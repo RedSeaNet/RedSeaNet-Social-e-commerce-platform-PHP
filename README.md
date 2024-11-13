@@ -7,7 +7,7 @@
 
 [Official Website](https://www.redseanet.com/) |
 [Demo](http://www.store.redseanet/) |
-[Help Document](https://www.redseanet.com/) |
+[Help Document](https://redseanet.com/technology-sharing/ecomphp.html)
 
 </div>
 
@@ -15,7 +15,15 @@
 
 ### Change Log
 
-Click and See<a href="https://www.redseanet.com/doc/ecomphp_change_summary.html" target="_blank">Change Log</a>
+Click and See  <a href="https://redseanet.com/technology-sharing/ecomphp/ecomphp_change_summary.html" target="_blank">Change Log</a>
+
+---
+
+### Install Local
+
+Click and See   <a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP/blob/master/readme/install.md" target="_blank">Install Local</a>
+
+---
 
 ### Introduce
 
@@ -143,16 +151,16 @@ Elasticsearch（Optional）
 
 ---
 
-Welcome <a href="#" target="_blank">Feedback Issue</a>
+Welcome <a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP/issues" target="_blank">Feedback Issue</a>
 
-Welcome <a href="#" target="_blank">Contribution</a>
+Welcome <a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP" target="_blank">Contribution</a>
 
 
 ---
 
 ## How to contribute
 
-Fork the repository,, edit and [submit a pull request](https://github.com/).
+Fork the repository,, edit and [submit a pull request](https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP/pulls).
 
 Please be very clear on your commit messages and pull request, empty pull request messages may be rejected without reason.
 

@@ -1,13 +1,13 @@
 <div align="center" >
     <img src="http://redseanet.com/pub/theme/redseanet/frontend/picture/logo.png" width="60" height="60" />
 </div>
-<div align="center">红海互联开源商城系统 PHP 版</div>
+<div align="center">红海互联开源社交商城系统 PHP 版</div>
 
 <div align="center">
 
 [官网](https://www.redseanet.com/) |
 [在线体验](http://www.store.redseanet/) |
-[帮助文档](https://www.redseanet.com/) |
+[帮助文档](https://redseanet.com/technology-sharing/ecomphp.html)
 
 </div>
 
@@ -15,7 +15,15 @@
 
 ### 更新说明
 
-点击查看<a href="https://www.redseanet.com/doc/ecomphp_change_summary.html" target="_blank">更新记录</a>
+点击查看   <a href="https://redseanet.com/technology-sharing/ecomphp/ecomphp_change_summary.html" target="_blank">更新记录</a>
+
+---
+
+### 本地安装
+
+点击查看   <a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP/blob/master/readme/install.md" target="_blank">本地安装</a>
+
+---
 
 ### 介绍
 
@@ -43,9 +51,9 @@
 
 管理后台： https://store.redseanet.com/admin
 
-账号：
+账号：     
 用户名： demo 
-redseanet.com
+密码： redseanet.com
 
 PC/WAP 端：http://store.redseanet/ （电脑/手机打开）
 
@@ -145,16 +153,16 @@ Elasticsearch（可选）
 
 ---
 
-欢迎<a href="#" target="_blank">反馈问题</a>
+欢迎<a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP/issues" target="_blank">反馈问题</a>
 
-欢迎<a href="#" target="_blank">提交代码</a>
+欢迎<a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP" target="_blank">提交代码</a>
 
 
 ---
 
 ## 如何参与贡献
 
-Fork 库出来, 编辑和 [提交一个 PR](https://github.com/).
+Fork 库出来, 编辑和 [提交一个 PR](https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP/pulls).
 
 请清楚地描述提交和 PR 的信息，空的描述和不清楚的描述， PR 会被没有原因驳回；
 

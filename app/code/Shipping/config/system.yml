@@ -1,0 +1,110 @@
+---
+shipping:
+    label: Shipping Method
+    children:
+        free_shipping:
+            label: Free Shipping
+            scope: [merchant,store]
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 0
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 1
+                    default: Free Shipping
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Shipping\Model\FreeShipping
+                country:
+                    type: jquerynoajaxselect2
+                    label: Available Countries
+                    source: Redseanet\I18n\Source\Country
+                    comment: Select none if all countries are available
+                    priority: 20
+                    attrs:
+                        multiple: true
+                min_total:
+                    type: price
+                    label: Minimum Order Total
+                    default: 1
+                    priority: 50
+                max_total:
+                    type: price
+                    label: Maximum Order Total
+                    default: ''
+                    priority: 51
+        flat_rate:
+            label: Flat Rate
+            scope: [merchant,store]
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 0
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 1
+                    default: Flat Rate
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Shipping\Model\FlatRate
+                unit:
+                    type: select
+                    label: Unit
+                    required: required
+                    default: 0
+                    priority: 10
+                    options:
+                        - Per Item
+                        - Per Order
+                rate:
+                    type: price
+                    label: Rate
+                    required: required
+                    default: 0
+                    priority: 11
+                calc:
+                    type: select
+                    label: Calculation
+                    required: required
+                    default: 0
+                    options:
+                        - Fixed
+                        - Percent
+                    priority: 12
+                country:
+                    type: jquerynoajaxselect2
+                    label: Available Countries
+                    source: Redseanet\I18n\Source\Country
+                    comment: Select none if all countries are available
+                    priority: 20
+                    attrs:
+                        multiple: true
+                min_total:
+                    type: price
+                    label: Minimum Order Total
+                    default: 1
+                    priority: 50
+                max_total:
+                    type: price
+                    label: Maximum Order Total
+                    default: ''
+                    priority: 51

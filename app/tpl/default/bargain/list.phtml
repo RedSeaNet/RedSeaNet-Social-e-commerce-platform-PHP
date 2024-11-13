@@ -1,0 +1,39 @@
+<?php
+$bargains = $this->getVariable('bargains');
+$currency = $this->getContainer()->get('currency');
+$languageId = $this->getLanguageId();
+?>
+<div class="container">
+    <?php if (count($bargains)): ?>
+        <ul class="products-grid ">
+            <?php
+            foreach ($bargains as $bargain):
+                $thumbnail = $bargain->getThumbnail()->load(true);
+                $thumbnailImage = $this->getPubUrl("frontend/images/placeholder.png");
+                if (isset($thumbnail[0]["real_name"])) {
+                    $thumbnailImage = $this->getResourceUrl('image/resized/200x/' . $thumbnail[0]["real_name"]);
+                }
+                $bargainId = $bargain->getId();
+                ?>
+                <li class="item col-lg-3 col-md-3">
+                    <a href="<?php echo $this->getBaseUrl("bargain/index/?bargain=" . $bargainId); ?>" title="<?php echo $bargain['name'][$languageId] ?>" class="product-image">
+                        <img src="<?php echo $thumbnailImage ?>" loading="lazy" alt="<?php echo $bargain['name'][$languageId] ?>" />      
+                    </a>
+                    <h6 class="product-name text-center">
+                        <a href="<?php echo $this->getBaseUrl("bargain/index/?bargain=" . $bargainId); ?>" title="<?php echo $bargain['name'][$languageId] ?>">
+                            <?php echo $bargain['name'][$languageId] ?>
+                        </a>
+                    </h6>
+                    <div class="price-box">
+                        <span class="price sys-blue"><?php echo $currency->convert($bargain['min_price'], true) ?></span>
+                    </div>
+                </li>
+            <?php endforeach ?>
+        </ul>
+    <?php else: ?>
+        <div class="text-center">
+            <p><img src="<?php echo $this->getPubUrl('frontend/images/empty-search.png'); ?>" /></p>
+            <p class="no-product"><?php echo $this->translate('There are no bargains matching the selection.') ?></p>
+        </div>
+    <?php endif ?>
+</div>

@@ -1,0 +1,113 @@
+<?php
+$bargain = $this->getVariable('bargain');
+$bargaincase = $this->getVariable('bargaincase');
+$item = $this->getVariable('item');
+
+$currency = $this->getContainer()->get('currency');
+$languageId = $this->getLanguageId();
+$options = is_scalar($bargain['options']) ? json_decode($bargain['options'], true) : $bargain['options'];
+$thumbnail = $this->getThumbnail($bargain['thumbnail']);
+
+$items = [];
+$item["base_total"] = $item['price'] * $item['qty'];
+if (!isset($item["free_shipping"])) {
+    $item["free_shipping"] = $item['is_virtual'];
+}
+$items[] = $item;
+$bargainId = $bargain->getId();
+$bargain_case_id = $bargaincase->getId();
+?>
+<div class="container">
+    <div class="checkout-steps">
+        <form action="<?php echo $this->getBaseUrl('bargain/checkout/place/') ?>" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+            <input type='hidden' name='options' value='<?php echo json_encode($options) ?>' />
+            <input type="hidden" name="product_id" value="<?php echo $bargain['product_id'] ?>" />
+            <input type="hidden" name="store_id" value="<?php echo $item['store_id'] ?>" />
+
+            <input type="hidden" name="is_virtual" value="<?php echo $item['is_virtual'] ?>" />
+            <input type="hidden" name="sku" value="<?php echo $item['sku'] ?>" />
+            <input type="hidden" name="warehouse_id" value="<?php echo $item['warehouse_id'] ?>" />
+            <input type="hidden" name="base_price" value="<?php echo $item['base_price'] ?>" />
+            <input type="hidden" name="price" value="<?php echo $currency->convert($item['base_price']) ?>" />
+            <input type="hidden" name="items" value='<?php echo json_encode($items) ?>' />
+            <input type="hidden" name="bargain" value="<?php echo $bargainId ?>" />
+            <input type="hidden" name="bargain_case" value="<?php echo $bargain_case_id ?>" />
+            <div class="fieldset bulk-sale-detail bg-white p-md-4 p-2">
+                <div class="pt-4 pb-4">
+                    <div class="d-flex flex-wrap align-items-center">
+                        <div class="col-12 col-md-6 d-flex align-items-center">
+                            <a href="<?php echo $this->getBaseUrl('bargain/index/?bargain=' . $bargainId); ?>">
+                                <img src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" alt="<?php echo $item['product']['name'] ?>" width="100" />
+                            </a>
+                            <div class="ps-2">
+                                <h5 class="product-name"><?php echo $bargain['name'][$languageId] ?></h5>
+                                <p class="sku"><?php echo $bargain['sku'] ?></p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 pt-4 p-md-0">
+                            <div class="price-box">
+                                <span class="old-price">
+                                    <span class="badge text-bg-danger"><?php echo $this->translate('Old Price') ?></span>
+                                    <span class="price"><?php echo $currency->convert($bargain['original_price'], true) ?></span>
+                                </span>
+                                <span class="special-price">
+                                    <span class="badge text-bg-danger"><?php echo $this->translate('Special Price') ?></span>
+                                    <span class="price" id="previewPrice" data-default="<?php echo $currency->convert($item['base_price'], false) ?>"><?php echo $currency->convert($item['base_price'], true) ?></span>
+                                    <div class="input-box">
+                                        <div class="cell qty">
+                                            <label for="qty" class="spin minus">-</label>
+                                            <input id="qty" class="form-control required" value="1" 
+                                                   min="1" 
+                                                   max="<?php echo $bargain['num']; ?>" 
+                                                   step="1" name="qty" type="number" />
+                                            <label for="qty" class="spin plus">+</label>
+                                            <span class="inventory"><?php echo $this->translate('pcs'), $this->translate('(%d pcs in stock)', [$bargain['stock']]) ?></span>
+                                        </div>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <p class="rules">
+                    <label for="rules"> 
+                        <a class="font-blue" href="<?php echo $this->getBaseUrl('help/customer/mjbz0210.html') ?>"><?php echo $this->translate('Click here to view') ?></a>
+                        <?php echo $this->translate('the rules and instructions of bargain shopping') ?>
+                    </label> 
+                </p>
+
+                <div class="row">
+                    <?php echo $this->getChild('address')->setVariable('isVirtual', $item['is_virtual']) ?>
+                </div>
+                <div class="row">
+                    <?php echo $this->getChild('payment')->setVariable('address', null)->setVariable('items', $items) ?>
+                </div>
+                <div class="row">
+                    <table style="width: 100%">
+                        <tr>
+                            <td class="text-end"><div id="shippingmethoddiv"><?php echo $this->getChild('shipping')->setVariable('store_id', $item['store_id'])->setVariable('isVirtual', $item['is_virtual'])->setVariable('address', null)->setVariable('items', $items); ?></div></td>
+                        </tr>
+                        <tr>
+                            <td class="text-end"><?php echo $this->translate('%d item(s)', [$item["qty"]]) ?>  <span class="subtotal"><?php echo $this->translate('Subtotal') ?>:<?php echo $this->getCurrency()->format(0) ?></span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-end"><?php echo $this->translate('Shipping') ?>  <?php echo $currency["symbol"]; ?><span class="shipping_fee">0</span></td>
+                        </tr>
+                        <tr class="grand-total">
+                            <td class="text-end">
+                                <?php echo $this->translate('Grand Total', [], 'checkout') ?>  
+                                <span class="total"><?php echo $this->getCurrency()->format(round($item["price"] * $item["qty"], 2)) ?></span>
+                                <input type="hidden" name="total" value="<?php echo $this->getCurrency()->format(round($item["price"] * $item["qty"], 2)) ?>" />
+                            </td>
+                        </tr>
+                    </table> 
+                </div>
+                <div class="buttons-set text-end">
+                    <button type="submit" class="btn btn-checkout"><?php echo $this->translate('Checkout') ?></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

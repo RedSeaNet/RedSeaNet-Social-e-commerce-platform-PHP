@@ -1,0 +1,36 @@
+<?php
+$query = $this->getQuery();
+$type = !empty($query["type"]) && $query["type"] == 1 ? 1 : 0;
+$page = !empty($query["page"]) ? intval($query["page"]) : 1;
+
+$mymessagesRead = $this->getNotifications(["core_notifications.type" => $type, "core_notifications.status" => 1, "page" => $page]);
+if (count($mymessagesRead) > 0) {
+    for ($m = 0; $m < count($mymessagesRead); $m++) {
+        if ($type == 1) {
+            ?>
+            <li class="p-4 m-2 item" style="background-color: #F8F8F8; border-radius: 0.5rem;">
+                <div style="border-bottom: 1px dotted #eee;" class="d-flex justify-content-between"><h6 class="title"><?php echo $mymessagesRead[$m]["title"]; ?></h6>
+                    <div><?php echo $this->getTime($mymessagesRead[$m]["created_at"]); ?></div></div>
+                <div class="pt-2content"><?php echo $mymessagesRead[$m]["content"]; ?></div>
+            </li>
+            <?php
+        } else {
+            ?>
+            <li class="p-4 m-2 item" style="background-color: #F8F8F8; border-radius: 0.5rem;">
+                <div class="">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <img src="<?php echo $mymessagesRead[$m]['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $mymessagesRead[$m]['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" class="rounded-circle" width="40" /> 
+                        </div>
+                        <div class="">
+                            <h6 class="title">&nbsp;<?php echo $mymessagesRead[$m]["title"]; ?></h6>
+                            <p class="pb-0 font-12">&nbsp;<?php echo $this->getTime($mymessagesRead[$m]["created_at"]); ?></p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <?php
+        }
+    }
+}
+

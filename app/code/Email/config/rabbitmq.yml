@@ -1,0 +1,13 @@
+---
+customer.login.after.mq:
+    -
+        listener: [\Redseanet\Email\Mq\Login, welcome]
+        priority: 20
+customer.register.after.mq:
+    -
+        listener: [\Redseanet\Email\Mq\Register, welcome]
+        priority: 10
+subscribe.mp:
+    -
+        listener: [\Redseanet\Email\Mq\Subscribe, subscribe]
+        priority: 10

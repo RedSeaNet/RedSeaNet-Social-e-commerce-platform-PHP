@@ -1,0 +1,107 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+$parent = $this->getVariable('parent');
+?>
+<div class="input-box <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label class="control-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell">
+        <table class="table tier-price">
+            <thead>
+                <tr>
+                    <th><?php echo $this->translate('Customer Group') ?></th>
+                    <th><?php echo $this->translate('Qty') ?></th>
+                    <th><?php echo $this->translate('Price') ?></th>
+                    <th><?php echo $this->translate('Action') ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if ($this->getPrice()):
+                foreach ($this->getPrice() as $groupId => $prices):
+                    foreach ($prices as $qty => $price):
+                        ?>
+                        <tr>
+                            <td class="form-inline">
+                                <select class="form-control group">
+                                    <option value="-1"><?php echo $this->translate('All Customers') ?></option>
+                                    <option value="0"><?php echo $this->translate('Not Logged In') ?></option>
+                                    <?php foreach ($this->getGroups() as $group): ?>
+                                        <option value="<?php echo $group->getId() ?>"<?php if ($group->getId() == $groupId): ?> selected="selected"<?php endif ?>><?php echo $group['name'] ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                            </td>
+                            <td class="form-inline">
+                                <input type="number" class="form-control number qty" value="<?php echo $qty ?>" /> <?php echo $this->translate('and above') ?>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><?php echo $this->getConfig()['i18n/currency/base'] ?></span>
+                                    <input type="number" class="form-control number price" value="<?php echo $price ?>" />
+                                </div>
+                            </td>
+                            <td>
+                                <a href="javascript:void(0);" class="delete">
+                                    <span class="fa fa-trash-o" aria-hidden="true"></span>
+                                    <span class="sr-only"><?php echo $this->translate('Remove') ?></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <?php
+                    endforeach;
+                endforeach;
+                endif;
+                ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4">
+                        <a href="javascript:void(0);" class="add">
+                            <span class="fa fa-plus-square" aria-hidden="true"></span>
+                            <span class="sr-only"><?php echo $this->translate('Add') ?></span>
+                        </a>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        <template>
+            <tr>
+                <td class="form-inline">
+                    <select class="form-control group">
+                        <option value="-1"><?php echo $this->translate('All Customers') ?></option>
+                        <option value="0"><?php echo $this->translate('Not Logged In') ?></option>
+                        <?php foreach ($this->getGroups() as $group): ?>
+                            <option value="<?php echo $group->getId() ?>"><?php echo $group['name'] ?></option>
+                        <?php endforeach ?>
+                    </select>
+                </td>
+                <td class="form-inline">
+                    <input type="number" class="form-control number qty" /> <?php echo $this->translate('and above') ?>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <span class="input-group-addon"><?php echo $this->getConfig()['i18n/currency/base'] ?></span>
+                        <input type="number" class="form-control number price" />
+                    </div>
+                </td>
+                <td>
+                    <a href="javascript:void(0);" class="delete">
+                        <span class="fa fa-trash-o" aria-hidden="true"></span>
+                        <span class="sr-only"><?php echo $this->translate('Remove') ?></span>
+                    </a>
+                </td>
+            </tr>
+        </template>
+        <input type="hidden" name="<?php echo $key ?>" value='<?php echo $item['value'] ?? '' ?>' />
+        <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

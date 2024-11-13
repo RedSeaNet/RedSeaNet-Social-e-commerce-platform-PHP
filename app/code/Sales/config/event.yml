@@ -1,0 +1,65 @@
+---
+currency.switch:
+    -
+        listener: [\Redseanet\Sales\Listeners\Cart, afterCurrencySwitch]
+        priority: 0
+customer.login.after:
+    -
+        listener: [\Redseanet\Sales\Listeners\Cart, afterLoggedIn]
+        priority: 10
+customer.logout.after:
+    -
+        listener: [\Redseanet\Sales\Listeners\Cart, afterLoggedOut]
+        priority: 10
+Redseanet\Sales\Model\Order.model.save.before:
+    -
+        listener: [\Redseanet\Sales\Listeners\Increment, generate]
+        priority: 10
+Redseanet\Sales\Model\Invoice.model.save.before:
+    -
+        listener: [\Redseanet\Sales\Listeners\Increment, generate]
+        priority: 10
+Redseanet\Sales\Model\Shipment.model.save.before:
+    -
+        listener: [\Redseanet\Sales\Listeners\Increment, generate]
+        priority: 10
+Redseanet\Sales\Model\CreditMemo.model.save.before:
+    -
+        listener: [\Redseanet\Sales\Listeners\Increment, generate]
+        priority: 10
+order.place.after:
+    -
+        listener: [\Redseanet\Sales\Listeners\Email, afterOrderPlaced]
+        priority: 10
+#    -
+#        listener: [\Redseanet\Sales\Listeners\SMS, afterOrderPlaced]
+#        priority: 20
+Redseanet\Sales\Model\Invoice.model.save.after:
+    -
+        listener: [\Redseanet\Sales\Listeners\Email, afterInvoiceSaved]
+        priority: 10
+    -
+        listener: [\Redseanet\Sales\Listeners\SMS, afterInvoiceSaved]
+        priority: 20
+order.shipped:
+    -
+        listener: [\Redseanet\Sales\Listeners\Email, afterShipmentSaved]
+        priority: 10
+    -
+        listener: [\Redseanet\Sales\Listeners\SMS, afterShipmentSaved]
+        priority: 20
+order_status_changed:
+    -
+        listener: [\Redseanet\Sales\Listeners\Email, orderStatusChanged]
+        priority: 10
+    -
+        listener: [\Redseanet\Sales\Listeners\SMS, orderStatusChanged]
+        priority: 20
+Redseanet\Sales\Model\Rma.model.save.after:
+    -
+        listener: [\Redseanet\Sales\Listeners\Email, rma]
+        priority: 10
+    -
+        listener: [\Redseanet\Sales\Listeners\SMS, rma]
+        priority: 20
+    

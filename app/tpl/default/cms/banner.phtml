@@ -1,0 +1,32 @@
+<?php
+$code = $this->getVariable('code') ?? 'webhome';
+$limit = $this->getVariable('limit') ?? 8;
+$banners = $this->getBanners($code, $limit);
+if (count($banners)) {
+    ?>
+    <div id="carousel-<?php echo $code; ?>" class="carousel slide" data-bs-ride="carousel" style="width: 100%;display: flex;" data-bs-touch="true">
+        <!-- 指示符 -->
+        <ul class="carousel-indicators">
+            <?php for ($b = 0; $b < count($banners); $b++) { ?>
+                <li data-bs-target="#carousel-<?php echo $code; ?>" data-bs-slide-to="<?php echo $b; ?>" class="<?php echo ($b == 0 ? 'active' : '') ?>"></li>
+            <?php } ?>
+        </ul>
+        <!-- 轮播图片 -->
+        <div class="carousel-inner">
+            <?php for ($b = 0; $b < count($banners); $b++) { ?>
+            <div class="carousel-item <?php echo ($b == 0 ? 'active' : '') ?>" style="text-align: center;">
+                    <a class="" <?php echo!empty($banners[$b]["url"]) ? 'href="' . $banners[$b]["url"] . '"' : ''; ?>>
+                        <img src="<?php echo $this->getResourceUrl('image/' . $banners[$b]["image"]) ?>" alt="<?php echo $banners[$b]["title"]; ?>" class="w-100" />
+                    </a>
+                </div>
+            <?php } ?>
+        </div>
+        <!-- 左右切换按钮 -->
+        <a class="carousel-control-prev" href="#carousel-<?php echo $code; ?>" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </a>
+        <a class="carousel-control-next" href="#carousel-<?php echo $code; ?>" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </a>
+    </div>
+<?php } ?>

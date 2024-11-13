@@ -1,0 +1,8 @@
+<?php if ($this->getConfig()['fpc/general/enabled']): ?>
+    <esi:include src="/esi/?key[]=csrf" />
+    <esi:remove>
+        <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+    </esi:remove>
+<?php else: ?>
+    <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+<?php endif; ?>

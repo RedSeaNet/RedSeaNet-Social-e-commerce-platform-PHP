@@ -1,0 +1,30 @@
+<?php
+$referees = $this->getReferee();
+?>
+
+<div class="fieldset">
+    <div class="input-box d-flex">
+        <?php
+        if (!empty($referees)) {
+            ?>
+            <div>
+                <img src="<?php
+                if ($referees->offsetGet('avatar')) {
+                    echo $this->getUploadedUrl('customer/avatar/' . $referees->offsetGet('avatar'));
+                } else {
+                    echo $this->getPubUrl('frontend/images/avatar-holderplace.jpg');
+                }
+                ?>" alt="" width="60" />
+            </div>
+            <div>
+                <h5><?php echo $referees->offsetGet('username'); ?></h5>
+                <p>ID:<?php echo $referees->offsetGet('increment_id'); ?></p>
+            </div>
+            <?php
+        } else {
+            echo '<div class="p-2">' . $this->translate('You do have referees') . '.</div>';
+        }
+        ?>
+    </div>
+</div>
+

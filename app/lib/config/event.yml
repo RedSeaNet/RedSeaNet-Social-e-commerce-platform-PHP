@@ -1,0 +1,13 @@
+---
+route:
+    -
+        listener: [\Redseanet\Lib\Listeners\Route, dispatch]
+        priority: 10
+render:
+    -
+        listener: [\Redseanet\Lib\Listeners\Render, render]
+        priority: 10
+respond:
+    -
+        listener: [\Redseanet\Lib\Listeners\Respond, respond]
+        priority: 10

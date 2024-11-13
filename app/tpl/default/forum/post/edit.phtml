@@ -1,0 +1,210 @@
+<?php
+$categories = $this->getCategories();
+$productCategories = $this->getRootCategory();
+$post = $this->getVariable('post');
+$query = $this->getQuery();
+$active = $this->getActiveIds();
+$relateProducts = $this->getLinkedProducts();
+if ($this->getSegment('customer')->get('hasLoggedIn')):
+    $config = $this->getConfig();
+    ?>
+    <form action="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/save/') ?>" method="post" data-upload="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/upload/') ?>" enctype="multipart/form-data">
+        <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+        <input type="hidden" name="id" value="<?php echo $post['id']; ?>" />
+        <div class="fieldset">
+            <div class="input-box">
+                <label for="post:image"><?php echo $this->translate('Post Image'); ?></label>
+                <div class="cell">
+                    <div class="images" id="forum-images-comtainer" style="overflow: auto;">
+                        <?php
+                        $thumbnails = $post->getThumbnails();
+                        if (!empty($thumbnails)) {
+                            foreach ($thumbnails as $item) {
+                                ?>
+                                <div class="preview">
+                                    <img src="<?php echo $this->getBaseUrl('pub/upload/forum/') . $item ?>" />
+                                    <input type="text" name="uploaded[]" value="<?php echo $item; ?>" hidden="hidden" />
+                                </div>
+                                <?php
+                            }
+                        }
+                        ?>
+                        <input type="file" hidden="hidden" accept="image/jpeg,image/jpg,image/gif,image/png" name="image[][]" id="forum-image-<?php echo $post['id']; ?>" />
+                        <label for="forum-image-<?php echo $post['id']; ?>" class="add-image"><span class="publish-plus"><span class="fa fa-plus" aria-hidden="true"></span></span></label>
+                        <span>(<?php echo $this->translate('%d images allowed at most.', [5]) ?>)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="input-box">
+                <label for="post:video"><?php echo $this->translate('Video'); ?></label>
+                <div class="cell">
+                    <div class="video">
+                        <input type="file" accept="video/*" name="video" id="forum-video" />
+                        <div><label id="video-error" class="invalid" for="video" style="display: none;"><?php echo $this->translate('The video should not be longer than 30 minutes') ?>!</label></div>
+                        <div style="display: flex;padding:5px 0; align-items: center;">
+                            <div class="progress col-10">
+                                <div id="forum-video-0-progress" class="progress-bar bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <span id="forum-video-0-progress-text">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-box">
+                <div class="cell">
+                    <select name="category" class="form-control">
+                        <option value=""><?php echo $this->translate('Selection of topic classification'); ?></option>
+                        <?php
+                        if (count($categories) != 0):
+                            foreach ($categories as $item):
+                                ?>
+                                <option <?php if ($item['id'] == $post['category_id']) echo 'selected="selected"'; ?> value="<?php echo $item['id']; ?>"><?php echo $item['name']; ?></option>
+                                <?php
+                            endforeach;
+                        endif;
+                        ?>
+                    </select>
+                    &nbsp;&nbsp;
+                </div>
+                <label for="post:title" class="col-form-label required"><?php echo $this->translate('Title') ?></label>
+                <div class="cell">
+                    <input type="text" name="title" id="post:title" class="form-control required" value="<?php echo $post['title']; ?>" />
+                </div>
+            </div>
+            <div class="input-box">
+                <label for="post:description" class="control-lable"><?php echo $this->translate('Description') ?></label>
+                <input type="text" name="description" id="post:description" class="form-control" value="<?php echo $post['description']; ?>" />
+            </div>
+            <div class="input-box">
+                <label for="post:content" class="col-form-label required"><?php echo $this->translate('Content') ?></label>
+
+                <textarea name="content" id="post:content" class="form-control required<?php if ($config['forum/post/wysiwyg']): ?> htmleditor noneresourceimage<?php endif ?>"><?php echo $post['content']; ?></textarea>
+
+            </div>
+            <div class="input-box">
+                <label for="post_tags" class="col-form-label"><i class="fa fa-hashtag" aria-hidden="true"></i><?php echo $this->translate('Hashtags') ?></label>
+                <input name="tags" id="post_tags" autocomplete="true" data-minwidth="100%" value="<?php echo $post['tags']; ?>" />
+            </div>
+            <div class="input-box">
+                <div class="cell">&nbsp;</div>
+                <div class="cell">
+                    <a data-bs-toggle="modal" data-bs-target="div#linksModal"><i class="fa fa-link" aria-hidden="true"></i><?php echo $this->translate('Add Links') ?></a>&nbsp;&nbsp;
+                    <a data-bs-toggle="modal" data-bs-target="div#pollModal"><i class="fa fa-bar-chart" aria-hidden="true"></i><?php echo $this->translate('Add Vote') ?></a>
+                </div>
+            </div>
+            <div class="input-box">
+                <label for="is_draft" class="col-form-label required"><?php echo $this->translate('Save as Draft') ?></label>
+                <div class="cell">
+                    <input type="radio" name="is_draft" value="1" id="draft-1" <?php echo $post['is_draft'] ? 'checked' : ''; ?>><label for="draft-1"><?php echo $this->translate('Yes') ?></label>
+                    <input type="radio" name="is_draft" value="0" id="draft-0" <?php echo $post['is_draft'] ? '' : 'checked'; ?>><label for="draft-0"><?php echo $this->translate('No') ?></label>
+                </div>
+            </div>
+            <?php if ($config['forum/post/captcha']): ?>
+                <div class="input-box">
+                    <label for="post:captcha" class="col-form-label"><?php echo $this->translate('Captcha') ?></label>
+                    <div class="cell">
+                        <input type="text" name="captcha" class="form-control required captcha" maxlength="5" id="post:captcha" autocomplete="off" spellcheck="false" data-rule-remote="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/validCaptcha/') ?>" />
+                        <img src="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/captcha/') ?>" alt="" class="captcha" height="26" width="70" />
+                    </div>
+                </div>
+            <?php endif ?>
+            <div class="input-box">
+                (<small><?php echo $this->translate('After the associated product, the reader from your article click into the product order, your account will be awarded points, up to 15 items can be selected.'); ?></small>)
+            </div>
+            <div class="input-box related" id="productsrelated">
+                <select data-tags="true" data-allow-clear="true" name="forum_product_relation[]" id="forum_product_relation" class="js-data-example-ajax select2Adapter w-100" data-ajax--cache="true" data-ajax--url="/catalog/search/nameid" multiple="multiple" data-placeholder="<?php echo $this->translate('Please choose product') ?>">
+                    <?php
+                    if (count($relateProducts) > 0) {
+                        foreach ($relateProducts as $product) {
+                            echo '<option value="' . $product['id'] . '"  selected="selected">' . $product['name'] . '</option>';
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="buttons-set text-end">
+                <button type="submit" class="btn btn-primary"><?php echo $this->translate('Submit') ?></button>
+            </div>
+            <div class="buttons-set text-center d-block d-sm-none">
+                <button type="submit" class="btn btn-primary"><?php echo $this->translate('Submit') ?>&nbsp;&nbsp;<span class="fa fa-arrow-right"></span></button>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- 模态框 -->
+    <div class="modal fade" id="linksModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- 模态框头部 -->
+                <div class="modal-header">
+                    <h4 class="modal-title"><?php echo $this->translate('Add Links') ?></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <!-- 模态框主体 -->
+                <div class="modal-body">
+                    <?php
+                    $recommend_link = $this->getLinks();
+                    echo $this->getChild('recommend_link')->setVariable('links', $recommend_link);
+                    ?>
+                </div>
+                <!-- 模态框底部 -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><?php echo $this->translate('Confirm') ?></button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="pollModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- 模态框头部 -->
+                <div class="modal-header">
+                    <h4 class="modal-title"><?php echo $this->translate('Add Vote') ?></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <!-- 模态框主体 -->
+                <div class="modal-body">
+                    <?php
+                    if (isset($post['poll_id']) && $post['poll_id'] != '') {
+                        $poll = $this->getPoll($post['poll_id']);
+                        echo $this->getChild('poll')->setVariable('poll', $poll);
+                    } else {
+                        echo $this->getChild('poll');
+                    }
+                    ?>
+                </div>
+                <!-- 模态框底部 -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><?php echo $this->translate('Confirm') ?></button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="relateProductModal" data-url="<?php echo $this->getBaseUrl('catalog/search/modal'); ?>">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- 模态框头部 -->
+                <div class="modal-header">
+                    <h4 class="modal-title"><?php echo $this->translate('Add related products') ?></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <!-- 模态框主体 -->
+                <div class="modal-body">
+
+                </div>
+                <!-- 模态框底部 -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><?php echo $this->translate('Confirm') ?></button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</form>
+<p>&nbsp;</p>

@@ -1,0 +1,45 @@
+<?php
+$accounts = $this->getAccount();
+?>
+<form action="<?php echo $this->getBaseUrl('balance/statement/drawPost/') ?>" method="post">
+    <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+    <div class="fieldset">
+        <div class="input-box">
+            <label for="account" class="col-form-label"><?php echo $this->translate('Account') ?></label>
+            <ul class="cell">
+                <?php
+                foreach ($accounts as $account):
+                    $detail = json_decode($account['detail'], true);
+                    unset($account['detail']);
+                    $json = $account;
+                    foreach ($detail as $k => $v) {
+                        $json['detail[' . $k . ']'] = $v;
+                    }
+                    ?>
+                    <li data-id="<?php echo $account['id'] ?>">
+                        <input type="radio" name="account_id" id="account_id-<?php echo $account['id'] ?>" value="<?php echo $account['id'] ?>" />
+                        <label for="account_id-<?php echo $account['id'] ?>">
+                            <span class="type"><?php echo $this->translate($this->getType()[$account['type']] ?? '') ?></span>
+                            <span class="name"><?php echo $detail['name'] ?></span>
+                            <span class="id"><?php echo $detail['id'] ?></span>
+                        </label>
+                        <a href="#modal-account" data-bs-toggle="modal" data-info='<?php echo json_encode($json) ?>'><?php echo $this->translate('Edit') ?></a>
+                        <a href="<?php echo $this->getBaseUrl('balance/statement/deleteAccount/') ?>" data-method="delete" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $account['id'] ?>"><?php echo $this->translate('Delete') ?></a>
+                    </li>
+                <?php endforeach ?>
+                <li><a href="#modal-account" data-bs-toggle="modal" data-info="{}"><?php echo $this->translate('Add') ?></a></li>
+            </ul>
+        </div>
+        <div class="input-box">
+            <label for="amount" class="col-form-label"><?php echo $this->translate('Amount') ?></label>
+            <div class="cell">
+                <input type="number" class="form-control required number" name="amount" min="0" max="<?php echo $this->getBalance() ?>" />
+            </div>
+        </div>
+        <div class="buttons-set">
+            <button type="submit" class="btn btn-theme">
+                <?php echo $this->translate('Draw') ?>
+            </button>
+        </div>
+    </div>
+</form>

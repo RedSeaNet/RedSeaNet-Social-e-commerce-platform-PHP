@@ -1,0 +1,17 @@
+<div class="alert alert-warning">
+    <?php echo $this->translate('Application to open a store is completely free. Each ID could only open one store.', [], 'retailer') ?><br />
+    <?php echo $this->translate('The approval would speed 1~3 working days. Click here to know more about it.', [], 'retailer') ?>
+</div>
+<div class="flow">
+    <ol class="clearfix">
+        <li class="active"><span><?php echo $this->translate('Application', [], 'retailer') ?></span></li>
+        <li class="active"><span><?php echo $this->translate('Supplementation', [], 'retailer') ?></span></li>
+        <li class="active"><span><?php echo $this->translate('Approving', [], 'retailer') ?></span></li>
+    </ol>
+</div>
+<div class="form">
+    <p class="notice text-center">
+        <?php echo $this->translate('Your application is processing. Please wait for a while.', [], 'retailer') ?>
+        <a href="<?php echo $this->getBaseUrl('retailer/account/reapply/') ?>" class="btn btn-theme"><?php echo $this->translate('Reapply') ?></a>
+    </p>
+</div>

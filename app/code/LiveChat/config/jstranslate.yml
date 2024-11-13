@@ -1,0 +1,5 @@
+---
+livechat:
+    - "You have received a new message."
+livechat_admin:
+    - "The explorer does not support livechat. Please upgrade your explorer."

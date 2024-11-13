@@ -1,0 +1,4 @@
+---
+admin:
+    route: Redseanet\Admin\Route\Router
+    priority: 100

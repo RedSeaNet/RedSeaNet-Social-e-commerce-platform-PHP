@@ -1,0 +1,18 @@
+<?php
+$elements = $this->getVariable('elements');
+?>
+<div class="edit">
+    <h2 class="page-title"><?php echo $this->translate('Select Attribute Set') ?></h2>
+    <form action="<?php echo $this->getSaveUrl() ?>" method="get">
+        <div class="page-content table tab-pane fade active in" id="main-tab">
+            <?php
+            foreach ($elements as $key => $item) {
+                echo $this->getInputBox($key, $item);
+            }
+            ?>
+        </div>
+        <div class="buttons-set">
+            <button type="submit" class="btn btn-submit"><span><?php echo $this->translate('Next', [], 'eav') ?></span></button>
+        </div>
+    </form>
+</div>

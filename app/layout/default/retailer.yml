@@ -1,0 +1,1533 @@
+---
+retailer_account:
+    update: frontend
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: retailer-account
+        children:
+            content:
+                type: Redseanet\Lib\ViewModel\Template
+                template: customer/account
+                children:
+                    nav:
+                        type: Redseanet\Customer\ViewModel\Navigation
+                        template: retailer/navigation
+                        action:
+                            -
+                                method: addGroup
+                                params: [{label: 'Transaction Management',priority: 0,icon: 'file-text'}]
+                            -
+                                method: addGroup
+                                params: [{label: 'Product Management',priority: 10,icon: 'file-image-o'}]
+                            -
+                                method: addGroup
+                                params: [{label: 'Store Management',priority: 20,icon: 'bank'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/sales_order/',label: 'Order Management',priority: 1,group: 'Transaction Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/transaction/review/',label: 'Review Management',priority: 2,group: 'Transaction Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/refund/',label: 'Return &amp; Refund',priority: 3,group: 'Transaction Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/account/reward/',label: 'My Billing',priority: 4,group: 'Transaction Management'}]
+                            - 
+                                method: addLink
+                                params: [{link: 'retailer/product/release/',label: 'Release Product',priority: 4,group: 'Product Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/product/selling/',label: 'Selling Products',priority: 5,group: 'Product Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/product/stock/',label: 'Stock Products',priority: 6,group: 'Product Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/product/history/',label: 'Release History',priority: 7,group: 'Product Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/store/view/',label: 'View Store',priority: 8,group: 'Store Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/shipping/',label: 'Shipping Method',priority: 9,group: 'Store Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/store/decorationList',label: 'Store Decoration',priority: 10,group: 'Store Management',class: 'd-md-block d-none'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/resource/',label: 'Resource Management',priority: 11,group: 'Store Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/category/',label: 'Category Management',priority: 13,group: 'Store Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'retailer/store/setting/',label: 'Store Settings',priority: 14,group: 'Store Management'}]
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: customer
+                            -
+                                method: addHandledSegment
+                                params: retailer
+                            -
+                                method: setVariable
+                                params:
+                                    - inline
+                                    - 1
+retailer_account_dashboard:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer Center
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/stat.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Wrapper
+                        children:
+                            profile:
+                                type: Redseanet\Retailer\ViewModel\Dashboard\Profile
+                                template: retailer/dashboard/profile
+                            stat:
+                                type: Redseanet\Retailer\ViewModel\Dashboard\Stat
+                                template: retailer/dashboard/stat
+                            rank: 
+                                type: Redseanet\Retailer\ViewModel\Dashboard\Ranking
+                                template: retailer/dashboard/ranking
+retailer_apply:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Register for a Business Account
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Register for a Business Account
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/apply/form
+retailer_processing:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Register for a Business Account
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Register for a Business Account
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/apply/processing
+retailer_store_setting:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Store Infomation
+                    -
+                        method: addScript
+                        params: frontend/vendor/cropper/cropper.min.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/cropper/cropper.min.css
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Store Infomation
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Store
+                        template: retailer/store/setting
+                        children:
+                            imagecropper:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: page/image-cropper
+retailer_brand:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer Brand Management
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/store/brand
+retailer_store_view:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Store Settings
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/jquery.hiSlider.min.css
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/enhancement.css
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/jquery.hiSlider.min.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/regain_component.js
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/store/view
+view_search:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer Store
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/jquery.hiSlider.min.css
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/enhancement.css
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/jquery.hiSlider.min.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/regain_component.js
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/store_search
+retailer_store_product_view:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer Store
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/jquery.hiSlider.min.css
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/enhancement.css
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/jquery.hiSlider.min.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/regain_component.js
+                    -
+                        method: addScript
+                        params: frontend/js/product.js
+                    -
+                        method: addScript
+                        params: frontend/js/magnifying.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/zoombox.js',defer: 'defer',async: 'async'}]
+                    -    
+                        method: addScript
+                        params: frontend/vendor/masonry/masonry.pkgd.min.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/infinite-scroll/infinite-scroll.pkgd.min.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery-sina-emotion-4.1.0/jquery-sina-emotion.min.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/jquery-sina-emotion-4.1.0/jquery-sina-emotion.min.css
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/store/product_view
+                        children:
+                            product:
+                                type: Redseanet\Catalog\ViewModel\Product\View
+                                template: retailer/store/product/view
+                                children:
+                                    tier:
+                                        type: Redseanet\Catalog\ViewModel\Product\TierPrice
+                                        template: retailer/store/product/tierprices
+                                    promotion:
+                                        type: Redseanet\Promotion\ViewModel\Product
+                                        template: retailer/store/product/promotion
+                                    share:
+                                        type: Redseanet\Catalog\ViewModel\Product\Share
+                                        template: retailer/store/product/share
+                                    attribute:
+                                        type: Redseanet\Catalog\ViewModel\Product\View
+                                        template: retailer/store/product/attribute
+                                    service:
+                                        type: Redseanet\Cms\ViewModel\Block
+                                        action:
+                                            -
+                                                method: setBlockId
+                                                params: after-sales-service
+                                    option:
+                                        type: Redseanet\Catalog\ViewModel\Product\Option
+                                        template: retailer/store/product/option
+                                    media:
+                                        type: Redseanet\Lib\ViewModel\Template
+                                        template: retailer/store/product/media
+            extra:
+                children:
+                    log:
+                        type: Redseanet\Log\ViewModel\Visitor
+retailer_store_custom_view:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer Store
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/jquery.hiSlider.min.css
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/enhancement.css
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/jquery.hiSlider.min.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/regain_component.js
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/custom_page_view
+retailer_sales_order_list:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Order Management
+                    -
+                        method: addLink
+                        params: frontend/css/jquery-ui.min.css
+                    -
+                        method: addScript
+                        params: frontend/js/jquery-ui.min.js
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Order Management
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Sales\Order
+                        template: retailer/sales/order/list
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+retailer_sales_order_view:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: frontend/js/locate.js
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/sales/order/view
+            extra:
+                children:
+                    address:
+                        type: Redseanet\Retailer\ViewModel\Sales\Edit\Address
+                        template: retailer/sales/edit/addressForm
+                    discount:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/sales/edit/discount
+retailer_sales_shipment_edit:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Invoice / Sales
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/sales.js', defer: 'defer', async: 'async'}]
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Sales\Edit\Shipment
+                        template: retailer/sales/edit/shipment
+retailer_sales_shipment_print:
+    update: retailer_account
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Sales\View\Shipment
+                        template: retailer/sales/print/shipment
+retailer_sales_invoice_edit:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Invoice / Sales
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/sales.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Sales\Edit\Invoice
+                        template: retailer/sales/edit/invoice
+retailer_sales_creditmemo_edit:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Credit Memo / Sales
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/sales.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Sales\Edit\CreditMemo
+                        template: retailer/sales/edit/creditmemo
+retailer_selling_products:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Selling Products
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Selling Products
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Catalog\Product\Selling
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+retailer_stock_products:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Stock Products
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Stock Products
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Catalog\Product\Stock
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+retailer_history_products:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Release History
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Release History
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Catalog\Product\History
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+retailer_review:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Review Management
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/zoombox.js',defer: 'defer',async: 'async'}]
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Review Management
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Catalog\Review
+                        template: retailer/catalog/review/list
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+            extra:
+                children:
+                    reply:
+                        type: Redseanet\Retailer\ViewModel\Catalog\Review
+                        template: retailer/catalog/review/reply
+retailer_product_edit_before:
+    update: retailer_account
+    root:
+        children:
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Release Product
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Catalog\Edit\BeforeEdit
+                        template: retailer/catalog/product/beforeEdit
+retailer_product_edit:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addLink
+                        params: backend/css/jquery-ui.min.css
+                    -
+                        method: addLink
+                        params: frontend/css/resource.css
+                    -
+                        method: addScript
+                        params: frontend/js/jquery-ui.min.js
+                    -
+                        method: addScript
+                        params: frontend/js/jquery.fileupload/core.js
+                    -
+                        method: addScript
+                        params: frontend/js/resource.js
+                    -
+                        method: addScript
+                        params: frontend/js/retailer/product.js
+                    -
+                        method: addScript
+                        params: frontend/ckeditor/ckeditor.js
+                    -
+                        method: addScript
+                        params: frontend/ckeditor/adapters/jquery.js
+                    -
+                        method: addScript
+                        params: frontend/ckeditor.js
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Catalog\Edit\Product
+                        children:
+                            tabs:
+                                type: Redseanet\Retailer\ViewModel\Catalog\Edit\Tabs
+                                action:
+                                    -
+                                        method: setMainTabLabel
+                                        params: General
+                                    -
+                                        method: addTab
+                                        params:
+                                            - category
+                                            - Category
+                                            - -2
+                                    -
+                                        method: addTab
+                                        params:
+                                            - images
+                                            - Images/Video
+                                            - -1
+                                    -
+                                        method: addTab
+                                        params:
+                                            - custom_options
+                                            - Custom Options
+                                            - 120
+                                    -
+                                        method: addTab
+                                        params:
+                                            - inventory
+                                            - Inventory
+                                            - 130
+                                    -
+                                        method: addTab
+                                        params:
+                                            - additional
+                                            - Product Parameters
+                                            - 140
+                                    -
+                                        method: addTab
+                                        params:
+                                            - store_category
+                                            - Store-category
+                                            - 150
+                                children:
+                                    images:
+                                        type: Redseanet\Retailer\ViewModel\Catalog\Edit\Product\Tab
+                                        template: retailer/catalog/product/images
+                                    category:
+                                        type: Redseanet\Retailer\ViewModel\Catalog\Edit\Product\Category
+                                        template: retailer/catalog/product/category
+                                    inventory:
+                                        type: Redseanet\Retailer\ViewModel\Catalog\Edit\Product\Inventory
+                                        template: retailer/catalog/product/inventory
+                                    custom_options:
+                                        type: Redseanet\Retailer\ViewModel\Catalog\Edit\Product\Options
+                                        template: retailer/catalog/product/options
+                                    additional:
+                                        type: Redseanet\Retailer\ViewModel\Catalog\Edit\Product\Additional
+                                        template: retailer/catalog/product/additional
+                                    store_category:
+                                        type: Redseanet\Retailer\ViewModel\Catalog\Edit\Product\StoreCategory
+                                        template: retailer/catalog/product/storeCategory
+            extra:
+                children:
+                    insert:
+                        type: Redseanet\Retailer\ViewModel\Resource\Modal
+                        template: resource/insert
+                        children:
+                            list:
+                                type: Redseanet\Retailer\ViewModel\Resource\Explorer
+                                template: resource/explorer
+                    upload:
+                        type: Redseanet\Retailer\ViewModel\Resource\Modal
+                        template: resource/upload
+retailer_product_edit_1:
+    update: retailer_product_edit
+retailer_product_edit_2:
+    update: retailer_product_edit
+retailer_category:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Category Management
+                    -
+                        method: addScript
+                        params: frontend/js/jquery-ui.min.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/retailer/category.js',defer: 'defer',async: 'async'}]
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Category Management
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Category
+                        template: retailer/category/list
+            extra:
+                children:
+                    form:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/category/form
+retailer_resource:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Resource Management
+                    -
+                        method: addLink
+                        params: frontend/css/resource.css
+                    -
+                        method: addScript
+                        params: frontend/js/jquery-ui.min.js
+                    -
+                        method: addScript
+                        params: frontend/js/jquery.fileupload/core.js
+                    -
+                        method: addScript
+                        params: [{src: "frontend/js/resource.js",defer: "defer"}]
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Resource\Explorer
+                        template: resource/explorer
+            extra:
+                children:
+                    modal:
+                        type: Redseanet\Retailer\ViewModel\Resource\Modal
+                        template: resource/upload
+
+retailer_resource_decoration:
+    update: frontend
+    root:
+        template: page/empty
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Resource Management
+                    -
+                        method: addLink
+                        params: frontend/css/resource.css
+                    -
+                        method: addScript
+                        params: frontend/js/jquery-ui.min.js
+                    -
+                        method: addScript
+                        params: frontend/js/jquery.fileupload/core.js
+                    -
+                        method: addScript
+                        params: [{src: "frontend/js/resource.js",defer: "defer"}]
+                    -
+                        method: addScript
+                        params: frontend/dragResource/editor/dialogs/internal.js
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Resource\Explorer
+                        template: resource/explorer
+            extra:
+                children:
+                    modal:
+                        type: Redseanet\Retailer\ViewModel\Resource\Modal
+                        template: resource/upload
+
+retailer_resource_nav:
+    update: frontend
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Resource\Explorer
+                        template: resource/navigation
+retailer_resource_list:
+    update: frontend
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Resource\Explorer
+                        template: resource/list
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+                                action:
+                                    -
+                                        method: setVariable
+                                        params: 
+                                            - canJump
+                                            - 0
+retailer_shipping:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Shipping Method
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Shipping Method
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Shipping
+                        template: retailer/store/shipping
+retailer_activity:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer Activity Registration
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/activity
+retailer_activity_view:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer After Activity View
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/activityview
+retailer_promotion:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer Promotion Management
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/promotion
+retailer_promotion_view:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer Promotion View
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/promotionview
+retailer_members:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer Member Relationship Management
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/members
+retailer_member_detail:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer Member Detail
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/memberdetail
+retailer_transaction_record:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Transaction Record
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: retailer/transactionRecordy
+decoration_store:
+    update: default
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addLink
+                        params:
+                            - frontend/favicon.ico
+                            - shortcut icon
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/bootstrap.min.css
+                    -
+                        method: addLink
+                        params: frontend/vendor/bootstrap5/css/bootstrap.css
+                    -
+                        method: addLink
+                        params: frontend/vendor/font-awesome-4.7.0/css/font-awesome.min.css
+                    -
+                        method: addLink
+                        params: frontend/css/styles.css
+                    -
+                        method: addLink
+                        params: [frontend/css/styles-ie.css,stylesheet,lt IE 9]
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery/jquery.min.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/vendor/jquery.cookie/jquery.cookie.min.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: frontend/js/translate.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery.validate/jquery.validate.min.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery.validate/config.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/vendor/modernizr/modernizr.custom.min.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/vendor/bootstrap5/js/bootstrap.bundle.min.js',defer: 'defer',async: 'async'}]
+                    -    
+                        method: addScript
+                        params: [{src: 'frontend/js/app.js',defer: 'defer'}]
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/selectivizr.js',defer: 'defer'},lt IE 9]                        
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/bootstrap-theme.min.css
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/theme.css
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/bootstrap-colorselector.css
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/jquery.hiSlider.min.css
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/enhancement.css
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/tinymce.min.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/jquery-ui.min.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/jquery.ui.touch-punch.min.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/bootstrap-colorselector.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/template.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/app.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/layer/layer.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/jquery.hiSlider.min.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/regain_component.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/animsition/js/animsition.min.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/wow/wow.min.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/animsition/css/animsition.min.css
+                    -
+                        method: addLink
+                        params: frontend/vendor/wow/animate.css
+                    -
+                        method: setTitle
+                        params: Retailer Store
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/storeDecoration
+decoration_store_customize:
+    update: decoration_store
+    root:
+        children:
+            head:
+                action:
+                   -
+                        method: setTitle
+                        params: Retailer Store Customize
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/storeDecorationCustomize
+decoration_store_productdetail:
+    update: decoration_store
+    root:
+        children:
+            head:
+                action:
+                   -
+                        method: setTitle
+                        params: Retailer Store Product
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/storeDecorationProductDetail
+decoration_list:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Store Settings 
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationList
+
+decorationFunc:
+    update: default
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/bootstrap.min.css
+                    -
+                        method: addLink
+                        params: frontend/dragResource/css/enhancement.css                   
+                    -
+                        method: addLink
+                        params: frontend/vendor/font-awesome-4.7.0/css/font-awesome.min.css
+                    -
+                        method: addLink
+                        params: frontend/css/styles.css
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery/jquery.min.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/layer/layer.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/bootstrap.min.js
+                    -
+                        method: addLink
+                        params: frontend/css/resource.css
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery-ui/jquery-ui.min.js
+                    -
+                        method: addScript
+                        params: frontend/js/jquery.fileupload/core.js
+                    -
+                        method: addScript
+                        params: frontend/js/resource.js
+                    -
+                        method: addScript
+                        params: frontend/js/translate.js
+            extra:
+                children:
+                    insert:
+                        type: Redseanet\Retailer\ViewModel\Resource\Modal
+                        template: resource/insert
+                        children:
+                            list:
+                                type: Redseanet\Retailer\ViewModel\Resource\Explorer
+                                template: resource/explorer
+                    upload:
+                        type: Redseanet\Retailer\ViewModel\Resource\Modal
+                        template: resource/upload
+decorationFunc_customize:
+    update: decorationFunc
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: customize
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/template.js
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationFunc/customize
+decorationFunc_hot_product:
+    update: decorationFunc
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/template.js
+                    -
+                        method: setTitle
+                        params: hot_product
+
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationFunc/hot_product
+decorationFunc_pic_carousel:
+    update: decorationFunc
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: pic_carousel
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/template.js
+
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationFunc/pic_carousel
+decorationFunc_menu:
+    update: decorationFunc
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: menu
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/template.js
+
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationFunc/menu
+decorationFunc_product_class:
+    update: decorationFunc
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: product_class
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationFunc/product_class
+decorationFunc_long_search:
+    update: decorationFunc
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: long_search
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationFunc/long_search
+decorationFunc_short_search:
+    update: decorationFunc
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: short_search
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationFunc/short_search
+decorationFunc_product_recommend:
+    update: decorationFunc
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: product_recommend
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/template.js
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationFunc/product_recommend
+decorationFunc_store_recommend:
+    update: decorationFunc
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: store_recommend
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/template.js
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationFunc/store_recommend
+decorationFunc_sales_amount:
+    update: decorationFunc
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: sales_amount
+                    -
+                        method: addScript
+                        params: frontend/dragResource/js/template.js
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationFunc/sales_amount
+decorationFunc_logo_top:
+    update: decorationFunc
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: logo
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationFunc/logo_top
+decorationFunc_paragraph:
+    update: decorationFunc
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: paragraph
+                    -
+                        method: addScript
+                        params: frontend/dragResource/editor/ueditor.config.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/editor/ueditor.all.min.js
+                    -
+                        method: addScript
+                        params: frontend/dragResource/editor/lang/zh-cn/zh-cn.js
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\StoreDecoration
+                        template: retailer/decorationFunc/paragraph
+retailer_list:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailers
+            content:
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Stores
+                        template: retailer/store/list
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+                                action:
+                                    -
+                                        method: showLabel
+                                        params: false
+admin_retailer_apply_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Application
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/retailer_apply/',label: 'Application'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Retailer\Grid
+admin_retailer_apply_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/retailer_apply/',label: 'Application'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Retailer\Edit
+retailer_refund:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Return &amp; Refund
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Return &amp; Refund
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Refund
+                        template: sales/refund/list
+retailer_refund_view:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Return &amp; Refund
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/zoombox.js',defer: 'defer',async: 'async'}]
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Return &amp; Refund
+                children:
+                    main:
+                        type: Redseanet\Retailer\ViewModel\Refund
+                        template: sales/refund/view
+admin_retailer_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer List
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/retailer_index/',label: 'Retailer List'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/retailer_index/edit/',label: 'Add New Retailer'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Retailer\Grid\Grid
+admin_retailer_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/retailer_index/',label: 'Retailer'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Retailer\Edit\Edit
+admin_retailer_manager_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Retailer Manager List
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/retailer_manager/',label: 'Retailer Manager List'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/retailer_manager/edit/',label: 'Add New Reatailer Manager'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Retailer\Grid\Manager
+admin_retailer_manager_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: backend/vendor/select2/js/select2.full.min.js
+                    -
+                        method: addLink
+                        params: backend/vendor/select2/css/select2.min.css
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/retailer_manager/',label: 'Retailer Manager'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Retailer\Edit\Manager

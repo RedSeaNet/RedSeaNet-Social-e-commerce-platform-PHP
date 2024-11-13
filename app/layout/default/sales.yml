@@ -1,0 +1,663 @@
+---
+customer_account:
+    root:
+        children:
+            content:
+                children:
+                    nav:
+                        action:
+                            -
+                                method: addGroup
+                                params: [{label: 'Order Center',priority: 20,icon: 'calendar-check-o'}]
+                            -
+                                method: addLink
+                                params: [{link: 'sales/order/list/',label: 'My Orders',group: 'Order Center'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/coupon/',label: 'Coupons',group: 'Order Center',class: 'd-md-block d-none'}]
+                            -
+                                method: addLink
+                                params: [{link: 'checkout/cart/',label: 'Shopping Cart',group: 'Order Center'}]    
+                            -
+                                method: addLink
+                                params: [{link: 'sales/refund/',label: 'Return &amp; Refund',group: 'Order Center'}]
+admin_sales_cart_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Abandoned Cart / Sales
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_cart/',label: 'Abandoned Cart'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Sales\Grid\Cart
+admin_sales_cart_view:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Cart / Sales
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_cart/',label: 'Cart'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'View'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Sales\View\Cart
+                        template: admin/sales/cart
+admin_sales_order_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Order / Sales
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_order/',label: 'Order'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Sales\Grid\Order
+admin_sales_order_view:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Order / Sales
+                    -
+                        method: addScript
+                        params: backend/js/locate.js
+                    -
+                        method: addScript
+                        params: [{'src': 'backend/js/modal.js','defer': 'defer','async': 'async'}]
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_order/',label: 'Order'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'View'}]
+                    main:
+                        type: Redseanet\Admin\ViewModel\Sales\View\Order
+                        template: admin/sales/order
+            extra:
+                children:
+                    address:
+                        type: Redseanet\Admin\ViewModel\Sales\Edit\Address
+                        template: admin/customer/addressForm
+                    discount:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: admin/sales/edit/discount
+admin_sales_order_print:
+    update: admin
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    main:
+                        type: Redseanet\Admin\ViewModel\Sales\View\Order
+                        template: admin/sales/print/order
+admin_sales_recharge_order_list: 
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Recharge Orders / Sales
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_recharge_order/',label: 'Recharge Orders'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Sales\Grid\RechargeOrder
+admin_sales_invoice_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Invoice / Sales
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_invoice/',label: 'Invoice'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Sales\Grid\Invoice
+admin_sales_invoice_view:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Invoice / Sales
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_invoice/',label: 'Invoice'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'View'}]
+                    main:
+                        type: Redseanet\Admin\ViewModel\Sales\View\Invoice
+                        template: admin/sales/invoice
+admin_sales_invoice_edit:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Invoice / Sales
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/sales.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Sales\Edit\Invoice
+                        template: admin/sales/edit/invoice
+admin_sales_invoice_print:
+    update: admin
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    main:
+                        type: Redseanet\Admin\ViewModel\Sales\View\Invoice
+                        template: admin/sales/print/invoice
+admin_sales_shipment_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Shipment / Sales
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_shipment/',label: 'Shipment'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Sales\Grid\Shipment
+admin_sales_shipment_view:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Shipment / Sales
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_shipment/',label: 'Shipment'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'View'}]
+                    main:
+                        type: Redseanet\Admin\ViewModel\Sales\View\Shipment
+                        template: admin/sales/shipment
+admin_sales_shipment_edit:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Invoice / Sales
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/sales.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Sales\Edit\Shipment
+                        template: admin/sales/edit/shipment
+admin_sales_shipment_print:
+    update: admin
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    main:
+                        type: Redseanet\Admin\ViewModel\Sales\View\Shipment
+                        template: admin/sales/print/shipment
+admin_sales_creditmemo_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Credit Memo / Sales
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_creditmemo/',label: 'Credit Memo'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Sales\Grid\CreditMemo
+admin_sales_creditmemo_view:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Credit Memo / Sales
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_creditmemo/',label: 'Credit Memo'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'View'}]
+                    main:
+                        type: Redseanet\Admin\ViewModel\Sales\View\CreditMemo
+                        template: admin/sales/creditmemo
+admin_sales_creditmemo_edit:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Credit Memo / Sales
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/sales.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Sales\Edit\CreditMemo
+                        template: admin/sales/edit/creditmemo
+admin_sales_creditmemo_print:
+    update: admin
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    main:
+                        type: Redseanet\Admin\ViewModel\Sales\View\CreditMemo
+                        template: admin/sales/print/creditmemo
+admin_order_status_list:
+    update: grid
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_status/',label: 'Order Statuses'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/sales_status/edit/',label: 'Add New Status'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Sales\Grid\Status
+                        template: admin/grid-simple
+admin_order_status_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_status/',label: 'Order Statuses'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_status/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Sales\Edit\Status
+admin_refund_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Return &amp; Refund / Sales
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_refund/',label: 'Return &amp; Refund'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Sales\Grid\Refund
+                        template: admin/grid
+admin_refund_view:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Return &amp; Refund / Sales
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/tab.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/zoombox.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/sales_refund/',label: 'Return &amp; Refund'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'View'}]
+                    main:
+                        type: Redseanet\Admin\ViewModel\Sales\View\Refund
+                        template: admin/sales/refund/view
+admin_customer_edit:
+    root:
+        children:
+            content:
+                children:
+                    edit:
+                        children:
+                            tabs:
+                                action:
+                                    -
+                                        method: addTab
+                                        params:
+                                            - cart
+                                            - Shopping Cart
+                                            - 60
+                                children:
+                                    cart:
+                                        type: Redseanet\Admin\ViewModel\Sales\Customer\Cart
+                                        template: admin/grid-simple
+                                        children:
+                                            pager:
+                                                type: Redseanet\Lib\ViewModel\Pager
+sales_refund:
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Return &amp; Refund
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Return &amp; Refund
+                children:
+                    main:
+                        type: Redseanet\Sales\ViewModel\Refund
+                        template: sales/refund/list
+sales_refund_apply:
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Return &amp; Refund
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Return &amp; Refund
+                children:
+                    main:
+                        type: Redseanet\Sales\ViewModel\Refund\Apply
+                        template: sales/refund/form
+sales_refund_view:
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Return &amp; Refund
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/zoombox.js',defer: 'defer',async: 'async'}]
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Return &amp; Refund
+                children:
+                    main:
+                        type: Redseanet\Sales\ViewModel\Refund
+                        template: sales/refund/view
+sales_order_list:
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: My Orders
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - My Orders
+                children:
+                    main:
+                        type: Redseanet\Sales\ViewModel\Order
+                        template: sales/order/list
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+                                action:
+                                    -
+                                        method: setDefaultLimit
+                                        params: 20
+sales_order_review:
+    update: customer_account
+    root:
+        children:
+            content:
+                children:
+                    main:
+                        type: Redseanet\Sales\ViewModel\Review
+                        template: sales/order/review
+sales_order_view:
+    update: customer_account
+    root:
+        children:
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Order Infomation
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: sales/order/view
+                        children:
+                            tab:
+                                type: Redseanet\Sales\ViewModel\Tab
+                                template: sales/tab
+                            pane:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: sales/order/content/order
+sales_order_invoice:
+    update: customer_account
+    root:
+        children:
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Order Infomation
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: sales/order/view
+                        children:
+                            tab:
+                                type: Redseanet\Sales\ViewModel\Tab
+                                template: sales/tab
+                            pane:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: sales/order/content/invoice
+sales_order_shipment:
+    update: customer_account
+    root:
+        children:
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Order Infomation
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: sales/order/view
+                        children:
+                            tab:
+                                type: Redseanet\Sales\ViewModel\Tab
+                                template: sales/tab
+                            pane:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: sales/order/content/shipment
+sales_order_creditmemo:
+    update: customer_account
+    root:
+        children:
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Order Infomation
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: sales/order/view
+                        children:
+                            tab:
+                                type: Redseanet\Sales\ViewModel\Tab
+                                template: sales/tab
+                            pane:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: sales/order/content/creditmemo
+sales_order_inquire:
+    update: frontend
+    root:
+        children:
+            head: 
+                action: 
+                    -
+                        method: setTitle
+                        params: Order Inquire
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Order Inquire                    
+            content:
+               children:
+                    main:
+                        type: Redseanet\Sales\ViewModel\Inquire
+                        template: sales/order/inquire
+                        

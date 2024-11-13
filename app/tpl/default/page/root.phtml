@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html class="no-js" lang="<?php echo $this->getLang() ?>">
+    <head>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <!--[if lt IE 9]><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><![endif]-->
+        <!--[if (gte IE 9)|(!IE)]><!-->
+        <meta charset="UTF-8" />
+        <!--<![endif]-->
+        <?php echo $this->head ?>
+        <?php
+        $customer = $this->getSegment('customer');
+        $userLoginStatus = $customer->get('hasLoggedIn') ? 1 : 0;
+        $csrf = $this->getCsrfKey();
+        ?>
+        <script>
+            var ULS = "<?php echo $userLoginStatus ?>";
+            var csrf = "<?php echo $csrf ?>";
+            var _hmt = _hmt || [];
+            (function () {
+                var hm = document.createElement("script");
+                hm.src = "https://hm.baidu.com/hm.js?34b595a9343eb1679dde95283c7183e2";
+                var s = document.getElementsByTagName("script")[0];
+                s.parentNode.insertBefore(hm, s);
+            })();
+        </script>
+    </head>
+    <body class="<?php echo $this->getBodyClass() ?>">
+        <?php echo $this->globalNotice ?>
+        <header class="header">
+            <?php echo $this->header ?>
+        </header>
+        <?php echo $this->beforeContent ?>
+        <div class="main-container">
+            <?php echo $this->content ?>
+        </div>
+        <?php echo $this->afterContent ?>
+        <footer class="footer">
+            <?php echo $this->footer ?>
+        </footer>
+        <?php echo $this->extra ?>
+
+    </body>
+</html>

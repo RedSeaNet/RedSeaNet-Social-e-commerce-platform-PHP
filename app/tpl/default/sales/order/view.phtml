@@ -1,0 +1,6 @@
+<?php
+$order = $this->getVariable('order');
+?>
+<div class="sales-order-view">
+    <?php echo $this->getChild('tab')->setVariable('order', $order), $this->getChild('pane')->setVariable('order', $order) ?>
+</div>

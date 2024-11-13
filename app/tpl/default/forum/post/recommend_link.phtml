@@ -1,0 +1,47 @@
+<?php
+$links = $this->getVariable('links', []);
+?>
+
+<ol class="options-list">
+    <?php
+    if (count($links) > 0) {
+        for ($l = 0; $l < count($links); $l++) {
+            ?>
+            <li>
+                    <?php echo $this->translate('Link Info') ?>
+                    <?php
+                    if($l==0){
+echo '<a href="javascript:void(0);" class="add"><span class="fa fa-plus"></span></a>';
+                    }else{
+echo '<a href="javascript:void(0);" class="add"><span class="fa fa-plus"></span></a>
+                <a href="javascript:void(0);" class="remove"><span class="fa fa-times"></span></a>';
+                    }
+                    ?>
+                <input type="text" name="link_name[]" class="form-control" value="<?php echo $links[$l]["name"]; ?>" placeholder="<?php echo $this->translate('Enter link title') ?>" />
+                <input type="text" name="link_url[]" class="form-control" value="<?php echo $links[$l]["link"]; ?>" placeholder="<?php echo $this->translate('Enter link URL') ?>, Ex: domain.com" />
+            </li>
+            <?php
+        }
+    } else {
+        ?>
+        <li>
+                <?php echo $this->translate('Link Info') ?>
+                <a href="javascript:void(0);" class="add"><span class="fa fa-plus"></span></a>
+            <input type="text" name="link_name[]" class="form-control" placeholder="<?php echo $this->translate('Enter link title') ?>" />
+            <input type="text" name="link_url[]" class="form-control" placeholder="<?php echo $this->translate('Enter link URL') ?>, Ex: domain.com" />
+        </li>
+        <?php
+    }
+    ?>
+</ol>
+<template>
+            <li>
+              
+                    <span><?php echo $this->translate('Link Info') ?></span>
+                    <a href="javascript:void(0);" class="add"><span class="fa fa-plus"></span></a>
+                <a href="javascript:void(0);" class="remove"><span class="fa fa-times"></span></a>
+                
+                <input type="text" name="link_name[]" class="form-control" placeholder="<?php echo $this->translate('Enter link title') ?>" />
+                <input type="text" name="link_url[]" class="form-control" placeholder="<?php echo $this->translate('Enter link URL') ?>, Ex: domain.com" />
+            </li>
+        </template>

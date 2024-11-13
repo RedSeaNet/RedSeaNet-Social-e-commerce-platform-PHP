@@ -1,0 +1,39 @@
+<?php
+$methods = $this->getMethods();
+?>
+<ul class="nav nav-tabs">
+    <?php
+    $flag = true;
+    foreach ($methods as $code => $method):
+        ?>
+        <li>
+            <a href="#<?php echo $code ?>" data-bs-toggle="tab"<?php if ($flag): ?> class="active show"<?php
+            $flag = false;
+        endif;
+        ?>><?php echo $this->translate($method['label'], [], 'shipping') ?></a>
+        </li>
+    <?php endforeach ?>
+</ul>
+<form action="<?php echo $this->getBaseUrl('retailer/shipping/save/') ?>" method="post">
+    <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+    <div class="tab-content">
+        <?php
+        $flag = true;
+        foreach ($methods as $code => $method):
+            ?>
+            <div class="tab-pane fade<?php if ($flag): ?> in active show<?php
+                     $flag = false;
+                 endif;
+                 ?>" id="<?php echo $code ?>">
+                     <?php
+                     foreach ($this->getInputBoxes($code) as $html) {
+                         echo $html;
+                     }
+                     ?>
+            </div>
+        <?php endforeach ?>
+    </div>
+    <div class="buttons-set">
+        <button type="submit" class="btn btn-primary"><?php echo $this->translate('Submit') ?></button>
+    </div>
+</form>

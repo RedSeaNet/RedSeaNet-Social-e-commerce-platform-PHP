@@ -1,0 +1,208 @@
+---
+rewardpoints:
+    label: Reward Points
+    children:
+        general:
+            label: General
+            scope: merchant
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 0
+                title:
+                    type: text
+                    label: Displayed Title
+                    required: required
+                    poriority: 10
+                    default: Reward Points
+                activating:
+                    type: tel
+                    label: Days Before Activation
+                    priority: 20
+                    default: 0
+                expiration:
+                    type: tel
+                    label: Days Before Expiration
+                    priority: 20
+                    default: 0
+        gathering:
+            label: Gathering Rule
+            scope: merchant
+            children:
+                calculation:
+                    label: Range be Btained
+                    type: select
+                    required: required
+                    priority: 0
+                    default: 0
+                    options:
+                        - Subtotal Only
+                        - Including Shipping &amp; Tax
+                rate:
+                    label: Gathering Rate
+                    type: number
+                    required: required
+                    priority: 1
+                    default: 1
+                    comment: Actual Points=X points per unit(Allowed decimal)
+                    attrs:
+                        min: 0
+                refunded:
+                    type: select
+                    label: Cancel Earned Points After Order Refunding
+                    required: required
+                    priority: 10
+                    default: 1
+                    options:
+                        1: Yes
+                        0: No
+                min_amount:
+                    label: Minimal Amount of Orders
+                    type: number
+                    required: required
+                    priority: 10
+                    default: 0
+                    comment: Orders can be obtained within the reward points range of the amount below the input figures will not get points
+                max_amount_calculation:
+                    label: Maximum Points Calculation
+                    type: select
+                    priority: 20
+                    default: 0
+                    options:
+                        - Fixed
+                        - Percent
+                max_amount:
+                    label: Maximum Points for Each Order
+                    type: number
+                    priority: 41
+                    comment: Fill in the blank or 0 points for every single said no limit
+                registration:
+                    label: Registration
+                    type: tel
+                    priority: 30
+                    default: 0
+                    comment: The number of points can be obtained according to the customer behavior, blank or fill in 0 said that this behavior cannot obtain the reward points
+                newsletter:
+                    label: Newsletter Signup
+                    type: tel
+                    priority: 40
+                    default: 0
+                birthday:
+                    label: "Customer's Birthday"
+                    type: tel
+                    priority: 50
+                    default: 0
+                    comment: Not available until cron job runs.
+                reviewing:
+                    label: Reviewing Product
+                    type: tel
+                    priority: 51
+                    default: 0
+                words_limitation:
+                    label: Minimum Number of Words in the Review
+                    type: tel
+                    priority: 60
+                    default: 0
+                    comment: Comments less than words entered here cannot get points
+                share:
+                    label: Sharing to Social Medias
+                    type: tel
+                    priority: 70
+                    default: 0
+                share_limitation:
+                    label: Daily Maximum Points for Sharing
+                    type: tel
+                    priority: 70
+                    comment: Leave empty to avoid the limitation.
+        using:
+            label: Using Rule
+            scope: merchant
+            children:
+                calculation:
+                    label: Using
+                    type: select
+                    required: required
+                    priority: 0
+                    default: 0
+                    options:
+                        - Subtotal Only
+                        - Including Shipping &amp; Tax
+                rate:
+                    label: Using Rate
+                    type: text
+                    required: required
+                    priority: 1
+                    default: 1
+                    comment: Deductible unit currency=use reward points X units per point(Allowed decimal).
+                    attrs:
+                        min: 0
+                max_amount_calculation:
+                    label: Maximum Points use Calculation
+                    type: select
+                    required: required
+                    priority: 10
+                    default: 0
+                    options:
+                        - Fixed maximum available points
+                        - Maximum deductible amount
+                max_amount:
+                    label: Maximum Points use Each Order
+                    type: number
+                    required: required
+                    priority: 20
+                    default: 0
+                    comment: Fill in the blank or 0 customers daily share information can be obtained without reward points upper limit
+                refunded:
+                    type: select
+                    label: Restore Spent Points After Order Refunding
+                    required: required
+                    priority: 30
+                    default: 1
+                    options:
+                        1: Yes
+                        0: No
+                remain:
+                    type: tel
+                    label: Minimum Points Balance
+                    required: required
+                    priority: 40
+                    default: 0
+                    comment: User residual reward points number below the input number can not use reward points
+                min_amount:
+                    label: Minimal Amount of Orders
+                    type: number
+                    required: required
+                    priority: 41
+                    default: 0
+                    comment: Orders can be obtained within the reward points range of the amount below the input figures will not get points
+        notifications:
+            label: Notifications
+            scope: merchant
+            children:
+                updated:
+                    label: Balance Updated Email
+                    type: select
+                    required: required
+                    priority: 0
+                    default: reward_points_updated
+                    source: \Redseanet\Email\Source\Template
+                expiring:
+                    label: Points Expiring Email
+                    type: select
+                    required: required
+                    priority: 0
+                    default: reward_points_expiring
+                    source: \Redseanet\Email\Source\Template
+                birthday:
+                    label: "Points for Customer's Birthday Email"
+                    type: select
+                    required: required
+                    priority: 0
+                    default: reward_points_birthday
+                    source: \Redseanet\Email\Source\Template

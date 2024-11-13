@@ -1,0 +1,43 @@
+<div class="cell" id="stat-rma">
+    <h4 class="title">
+        <span class="label"><?php echo $this->translate('Return &amp; Refund') ?>: </span>
+        <span class="data amount">-</span></h4>
+    <ul class="detail">
+        <li>
+            <span class="label"><?php echo $this->translate('Alipay') ?>: </span>
+            <span class="data alipay">-</span>
+            <span class="link"><a href="#"><?php echo $this->translate('Redirect') ?></a></span>
+        </li>
+        <li>
+            <span class="label"><?php echo $this->translate('WeChat Pay') ?>: </span>
+            <span class="data wechat">-</span>
+            <span class="link"><a href="#"><?php echo $this->translate('Redirect') ?></a></span>
+        </li>
+        <li>
+            <span class="label"><?php echo $this->translate('Others') ?>: </span>
+            <span class="data others">-</span>
+            <span class="link"></span>
+        </li>
+    </ul>
+    <script>
+        $(function () {
+            $.get('<?php echo $this->getAdminUrl('sales_refund/stat/') ?>').then(function (response) {
+                var result = {alipay: 0, wechat: 0, others: 0, amount: 0};
+                for (var i in response) {
+                    result.amount += parseInt(response[i]);
+                    if (i.indexOf('alipay') !== -1) {
+                        result.alipay += parseInt(response[i]);
+                    } else if (i.indexOf('wechat') !== -1) {
+                        result.wechat += parseInt(response[i]);
+                    } else {
+                        result.others += parseInt(response[i]);
+                    }
+                }
+                var p = $('#stat-rma');
+                for (var i in result) {
+                    $('.data.' + i, p).text(result[i]);
+                }
+            });
+        });
+    </script>
+</div>

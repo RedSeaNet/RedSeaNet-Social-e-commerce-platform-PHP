@@ -1,0 +1,32 @@
+---
+tracking:
+    label: Order Tracking
+    children:
+        trackingmore:
+            label: TrackingMore
+            scope: [merchant]
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 0
+                api_key:
+                    type: text
+                    label: API Key
+                    required: required
+                    priority: 1
+                    attrs:
+                        data-base: '#trackingmore-enable'
+                    comment: 'Click <a href="https://www.trackingmore.com/">here</a> to get the API key'
+                supported_carrier:
+                    type: multiselect
+                    label: Supported Carrier
+                    priority: 10
+                    source: \Redseanet\TrackingMore\Source\Carrier
+                    attrs:
+                        data-base: '#trackingmore-enable'

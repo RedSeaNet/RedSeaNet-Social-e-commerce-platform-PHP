@@ -1,0 +1,370 @@
+<?php
+$page_types = $this->getVariable("page_types");
+$id = $this->getVariable("id");
+$template_name = $this->getVariable("template_name");
+$template_id = $this->getVariable("template_id");
+$templateView = $this->getTemplateView(null, $id);
+$store_id = $templateView["store_id"];
+$menuView = $this->template_menu();
+$logo_topView = $this->template_logo_top(!empty($templateView['stable_params']['logo_top']) ? $templateView['stable_params']['logo_top'] : '');
+$logo_top_params = urlencode(json_encode(!empty($templateView['stable_params']['logo_top']) ? $templateView['stable_params']['logo_top'] : ''));
+$logo_top_outerHeight = !empty($templateView['stable_params']['logo_top']['heightSet']) ? $templateView['stable_params']['logo_top']['heightSet'] + 4 : 200;
+if (!empty($templateView)) {
+    $customizeTemplates = $this->getCustomizeInfo($template_id, 1);
+} else {
+    $customizeTemplates = [];
+}
+$categoriesTree = $this->getStoreCategoriesTree($store_id);
+?>
+<style>
+    .lyrow{margin-bottom: 10px}
+    .col-md-41{padding:0px}
+    .col-md-61{padding:0px}
+    .navbar-brand{margin-left:11px;color:#FFFFFF;font-size:20px}
+    .navbar-inverse .navbar-brand{color:#FFFFFF;}
+    .header .nav.container{width:1150px;margin:0px auto}
+    .catalog-product .store_info{width:100%;float:none;margin:0px 0px 9px 0px}
+    input{width:90%;margin-bottom: 5px;}
+</style>
+<script type="text/javascript">
+    var path = '';
+    var page_type = 1;
+    var site_path = '<?php echo $this->getBaseUrl(); ?>';
+    var template_id = <?php echo $template_id; ?>;
+    var template_name = '<?php echo $template_name; ?>';
+    var current_template_id = <?php echo $id; ?>;
+    var store_id = <?php echo empty($templateView) ? 0 : $templateView['store_id'] ?>;
+</script>
+<div class="decoration_logo_top stable_top " style="height:500px;background-image:url(<?php echo $this->getBaseUrl('pub/theme/default/frontend/dragResource/images/pd-tops.jpg'); ?>)">
+    <a href="javascript:void(0)" class="stable" data-tag='logo_top' data-name='店铺头部Banner' data-param='<?php echo $logo_top_params; ?>' ></a>
+</div>
+<div class="retailer-store">
+    <div class="navbar-inverse fixed-top navbar-htmleditor">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="javascript:void(0)">装 修 店 铺  <span class="store_template_name"> - <?php echo $template_name; ?></span>
+                &nbsp;&nbsp; | </a> 
+            <a class="navbar-brand" href="javascript:void(0)">
+                <span class="decoration_position"> 当前装修页面  &nbsp; 
+                    <select class="page_type_select" id='page_type_select' >
+                        <?php foreach ($page_types as $key => $value) { ?>
+                            <option value="0" page_type='<?php echo $value; ?>' <?php if ($value == '2') echo "selected"; ?> ><?php echo $key; ?></option>
+                        <?php } ?>
+                        <option value="-1" >自定义页面</option>
+                        <?php foreach ($customizeTemplates as $key => $value) { ?>
+                            <option value="<?php echo $value['id']; ?>"  page_type=1 >&nbsp; |- <?php echo $value['template_name']; ?></option>	
+                        <?php } ?>
+
+                    </select>
+                </span> 
+                &nbsp; 		
+            </a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav" id="menu-htmleditor">
+                <li>
+                    <div class="btn-group" data-bs-toggle="buttons-radio">
+                        <button type="button" id="edit" class="active btn btn-primary"><i class="glyphicon glyphicon-edit "></i> 编辑</button>
+                        <button type="button" class="btn btn-primary" id="sourcepreview"><i class="glyphicon-eye-open glyphicon"></i> 预览</button>
+                        <button type="button" id="save" class="btn btn-warning float-end"><i class="fa fa-save"></i>&nbsp;保存</button>
+                        <button type="button" id="returns" class="btn btn-danger float-end" onclick="window.location = '<?php echo $this->getBaseUrl('/retailer/store/decorationList') ?>'" ><i class="fa fa-arrow-right"></i>&nbsp;返回</button>
+                    </div> &nbsp;
+                    <div class="btn-group" data-bs-toggle="buttons-radio" id='add' style='display: none;'>
+                        <button type="button" class="active btn btn-secondary" id="pc"><i class="fa fa-laptop"></i> Desktop</button>
+                        <button type="button" class="btn btn-secondary" id="tablet"><i class="fa fa-tablet"></i> Tablet</button>
+                        <button type="button" class="btn btn-secondary" id="mobile"><i class="fa fa-mobile"></i> Mobile</button> </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="edit container">
+        <div class="row">
+            <div class="">
+                <div class="sidebar-nav">
+                    <ul class="nav nav-list "></ul> <br>
+                    <ul class="nav nav-list">
+                        <li class="nav-header"><i class="fa fa-html5"></i>&nbsp; 功能模块 </li>
+                        <li class="boxes" id="elmBase">
+                            <div class="box box-element" data-type="paragraph" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a> <span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">自由编辑</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div>
+                            <div class="box box-element" data-type="short_search" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a><span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">短搜索条</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div>
+
+                            <div class="box box-element" data-type="product_class" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a><span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">商品分类</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div>
+
+                            <div class="box box-element" data-type="sales_amount" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a><span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">销 售 量</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div>
+
+                            <div class="box box-element" data-type="hot_product" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a><span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">热卖商品</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div> 
+                            <div class="box box-element" data-type="product_recommend" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a> <span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">商品推荐</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="download-layout">
+                <div class="container"></div>
+            </div>
+            <div class="htmlpage catalog-product" style="width:1160px;margin:0px auto;margin-top:5px" > 
+                <div class="lyrow layer_table ui-draggable" info="单行2列表格 列比例 1:4" style="display: block;">
+                    <div class="drag hideRanges"></div>
+                    <div class="preview"></div>
+                    <div class="view">
+                        <div class="row catalog-product clearfix">
+                            <div class="col-md-2-1 column ui-sortable left_contents customize">
+                                <?php echo empty($templateView) ? '' : $templateView['code_model']; ?>                            
+                            </div>
+                            <div class="col-md-10-1 column ui-sortable" style="padding: 20px;"><div class="box box-element ui-draggable" data-type="paragraph" show-type="1" id="0dee-da65-cdde-71e8" style="display: block;">
+                                    <div class="preview"> <i class="fa"> + </i>
+                                        <div class="element-desc">自由编辑</div>
+                                    </div>
+                                    <div class="view" style="padding: 7px;"><div class="content function-tag" data-tag="paragraph" data-name="自由编辑" data-param="" data-id="0dee-da65-cdde-71e8">
+                                            <img src="<?php echo $this->getBaseUrl('pub/theme/default/frontend/dragResource/images/pd-right.jpg'); ?>" style="width:100%"></div></div>
+                                </div></div>
+                        </div> <br> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id='save_html' style="display:none"></div>
+
+<script id="paragraph" type="text/html">
+    <div class="content function-tag" data-tag='paragraph' data-name='自由编辑' data-param='' > 
+
+    </div>
+</script>
+
+<script id="long_search" type="text/html">
+    <div class="search content function-tag" data-tag='long_search' data-name='本店搜索' data-param='' >
+
+    </div> 
+</script>
+
+<script id="short_search" type="text/html">
+    <div class="local-search content function-tag" data-tag='short_search' data-name='本店搜索' data-param='' >
+
+    </div>
+</script>
+
+<script id="product_class" type="text/html">
+    <div class="category">
+        <div class="title"><h4>商品分类</h4></div>
+        <div class="content function-tag" data-tag='product_class' data-name='商品分类' data-param='' >
+
+        </div>
+    </div>
+</script>
+
+<script id="sales_amount" type="text/html">
+    <div class="statics">
+        <div class="title title_product_detail"><h4>销售量</h4></div>
+        <div class="content function-tag" data-tag='sales_amount' data-name='销售量' data-param='' >
+
+        </div>
+    </div>
+</script>
+
+<script id="hot_product" type="text/html">
+    <div class="hot-product">
+        <div class="title title_product_detail"><h4>热卖商品</h4></div>
+        <div class="content function-tag" style="padding:3px" data-tag='hot_product' data-name='热卖商品' data-param="%7B%22hot_text%22%3A%22%22%2C%22select_row%22%3A%223%22%2C%22select_column%22%3A%221%22%2C%22price_from%22%3A%22%22%2C%22price_to%22%3A%22%22%7D"   >
+
+        </div>
+    </div>
+</script> 
+
+<script id="store_recommend" type="text/html">
+    <div class="retailer-prompt">
+        <div class="title"><h4>店长推荐</h4><span class="more">更多&gt;</span></div>
+        <div class="content function-tag" data-tag='store_recommend' data-name='店长推荐' data-param='' >
+
+        </div>
+    </div>
+</script>
+
+<script id="product_recommend" type="text/html">
+    <div class="products">
+        <div class="title title_product_detail"><h4>商品推荐</h4></div>
+        <div class="content function-tag" style="border:1px solid #CCCCCC;padding:3px" data-tag='product_recommend' data-name='商品推荐' data-param="%7B%22hot_text%22%3A%22%22%2C%22select_row%22%3A%223%22%2C%22select_column%22%3A%221%22%2C%22price_from%22%3A%22%22%2C%22price_to%22%3A%22%22%2C%22page_type%22%3A%222%22%7D" >
+
+        </div>
+    </div>
+</script>
+
+<script id="pic_carousel" type="text/html">
+    <div class="pic_carousel" >
+        <div class="title"><h4>图片轮播</h4></div>
+        <div class="content function-tag component" data-tag='pic_carousel' data-name='图片轮播' data-param='' >	
+        </div>
+    </div>
+</script>
+
+
+<script>
+    $(function () {
+        $('.sidebar-nav .layer_table').each(function () {
+            $(this).mouseover(function () {
+                var id = $(this).attr('id');
+                var info = $(this).attr('info');
+                layer.tips(info, '#' + id);
+            });
+
+        });
+    });
+    function saveData() {
+        var htmls = $.trim($(".htmlpage div.left_contents").html());
+        if (htmls == "")
+        {
+            layer.msg('亲, 请装修您的店铺吧, 加个表格试试先', {shade: [0.3, '#fff'], time: 2000});
+            return;
+        }
+        if (!$("#edit").hasClass("active"))
+        {
+            htmls = $(".htmlpage").html();
+        }
+        $("#save_html").html(htmls);
+        $("#save_html").find(".box.box-element.ui-draggable").eq(0).remove();
+        var code_model = changeTag();
+        $("#download-layout .container .column").css("padding", "7px");
+        $("#download-layout .container div.left_contents").find('.content.function-tag').eq(0).remove();
+        var src_model = style_html($("#download-layout .container div.left_contents").html());
+        $("#save_html").html(src_model);
+        src_model = changeTag();
+
+        var stable_params = {};
+        $(".stable").each(function () {
+            var tempParams = $(this).attr('data-param');
+            if ($.trim(tempParams) != "")
+            {
+                tempParams = JSON.parse(decodeURIComponent(tempParams));
+            } else
+                tempParams = "";
+            var tempTag = $(this).attr('data-tag');
+            stable_params[tempTag] = tempParams;
+        });
+        stable_params = encodeURIComponent(JSON.stringify(stable_params));
+
+        //console.log(code_model);
+        //console.log(src_model);
+        saveDataFinal(code_model, src_model, stable_params);
+
+
+    }
+
+    function saveDataFinal(code_model, src_model, stable_params) {
+        $.ajax({
+            url: '<?php echo $this->getBaseUrl('/retailer/store/addTemplate') ?>',
+            type: "post",
+            dataType: 'json',
+            data: {code_model: code_model, src_model: src_model, template_id:<?php echo $id; ?>, store_id: store_id, stable_params: stable_params},
+            beforeSend: function () {
+                layer.msg(' 保存中 ...', {icon: 16, shade: [0.3, '#fff'], time: -1});
+            },
+            success: function (data) {
+                layer.closeAll();
+
+            },
+            error: function (msg) {
+
+            }
+
+        });
+    }
+    function call_ajax_data(dataID, dataType) {
+        layer.closeAll();
+        var dataParam = $("#" + dataID).find(".view").find(".content.function-tag[data-id='" + dataID + "']").attr("data-param");
+        $.ajax({
+            url: site_path + 'retailer/store/getTemplateData',
+            type: "post",
+            dataType: 'json',
+            data: {dataID: dataID, dataTag: dataType, dataParam: dataParam},
+            beforeSend: function () {
+                layer.load(1, {shade: [0.1, '#fff']});
+            },
+            success: function (data) {
+                var obj = $("#" + dataID).find(".view").find(".content.function-tag[data-id='" + dataID + "']");
+                obj.html(data.view);
+                if (obj.hasClass('component'))
+                {
+                    var func = dataType + "_init";
+                    var f = eval(func);
+                    f(obj);
+                } else if ($("#" + dataID).hasClass('stable'))
+                {
+                    var func = dataType + "_init";
+                    var f = eval(func);
+                    f(dataID, data.view);
+                } else
+                {
+
+                    var func = dataType + "_init";
+
+                    try {
+                        if (typeof (eval(func)) == "function") {
+                            //console.log(111);
+                            var f = eval(func);
+                            f(obj, dataID);
+                        }
+                    } catch (e) {
+
+                    }
+                }
+                layer.closeAll();
+            },
+            error: function (msg) {
+
+            }
+
+        });
+    }
+</script>

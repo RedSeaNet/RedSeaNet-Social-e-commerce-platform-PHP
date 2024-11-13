@@ -1,0 +1,5 @@
+---
+checkout:
+    method: [GET,POST,DELETE]
+    route: /checkout/{controller}/[{action}[/]]
+    namespace: Redseanet\Checkout\Controller

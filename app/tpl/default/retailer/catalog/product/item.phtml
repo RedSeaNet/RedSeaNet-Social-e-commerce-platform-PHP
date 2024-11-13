@@ -1,0 +1,30 @@
+<?php
+$product = $this->getVariable('product');
+$thumbnail = $product->getThumbnail();
+?>
+<div class="row justify-content-between align-items-center pt-2 border-bottom" data-id="<?php echo $product->getId() ?>">
+    <div class="col-10 col-md-8 text-start align-items-center d-flex">
+        <div>
+          <input type="checkbox" name="id[]" value="<?php echo $product->getId() ?>" />
+          
+        </div>
+         <div class="p-2">
+            <a href="<?php echo $product->getUrl(); ?>">
+            <img src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" width="60" alt="<?php echo $product['name'] ?>" class="rounded" />
+        </a>
+        </div>
+        <div>
+           <a href="<?php echo $product->getUrl(); ?>"><?php echo $product['name'] ?></a> 
+        </div>
+    </div>
+    <div class="text-center col-2 col-md-1"><?php echo $this->getCurrency()->convert($product->getFinalPrice(), true) ?></div>
+    <div class="text-center col-1 col-md-1 d-none d-md-block"><?php echo $product->getInventory() ?></div>
+    <div class="text-center actions col-12 col-md-1 flex-md-column">
+        <a href="<?php echo $this->getBaseUrl('retailer/product/release/?id=' . $product->getId()) ?>"><?php echo $this->translate('Edit') ?></a>
+        <?php
+        foreach ($this->getActions($product) as $action) {
+            echo $action;
+        }
+        ?>
+    </div>
+</div>

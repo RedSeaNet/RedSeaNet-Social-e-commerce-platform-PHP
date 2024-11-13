@@ -1,0 +1,9 @@
+---
+uv:
+    data: dashboard/visitors/?unique=1
+    title: Unique Visitors
+    color: '#F00'
+pv:
+    data: dashboard/visitors/
+    title: Page View
+    color: '#F60'

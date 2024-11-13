@@ -1,0 +1,63 @@
+<?php
+$config = $this->getConfig();
+$post = $this->getVariable('post', []);
+?>
+<form action="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/save/') ?>" method="post" data-upload="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/upload/') ?>">
+    <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+    <input type="hidden" name="category_id" value="<?php echo $this->getVariable('category_id', '') ?>" />
+    <input type="hidden" name="product_id" value="<?php echo $this->getVariable('product_id', $this->getQuery('product_id', '')) ?>" />
+    <?php if ($post['id']): ?>
+        <input type="hidden" name="id" value="<?php echo $post['id'] ?>" />
+    <?php endif; ?>
+    <div class="fieldset">
+        <div class="input-box">
+            <label for="post:title" class="col-form-label required"><?php echo $this->translate('Title') ?></label>
+            <div class="cell">
+                <input type="text" name="title" id="post:title" class="form-control required" value="<?php echo $post['title'] ?? '' ?>" />
+            </div>
+        </div>
+        <?php if ($config['forum/post/description'] > -1): ?>
+            <div class="input-box">
+                <label for="post:description" class="col-form-label<?php if ($config['forum/post/description']): ?> required<?php endif ?>"><?php echo $this->translate('Description') ?></label>
+                <div class="cell">
+                    <input type="text" name="description" id="post:description" class="form-control<?php if ($config['forum/post/description']): ?> required<?php endif ?>" maxlength="128" value="<?php echo $post['description'] ?? '' ?>" />
+                </div>
+            </div>
+        <?php endif ?>
+        <div class="input-box">
+            <label for="post:content" class="col-form-label required"><?php echo $this->translate('Content') ?></label>
+            <div class="cell">
+                <textarea name="content" id="post:content" class="form-control required<?php if ($config['forum/post/wysiwyg']): ?> htmleditor fullbar<?php endif ?>"><?php echo $post['content'] ?? '' ?></textarea>
+            </div>
+        </div>
+        <?php echo $this->getChild('poll')->setVariable('poll', is_object($post) ? $post->getPoll() : []) ?>
+        <?php if ($config['forum/post/anonymous']): ?>
+            <div class="input-box">
+                <div class="cell"></div>
+                <div class="cell">
+                    <input type="checkbox" id="post:anonymous" name="anonymous" value="1" <?php if (!empty($post['anonymous'])): ?> checked="checked"<?php endif ?>/>
+                    <label for="post:anonymous"><?php echo $this->translate('Post Anonymously') ?></label>
+                </div>
+            </div>
+        <?php endif ?>
+        <div class="input-box">
+            <div class="cell"></div>
+            <div class="cell">
+                <input type="checkbox" id="post:review" name="can_review" value="0" <?php if (isset($post['can_review']) && !$post['can_review']): ?> checked="checked"<?php endif ?>/>
+                <label for="post:review"><?php echo $this->translate('Disable Review') ?></label>
+            </div>
+        </div>
+        <?php if ($config['forum/post/captcha']): ?>
+            <div class="input-box">
+                <label for="post:captcha" class="col-form-label"><?php echo $this->translate('Captcha') ?></label>
+                <div class="cell">
+                    <input type="text" name="captcha" class="form-control required captcha" maxlength="5" id="post:captcha" autocomplete="off" spellcheck="false" data-rule-remote="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/validCaptcha/') ?>" />
+                    <img src="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/captcha/') ?>" alt="" class="captcha" height="26" width="70" />
+                </div>
+            </div>
+        <?php endif ?>
+        <div class="buttons-set">
+            <button type="submit" class="btn btn-theme"><?php echo $this->translate('Submit') ?></button>
+        </div>
+    </div>
+</form>

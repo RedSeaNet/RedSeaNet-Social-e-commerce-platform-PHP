@@ -1,0 +1,34 @@
+<?php
+$store_id = $this->getVariable("store_id");
+$retailer = $this->getVariable("retailer");
+$templateView = $this->getTemplateView($store_id);
+$menuView = $this->template_menu(null, $store_id);
+$logo_topView = $this->template_logo_top(!empty($templateView['stable_params']['logo_top']) ? $templateView['stable_params']['logo_top'] : '', $store_id, $retailer);
+$logo_top_outerHeight = !empty($templateView['stable_params']['logo_top']['heightSet']) ? $templateView['stable_params']['logo_top']['heightSet'] + 4 : 200;
+$categoriesTree=$this->getStoreCategoriesTree($store_id);
+if (!empty($templateView)):
+    ?>
+    <div class="decoration_logo_top stable_top" style="height:<?php echo $logo_top_outerHeight; ?>px;background-image:url(<?php echo $logo_topView; ?>);position:relative;" >
+        <a href="javascript:void(0)" class="stable" data-tag='logo_top' data-name='店铺头部Banner' data-param='<?php echo $logo_top_params; ?>' style="position:absolute;top:5px;right:28px;"><i class="glyphicon glyphicon-edit"></i></a>
+    </div>
+    <header class="header">
+        <nav class="nav-main store_menu">
+            <ul class="nav nav-pills container">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" href="javascript:void(0);">全部商品分类</a>
+                    <ul class="dropdown-menu">
+                        <?php 
+                        foreach ($categoriesTree as $value => $label){
+                            echo '<li><a href="'.$this->getBaseUrl('retailer/store/viewSearch?catalog='.$label['id']).'">'.str_repeat('&nbsp;&nbsp;',$label['level']).'|-- '.$this->translate($label['name']).'</a></li>';
+                        }
+                        ?>
+                    </ul>
+                </li>
+                <?php echo $menuView; ?>
+            </ul>
+        </nav>
+    </header>
+    <div class="container retailer-store"> 
+        <?php echo!empty($templateView) ? $templateView['src_model'] : ''; ?>
+    </div>
+<?php endif; ?>

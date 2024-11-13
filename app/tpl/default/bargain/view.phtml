@@ -1,0 +1,139 @@
+<?php
+$bargain = $this->getVariable('model');
+$currency = $this->getContainer()->get('currency');
+$thumbnail = $bargain->getThumbnail()->load(true);
+$thumbnailImage = $this->getPubUrl("frontend/images/placeholder.png");
+if (isset($thumbnail[0]["real_name"])) {
+    $thumbnailImage = $this->getResourceUrl('image/' . $thumbnail[0]["real_name"]);
+}
+$languageId = $this->getLanguageId();
+$hasLoggedIn = $this->getSegment('customer')->get('hasLoggedIn');
+$customerId = '';
+if ($hasLoggedIn) {
+    $customer = $this->getSegment('customer')->get('customer');
+    $customerId = $customer['id'];
+}
+$bargainId = $bargain->getId();
+$bargainCase = $this->getVariable('bargainCase');
+$hadHelpBargain = false;
+?>
+
+<div class="col-main container bargain-detail">
+    <div class="row">
+        <div class="col-12 col-md-5 p-0 pb-2">
+            <?php echo $this->getChild('media')->setVariable('model', $bargain) ?> 
+        </div>
+        <div class="col-12 col-md-7 product-info p-4">
+            <h5 class="product-name"><?php echo $bargain['name'][$languageId] ?></h5>
+            <p class="sku"><?php echo $bargain->getOptionsLabel() ?></p>
+            <p class="sku"><?php echo $bargain['sku'] ?></p>
+
+            <div class="price-box">
+                <p class="old-price">
+                    <span class=""><?php echo $this->translate('Original Price') ?>:</span>
+                    <span class="price"><?php echo $currency->convert($bargain['original_price'], true) ?></span>
+                </p>
+                <p class="special-price">
+                    <span class=""><?php echo $this->translate('Current Price') ?>:</span>
+                    <span class="sys-red"><?php echo $currency->convert($bargain['currentPrice'], true) ?></span>
+                </p>
+                <p class="special-price">
+                    <span class=""><?php echo $this->translate('Min Price') ?>:</span>
+                    <span class="price"><?php echo $currency->convert($bargain['min_price'], true) ?></span>
+                </p>
+                <p>
+                    <span class=""><?php echo $this->translate('Start Time') ?>:</span>
+                    <span class="price"><?php echo $bargain['start_time'] ?></span>
+                </p>
+                <p>
+                    <span class=""><?php echo $this->translate('End Time') ?>:</span>
+                    <span class="price"><?php echo $bargain['stop_time'] ?></span>
+                </p>
+                <?php echo $this->getChild('share') ?>
+
+                <p class="">
+                    <label for="rules"> 
+                        <?php echo $this->translate('The rules of bargain') ?>
+                        <a class="font-blue" href="<?php echo $this->getBaseUrl('help/customer/bargainrule.html') ?>"><?php echo $this->translate('Click here to view') ?></a>
+
+                    </label> 
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="fieldset bulk-sale-detail">
+
+        <div class="input-box">
+            <label class="col-form-label"><?php echo $this->translate('Bargain Progress') ?>(<?php echo $this->translate('There are %s friends to help chop off successfully and less %d', [$bargain["hadHelpBargain"],($bargain["people_num"]-$bargain["hadHelpBargain"])]) ?>)</label>
+            <div class="cell">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="<?php echo $bargain["pricePercent"] ?>" aria-valuemin="0" aria-valuemax="100" style="width:<?php echo $bargain["pricePercent"] ?>%"></div>
+
+                </div>
+                <div class="row"><div class="col-6"><?php echo $this->translate('Chop off') ?>: <?php echo $currency->convert(round($bargain['alreadyPrice'], 2), true); ?></div><div class="col-6 text-end"><?php echo $this->translate('Less') ?>: <?php echo $currency->convert(round($bargain['lessPrice'], 2), true) ?></div></div>
+            </div>
+        </div>
+        <div class="row">
+            <table>
+                <?php
+                if (isset($bargainCase["helper"]) && count($bargainCase["helper"]) > 0) {
+
+                    for ($h = 0; $h < count($bargainCase["helper"]); $h++) {
+                        if ($customerId == $bargainCase["helper"][$h]["customer_id"]) {
+                            $hadHelpBargain = true;
+                        }
+                        $avatar = '<img src="';
+                        if ($bargainCase["helper"][$h]["avatar"] != '') {
+                            $avatar = $avatar . $this->getUploadedUrl('customer/avatar/' . $bargainCase["helper"][$h]['avatar']);
+                        } else {
+                            $avatar = $avatar . $this->getPubUrl('frontend/images/placeholder.png');
+                        }
+                        $avatar = $avatar . '" alt="" style="width:45px;border-radius:50%;" />';
+                        echo '<tr><td>' . $avatar . '</td><td>' . $bargainCase["helper"][$h]["username"] . '</td><td>' . $currency->convert(round($bargainCase["helper"][$h]["price"], 2), true) . '</td><td>' . $bargainCase["helper"][$h]["created_at"] . '</td></tr>';
+                    }
+                }
+                ?>
+            </table>
+        </div>
+        <div class="buttons-set text-end">
+            <?php
+            if ($hasLoggedIn) {
+                if (!isset($bargainCase["id"]) || $bargainCase["id"] == '') {
+                    echo '&nbsp;&nbsp;<a class="btn btn-primary" href="' . $this->getBaseUrl('bargain/index/join/?bargain=' . $bargainId) . '">' . $this->translate('Join in now') . '</a>';
+                }
+                if (isset($bargainCase["id"]) && $bargainCase["id"] != '' && $bargainCase["customer_id"] == $customerId) {
+                    if ($bargain["lessPrice"] > 0) {
+                        $copyUrl = $this->getBaseUrl('bargain/index/index/?bargain=' . $bargainId . '&bargain_case_id=' . $bargainCase["id"]);
+                        echo '&nbsp;&nbsp;<a class="btn btn-light" href="javascript:void(0);" onclick="prompt(\'按CTRL+C复制链接。\',\'' . $copyUrl . '\');return false;">' . $this->translate('Invite friend to chop off price') . '</a>';
+                    }
+                    if (!$hadHelpBargain) {
+                        echo '&nbsp;&nbsp;<a class="btn btn-primary" href="' . $this->getBaseUrl('bargain/index/help/?bargain=' . $bargainId) . '&bargain_case_id=' . $bargainCase["id"] . '">' . $this->translate('Help oneself to chop off price') . '</a>';
+                    }
+                }
+                if (isset($bargainCase["id"]) && $bargainCase["id"] != '' && $bargainCase["customer_id"] != $customerId) {
+                    echo '&nbsp;&nbsp;<a class="btn btn-primary" href="' . $this->getBaseUrl('bargain/index/help/?bargain=' . $bargainId . '&bargain_case_id=' . $bargainCase["id"]) . '">' . $this->translate('Help your friend chop off price') . '</a>';
+                }
+                if (isset($bargainCase["id"]) && $bargainCase["id"] != '' && isset($bargainCase["customer_id"]) && $bargainCase["customer_id"] == $customerId && $bargain["lessPrice"] == 0) {
+                    echo '<a>' . $this->translate('You have choped off the bargain successfully') . '!</a>';
+                    echo '&nbsp;&nbsp;<a class="btn btn-primary" href="' . $this->getBaseUrl('bargain/checkout/view/?bargain=' . $bargainId) . '&bargain_case=' . $bargainCase["id"] . '">' . $this->translate('Pay Now') . '</a>';
+                }
+                if ($bargain["lessPrice"] == 0) {
+                    echo '&nbsp;&nbsp;<a class="btn btn-primary" href="' . $this->getBaseUrl('bargain/index/join/?bargain=' . $bargainId) . '">' . $this->translate('Open more bargain') . '</a>';
+                }
+            } else {
+                echo '&nbsp;&nbsp;<a class="btn btn-primary" href="' . $this->getBaseUrl('customer/account/login/') . '">' . $this->translate('Login') . '</a>';
+            }
+            ?>
+
+        </div>
+
+
+
+    </div>
+</div>
+<div class="container product-detail">
+    <div id="description">
+        <?php echo $bargain['content'][$languageId]; ?>
+    </div>
+</div>

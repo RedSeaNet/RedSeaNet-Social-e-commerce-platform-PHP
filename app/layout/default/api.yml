@@ -1,0 +1,274 @@
+---
+admin_rest_role_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: REST Role
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_rest_role/',label: 'REST Role'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/api_rest_role/edit/',label: 'Add New Role'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Api\Grid\RestRole
+admin_rest_role_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_rest_role/',label: 'REST Role'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_rest_role/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Api\Edit\RestRole
+admin_rest_attribute_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: REST Attribute Rules
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_rest_attribute/',label: 'REST Attribute Rules'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Api\Grid\Attribute
+                        template: admin/grid-simple
+admin_rest_attribute_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_rest_attribute/',label: 'REST Attribute Rules'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_rest_attribute/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Api\Edit\Attribute
+                        children:
+                            attribute:
+                                type: Redseanet\Admin\ViewModel\Api\Edit\Widget\Attribute
+                                template: admin/api/attribute
+admin_soap_user_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: SOAP User
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_soap_user/',label: 'SOAP User'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/api_soap_user/edit/',label: 'Add New SOAP User'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Api\Grid\SoapUser
+                        
+admin_soap_user_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_soap_user/',label: 'SOAP User'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_soap_user/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Api\Edit\SoapUser
+                        
+admin_soap_role_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: SOAP Role
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_soap_role/',label: 'SOAP Role'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/api_soap_role/edit/',label: 'Add New SOAP Role'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Api\Grid\SoapRole
+admin_soap_role_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_soap_role/',label: 'SOAP Role'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_soap_role/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Api\Edit\SoapRole
+                        children:
+                            tabs:
+                                type: Redseanet\Admin\ViewModel\Tabs
+                                action:
+                                    -
+                                        method: setMainTabLabel
+                                        params: General
+                                    -
+                                        method: addTab
+                                        params:
+                                            - operation
+                                            - Operation
+                                            - 100
+                                children:
+                                    operation:
+                                        type: Redseanet\Admin\ViewModel\Api\Edit\Widget\Operation
+                                        template: admin/api/operation
+admin_rpc_role_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_rpc_role/',label: 'RPC Role'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_rpc_role/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Api\Edit\RpcRole
+                        children:
+                            tabs:
+                                type: Redseanet\Admin\ViewModel\Tabs
+                                action:
+                                    -
+                                        method: setMainTabLabel
+                                        params: General
+                                    -
+                                        method: addTab
+                                        params:
+                                            - operation
+                                            - Operation
+                                            - 100
+                                children:
+                                    operation:
+                                        type: Redseanet\Admin\ViewModel\Api\Edit\Widget\RpcOperation
+                                        template: admin/api/operation
+admin_rpc_user_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: RPC User
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_rpc_user/',label: 'RPC User'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/api_rpc_user/edit/',label: 'Add New RPC User'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Api\Grid\RpcUser
+                        
+admin_rpc_user_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_rpc_user/',label: 'RPC User'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_rpc_user/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Api\Edit\RpcUser
+                        
+admin_rpc_role_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: RPC Role
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_rpc_role/',label: 'RPC Role'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/api_rpc_role/edit/',label: 'Add New RPC Role'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Api\Grid\RpcRole
+admin_rsa_key:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Api\Edit\RsaKey
+                        template: admin/api/rsakey
+                        
+                        

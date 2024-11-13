@@ -1,0 +1,248 @@
+---
+wsdl:
+    message:
+        customerValid:
+            sessionId: string
+            username: string
+            password: string
+        customerValidResponse:
+            customerId: int
+        customerInfo:
+            sessionId: string
+            customerId: int
+        customerInfoResponse:
+            customer: customer
+        customerCreate:
+            sessionId: string
+            data: customer
+        customerCreateResponse:
+            customerId: int
+        customerSave:
+            sessionId: string
+            customerId: int
+            data: customer
+        customerSaveResponse:
+            result: int
+        customerSearch:
+            sessionId: string
+            customerId: int
+            keywords: string
+            lastId: int
+            limit: int
+        customerSearchResponse:
+            customers: customer[]
+        addressList:
+            sessionId: string
+            customerId: int
+        addressListResponse:
+            address: address[]
+        addressInfo:
+            sessionId: string
+            customerId: int
+            addressId: int
+        addressInfoResponse:
+            address: address
+        addressSave:
+            sessionId: string
+            customerId: int
+            data: address
+        addressSaveResponse:
+            result: bool
+        addressDelete:
+            sessionId: string
+            customerId: int
+            addressId: int
+        addressDeleteResponse:
+            result: bool
+    port:
+        -
+            name: customerValid
+            input: tns:customerValid
+            output: tns:customerValidResponse
+            documentation: Valid customer username and password
+        -
+            name: customerInfo
+            input: tns:customerInfo
+            output: tns:customerInfoResponse
+            documentation: Get customer info by id
+        -
+            name: customerCreate
+            input: tns:customerCreate
+            output: tns:customerCreateResponse
+            documentation: Create a new customer
+        -
+            name: customerSave
+            input: tns:customerSave
+            output: tns:customerSaveResponse
+            documentation: Modify customer's infomation
+        -
+            name: customerSearch
+            input: tns:customerSearch
+            output: tns:customerSearchResponse
+            documentation: Get customer list
+        -
+            name: addressList
+            input: tns:addressList
+            output: tns:addressListResponse
+            documentation: Get customer address list
+        -
+            name: addressInfo
+            input: tns:addressInfo
+            output: tns:addressInfoResponse
+            documentation: Get customer address infomation
+        -
+            name: addressSave
+            input: tns:addressSave
+            output: tns:addressSaveResponse
+            documentation: Update or create a customer address
+        -
+            name: addressDelete
+            input: tns:addressDelete
+            output: tns:addressDeleteResponse
+            documentation: Delete a customer address
+rpcport:
+    customerValid:
+        params: 
+            id: string
+            token: string
+            username: string
+            password: sring
+            uuid: string
+            checkPermission: Boolean
+        respone: json array 
+        documentation: customer login
+    customerCreate: 
+        params: 
+            id: string
+            token: string
+            data: array
+        respone: json array 
+        documentation: customer register
+    customerUpdate: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            data: array
+        respone: json array 
+        documentation: customer information update
+    customerUpdatePassword: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+        respone: json array 
+        documentation: customer password update
+    getcustomerInfo: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+        respone: json array 
+        documentation: customer password update
+    addressList: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+        respone: json array 
+        documentation: get customer address list
+    addressInfo: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            addressId: int
+        respone: json array 
+        documentation: get address infomation by address id
+    addressSave: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            data: array
+        respone: json array 
+        documentation: add customer address 
+    addressDelete: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            addressId: int
+        respone: json array 
+        documentation: delete address by address id
+    getDefaultAddress: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+        respone: json array 
+        documentation: get default address 
+    addWishlistItem: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            data: array
+            languageId: int
+        respone: json array 
+        documentation: add item with wish list
+    getWishlist: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            page: int
+            limit: int
+            languageId: int
+        respone: json array 
+        documentation: get wish list litem list
+    deleteWishlistItem: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            itemId: int
+            page: int
+            limit: int
+            languageId: int
+        respone: json array 
+        documentation: delete item with wish list
+    balanceList: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            condition: array
+            page: int
+            limit: int
+            languageId: int
+        respone: json array 
+        documentation: get balance list
+soap:
+    customerValid: \Redseanet\Customer\Model\Api\Soap\Customer
+    customerInfo: \Redseanet\Customer\Model\Api\Soap\Customer
+    customerCreate: \Redseanet\Customer\Model\Api\Soap\Customer
+    customerSearch: \Redseanet\Customer\Model\Api\Soap\Customer
+    addressList: \Redseanet\Customer\Model\Api\Soap\Address
+    addressInfo: \Redseanet\Customer\Model\Api\Soap\Address
+    addressSave: \Redseanet\Customer\Model\Api\Soap\Address
+    addressDelete: \Redseanet\Customer\Model\Api\Soap\Address
+rest:
+    customer: \Redseanet\Customer\Model\Api\Rest\Customer
+    address: \Redseanet\Customer\Model\Api\Rest\Address
+rpc:
+    customerValid: \Redseanet\Customer\Model\Api\Rpc\Customer
+    customerCreate: \Redseanet\Customer\Model\Api\Rpc\Customer
+    customerUpdate: \Redseanet\Customer\Model\Api\Rpc\Customer
+    customerUpdatePassword: \Redseanet\Customer\Model\Api\Rpc\Customer
+    getcustomerInfo: \Redseanet\Customer\Model\Api\Rpc\Customer
+    addressList: \Redseanet\Customer\Model\Api\Rpc\Address
+    addressInfo: \Redseanet\Customer\Model\Api\Rpc\Address
+    addressSave: \Redseanet\Customer\Model\Api\Rpc\Address
+    addressDelete: \Redseanet\Customer\Model\Api\Rpc\Address
+    getDefaultAddress: \Redseanet\Customer\Model\Api\Rpc\Address
+    addWishlistItem: \Redseanet\Customer\Model\Api\Rpc\Wishlist
+    getWishlist: \Redseanet\Customer\Model\Api\Rpc\Wishlist
+    deleteWishlistItem: \Redseanet\Customer\Model\Api\Rpc\Wishlist
+    balanceList: \Redseanet\Customer\Model\Api\Rpc\Balance

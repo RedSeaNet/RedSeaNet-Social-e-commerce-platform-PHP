@@ -1,0 +1,9 @@
+<?php
+$item = $this->getVariable('item');
+$parent = $this->getVariable('parent');
+?>
+<input type="hidden" name="<?php echo $this->getVariable('key') ?>" value="<?php echo $item['value'] ?? '' ?>" <?php
+               if (isset($item['attrs'])) {
+                   echo $parent->getAttrs($item['attrs']);
+               }
+               ?> />

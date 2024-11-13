@@ -1,0 +1,30 @@
+<header class="header">
+    <h2 class="page-title"><span lang="en">RedSeaNet</span> <span><?php echo $this->translate('Admin Panel') ?></span></h2>
+</header>
+<div class="main-container">
+    <div class="panel panel-login clearfix">
+        <div class="panel-body">
+            <form action="<?php echo $this->getAdminUrl('index/forgotpost/') ?>" method="post" class="form-inline">
+                <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+                <div class="input-box">
+                    <label for="login:username" class="control-label"><?php echo $this->translate('Username') ?>: </label>
+                    <input type="text" name="username" class="form-control required" id="login:username" spellcheck="false" />
+                </div>
+                <div class="input-box">
+                    <label for="login:captcha" class="control-label"><?php echo $this->translate('Captcha') ?>: </label>
+                    <input type="text" name="captcha" class="form-control required captcha" maxlength="5" autocomplete="off" spellcheck="false" id="login:captcha" />
+                    <img src="<?php echo $this->getAdminUrl('index/captcha/') ?>" alt="" class="captcha" height="26" width="70" />
+                </div>
+                <div class="additional text-end">
+                    <a href="<?php echo $this->getAdminUrl() ?>"><?php echo $this->translate('Back to '), $this->translate('Login') ?></a>
+                </div>
+                <div class="buttons-set text-center">
+                    <button type="submit" class="btn"><span><?php echo $this->translate('Submit') ?></span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+    <address class="copyright" lang="en"><?php echo $this->getVariable('copyright') ?></address>
+</footer>

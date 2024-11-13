@@ -1,0 +1,8 @@
+---
+retailer:
+    method: [GET,POST,DELETE]
+    route: /retailer/{controller}/[{action}[/]]
+    namespace: Redseanet\Retailer\Controller
+store:
+    route: Redseanet\Retailer\Route\Router
+    priority: 50

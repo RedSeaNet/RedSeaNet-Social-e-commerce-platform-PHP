@@ -1,0 +1,30 @@
+<ul class="posts-list"><?php
+    $config = $this->getConfig();
+    $new = strtotime('-' . $config['forum/post/new_days'] . 'days');
+    $current = $this->getSegment('customer')->get('hasLoggedIn') ? $this->getSegment('customer')->get('customer')['id'] : 0;
+    $posts = $this->getVariable('posts');
+    $posts->getSelect()->where->isNull('poll_id');
+    foreach ($posts as $post):
+        $customer = $post->getCustomer();
+        ?><li class="clearfix<?php if ($post['poll_id']): ?> poll<?php
+        endif;
+        if (strtotime($post['created_at']) >= $new):
+            ?> new<?php
+            endif;
+            if (strtotime($post['is_hot']) >= $new):
+                ?> hot<?php endif ?>">
+            <div class="avatar">
+                <a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $customer['id']) ?>"><img class="img-fluid rounded-circle" src="<?php echo $customer['avatar'] ? $this->getUploadedUrl('customer/avatar/') . $customer['avatar'] : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="<?php echo $customer['username'] ?>" /></a>
+            </div>
+            <div class="user">
+                <h5 class="name"><a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $customer['id']) ?>"><?php echo $customer['username'] ?></a></h5>
+                <div class="time"><?php echo $this->getTime($post['created_at']) ?></div>
+            </div>
+            <div class="post">
+                <article class="content">
+                    <h3 class="title"><a href="<?php echo $post->getUrl(); ?>"><?php echo $post['title'] ?></a></h3>
+                    <?php echo $config['forum/post/wysiwyg'] ? $post['content'] : htmlspecialchars($post['content'], 51) ?>
+                </article>
+            </div>
+        </li><?php endforeach; ?></ul>
+<p class="empty"><?php echo $this->translate('No post available right now.') ?></p>

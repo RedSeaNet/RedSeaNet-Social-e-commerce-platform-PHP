@@ -1,0 +1,18 @@
+<?php
+$item = $this->getVariable('item');
+$parent = $this->getVariable('parent');
+?>
+<div class="form-group <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label class="col-form-label">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell">
+        <a href="<?php echo $this->getAdminUrl($item['link']) ?>" <?php
+        if (isset($item['attrs'])) {
+            echo $parent->getAttrs($item['attrs']);
+        }
+        ?>><?php echo $this->translate($item['content']) ?></a>
+    </div>
+</div>

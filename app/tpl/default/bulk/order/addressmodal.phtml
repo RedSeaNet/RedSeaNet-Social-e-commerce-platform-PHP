@@ -1,0 +1,52 @@
+<?php
+$addresses = $this->getAddress();
+$attributes = $this->getAddressAttribute();
+?>
+<div class="modal" role="dialog" id="modifyaddressmodal" aria-modal="true">
+    <form action="<?php echo $this->getBaseUrl('checkout/order/saveaddress/') ?>" method="post" data-ajax="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><?php echo $this->translate('Address') ?></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-edit-address">
+
+                        <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+                        <input type="hidden" name="id" value="" />
+                        <input type="hidden" name="is_billing" value="0" />
+                        <?php
+                        foreach ($attributes as $attribute) {
+                            $item = [
+                                'type' => $attribute['input'],
+                                'label' => $attribute['label']
+                            ];
+                            if ($attribute['is_required']) {
+                                $item['required'] = 'required';
+                            }
+                            echo $this->getInputBox($attribute['code'], $item);
+                        }
+                        ?>
+
+                        <script>
+                            new Locate();
+                        </script>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="buttons-set">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo $this->translate('Close') ?></button>
+                        <button type="submit" class="btn btn-primary"> 
+                            <span><?php echo $this->translate('Save') ?></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    new Locate();
+</script>

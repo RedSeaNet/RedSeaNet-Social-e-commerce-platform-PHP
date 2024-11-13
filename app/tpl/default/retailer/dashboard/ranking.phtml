@@ -1,0 +1,35 @@
+<?php if($items = $this->getItems()): ?>
+<div class="card panel-rank">
+    <div class="card-header">
+        <h4 class="card-title">
+            <span><?php echo $this->translate('Ranking') ?></span>
+        </h4>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan="2" class="text-nowrap"><?php echo $this->translate('Product Infomation') ?></th>
+                    <th>SKU</th>
+                    <th class="text-nowrap"><?php echo $this->translate('Qty') ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($items as $item): ?>
+                    <tr>
+                        <td><img src="<?php
+                            $thumbnail = $item->getThumbnail();
+                            echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail;
+                            ?>" alt="<?php echo $item->offsetGet('name') ?>" width="60" /></td>
+                        <td><?php echo $item->offsetGet('name') ?></td>
+                        <td><?php echo $item->offsetGet('sku') ?></td>
+                        <td><?php echo (float) $item->offsetGet('qty') ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php else: ?>
+<p class="text-center"><?php echo $this->translate('Currently no products sold.'); ?></p>
+<?php endif; ?>

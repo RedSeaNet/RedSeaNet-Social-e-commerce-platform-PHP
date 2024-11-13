@@ -1,0 +1,4 @@
+---
+cms_url:
+    title: Cms Url
+    provider: \Redseanet\Cms\Indexer\Url

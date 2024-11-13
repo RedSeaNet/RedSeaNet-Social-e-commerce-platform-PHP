@@ -1,0 +1,235 @@
+<?php
+$templates = $this->getTemplateList(0);
+$theme_templates = $this->getTemplateList(1);
+?>
+<main class="col-main col-12 col-sm-12 col-md-10 mg-bottom-40 sales-products">
+    <div class="wishlist decorationlist" style="width:935px">
+        <h3><?php echo $this->translate('Store Decoration'); ?></h3>
+        <div style="clear:both"></div>
+        <!-- tab -->
+        <div class="deccoration_topbg" ></div>
+        <div class="deccoration_tabs">
+            <ul id="Decoration" class="nav nav-tabs">
+                <li>
+                    <a href="#MyTemplates" data-bs-toggle="tab" class="active">
+                        <div class="seperation-title"><span class="title">我的模版</span> <span>共有  <?php echo count($templates) ?> 条记录</span></div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#TemplateSubject" data-bs-toggle="tab">
+                        <div class="seperation-title"><span class="title">主题模版</span> 共有  <?php echo count($theme_templates) ?> 条记录</div>
+                    </a>
+                </li>
+            </ul>
+            <!-- tabcontent -->
+            <div id="myTabContent" class="tab-content">
+                <div id="MyTemplates" class="tab-pane fade in active show" >
+                    <button class="btn btn-primary" onclick="window.location = '<?php echo $this->getBaseUrl('/retailer/store/decoration?id=-1') ?>'"><i class="fa fa-plus" style="padding: 0 6px"></i>新建模版</button>
+                    <div class="decoration-content">
+                        <ul>
+                            <?php foreach ($templates as $key => $template): ?>
+                                <li>
+                                    <div class="top <?php echo $template['status'] == 1 ? 'active' : '' ?>">
+                                        <div class="position1"></div>
+                                        <div class="position3">
+                                            <button class="btn btn-success btn-sm" onclick="window.location = '<?php echo $this->getBaseUrl('/retailer/store/decoration?id=' . $template['id']) ?>'"><?php echo $this->translate('Edit'); ?></button>
+                                            <a class="btn btn-danger btn-sm delTemplateBtn" href="<?php echo $this->getBaseUrl('retailer/store/delTemplate/') ?>" data-method="delete" data-params="id=<?php echo $template['id'] ?>&csrf=<?php echo $this->getCsrfKey() ?>"><?php echo $this->translate('Delete'); ?></a>
+                                            <a class="btn btn-info btn-sm setTemplateBtn" template_id='<?php echo $template['id'] ?>'><?php echo $this->translate('Set as Template'); ?></a>
+                                            <span class="btn btn-secondary btn-sm setTemplateBtn"><?php echo $this->translate('Current Template'); ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="bottom"><?php echo $template['template_name'] ?></div>
+                                </li>
+                            <?php endforeach;
+                            ?> 
+                        </ul>
+                    </div>
+                </div>
+                <div  id="TemplateSubject" class="tab-pane fade">
+                    <div class="decoration-content">
+                        <ul>
+                            <?php foreach ($theme_templates as $key => $template) { ?>
+                                <li>
+                                    <div class="top <?php echo $template['status'] == 1 ? 'active' : '' ?>">
+                                        <div class="position1"></div>
+                                        <div class="position3">
+                                            <button class="btn btn-success btn-sm" onclick="window.location = '<?php echo $this->getBaseUrl('/retailer/store/decoration?id=' . $template['id']) ?>'" >根据该主题新建模版</button>
+                                        </div>
+                                    </div>
+                                    <div class="bottom"><?php echo $template['template_name'] ?></div>
+                                </li>
+                            <?php } ?> 
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="modal-receive" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="receiveModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="receiveModalLabel">收到货款</h4>
+                </div>
+                <div class="modal-body">
+                    <div >
+                        <h1>您确定已经收到买家的货款了吗？</h1>
+                        <p>订单号&nbsp;&nbsp;&nbsp;&nbsp;:<span>88888888888</span></p>
+                        <dl>
+                            <dt>操作原因:</dt>
+                            <dd><textarea name="remark"></textarea></dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-price" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="priceModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="priceModalLabel">费用调整</h4>
+                </div>
+                <div class="modal-body">
+                    <div>买家:&nbsp;&nbsp;Stone<br>订单号&nbsp;&nbsp;:<strong>88888888888</strong></div>
+                    <div>
+                        <ul>
+                            <li>
+                                <h3>商品总价:<strong>¥100.00</strong></h3>
+                                <p><input type="text" value="100.00" name="goods_amount"></p>
+                            </li>
+                            <li>
+                                <h3>配送费用:<strong>¥10.00</strong></h3>
+                                <p><input type="text" value="10.00" name="shipping_fee"></p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div><h3>订单总价:<strong>¥110.00</strong></h3></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-cancel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="cancelModalLabel">费用调整</h4>
+                </div>
+                <div class="modal-body">
+                    <h1>您是否确定要取消以下订单？</h1>
+                    <p>订单号&nbsp;&nbsp;&nbsp;&nbsp;:<span>88888888888</span></p>
+                    <dl>
+                        <dt>取消原因:</dt>
+                        <dd>
+                            <div class="li">
+                                <input type="radio" value="无法备齐货物" id="d1" name="cancel_reason" checked=""> <label for="d1">无法备齐货物</label>
+                            </div>
+                            <div class="li">
+                                <input type="radio" value="不是有效的订单" id="d2" name="cancel_reason"> <label for="d2">不是有效的订单</label>
+                            </div>
+                            <div class="li">
+                                <input type="radio" value="买家主动要求" id="d3" name="cancel_reason"> <label for="d3">买家主动要求</label>
+                            </div>
+                            <div class="li">
+                                <input type="radio" value="其他原因" id="d4" flag="other_reason" name="cancel_reason"> <label for="d4">其他原因</label>
+                            </div>
+                        </dd>
+                        <dd id="other_reason">
+                            <textarea name="remark" id="other_reason_input"></textarea>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+<script>
+    $(function () {
+        $(".decorationlist .decoration-content li div.top").mouseover(function () {
+            $(this).find('.position2').show();
+            $(this).find('.position3').show();
+        });
+
+        $(".decorationlist .decoration-content li div.top").mouseout(function () {
+            $(this).find('.position2').hide();
+            $(this).find('.position3').hide();
+        });
+
+
+    });
+
+    $('.delTemplateBtn').click(function () {
+        var template_id = $(this).attr("template_id");
+        var obj = $(this);
+        $.ajax({
+            url: '<?php echo $this->getBaseUrl('/retailer/store/delTemplate') ?>',
+            type: "post",
+            dataType: 'json',
+            data: {id: template_id},
+            beforeSend: function () {
+            },
+            success: function (data) {
+                if (data.error == 0)
+                {
+                    obj.closest("li").remove();
+                }
+            },
+            error: function (msg) {
+
+            }
+
+        });
+
+    });
+
+    $('.setTemplateBtn').click(function () {
+        var template_id = $(this).attr("template_id");
+        if (!template_id) {
+            return false;
+        }
+        var obj = $(this);
+        $.ajax({
+            url: '<?php echo $this->getBaseUrl('/retailer/store/setTemplate') ?>',
+            type: "post",
+            dataType: 'json',
+            data: {id: template_id},
+            beforeSend: function () {
+            },
+            success: function (data) {
+                if (data.error == 0)
+                {
+                    $(".decoration-content div.top").removeClass('active');
+                    obj.closest("div.top").addClass('active');
+                }
+            },
+            error: function (msg) {
+
+            }
+
+        });
+        $('#Decoration a').click(function (e) {
+            e.preventDefault()
+            $(this).tab('show')
+        });
+
+    });
+</script>

@@ -1,0 +1,101 @@
+---
+oauth_login:
+    update: frontend
+    root:
+        children:
+            content:
+                children:
+                    form:
+                        type: Redseanet\Oauth\ViewModel\Login
+customer_account_login:
+    root:
+        children:
+            content:
+                children:
+                    oauth:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: oauth/openId
+customer_account_create:
+    root:
+        children:
+            content:
+                children:
+                    oauth:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: oauth/openId
+admin_oauth_consumer_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: OAuth Consumer
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_oauth_consumer/',label: 'OAuth Consumer'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/api_oauth_consumer/edit/',label: 'Add New Consumer'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Api\Grid\Consumer
+admin_oauth_consumer_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_oauth_consumer/',label: 'OAuth Consumer'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_oauth_consumer/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Api\Edit\Consumer
+admin_oauth_token_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Authorized OAuth Tokens
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/api_oauth_token/',label: 'Authorized OAuth Tokens'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Api\Grid\Token
+admin_oauth_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer Oauth List / Customer Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: '#',label: 'OAuth Login'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Oauth\Grid

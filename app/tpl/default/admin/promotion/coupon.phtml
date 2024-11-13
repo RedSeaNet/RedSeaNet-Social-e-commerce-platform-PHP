@@ -1,0 +1,54 @@
+<?php
+$coupons = $this->getCoupons();
+?>
+<div class="grid coupon">
+    <div class="buttons-set text-end">
+        <button type="button" class="btn btn-theme btn-add"><span><?php echo $this->translate('Add', [], 'promotion') ?></span></button>
+        <button type="button" class="btn btn-theme btn-generate" title="<?php echo $this->translate('How many coupons do you want to generate?', [], 'promotion') ?>"><span><?php echo $this->translate('Generate', [], 'promotion') ?></span></button>
+    </div>
+    <table class="table table-hover table-striped table-no-border">
+        <thead class="sort-by">
+            <tr>
+                <th>
+                    <?php echo $this->translate('Code') ?>
+                </th>
+                <th>
+                    <?php echo $this->translate('Count of Usage', [], 'promotion') ?>
+                </th>
+                <th>
+                    <?php echo $this->translate('Status') ?>
+                </th>
+                <th class="action"><?php echo $this->translate('Action') ?></th>
+            </tr>
+        </thead>
+        <tbody class="target">
+            <?php foreach ($coupons as $coupon): ?>
+                <tr data-id="<?php echo $coupon['id'] ?>">
+                    <td><?php echo $coupon['code']; ?></td>
+                    <td><?php echo $coupon['uses']; ?></td>
+                    <td><?php echo $coupon['status']; ?></td>
+                    <td class="text-center action">
+                        <a href="<?php echo $this->getAdminUrl('promotion/deleteCoupon/') ?>" class="delete" data-method="delete" data-params="id=<?php echo $coupon['id'] ?>&csrf=<?php echo $this->getCsrfKey() ?>">
+                            <span class="fa fa-remove" aria-hidden="true"></span>
+                            <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach ?>
+        </tbody>
+    </table>
+    <template id="tmpl-coupon">
+        <tr>
+            <td><input type="text" class="form-control code" name="coupon[code][]" value="{$code}" maxlength="50" /></td>
+            <td><input type="tel" class="form-control digits" name="coupon[uses_per_coupon][]" value="0" min="0" /></td>
+            <td><input type="tel" class="form-control digits" name="coupon[uses_per_customer][]" value="0" min="0" /></td>
+            <td><?php echo $this->translate('Enabled') ?></td>
+            <td class="text-center action">
+                <a href="javascript:void(0);" class="delete">
+                    <span class="fa fa-remove" aria-hidden="true"></span>
+                    <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                </a>
+            </td>
+        </tr>
+    </template>
+</div>

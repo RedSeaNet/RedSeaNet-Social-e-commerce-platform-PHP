@@ -1,0 +1,106 @@
+<?php
+$bulk = $this->getVariable('model');
+$progress = min((int) ($bulk['count'] / $bulk['size'] * 100), 100);
+$currency = $this->getContainer()->get('currency');
+?>
+<div class="col-main container">
+    <div class="fieldset bulk-sale-detail">
+        <div class="table-responsive" id="preview">
+            <table class="table">
+                <colgroup>
+                    <col width="1" />
+                    <col />
+                    <col width="1" />
+                </colgroup>
+                <tbody>
+                    <?php
+                    foreach ($bulk->getItems() as $item):
+                        $options = is_scalar($item['options']) ? json_decode($item['options'], true) : $item['options'];
+                        $thumbnail = $item['product']->getThumbnail($options);
+                        $prices = is_scalar($item['product']['bulk_price']) ? json_decode($item['product']['bulk_price'], true) : $item['product']['bulk_price'];
+                        krsort($prices);
+                        $price = $item['base_price'];
+                        foreach ($prices as $s => $p) {
+                            if ($s <= $bulk['size']) {
+                                $price = $p;
+                                break;
+                            }
+                        }
+                        $expiration[] = $item['product']['bulk_expiration'] ?? 5;
+                        ?>
+                        <tr>
+                            <td>
+                                <a href="<?php echo $item['product']->getUrl(), '?bulk=', $bulk->getId() ?>">
+                                    <img src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" alt="<?php echo $item['product']['name'] ?>" width="100" />
+                                </a>
+                            </td>
+                            <td>
+                                <h5 class="product-name"><?php echo $item['product']['name'] ?></h5>
+                                <p class="sku"><?php echo $item['product']['sku'] ?></p>
+                            </td>
+                            <td>
+                                <div class="price-box">
+                                    <span class="old-price">
+                                        <span class="badge text-bg-danger"><?php echo $this->translate('Old Price') ?></span>
+                                        <span class="price"><?php echo $currency->convert($item['base_price'], true) ?></span>
+                                    </span>
+                                    <span class="special-price">
+                                        <span class="badge text-bg-danger"><?php echo $this->translate('Special Price') ?></span>
+                                        <span class="price"><?php echo $currency->convert($price, true) ?></span>
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="input-box">
+            <label class="col-form-label"><?php echo $this->translate('Bulk Progress') ?></label>
+            <div class="cell">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="<?php echo $progress ?>" aria-valuemin="0" aria-valuemax="100" style="width:<?php echo $progress ?>%"></div>
+                    <div class="text-center"><?php echo $bulk['count'], ' / ', $bulk['size'] ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="col-form-label"><?php echo $this->translate('Message From Creator') ?></label>
+            <div class="cell">
+                <?php
+                preg_match_all('/<img[^>]+>/', $bulk['description'], $imgs);
+                $desc = preg_replace('/<[^>]+>/', '', $bulk['description']);
+                ?>
+                <p><?php echo $desc ?></p>
+                <span id="images"><span><?php echo str_replace('<img', '<img class="zoombox"', implode('</span><span>', $imgs[0])) ?></span></span>
+            </div>
+        </div>
+
+
+        <?php echo $this->getChild('share') ?>
+        <p class="rules">
+            <label for="rules"> 
+                <a class="font-blue" href="<?php echo $this->getBaseUrl('help/customer/mjbz0210.html') ?>"><?php echo $this->translate('Click here to view') ?></a>
+                <?php echo $this->translate('the rules and instructions of group shopping') ?>
+            </label> 
+        </p>
+        <form action="<?php echo $this->getBaseUrl('bulk/process/apply/') ?>" method="post" enctype="multipart/form-data">
+            <div class="buttons-set text-end">
+                <input type="hidden" name="bulk" value="<?php echo $bulk->getId(); ?>" />
+                <?php if ($this->getSegment('customer')->get('hasLoggedIn') && $bulk->hasMember($this->getSegment('customer')->get('customer')['id'])): ?>
+                <button type="submit" class="btn btn-primary" href="<?php echo $this->getBaseUrl('bulk/process/retreat/?bulk='), $bulk->getId() ?>"><?php echo $this->translate('Retreat the Bulk') ?></button>
+                    <?php
+                elseif ($progress < 100 || $this->getConfig()['catalog/bulk_sale/limitation']):
+                    ?>
+                    <button type="submit" class="btn btn-primary" href="<?php echo $this->getBaseUrl('bulk/process/apply/?bulk=' . $bulk->getId()) ?>"><?php echo $this->translate('Join the Bulk') ?></button>
+                <?php else: ?>
+                    <span><?php echo $this->translate('The bulk is full.') ?></span>
+                    <button type="submit" class="btn btn-primary"><?php echo $this->translate('Create a Same Bulk') ?></button>
+                <?php
+                endif;
+                ?>
+            </div>
+        </form>
+        <?php echo $this->getChild('expiration')->setDate(date('Y-m-d', strtotime($bulk['created_at']) + min($expiration) * 86400)) ?>
+    </div>
+</div>

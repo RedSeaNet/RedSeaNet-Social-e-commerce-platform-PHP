@@ -1,0 +1,116 @@
+<?php
+$order = $this->getLatestOrder();
+if ($order && $order->getId()):
+    $flag = true;
+    ?>
+    <div class="card order p-0 m-0 mt-4 p-md-4">
+        <div class="card-header p-0 m-0">
+            <h6 class="card-title"><?php echo $this->translate('Latest Order') ?></h6>
+        </div>
+        <div class="card-body p-0 m-0 mt-2">
+            <div class="row align-items-center justify-content-between pt-2 pb-2 garybackgroup">
+                <div class="col-md-8 col-10" >
+                    <div class="text-nowrap"><?php echo $this->translate('Product(s)') ?></div>
+                </div>
+                <div class="text-center text-nowrap col-md-2 col-2"><?php echo $this->translate('Price') ?></div>
+                <div class="text-center text-nowrap col-md-2 col-2 d-none d-md-block"><?php echo $this->translate('Qty') ?></div>
+            </div>
+            <div class="row pt-2 pb-2">
+                <div class="col-6" >
+                    <div class="text-nowrap"><?php echo $order->getStore()['name'] ?></div>
+                </div>
+                <div class="col-6 text-end">
+                    <span class="status badge badge-info">
+                        <?php echo $this->translate($order->getStatus()['name']) ?>
+                    </span>
+                </div>
+            </div>
+
+            <?php
+            foreach ($order->getItems() as $item):
+                $product = $item['product'];
+                $options = json_decode($item['options'], true);
+                $thumbnail = $product->getThumbnail($options);
+                ?>
+                <div class="row justify-content-between align-items-center pt-2" data-id="<?php echo $product->getId() ?>">
+                    <div class="col-10 col-md-8 text-start align-items-center d-flex">
+                        <div>
+                            <a href="<?php echo $product->getUrl(); ?>"><img src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" alt="<?php echo $product['name'] ?>" width="60" height="60"/></a>
+                        </div>
+                        <div class="p-2">
+                            <h6 class="product-name"><a href="<?php echo $product->getUrl(); ?>"><?php echo $this->substring($product['name'], 50, '...') ?></a></h6>
+                            <?php
+                            if ($item['product_id'] && count($options)):
+                                ?>
+                                <dl class="options">
+                                    <?php
+                                    foreach ($product->getOptions() as $option):
+                                        if (isset($options[$option->getId()])):
+                                            ?>
+                                            <dt class="p-0 m-0"><?php echo $option['title'] ?></dt>
+                                            <dd class="p-0 m-0">
+                                                <?php
+                                                echo (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                                        $option->getValue($options[$option->getId()]) : $options[$option->getId()])
+                                                ?>;&nbsp;&nbsp;
+                                            </dd>
+                                            <?php
+                                        endif;
+                                    endforeach;
+                                    ?>
+                                </dl>
+                            <?php endif ?>
+                        </div>
+                    </div>
+                    <div class="text-center col-2 col-md-2">
+                        <?php if ($product->getFinalPrice($item['qty'], false) == $item['base_price']): ?>
+                            <span class="regular-price">
+                                <span class="price"><?php echo $order->getCurrency()->format($item['price']) ?></span>
+                            </span>
+                        <?php else: ?>
+                            <span class="special-price">
+                                <span class="price"><?php echo $order->getCurrency()->format($item['price']) ?></span>
+                            </span>
+                        <?php endif; ?>
+
+                    </div>
+                    <div class="text-center col-1 col-md-2 d-none d-md-block">
+                        <?php echo (float) $item['qty'] ?>
+                    </div>
+                </div>
+            <?php endforeach ?>     
+            <div class="pt-2 pb-2 d-flex justify-content-between garybackgroup mt-2 mb-2 col-12">
+                <div>
+                    <span><?php echo $this->translate('Order ID') ?>:</span>
+                    <span><?php echo $order['increment_id'] ?></span>
+                </div>
+                <div class="text-end">
+                    <span><?php echo date('Y-m-d H:i:s', strtotime($order['created_at'])) ?></span>
+                </div>
+            </div>
+            <div class="text-center actions col-12 justify-content-between d-flex align-items-center">
+                <div>
+                    <span class="total color-blue"><?php echo $this->translate("Total") . ": " . $order->getCurrency()->format($order['total']) ?></span>
+                    <span class="shipping">(<?php echo $this->translate('Including Shipping Fee: %s', [$order->getCurrency()->format($order['shipping'])]) ?>)</span>
+                </div>
+                <div>
+                    <?php if ($order->canRefund(FALSE) && $product->offsetGet('product_type_id') != 2): ?>
+                        <a href="<?php echo $this->getBaseUrl('sales/refund/apply/?id=' . $order->getId()) ?>"><?php echo $this->translate('Refund Application') ?></a>
+                    <?php endif ?>
+                    <?php if ($order->canConfirm()): ?>
+                        <a href="<?php echo $this->getBaseUrl('sales/order/confirm/?id=' . $order->getId()) ?>" class="btn" onclick="javascript:return confirm('<?php echo $this->translate('Please make sure you have received the item(s).') ?>');"><?php echo $this->translate('Confirm Receipt') ?></a>
+                    <?php endif ?>
+                    <?php if ($order->canRepay()): ?>
+                        <a href="<?php echo $this->getBaseUrl('sales/order/repay/?id=' . $order['id']) ?>"><?php echo $this->translate('Repay') ?></a>
+                    <?php elseif ($order->canReview()): ?>
+                        <a href="<?php echo $this->getBaseUrl('sales/order/review/?id=' . $order->getId()) ?>"><?php echo $this->translate('Add Review') ?></a>
+                    <?php endif ?>
+                    <a class="btn btn-primary" href="<?php echo $this->getBaseUrl('sales/order/view/?id=' . $order->getId()) ?>"><?php echo $this->translate('Order Details') ?></a>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+<?php endif; ?>

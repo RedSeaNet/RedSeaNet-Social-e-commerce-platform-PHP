@@ -1,0 +1,37 @@
+<?php
+$store_id = $this->getVariable("store_id");
+$templateView = $this->getProductDetailTemplateView($store_id);
+$menuView = $this->template_menu(null, $store_id);
+$logo_topView = $this->template_logo_top(!empty($templateView['stable_params']['logo_top']) ? $templateView['stable_params']['logo_top'] : '');
+$logo_top_outerHeight = !empty($templateView['stable_params']['logo_top']['heightSet']) ? $templateView['stable_params']['logo_top']['heightSet'] + 4 : 200;
+$categoriesTree = $this->getStoreCategoriesTree($store_id);
+?>
+<div class="decoration_logo_top stable_top" style="height:<?php echo $logo_top_outerHeight; ?>px;background-image:url(<?php echo $logo_topView; ?>" ></div>
+<header class="header">
+    <nav class="nav-main store_menu">
+        <ul class="nav nav-pills container">
+            <li class="dropdown">
+                <a class="dropdown-toggle" href="javascript:void(0);">全部商品分类</a>
+                <ul class="dropdown-menu">
+                    <?php
+                    foreach ($categoriesTree as $value => $label) {
+                        echo '<li><a href="'.$this->getBaseUrl('retailer/store/viewSearch?catalog='.$label['id']).'">' . str_repeat('&nbsp;&nbsp;', $label['level']) . '|-- ' . $this->translate($label['name']) . '</a></li>';
+                    }
+                    ?>
+                </ul>
+            </li>
+            <?php echo $menuView; ?>
+        </ul>
+    </nav>
+</header>
+<div class="container">
+    <div class="retailer-store">    
+        <div>
+            <?php
+            $product = $this->getChild('product');
+            $product->setVariable('templateView', !empty($templateView) ? $templateView['src_model'] : '');
+            echo $product;
+            ?>
+        </div>
+    </div>
+</div>

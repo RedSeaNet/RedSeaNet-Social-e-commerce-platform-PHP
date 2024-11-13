@@ -1,0 +1,39 @@
+---
+balance:
+    label: Account Balance
+    children:
+        general:
+            label: General
+            scope: merchant
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 1
+                product_for_recharge:
+                    type: tel
+                    label: Product for Recharge 
+                    priority: 1
+                    attrs:
+                        data-base: '#general-enable'
+                activating:
+                    type: tel
+                    label: Days Before Activation
+                    priority: 20
+                    default: 0
+                    attrs:
+                        data-base: '#general-enable'
+                complete_email:
+                    type: select
+                    label: Application Status Changed Notification
+                    required: required
+                    default: draw_balance
+                    priority: 40
+                    source: \Redseanet\Email\Source\Template
+                    attrs:
+                        data-base: '#general-enable'

@@ -1,0 +1,52 @@
+<?php
+$stat = $this->getStat();
+?>
+<div class="card panel-stat">
+    <div class="card-header">
+        <h4 class="card-title">
+            <span><?php echo $this->translate('Statistics') ?></span>
+        </h4>
+        <small><?php echo $this->translate('Updated at') ?><span class="data time"></span></small>
+    </div>
+    <div class="card-body">
+        <?php
+        $col = 0;
+        foreach ($stat as $key => $item):
+            $mod = $col % 4;
+            if ($mod === 0):
+                ?>
+                <div class="row">
+                <?php endif ?>
+                <div class="col-6 col-md-4 text-center" data-url="<?php echo $this->getBaseUrl('retailer/' . $item['data']) ?>">
+                    <h4 class="title">
+                        <span class="badge text-bg-danger"><?php echo $this->translate($item['title']) ?>: </span>
+                        <span class="data amount">-</span>
+                    </h4>
+                    <ul class="detail">
+                        <li>
+                            <span class="badge text-bg-danger"><?php echo $this->translate('Last 24 Hours') ?>: </span>
+                            <span class="data daily">-</span>
+                        </li>
+                        <li>
+                            <span class="badge text-bg-danger"><?php echo $this->translate('Last 30 Days') ?>: </span>
+                            <span class="data monthly">-</span>
+                        </li>
+                        <li>
+                            <span class="badge text-bg-danger"><?php echo $this->translate('Last 12 Months') ?>: </span>
+                            <span class="data yearly">-</span>
+                        </li>
+                    </ul>
+                </div>
+                <?php
+                if (++$col % 4 === 0):
+                    ?>
+                </div>
+                <?php
+            endif;
+        endforeach;
+        if ($mod) {
+            echo '</div>';
+        }
+        ?>
+    </div>
+</div>

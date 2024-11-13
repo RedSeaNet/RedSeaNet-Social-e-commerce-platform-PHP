@@ -1,0 +1,81 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+$parent = $this->getVariable('parent');
+?>
+<div class="input-box <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label for="<?php echo $id ?>" class="col-form-label control-label <?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell">
+        <select data-tags="true" data-allow-clear="true" name="<?php echo $key ?>" id="<?php echo $id ?>"<?php if (!empty($item['value'])): ?> data-default-value='<?php echo is_array($item['value']) ? json_encode($item['value']) : $item['value'] ?>'<?php
+        endif;
+        if (!isset($item['attrs']['class'])):
+            ?> class="js-data-example-ajax form-control<?php if (isset($item['required'])): ?> required<?php endif ?> <?php
+                    if (isset($item['class'])) {
+                        echo $item['class'];
+                    }
+                    ?>"<?php endif ?> <?php
+                if (isset($item['attrs'])) {
+                    echo $parent->getAttrs($item['attrs']);
+                }
+                ?>>
+                    <?php if (empty($item['required']) && !isset($item['attrs']['multiple'])): ?>
+                <option value=""><?php echo $this->translate($item['empty_string'] ?? 'Please Select') ?></option>
+            <?php endif ?>
+            <?php
+            if (!empty($item['options'])):
+                foreach ($item['options'] as $value => $label):
+                    if (is_array($label)):
+                        ?>
+                        <optgroup label="<?php echo $this->translate($value) ?>">
+                            <?php foreach ($label as $v => $l): ?>
+                                <option value="<?php echo $v ?>"<?php if (isset($item['value']) && $item['value'] !== '' && (in_array($v, (array) $item['value']) || (string) $v === $item['value'])): ?> selected="selected"<?php endif ?>><?php echo $this->translate($l) ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php else: ?>
+                        <option value="<?php echo $value ?>"<?php if (isset($item['value']) && $item['value'] !== '' && (in_array($value, (array) $item['value']) || (string) $value === $item['value'])): ?> selected="selected"<?php endif ?>><?php echo $this->translate($label) ?></option>
+                    <?php endif ?>
+                <?php endforeach ?>
+            <?php endif ?>     
+        </select>
+        <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("select#<?php echo $id ?>").select2({
+        ajax: {
+            method: 'post',
+            type: 'post',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term,
+                    page: params.page
+                };
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 1;
+                return {
+                    results: data.results,
+                    pagination: {
+                        more: (params.page * 20) < data.total_count
+                    }
+                };
+            },
+            cache: true
+        },
+        placeholder: '<?php echo $this->translate($item['empty_string'] ?? 'Please Select') ?>',
+        minimumInputLength: 1,
+<?php echo (isset($item['attrs']['multiple']) && (bool) $item['attrs']['multiple'] ? ',multiple: true' : ''); ?>
+    });
+</script>

@@ -1,0 +1,5 @@
+---
+bulk:
+    method: [GET,POST]
+    route: /bulk/{controller}/[{action}[/]]
+    namespace: Redseanet\Bulk\Controller

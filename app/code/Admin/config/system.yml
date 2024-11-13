@@ -1,0 +1,183 @@
+---
+global:
+    label: Global Configuration
+    children:
+        url:
+            label: Url
+            priority: 0
+            scope: [merchant,store]
+            children:
+                base_url:
+                    type: url
+                    required: required
+                    label: Base Url
+                    priority: 0
+                    scope: [merchant,store]
+                    default: /
+                    comment: Make sure that the Url ends with '/' (slash), e.g. http://yourdomain/
+                cookie_free_domain:
+                    type: url
+                    label: Cookie-free Domain
+                    priority: 1
+                    scope: [merchant,store]
+                    comment: Make sure that the Url ends with '/' (slash), e.g. http://yourdomain/
+                admin_path:
+                    type: text
+                    required: required
+                    label: Backend Path
+                    priority: 10
+                    scope: [merchant,store]
+                    default: admin
+        backend:
+            label: Backend
+            priority: 50
+            scope: [merchant]
+            children:
+                sso:
+                    label: Allowed SSO
+                    type: select
+                    priority: 10
+                    required: required
+                    default: 0
+                    options:
+                        1: Yes
+                        0: No
+                allowed_sso_url:
+                    label: Allowed SSO Url
+                    type: text
+                    priority: 20
+                    attrs:
+                        data-base: '#backend-sso'
+                    comment: Separated by semicolon(;)
+                sso_key:
+                    label: SSO Key
+                    type: text
+                    priority: 30
+                    required: required
+                    attrs:
+                        data-base: '#backend-sso'
+                    comment: We use the key to encrypt/decrypt sso result.
+theme:
+    label: Theme Configuration
+    children:
+        global:
+            label: Global
+            scope: merchant
+            priority: 0
+            children:
+                notice:
+                    type: text
+                    label: Global Notice
+                    priority: 0
+                    scope: merchant
+                layout:
+                    type: text
+                    required: required
+                    label: Layout
+                    priority: 0
+                    scope: merchant
+                    default: default
+                mobile_layout:
+                    type: text
+                    required: required
+                    label: Layout for Mobile Terminal
+                    priority: 1
+                    scope: merchant
+                    default: default
+                default_title:
+                    type: text
+                    label: Default Title
+                    priority: 10
+                    scope: merchant
+                    default: Default Title
+                default_keywords:
+                    type: text
+                    label: Default Keywords
+                    priority: 11
+                    scope: merchant
+                    default: Default Keywords
+                default_description:
+                    type: text
+                    label: Default Description
+                    priority: 12
+                    scope: merchant
+                    default: Default Description
+                robots:
+                    type: select
+                    label: Robots
+                    priority: 13
+                    scope: merchant
+                    default: NOINDEX,NOFOLLOW,NOARCHIVE
+                    options:
+                        INDEX,FOLLOW,ARCHIVE: INDEX,FOLLOW,ARCHIVE
+                        NOINDEX,FOLLOW,ARCHIVE: NOINDEX,FOLLOW,ARCHIVE
+                        INDEX,NOFOLLOW,ARCHIVE: INDEX,NOFOLLOW,ARCHIVE
+                        INDEX,FOLLOW,NOARCHIVE: INDEX,FOLLOW,NOARCHIVE
+                        NOINDEX,NOFOLLOW,ARCHIVE: NOINDEX,NOFOLLOW,ARCHIVE
+                        NOINDEX,FOLLOW,NOARCHIVE: NOINDEX,FOLLOW,NOARCHIVE
+                        NOINDEX,NOFOLLOW,NOARCHIVE: NOINDEX,NOFOLLOW,NOARCHIVE
+        frontend:
+            label: Frontend
+            scope: [merchant,store]
+            priority: 10
+            children:
+                welcome:
+                    type: text
+                    label: Welcome Text
+                    priority: 0
+                    scope: [merchant,store]
+                    default: 'Welcome '
+                welcome_loggedin:
+                    type: text
+                    label: Welcome Text (Logged In)
+                    priority: 0
+                    scope: [merchant,store]
+                    comment: 'Use %%s instead of the username'
+                    default: 'Welcome %s'
+                template:
+                    type: text
+                    required: required
+                    label: Template
+                    priority: 0
+                    scope: merchant
+                    default: default
+                mobile_template:
+                    type: text
+                    required: required
+                    label: Template for Mobile Terminal
+                    priority: 1
+                    scope: merchant
+                    default: default
+                static:
+                    type: text
+                    required: required
+                    label: Static Files
+                    priority: 10
+                    scope: merchant
+                    default: default
+                mobile_static:
+                    type: text
+                    required: required
+                    label: Static Files for Mobile Terminal
+                    priority: 11
+                    scope: merchant
+                    default: default
+        backend:
+            label: Backend
+            scope: merchant
+            priority: 20
+            children:
+                template:
+                    type: text
+                    required: required
+                    label: Template
+                    priority: 0
+                    scope: merchant
+                    default: default
+                static:
+                    type: text
+                    required: required
+                    label: Static Files
+                    priority: 10
+                    scope: merchant
+                    default: default

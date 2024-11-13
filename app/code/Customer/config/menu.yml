@@ -1,0 +1,58 @@
+---
+customer:
+    icon: users
+    title: Customer Management
+    priority: 20
+    children:
+        -
+            link: customer_manage/
+            operation: 'Admin\Customer\Manage::index'
+            title: Customer Management
+            priority: 0
+        -
+            link: customer_notifications/
+            operation: 'Admin\Customer\Notifications::index'
+            title: Notifications Management
+            priority: 10
+        -
+            link: customer_attribute/
+            operation: 'Admin\Customer\Attribute::index'
+            title: Attribute Management
+            priority: 20
+        -
+            link: customer_attribute_set/
+            operation: 'Admin\Customer\Attribute\Set::index'
+            title: Attribute Set Management
+            priority: 30
+        -
+            link: customer_group/
+            operation: 'Admin\Customer\Group::index'
+            title: Customer Group
+            priority: 40
+        -
+            link: customer_level/
+            operation: 'Admin\Customer\Level::index'
+            title: Customer Level
+            priority: 50
+        -
+            link: customer_address/
+            operation: 'Admin\Customer\Address::index'
+            title: Address Book
+            priority: 60
+        -
+            link: customer_attribute_address/
+            operation: 'Admin\Customer\Attribute\Address::index'
+            title: Address Attribute Management
+            priority: 70
+        -
+            link: customer_media/
+            operation: 'Admin\Customer\Media::index'
+            title: Social Media Management
+            priority: 80
+system:
+    children:
+        -
+            link: config/customer/
+            operation: 'Admin\Config::customer'
+            title: Customer Configuration
+            priority: 50

@@ -1,0 +1,56 @@
+<div class="container">
+    <div class="footer-top">
+        <nav class="container footer-links">
+            <div class="col-md-3 col-6 p-2">
+                <div class="title"><?php echo $this->translate('Category') ?></div>
+                <ul class="list-inline" role="menu">
+                    <?php echo $this->getChild('category'); ?>
+                </ul>
+            </div>
+            <div class="col-md-3 d-none d-md-block p-2">
+                <div class="title"><?php echo $this->translate('Stores') ?></div>
+                <ul class="list-inline">
+                    <?php echo $this->getChild('store'); ?>
+                </ul>
+            </div>
+            <div class="col-md-3 col-6 p-2">
+                <div class="title"><?php echo $this->translate('Wechat Mini-program') ?></div>
+                <ul class="list-inline">
+                    <li class="mt-2"><img class="w-50" src="<?php echo $this->getPubUrl('frontend/images/mini-program.jpg') ?>" /></li>
+                </ul>
+            </div>
+            <div class="col-md-3 d-none d-md-block p-2">
+                <div class="title"><?php echo $this->translate('Help Center') ?></div>
+                <ul class="list-inline">
+                    <?php
+                    $footerPages = $this->getPageByCategoryId(4);
+                    if (count($footerPages['pages']) > 0) {
+                        ?>
+                        <?php foreach ($footerPages['pages'] as $page): ?>
+                            <li class="p-1 border-bottom-1">
+                                <a href="<?php echo $this->getBaseUrl($page->getUrl($footerPages) . '.html') ?>"><?php echo $page['title'] ?></a>
+                            </li>
+                        <?php endforeach ?>
+                        <?php
+                    }
+                    ?>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="pb-5 pb-md-2 mb-4 mb-md-0">
+        <div class="footer-bottom ">
+            <div class="copyright col-lg-5 col-md-5">© Copyright 2019~2024 RedSeaNet. 粤ICP备2021010782号</div>
+            <div class="contact col-lg-3 col-md-3 d-none d-md-block">+86-15361887590 广东深圳</div>
+            <div class="paymenymethod col-lg-4 col-md-4 d-none d-md-block">payments </div>
+        </div>
+    </div>
+</div>
+<nav class="mobile-footer-bar d-block d-md-none">
+    <ul class="nav col-12" role="menu">
+        <li class="col-3" role="presentation"><a href="<?php echo $this->getBaseUrl() ?>" role="menuitem"><span class="fa fa-home">&nbsp;</span><span class="pe-1 font-12"><?php echo $this->translate('Home') ?></span></a></li>
+        <li class="col-3" role="presentation"><a href="<?php echo $this->getBaseUrl() ?>checkout/cart/" role="menuitem"><span class="fa fa-shopping-cart">&nbsp;</span><span class="pe-1 font-12"><?php echo $this->translate('Shopping') ?></span></a></li>
+        <li class="col-3" role="presentation"><a href="<?php echo $this->getBaseUrl() ?>forum/category/" role="menuitem"><span class="fa fa-comment">&nbsp;</span><span class="pe-1 font-12"><?php echo $this->translate('Explore') ?></span></a></li>
+        <li class="col-3" role="presentation"><a href="<?php echo $this->getBaseUrl() ?>customer/account/" role="menuitem"><span class="fa fa-user-circle">&nbsp;</span><span class="pe-1 font-12"><?php echo $this->translate('Me') ?></span></a></li>
+    </ul>
+</nav>

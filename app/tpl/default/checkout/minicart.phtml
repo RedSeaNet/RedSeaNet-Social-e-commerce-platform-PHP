@@ -1,0 +1,97 @@
+<?php
+$csrf = $this->getCsrfKey();
+$items = $this->getItems();
+$quality = 0;
+if ($items) {
+    foreach ($items as $key => $item) {
+        $quality = $quality + (float) $item['qty'];
+    }
+}
+?>
+<div class="minicart dropdown">
+    <a href="<?php echo $this->getBaseUrl('checkout/cart/') ?>" class="dropdown-toggle" rel="nofollow">
+        <span class="fa fa-shopping-cart" aria-hidden="true"></span>
+        <span class="badge badge-danger badge-pill"><?php echo $quality; ?></span>
+        <span><?php echo $this->translate('Shopping Cart', [], 'checkout') ?></span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-right">
+        <ul class="items"><?php
+            if ($items):
+                ?>
+                <li class="title"><?php echo $this->translate('Recently Added Products') ?></li>
+                <?php
+                foreach ($items as $key => $item):
+                    $options = json_decode($item['options'], true);
+                    $thumbnail = $item['product']->getThumbnail($options);
+                    ?>
+                    <li data-id="<?php echo $item['id'] ?>" class="clearfix">
+                        <a href="<?php echo $item['product']->getUrl() ?>" class="product-image col-2">
+                            <img src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" alt="<?php echo $item['product']['name'] ?>" class="img-fluid" width="45px" height="45px" />
+                        </a>
+                        <h6 class="product-name col-7">
+                            <a href="<?php echo $item['product']->getUrl() ?>" title="<?php echo $item['product']['name'] ?>"><?php echo $item['product']['name'] ?></a>
+                            <?php
+                            if ($item['product_id'] && count($options)):
+                                ?>
+                                <dl class="options">
+                                    <?php
+                                    foreach ($item['product']->getOptions() as $option):
+                                        if (isset($options[$option->getId()])):
+                                            ?>
+                                            <dt><?php echo $option['title'] ?></dt>
+                                            <dd>
+                                                <?php
+                                                echo (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                                        $option->getValue($options[$option->getId()]) : $options[$option->getId()])
+                                                ?>
+                                            </dd>
+                                            <?php
+                                        endif;
+                                    endforeach;
+                                    ?>
+                                </dl>
+                            <?php endif; ?>
+                        </h6>
+                        <div class="col-3 action">
+                            <div class="price"><?php echo $this->getCurrency()->format($item['price']), 'x', (float) $item['qty'] ?></div>
+                            <a href="<?php echo $this->getBaseUrl('checkout/cart/remove/') ?>" rel="nofollow" data-method="delete" data-params="item=<?php echo $item['id'] ?>&csrf=<?php echo $csrf ?>" title="<?php echo $this->translate('Delete') ?>">
+                                <span><?php echo $this->translate('Delete') ?></span>
+                            </a>
+                        </div>
+                    </li>
+                    <?php
+                endforeach;
+            endif;
+            ?></ul>
+        <div class="total clearfix">
+            <div class="col-8">
+                <?php echo $this->getChild('total') ?>
+            </div>
+            <div class="col-4">
+                <a href="<?php echo $this->getBaseUrl('checkout/cart/') ?>" rel="nofollow" class="btn btn-checkout">
+                    <span><?php echo $this->translate('View Cart') ?></span>
+                </a>
+            </div>
+        </div>
+        <div class="empty">
+            <div class="fa fa-shopping-basket col-4" aria-hidden="true"></div>
+            <div class="col-7"><?php echo $this->translate('You have no items in your shopping cart.') ?></div>
+        </div>
+    </div>
+    <template id="tmpl-minicart">
+        <li data-id="{$id}" class="clearfix">
+            <a href="{$url}" class="product-image col-2">
+                <img src="{$thumbnail}" alt="{$name}" />
+            </a>
+            <h3 class="product-name col-7">
+                <a href="{$url}">{$name}</a>
+            </h3>
+            <div class="col-3 action">
+                <div class="price">{$price}x{$qty}</div>
+                <a href="<?php echo $this->getBaseUrl('checkout/cart/remove/') ?>" data-method="delete" data-params="item={$id}&csrf=<?php echo $csrf ?>" title="<?php echo $this->translate('Delete') ?>">
+                    <span><?php echo $this->translate('Delete') ?></span>
+                </a>
+            </div>
+        </li>
+    </template>
+</div>

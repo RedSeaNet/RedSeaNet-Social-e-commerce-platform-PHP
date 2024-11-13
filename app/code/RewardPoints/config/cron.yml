@@ -1,0 +1,10 @@
+---
+-
+    time: '0 0 * * *'
+    code: 'Redseanet\RewardPoints\Listeners\Cron::schedule'
+-
+    time: '0 0 * * *'
+    code: 'Redseanet\RewardPoints\Listeners\Cron::expiration'
+-
+    time: '0 0 * * *'
+    code: 'Redseanet\RewardPoints\Listeners\Cron::activation'

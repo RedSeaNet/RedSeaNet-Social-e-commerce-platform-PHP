@@ -1,0 +1,13 @@
+---
+rpcport:
+    sendSmsCodeForCusotmer:
+        params: 
+            id: string
+            token: string
+            to: string
+            template: string
+            code: string
+        respone: json array string
+        documentation: send sms message by code
+rpc:
+    sendSmsCodeForCusotmer: \Redseanet\Message\Model\Api\Rpc\Message

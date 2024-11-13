@@ -1,0 +1,227 @@
+<?php
+$item = $this->getVariable('bulk_item');
+$bulk = $this->getVariable('bulk');
+$currency = $this->getContainer()->get('currency');
+$expiration = [];
+$defaultExpiration = (int) $this->getConfig()['catalog/bulk_sale/default_expiration'];
+$options = is_scalar($item['options']) ? json_decode($item['options'], true) : $item['options'];
+$thumbnail = $item['product']->getThumbnail($options);
+$bulk_price = is_scalar($item['product']['bulk_price']) ? json_decode($item['product']['bulk_price'], true) : $item['product']['bulk_price'];
+$expiration[] = $item['product']['bulk_expiration'] ?? $defaultExpiration;
+krsort($bulk_price);
+$json = [];
+foreach ($bulk_price as $k => $p) {
+    $json['p' . $k] = $currency->convert($p, false);
+}
+$items = [];
+$item["base_total"] = $item['price'] * $item['qty'];
+if (!isset($item["free_shipping"])) {
+    $item["free_shipping"] = $item['is_virtual'];
+}
+$items[] = $item;
+$optionsData=[];
+$options_name=[];
+if(is_array($options)&&count($options)>0){
+    foreach($options as $key=>$value){
+        $tmpOption=$item['product']->getOption($key);
+        $tmpOptionName=$tmpOption["title"];
+        $tmpValueName="";
+        foreach($tmpOption["value"] as $k=>$v){
+            if($v["id"]==$value){
+                $tmpValueName=$v["title"];
+            }
+        }
+        $optionsData[$tmpOptionName]=$tmpValueName;
+        $options_name[]=$tmpOptionName.':'.$tmpValueName;
+    }
+}
+?>
+<div class="container">
+    <div class="checkout-steps">
+        <form action="<?php echo $this->getBaseUrl('bulk/process/applyPost/') ?>" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+            <input type='hidden' name='options' value='<?php echo json_encode($options) ?>' />
+            <input type='hidden' name='options_name' value='<?php echo implode(',', $options_name) ?>' />
+            <input type='hidden' name='options_image' value='<?php echo $thumbnail ?>' />
+            <input type="hidden" name="product_id" value="<?php echo $item['product_id'] ?>" />
+            <input type="hidden" name="store_id" value="<?php echo $item['store_id'] ?>" />
+            <input type="hidden" name="qty" value="<?php echo $item['qty'] ?>" />
+
+            <input type="hidden" name="is_virtual" value="<?php echo $item['is_virtual'] ?>" />
+            <input type="hidden" name="sku" value="<?php echo $item['sku'] ?>" />
+            <input type="hidden" name="warehouse_id" value="<?php echo $item['warehouse_id'] ?>" />
+            <input type="hidden" name="base_price" value="<?php echo $item['base_price'] ?>" />
+            <input type="hidden" name="qty" value="<?php echo $item['qty'] ?>" />
+            <input type="hidden" name="price" value="<?php echo $item['price'] ?>" />
+            <input type="hidden" name="items" value='<?php echo json_encode($items) ?>' />
+            <input type="hidden" name="bulk_id" value="<?php echo ($bulk ? $bulk->getId() : '') ?>" />
+            <div class="fieldset bulk-sale-detail">
+                <div class="bulk-box input-box">
+                    <label  class="col-form-label required"><?php echo $this->translate('Size of the bulk. Cannot be changed after submited.') ?></label>
+                    <div class="cell clearfix">
+                        <?php 
+                        if($bulk&&$bulk["size"]!=''){
+                        foreach ($bulk_price as $qty => $price){
+                        ?>
+                        
+                        <div class="spellgroup">
+                            <?php if($qty==$bulk["size"]){ ?>
+                                <div class="Spellgroup-radio">
+                                    <input checked="checked" type="radio" name="size" class="required" value="<?php echo $qty ?>"
+                                           id="size-<?php echo $qty ?>" data-msg-required="<?php echo $this->translate('Size of the bulk. Cannot be changed after submited.') ?>" />
+                                </div>
+                                <label class="Spellgroup-box"  for="size-<?php echo $qty ?>">
+                                    <?php echo $this->translate('Price per pcs for %d people bulk', [$qty]) ?>:
+                                    <div>
+                                        <span class="Spellgroup-price">
+                                            <?php echo $currency->convert($price, true) ?>
+                                        </span>
+                                    </div>
+                                </label>
+                            <?php } ?>
+                            </div>
+                        
+                        <?php 
+                        }
+                        }else{
+                        foreach ($bulk_price as $qty => $price): ?>
+                            <div class="spellgroup">
+                                <div class="Spellgroup-radio">
+                                    <input type="radio" name="size" class="required" value="<?php echo $qty ?>"
+                                           id="size-<?php echo $qty ?>" data-msg-required="<?php echo $this->translate('Size of the bulk. Cannot be changed after submited.') ?>" />
+                                </div>
+                                <label class="Spellgroup-box"  for="size-<?php echo $qty ?>">
+                                    <?php echo $this->translate('Price per pcs for %d people bulk', [$qty]) ?>:
+                                    <div>
+                                        <span class="Spellgroup-price">
+                                            <?php echo $currency->convert($price, true) ?>
+                                        </span>
+                                    </div>
+                                </label>
+                            </div>
+                        <?php 
+                        endforeach;
+                        }
+                        ?>
+                        
+                    </div>
+                </div>
+                <div class="input-box">
+                    <label for="description" class="col-form-label"><?php echo $this->translate('Say Something') ?></label>
+                    <div class="cell">
+                        <textarea name="description" id="description" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="input-box">
+                    <label for="image" class="col-form-label"><?php echo $this->translate('Image') ?></label>
+                    <div class="cell">
+                        <script>
+                            function loadImage(files, fg, i) {
+                                i = i || 0;
+                                if (typeof files[i] === 'undefined') {
+                                    $('#images').html(fg);
+                                    return;
+                                }
+                                var r = new FileReader();
+                                r.readAsDataURL(files[i]);
+                                r.onload = function () {
+                                    var o = document.createElement('img');
+                                    o.src = this.result;
+                                    var s = document.createElement('span');
+                                    $(s).append(o);
+                                    $(fg).append(s);
+                                    loadImage(files, fg, i + 1);
+                                };
+                            }
+                        </script>
+                        <input type="file" name="image[]" id="image" hidden="hidden" accept="image/jpeg,image/gif,image/png" onchange="javascript:var fg = document.createDocumentFragment();
+                                loadImage(this.files, fg);" />
+                        <span id="images"></span>
+                        <label for="image"><span class="fa fa-plus-square-o"></span></label>
+                    </div>
+                </div>
+                <div class="table-responsive" id="preview">
+                    <table class="table">
+                        <colgroup>
+                            <col width="1" />
+                            <col />
+                            <col width="1" />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a href="<?php echo $item['product']->getUrl() ?>">
+                                        <img src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" alt="<?php echo $item['product']['name'] ?>" width="100" />
+                                    </a>
+                                </td>
+                                <td>
+                                    <h5 class="product-name"><?php echo $item['product']['name'] ?></h5>
+                                    <p class="sku"><?php echo $item['product']['sku'] ?></p>
+                                    <p class="sku"><?php 
+                                    if(is_array($optionsData)&& count($optionsData)){
+                                        foreach($optionsData as $optionO=>$optionV){
+                                            echo $optionO.':'.$optionV.'&nbsp;&nbsp;';
+                                        }
+                                    }
+                                    ?></p>
+                                </td>
+                                <td>
+                                    <div class="price-box">
+                                        <span class="old-price">
+                                            <span class="badge text-bg-danger"><?php echo $this->translate('Old Price') ?></span>
+                                            <span class="price"><?php echo $currency->convert($item['base_price'], true) ?></span>
+                                        </span>
+                                        <span class="special-price">
+                                            <span class="badge text-bg-danger"><?php echo $this->translate('Special Price') ?></span>
+                                            <span class="price" id="previewPrice" data-default="<?php echo $currency->convert($item['base_price'], false) ?>" data-price='<?php echo json_encode($json) ?>'><?php echo $currency->convert($item['base_price'], true) ?></span>
+                                            <span>X<?php echo $item["qty"] ?></span>
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="rules">
+                    <label for="rules"> 
+                        <a class="font-blue" href="<?php echo $this->getBaseUrl('help/customer/mjbz0210.html') ?>"><?php echo $this->translate('Click here to view') ?></a>
+                        <?php echo $this->translate('the rules and instructions of group shopping') ?>
+                    </label> 
+                </p>
+
+                <div class="row">
+                    <?php echo $this->getChild('address')->setVariable('isVirtual', $item['is_virtual']) ?>
+                </div>
+                <div class="row">
+                    <?php echo $this->getChild('payment')->setVariable('address', null)->setVariable('items', $items) ?>
+                </div>
+                <div class="row">
+                    <?php echo $this->getChild('expiration')->setDate(date('Y-m-d', strtotime('+' . min($expiration) . ' days'))) ?>
+                </div>
+                <div class="row">
+                    <table style="width: 100%">
+                        <tr>
+                            <td class="text-end"><div id="shippingmethoddiv"><?php echo $this->getChild('shipping')->setVariable('store_id', $item['store_id'])->setVariable('isVirtual', $item['is_virtual'])->setVariable('address', null)->setVariable('items', $items); ?></div></td>
+                        </tr>
+                        <tr>
+                            <td class="text-end"><?php echo $this->translate('%d item(s)', [$item["qty"]]) ?>  <span class="subtotal"><?php echo $this->translate('Subtotal') ?>:<?php echo $this->getCurrency()->format(0) ?></span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-end"><?php echo $this->translate('Shipping') ?>  <?php echo $currency["symbol"]; ?><span class="shipping_fee">0</span></td>
+                        </tr>
+                        <tr class="grand-total">
+                            <td class="text-end">
+                                <?php echo $this->translate('Grand Total', [], 'checkout') ?>  
+                                <span class="total"><?php echo $this->getCurrency()->format(round($item["price"] * $item["qty"], 2)) ?></span>
+                                <input type="hidden" name="total" value="<?php echo $this->getCurrency()->format(round($item["price"] * $item["qty"], 2)) ?>" />
+                            </td>
+                        </tr>
+                    </table> 
+                </div>
+                <div class="buttons-set text-end">
+                    <button type="submit" class="btn btn-checkout"><?php echo $this->translate('Checkout') ?></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

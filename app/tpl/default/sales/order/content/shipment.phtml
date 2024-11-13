@@ -1,0 +1,97 @@
+<?php
+$order = $this->getVariable('order');
+$currency = $order->getCurrency();
+$shipment = $this->getVariable('model');
+?>
+<div class="clearfix">
+    <div class="card panel-default">
+        <div class="card-header">
+            <h4 class="card-title"><?php echo $this->translate('Shipment Infomation', [], 'sales') ?></h4>
+        </div>
+        <div class="card-body">
+            <?php echo $this->translate('ID'), ': ', $shipment['increment_id'] ?><br />
+            <?php echo $this->translate('Order ID'), ': ', $order['increment_id'] ?><br />
+            <?php
+            if ($store = $order->getStore()) {
+                echo $this->translate('Store'), ': ', $store->offsetGet('name');
+            }
+            ?><br />
+            <?php
+            if ($language = $order->getLanguage()) {
+                echo $this->translate('Language'), ': ', $language->offsetGet('name');
+            }
+            ?>
+        </div>
+    </div>
+    <div class="card panel-default">
+        <div class="card-header clearfix">
+            <h4 class="card-title float-start"><?php echo $this->translate('Shipping Address', [], 'sales') ?></h4>
+        </div>
+        <div class="card-body">
+            <?php echo ($order->offsetGet('shipping_address')?nl2br($order->offsetGet('shipping_address')):"") ?>
+        </div>
+    </div>
+    <div class="card panel-default">
+        <div class="card-header">
+            <h4 class="card-title"><?php echo $this->translate('Shipping Method', [], 'sales') ?></h4>
+        </div>
+        <div class="card-body">
+            <?php echo $this->translate($order->getShippingMethod()->getLabel()) ?>
+            <?php foreach ($track = $shipment->getShippingMethod() as $item): ?>
+                <ul>
+                    <li><?php echo $this->translate('Carrier'); ?>:<?php echo $this->translate($item['carrier']); ?></li>
+                    <li><?php echo $this->translate('Shipment ID'); ?>:<?php echo $this->translate($item['tracking_number']); ?></li>
+                </ul>
+                <?php
+            endforeach;
+            ?>
+        </div>
+    </div>
+    <div class="card panel-default">
+        <div class="card-header">
+            <h4 class="card-title"><?php echo $this->translate('Comment', [], 'sales') ?></h4>
+        </div>
+        <div class="card-body">
+            <?php echo $shipment['comment'] ?>
+        </div>
+    </div>
+    <div class="card panel-default wide">
+        <div class="card-header">
+            <h4 class="card-title"><?php echo $this->translate('Product(s)') ?></h4>
+        </div>
+        <div class="card-body grid table-responsive">
+            <table class="table table-hover table-striped table-no-border">
+                <thead class="text-nowrap">
+                    <tr>
+                        <th><?php echo $this->translate('Product Name', [], 'sales') ?></th>
+                        <th class="text-center"><?php echo $this->translate('SKU', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('Options', [], 'sales') ?></th>
+                        <th class="text-center"><?php echo $this->translate('Qty', [], 'sales') ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($shipment->getItems() as $item): ?>
+                        <tr<?php if (isset($item['id'])): ?> data-id="<?php echo $item['id'] ?>"<?php endif ?>>
+                            <td><?php echo $item['product_name'] ?></td>
+                            <td class="text-center"><?php echo $item['sku'] ?></td> 
+                            <td>
+                                <?php
+                                $options = json_decode($item['options'], true);
+                                if ($item['product_id'] && count($options)) {
+                                    foreach ($item['product']->getOptions() as $option) {
+                                        if (isset($options[$option->getId()])) {
+                                            echo $option['title'], ': ', (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                                    $option->getValue($options[$option->getId()]) : $options[$option->getId()]), '<br />';
+                                        }
+                                    }
+                                }
+                                ?>
+                            </td>
+                            <td class="text-center"><?php echo (float) $item['qty'] ?></td>
+                        </tr>
+                    <?php endforeach ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

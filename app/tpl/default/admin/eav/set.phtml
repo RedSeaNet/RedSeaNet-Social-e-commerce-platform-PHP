@@ -1,0 +1,95 @@
+<?php
+$attributes = $this->getAttributes();
+$idTmp = $this->getQuery('id');
+$id = intval($idTmp);
+$customAttributes = $this->getCustomAttributes();
+$ids = [];
+$customIds = [];
+?>
+<div id="applying-attribute" class="clearfix">
+    <div id="attribute-groups">
+        <button type="button" class="btn" data-toggle="modal" data-target="#new-group"><span class="fa fa-fw fa-plus" aria-hidden="true"></span><span><?php echo $this->translate('Add New Attribute Group') ?></span></button>
+        <?php foreach ($this->getGroups() as $group): ?>
+            <div class="group" data-id="<?php echo $group['id'] ?>">
+                <h4 class="title"><?php echo $this->translate($group['name'], [], 'eav') ?></h4>
+                <a href="<?php echo $this->getDeleteUrl() ?>" data-method="delete" data-params="id=<?php echo $group['id'] ?>&csrf=<?php echo $this->getCsrfKey() ?>" class="remove"><span class="fa fa-remove" aria-hidden></span><span class="sr-only"><?php echo $this->translate('Delete') ?></span></a>
+                <div class="content">
+                    <?php
+                    if (!empty($attributes[$group['id']])):
+                        foreach ($attributes[$group['id']] as $attribute):
+                            $ids[] = $attribute['id'];
+                            ?>
+                            <div class="item clearfix">
+                                <input type="hidden" name="attributes[<?php echo $group['id'] ?>][]" value="<?php echo $attribute['id'] ?>" />
+                                <h5 class="attribute"><?php echo $attribute['label'] ?></h5>
+                                <a href="javascript:void(0);" class="remove"><span class="fa fa-remove" aria-hidden></span><span class="sr-only"><?php echo $this->translate('Delete') ?></span></a>
+                            </div>
+                            <?php
+                        endforeach;
+                    endif;
+                    ?>
+                </div>
+            </div>
+        <?php endforeach ?>
+    </div>
+    <div id="unapplied-attribute">
+        <h3 class="title"><?php echo $this->translate('Unapplied Attribute') ?></h3>
+        <?php
+        if (!empty($attributes[0])):
+            foreach ($attributes[0] as $attribute):
+                if (!in_array($attribute['id'], $ids)):
+                    ?>
+                    <div class="item clearfix">
+                        <input type="hidden" name="attributes[]" disabled="disabled" value="<?php echo $attribute['id'] ?>" />
+                        <h5 class="attribute"><?php echo $attribute['label'] ?></h5>
+                        <a href="javascript:void(0);" class="remove"><span class="fa fa-remove" aria-hidden></span><span class="sr-only"><?php echo $this->translate('Delete') ?></span></a>
+                    </div>
+                    <?php
+                endif;
+            endforeach;
+        endif;
+        ?>
+    </div>
+</div>
+
+<div id="custom-applying-attribute" class="clearfix">
+    <h3 class="title"><?php echo $this->translate('Custom Options') ?></h3>
+    <div id="custom-attribute">
+        <div class="content">
+            <?php
+            if (is_array($customAttributes) && count($customAttributes) > 0):
+                foreach ($customAttributes as $attribute):
+                    if (!empty($attribute['attribute_set_id']) && $id == $attribute['attribute_set_id']) {
+                        $customIds[] = $attribute['id'];
+                        ?>
+                        <div class="item clearfix">
+                            <input type="hidden" name="customattributes[]" value="<?php echo $attribute['id'] ?>" />
+                            <h5 class="attribute"><?php echo $attribute['label'] ?></h5>
+                            <a href="javascript:void(0);" class="remove"><span class="fa fa-remove" aria-hidden></span><span class="sr-only"><?php echo $this->translate('Delete') ?></span></a>
+                        </div>
+                        <?php
+                    }
+                endforeach;
+            endif;
+            ?>
+        </div>
+    </div>
+    <div id="custom-unapplied-attribute">
+        <h3 class="title"><?php echo $this->translate('Unapplied Attribute') ?></h3>
+        <?php
+        if (is_array($customAttributes) && count($customAttributes) > 0):
+            foreach ($customAttributes as $attribute):
+                if (!in_array($attribute['id'], $customIds)):
+                    ?>
+                    <div class="item clearfix">
+                        <input type="hidden" name="customattributes[]" disabled="disabled" value="<?php echo $attribute['id'] ?>" />
+                        <h5 class="attribute"><?php echo $attribute['label'] ?></h5>
+                        <a href="javascript:void(0);" class="remove"><span class="fa fa-remove" aria-hidden></span><span class="sr-only"><?php echo $this->translate('Delete') ?></span></a>
+                    </div>
+                    <?php
+                endif;
+            endforeach;
+        endif;
+        ?>
+    </div>
+</div>

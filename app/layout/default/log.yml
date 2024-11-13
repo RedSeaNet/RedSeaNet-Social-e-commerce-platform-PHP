@@ -1,0 +1,59 @@
+---
+admin_customer_edit:
+    root:
+        children:
+            content:
+                children:
+                    edit:
+                        children:
+                            tabs:
+                                action:
+                                    -
+                                        method: addTab
+                                        params:
+                                            - log
+                                            - Log
+                                            - 80
+                                children:
+                                    log:
+                                        type: Redseanet\Admin\ViewModel\Log\Customer
+                                        template: admin/grid-simple
+                                        children:
+                                            pager:
+                                                type: Redseanet\Lib\ViewModel\Pager
+admin_log_customer_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer Login Log
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/log_customer/',label: 'Customer Login Log'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\Log\Grid\Customer
+admin_log_visitor_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Visitor Log
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/log_visitor/',label: 'Visitor Log'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\Log\Grid\Visitor

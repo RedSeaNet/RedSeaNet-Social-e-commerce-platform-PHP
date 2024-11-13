@@ -1,0 +1,79 @@
+<div class="grid">
+    <table class="table table-no-border">
+        <thead class="sort-by">
+            <tr>
+                <th><?php echo $this->translate('Merchant') ?></th>
+                <th><?php echo $this->translate('Store') ?></th>
+                <th><?php echo $this->translate('Language') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $merchant = [];
+            $stores = [];
+            $languages = [];
+            foreach ($this->getVariable('collection') as $item) {
+                $merchant[$item['merchant_id']] = $item['merchant'];
+                if (!isset($stores[$item['merchant_id']])) {
+                    $stores[$item['merchant_id']] = [];
+                }
+                if (!isset($languages[$item['merchant_id']])) {
+                    $languages[$item['merchant_id']] = [];
+                }
+                $stores[$item['merchant_id']][$item['store_id']] = $item['store'];
+                $languages[$item['merchant_id']][$item['language_id']] = $item['language'];
+            }
+            ?>
+            <?php
+            foreach ($merchant as $id => $name):
+                $max = max(count($stores[$id]), count($languages[$id]));
+                $diff = abs(count($stores[$id]) - count($languages[$id]));
+                ?>
+                <tr>
+                    <td class="text-vmiddle" rowspan="<?php echo $max ?>">
+                        <a href="<?php echo $this->getAdminUrl('i18n_merchant/edit/?id=' . $id) ?>">
+                            <?php echo $this->translate($name, [], 'language') ?>
+                        </a>
+                    </td>
+                    <?php
+                    while (1):
+                        $storeId = key($stores[$id]);
+                        $store = current($stores[$id]);
+                        $languageId = key($languages[$id]);
+                        $language = current($languages[$id]);
+                        if ($store):
+                            ?>
+                            <td>
+                                <a href="<?php echo $this->getAdminUrl('i18n_store/edit/?id=' . $storeId) ?>">
+                                    <?php echo $this->translate($store, [], 'language') ?>
+                                </a>
+                            </td>
+                        <?php else: ?>
+                            <td></td>
+                        <?php
+                        endif;
+                        if ($language):
+                            ?>
+                            <td>
+                                <a href="<?php echo $this->getAdminUrl('i18n_language/edit/?id=' . $languageId) ?>">
+                                    <?php echo $this->translate($language, [], 'language') ?>
+                                </a>
+                            </td>
+                        <?php else: ?>
+                            <td></td>
+                        <?php endif ?>
+                    </tr>
+                    <tr>
+                        <?php
+                        $flag = next($stores[$id]) === false;
+                        $flag = next($languages[$id]) === false && $flag;
+                        if ($flag)
+                            break;
+                        ?>
+                    <?php endwhile ?>
+                    <td colspan="3"></td>
+                </tr>
+            <?php endforeach ?>
+        </tbody>
+    </table>
+</div>

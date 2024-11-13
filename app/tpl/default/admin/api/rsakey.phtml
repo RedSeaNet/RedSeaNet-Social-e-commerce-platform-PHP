@@ -1,0 +1,19 @@
+<?php
+$elements = $this->getVariable('elements');
+    ?>
+    <div class="product-edit">
+        <form action="<?php echo $this->getAdminUrl('api_rsakey/') ?>" method="get">
+            <div class="page-content table tab-pane fade active in" id="main-tab">
+                <?php
+                foreach ($elements as $key => $item) {
+                    echo $this->getInputBox($key, $item);
+                }
+                ?>
+            </div>
+            <div class="buttons-set">
+                <br /><br />
+                <button type="reset" class="btn btn-reset"><span><?php echo $this->translate('Reset') ?></span></button>
+                <button type="submit" value="<?php echo $this->getAdminUrl('api_rsakey/') ?>" class="btn btn-submit"><span>Action</span></button>
+            </div>
+        </form>
+    </div>

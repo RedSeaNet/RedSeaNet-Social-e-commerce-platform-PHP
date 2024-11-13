@@ -1,0 +1,22 @@
+<?php
+$item = $this->getVariable('item');
+?>
+<div class="cell" data-color="<?php echo $item['color'] ?>" data-title="<?php echo $this->translate($item['title']) ?>" data-url="<?php echo $this->getAdminUrl($item['data']) ?>">
+    <h4 class="title">
+        <span class="label"><?php echo $this->translate($item['title']) ?>: </span>
+        <span class="data amount">-</span></h4>
+    <ul class="detail">
+        <li>
+            <span class="label"><?php echo $this->translate('Last 24 Hours') ?>: </span>
+            <span class="data daily">-</span>
+        </li>
+        <li>
+            <span class="label"><?php echo $this->translate('Last 30 Days') ?>: </span>
+            <span class="data monthly">-</span>
+        </li>
+        <li>
+            <span class="label"><?php echo $this->translate('Last 12 Months') ?>: </span>
+            <span class="data yearly">-</span>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,67 @@
+---
+global:
+    children:
+        locale:
+            label: Locale
+            priority: 10
+            scope: [merchant,store]
+            children:
+                timezone:
+                    type: select
+                    required: required
+                    label: Timezone
+                    priority: 0
+                    scope: [merchant]
+                    default: Etc/GMT
+                    source: Redseanet\Lib\Source\Timezone
+                country:
+                    type: select
+                    required: required
+                    label: Default Country
+                    priority: 10
+                    default: CN
+                    scope: [merchant]
+                    source: Redseanet\I18n\Source\Country
+                enabled_country:
+                    type: multiselect
+                    label: Enabled Countries
+                    priority: 20
+                    scope: [merchant]
+                    source: Redseanet\I18n\Source\Country
+                    comment: Leave blank if all countries are allowed
+                disabled_country:
+                    type: multiselect
+                    label: Disabled Countries
+                    priority: 21
+                    scope: [merchant]
+                    source: Redseanet\I18n\Source\Country
+                    comment: Leave blank if all countries are allowed
+i18n:
+    label: I18N
+    children:
+        currency:
+            label: Currency
+            scope: merchant
+            children:
+                base:
+                    type: select
+                    label: Base Currency
+                    required: required
+                    priority: 0
+                    source: \Redseanet\I18n\Source\Currency
+                    default: CNY
+                enabled[]:
+                    type: select
+                    label: Enabled Currency
+                    required: required
+                    priority: 10
+                    attrs:
+                        multiple: multiple
+                    source: \Redseanet\I18n\Source\Currency
+                    default: CNY
+                rate:
+                    type: link
+                    label: Currency Rate
+                    link: i18n_currency/
+                    content: View More
+                    priority: 20

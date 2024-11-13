@@ -1,0 +1,150 @@
+---
+email:
+    label: Email Configuration
+    children:
+        transport:
+            label: Transport
+            scope: merchant
+            priority: 0
+            children:
+                enable:
+                    label: Enable
+                    required: required
+                    type: select
+                    priority: 0
+                    default: 0
+                    scope: merchant
+                    options:
+                        - No
+                        - Yes
+                service:
+                    label: Service
+                    required: required
+                    type: select
+                    priority: 1
+                    scope: merchant
+                    options:
+                        SmtpTransport: SMTP
+                        Swift_SendmailTransport: Sendmail
+                    default: SmtpTransport
+                host:
+                    type: text
+                    label: Host
+                    priority: 10
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#transport-service':'SmtpTransport'"
+                port:
+                    type: tel
+                    label: Port
+                    priority: 20
+                    required: required
+                    scope: merchant
+                    default: 25
+                    attrs:
+                        data-base: "'#transport-service':'SmtpTransport'"
+                security:
+                    type: select
+                    label: Encryption
+                    scope: merchant
+                    priority: 30
+                    default: ''
+                    empty_string: ''
+                    options:
+                        tls: TLS
+                        ssl: SSL
+                    attrs:
+                        data-base: "'#transport-service':'SmtpTransport'"
+                auth:
+                    type: select
+                    label: Auth Mode
+                    scope: merchant
+                    required: required
+                    priority: 40
+                    default: LOGIN
+                    options:
+                        PLAIN: PLAIN
+                        LOGIN: LOGIN
+                        CRAM-MD5: CRAM-MD5
+                        XOAUTH2: XOAUTH2
+                        NTLM: NTLM
+                    attrs:
+                        data-base: "'#transport-service':'SmtpTransport'"
+                username:
+                    type: text
+                    label: Username
+                    scope: merchant
+                    required: required
+                    priority: 50
+                password:
+                    type: text
+                    label: Password
+                    scope: merchant
+                    required: required
+                    priority: 60
+                    attrs:
+                        data-base: "'#transport-service':'SmtpTransport'"
+                test:
+                    type: link
+                    label: Transportation Testing
+                    scope: merchant
+                    priority: 900
+                    link: email_queue/test/
+                    content: Test
+                    attrs:
+                        data-method: post
+                        data-serialize: '#tab-transport'
+        default:
+            label: Default
+            scope: merchant
+            priority: 5
+            children:
+                sender_email:
+                    type: email
+                    label: Sender Email
+                    scope: merchant
+                    required: required
+                    priority: 0
+                sender_name:
+                    type: text
+                    label: Sender Name
+                    scope: merchant
+                    required: required
+                    priority: 1
+        admin:
+            label: Backend
+            scope: merchant
+            priority: 6
+            children:
+                sender_email:
+                    type: email
+                    label: Sender Email
+                    scope: merchant
+                    required: required
+                    priority: 0
+                sender_name:
+                    type: text
+                    label: Sender Name
+                    scope: merchant
+                    required: required
+                    priority: 1
+                forgot_template:
+                    type: select
+                    label: Password Forgotten Email Template
+                    scope: merchant
+                    required: required
+                    priority: 5
+                    default: forgot_admin_password
+                    source: Redseanet\Email\Source\Template
+        newsletter:
+            label: Newsletter
+            scope: merchant
+            priority: 10
+            children:
+                sender:
+                    type: email
+                    label: Sender Email
+                    scope: merchant
+                    required: required
+                    priority: 0

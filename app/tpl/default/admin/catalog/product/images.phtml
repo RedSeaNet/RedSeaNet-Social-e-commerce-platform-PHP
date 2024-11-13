@@ -1,0 +1,83 @@
+<?php
+$product = $this->getProduct();
+$images = $product['images'] ?? [];
+$thumbnail = $product['thumbnail'] ?? 0;
+$default = $product['default_image'] ?? 0;
+$video = $product->getVideo();
+?>
+
+<table class="table widget-upload">
+    <thead>
+        <tr>
+            <th><?php echo $this->translate('Image') ?></th>
+            <th><?php echo $this->translate('Label') ?></th>
+            <th><?php echo $this->translate('Image Group') ?></th>
+            <th><?php echo $this->translate('Default Image') ?></th>
+            <th><?php echo $this->translate('Thumbnail') ?></th>
+            <th><?php echo $this->translate('Remove') ?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $image = array_shift($images);
+        do {
+            ?>
+            <tr class="inline-box">
+                <td>
+                    <button type="button" class="btn" data-toggle="modal" data-target="#modal-insert" data-param="file_type=image%25" data-type="file-image" data-type-error="<?php echo $this->translate('Please select an image') ?>!" title="<?php echo $this->translate('Select Resource') ?>">
+                        <img src="<?php echo $image ? $this->getResourceUrl('image/' . $image['real_name']) : $this->getPubUrl('backend/images/placeholder.png') ?>" alt="" />
+                    </button>
+                    <input type="hidden" name="images[]" value="<?php echo $image ? $image['id'] : '' ?>" class="imageid" />
+                    <input type="hidden" name="images-src[]" value="<?php echo $image ? $image['real_name'] : '' ?>"  class="imagesrc"/>
+                </td>
+                <td><input type="text" name="images-label[]" class="form-control" value="<?php echo $image ? $image['label'] : '' ?>" /></td>
+                <td>
+                    <select name="images-group[]" class="form-control imagesgroup" data-default="<?php echo $image ? $image['group'] : '' ?>">
+                        <option value=""><?php echo $this->translate('Please Select') ?></option>
+                        <?php echo ($image ? '<option value="' . $image['group'] . '" selected="selected">' . $image['group'] . '</option>' : '') ?>
+                    </select>
+                </td>
+                <td class="text-center"><input type="radio" name="default_image"<?php if ($image && $image['id'] == $default): ?> checked="checked"<?php endif ?> value="<?php echo $image ? $image['id'] : '' ?>" /></td>
+                <td class="text-center"><input type="radio" name="thumbnail"<?php if ($image && $image['id'] == $thumbnail): ?> checked="checked"<?php endif ?> value="<?php echo $image ? $image['id'] : '' ?>" /></td>
+                <td>
+                    <a href="javascript:void(0);" class="delete">
+                        <span class="fa fa-trash-o" aria-hidden="true"></span>
+                        <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                    </a>
+                </td>
+            </tr>
+        <?php } while ($image = array_shift($images)) ?>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6">
+                <a href="javascript:void(0);" class="add">
+                    <span class="fa fa-plus-square" aria-hidden="true"></span>
+                    <span class="sr-only"><?php echo $this->translate('Add') ?></span>
+                </a>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+<p>&nbsp;</p>
+<table class="table widget-upload">
+    <tr class="videobox">
+        <td>
+            <?php echo $this->translate('Video') ?>（<?php echo $this->translate('Only support mp4') ?>）
+        </td>
+        <td>
+            <button type="button" class="btn" data-toggle="modal" data-target="#modal-insert" data-param="file_type=video%25" data-type="file-video" data-type-error="<?php echo $this->translate('Please select a vodeo') ?>!" title="<?php echo $this->translate('Select Resource') ?>">
+                <span class="fa fa-file-video-o" aria-hidden="true"></span> <span class="filename"><?php echo!empty($video['real_name']) ? $video['real_name'] : $this->translate('Please select a video') ?></span>
+            </button>
+            <input type="hidden" name="video" value="<?php echo!empty($product['video']) ? $product['video'] : '' ?>" class="imageid" />
+            <input type="hidden" name="videosrc" value="<?php echo!empty($video['real_name']) ? $video['real_name'] : '' ?>"  class="imagesrc"/>
+        </td>
+        <td>
+            <a href="javascript:void(0);" class="videodelete" data-placeholder="<?php echo $this->translate('Please select a video'); ?>">
+                <span class="fa fa-trash-o" aria-hidden="true"></span>
+                <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+            </a>
+        </td>
+    </tr>
+</table>

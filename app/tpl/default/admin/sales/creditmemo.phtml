@@ -1,0 +1,126 @@
+<?php
+$memo = $this->getCreditmemo();
+$order = $this->getOrder();
+$currency = $order->getCurrency();
+$paymentLog=$this->getOrderLogPayment();
+?>
+<div class="view clearfix">
+    <div class="buttons-set text-end">
+        <a href="<?php echo $this->getAdminUrl('sales_creditmemo/print/?id=' . $order->getId()) ?>" class="btn btn">
+            <?php echo $this->translate('Print', [], 'sales') ?>
+        </a>
+    </div>
+    <div class="panel">
+        <div class="panel-heading">
+            <h4 class="panel-title"><?php echo $this->translate('Credit Memo Infomation', [], 'sales') ?></h4>
+        </div>
+        <div class="panel-body">
+            <?php echo $this->translate('ID'), ': ', $memo['increment_id'] ?><br />
+            <?php
+            if ($language = $order->getLanguage()) {
+                echo $this->translate('Language'), ': ', $language->offsetGet('name');
+            }
+            ?>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-heading">
+            <h4 class="panel-title"><?php echo $this->translate('Customer Infomation', [], 'sales') ?></h4>
+        </div>
+        <div class="panel-body"><?php if ($customer = $this->getCustomer()): ?>
+                ID: <?php echo '<a href="'.$this->getAdminUrl('customer_manage/edit/?id=' .$customer->getId()).'">'.$customer->getId().'</a>' ?><br />
+                <?php echo $this->translate('Username'), ': <a href="'.$this->getAdminUrl('customer_manage/edit/?id=' .$customer->getId()).'">', $customer['username'].'</a>' ?>
+            <?php endif ?></div>
+    </div>
+    <div class="panel wide">
+        <div class="panel-heading">
+            <h4 class="panel-title"><?php echo $this->translate('Order Infomaiton') ?></h4>
+        </div>
+        <div class="panel-body grid table-responsive">
+            <?php echo $this->translate('Order ID'), ': <a href="'.$this->getAdminUrl('sales_order/view/?id=' .$memo['order_id']).'">', $order['increment_id'],'</a>' ?>
+            
+           <?php
+            if ($store = $order->getStore()) {
+                echo '&nbsp&nbsp&nbsp&nbsp'.$this->translate('Store'), ': ', $store->offsetGet('name');
+            }
+            ?><br />
+            <?php
+            //var_dump($order);
+            echo $this->translate('Ordered Date').': '.$order["created_at"];
+            if(isset($paymentLog['created_at'])&&$paymentLog['created_at']!=''){
+                echo '&nbsp&nbsp&nbsp&nbsp'.$this->translate('Payed at').': '.$paymentLog['created_at'];              
+            }
+            
+            ?>
+            
+        </div>
+    </div>
+    <div class="panel wide">
+        <div class="panel-heading">
+            <h4 class="panel-title"><?php echo $this->translate('Product(s)') ?></h4>
+        </div>
+        <div class="panel-body grid table-responsive">
+            <table class="table table-hover table-striped table-no-border">
+                <thead class="sort-by">
+                    <tr>
+                        <th><?php echo $this->translate('Product Name', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('SKU', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('Options', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('Price', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('Qty', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('Total', [], 'sales') ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($this->getCollection() as $item): ?>
+                        <tr<?php if (isset($item['id'])): ?> data-id="<?php echo $item['id'] ?>"<?php endif ?>>
+                            <td><?php echo $item['product_name'] ?></td>
+                            <td><?php echo $item['sku'] ?></td>
+                            <td>
+                                <?php
+                                $options = json_decode($item['options'], true);
+                                if ($item['product_id'] && count($options)) {
+                                    foreach ($item['product']->getOptions() as $option) {
+                                        if (isset($options[$option->getId()])) {
+                                            echo $option['title'], ': ', (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                                    $option->getValue($options[$option->getId()]) : $options[$option->getId()]), '<br />';
+                                        }
+                                    }
+                                }
+                                ?>
+                            </td>
+                            <td><?php echo $currency->format($item['price']) ?></td>
+                            <td><?php echo $item['qty'] ?></td>
+                            <td><?php echo $currency->format($item['total']) ?></td>
+                        </tr>
+                    <?php endforeach ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-heading">
+            <h4 class="panel-title"><?php echo $this->translate('Comment') ?></h4>
+        </div>
+        <div class="panel-body"><?php echo $memo['comment'] ?></div>
+    </div>
+    <div class="panel">
+        <div class="panel-heading">
+            <h4 class="panel-title"><?php echo $this->translate('Total', [], 'sales') ?></h4>
+        </div>
+        <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt><?php echo $this->translate('Subtotal', [], 'sales') ?></dt>
+                <dd><?php echo $currency->format($memo->offsetGet('subtotal')) ?></dd>
+                <dt><?php echo $this->translate('Shipping &amp; Handling', [], 'sales') ?></dt>
+                <dd><?php echo $currency->format($memo->offsetGet('shipping')) ?></dd>
+                <dt><?php echo $this->translate('Tax', [], 'sales') ?></dt>
+                <dd><?php echo $currency->format($memo->offsetGet('tax')) ?></dd>
+                <dt><?php echo $this->translate('Discount', [], 'sales') ?></dt>
+                <dd><?php echo $currency->format($memo->offsetGet('discount')) ?></dd>
+                <dt><?php echo $this->translate('Grand Total', [], 'sales') ?></dt>
+                <dd><?php echo $currency->format($memo->offsetGet('total')) ?></dd>
+            </dl>
+        </div>
+    </div>
+</div>

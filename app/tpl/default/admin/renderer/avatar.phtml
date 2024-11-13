@@ -1,0 +1,161 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+$parent = $this->getVariable('parent');
+?>
+<div class="input-box <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label class="control-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell">
+        <a class="btn" data-target="div#<?php echo $key ?>modal" data-toggle="modal">
+            <input type="hidden" name="<?php echo $key ?>" hidden accept="image/jpeg,image/gif,image/png" id="<?php echo $id ?>" />
+            <img src="<?php
+            if (!empty($item['value'])) {
+                echo $this->getBaseUrl('pub/upload/customer/avatar/' . $item['value']);
+            } else {
+                echo $this->getPubUrl('backend/images/avatar-holderplace.jpg');
+            }
+            ?>" style="width:60px; height: 60px;" id="<?php echo $key ?>avatar-img-preview" /><br />
+            <span><?php echo $this->translate('Update Image') ?></span>
+        </a>
+        <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>
+<script type="text/javascript" src="<?php echo $this->getPubUrl('backend/vendor/cropper/cropper.min.js') ?>" ></script>
+<link href="<?php echo $this->getPubUrl('backend/vendor/cropper/cropper.min.css') ?>" rel="stylesheet" />
+<div class="modal" id="<?php echo $key ?>modal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><?php echo $this->translate('Avatar') ?></h6>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body" style="min-height:400px;">
+                <div class="img-container hidden">
+                    <img src="" alt="" id="<?php echo $key ?>photo">
+                </div>
+                <div class="img-preview-box hidden">
+                    <div class="img-preview img-preview-lg">
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <label class="btn btn-danger pull-left" for="<?php echo $key ?>photoInput">
+                    <input type="file" class="sr-only" id="<?php echo $key ?>photoInput" accept="image/*">
+                    <span><?php echo $this->translate('Choose image') ?></span>
+                </label>
+                <a class="btn btn-primary" id="avatarSubmitButton" onclick="confirmPhoto();" data-loading-text="Loading..." >
+                    <span class="spinner-border spinner-border-sm" style="display:none;"></span>
+                    <?php echo $this->translate('Confirm') ?>
+                </a>
+                <a class="btn btn-close" aria-hidden="true" data-dismiss="modal"><?php echo $this->translate('Cancel') ?></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    #<?php echo $key ?>photo {
+        max-width:100%;
+        max-height:350px;
+    }
+    .img-preview-box {
+        text-align: center;
+        padding: 10px;
+    }
+    .img-preview-box > div {
+        display: inline-block;
+        ;
+        margin-right: 10px;
+    }
+    .img-preview {
+        overflow: hidden;
+    }
+    .img-preview-box .img-preview-lg {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+    }
+</style>
+<script type="text/javascript">
+    var initCropperInModal = function (img, input, modal) {
+        var $image = img;
+        var $inputImage = input;
+        var $modal = modal;
+        var options = {
+            aspectRatio: 1, // 纵横比
+            viewMode: 2,
+            preview: '.img-preview' // 预览图的class名
+        };
+        // 模态框隐藏后需要保存的数据对象
+        var saveData = {};
+        var URL = window.URL || window.webkitURL;
+        var blobURL;
+        $modal.on('show.bs.modal', function () {
+            if (!$inputImage.val()) {
+                $inputImage.click();
+            }
+        }).on('shown.bs.modal', function () {
+            $image.cropper($.extend(options, {
+                ready: function () {
+                    if (saveData.canvasData) {
+                        $image.cropper('setCanvasData', saveData.canvasData);
+                        $image.cropper('setCropBoxData', saveData.cropBoxData);
+                    }
+                }
+            }));
+        }).on('hidden.bs.modal', function () {
+            saveData.cropBoxData = $image.cropper('getCropBoxData');
+            saveData.canvasData = $image.cropper('getCanvasData');
+            $image.cropper('destroy').attr('src', blobURL);
+        });
+        if (URL) {
+            $inputImage.change(function () {
+                var files = this.files;
+                var file;
+                if (!$image.data('cropper')) {
+                    return;
+                }
+                if (files && files.length) {
+                    file = files[0];
+                    if (/^image\/\w+$/.test(file.type)) {
+                        if (blobURL) {
+                            URL.revokeObjectURL(blobURL);
+                        }
+                        blobURL = URL.createObjectURL(file);
+                        $image.cropper('reset').cropper('replace', blobURL);
+                        $('.img-container').removeClass('hidden');
+                        $('.img-preview-box').removeClass('hidden');
+                        $('div#<?php echo $key ?>modal .disabled').removeAttr('disabled').removeClass('disabled');
+                        $('div#<?php echo $key ?>modal .tip-info').addClass('hidden');
+                    } else {
+                        window.alert('<?php echo $this->translate('Please choose an image'); ?>!');
+                    }
+                }
+            });
+        } else {
+            $inputImage.prop('disabled', true).addClass('disabled');
+        }
+    };
+    var confirmPhoto = function () {
+        var photo = $('img#<?php echo $key ?>photo').cropper('getCroppedCanvas', {
+            width: 300,
+            height: 300
+        }).toDataURL('image/png');
+        $('img#<?php echo $key ?>avatar-img-preview').attr('src', photo);
+        $('input#<?php echo $key ?>').val(photo);
+        $('div#<?php echo $key ?>modal').modal('hide');
+    };
+    $(function () {
+        initCropperInModal($('img#<?php echo $key ?>photo'), $('input#<?php echo $key ?>photoInput'), $('div#<?php echo $key ?>modal'));
+    });
+</script>

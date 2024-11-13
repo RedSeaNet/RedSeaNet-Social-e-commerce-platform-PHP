@@ -1,0 +1,11 @@
+<div class="container text-end">
+    <?php
+    foreach ($this->getChild() as $child) {
+        $child->setCollection($this->getCollection());
+        if ($this->getCategory()) {
+            $child->setVariable('category', $this->getCategory());
+        }
+       echo $child->__toString();
+    }
+    ?>
+</div>

@@ -1,0 +1,5 @@
+---
+message:
+    method: [GET,POST]
+    route: /notifications/[{controller}/[{action}[/]]]
+    namespace: Redseanet\Notifications\Controller

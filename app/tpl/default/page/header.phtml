@@ -1,0 +1,122 @@
+<?php
+$customer = $this->getCustomer();
+$query = $this->getQuery('q');
+?>
+<div class="header-top d-none d-md-block">
+    <div class="container">
+        <div class="col-sm-4">
+            <a href="#" class="media-share"><span class="fa fa-wechat" aria-hidden="true"></span></a>
+            <a href="https://weibo.com/redseanet" class="media-share"><span class="fa fa-weibo" aria-hidden="true"></span></a>
+            <a href="#" class="media-share"><span class="fa fa-qq" aria-hidden="true"></span></a>
+            <a href="#" class="media-share"><span class="fa fa-linkedin" aria-hidden="true"></span></a>
+        </div> 
+        <div class="col-sm-8"><?php echo $this->getChild('links'); ?></div> 
+    </div>  
+</div>
+<form action="<?php echo $this->getBaseUrl('catalog/search/'); ?>" method="get">
+    <div class="header-mid d-none d-md-block">
+        <div class="container list-header pt-2 pb-2">
+            <div class="d-flex align-items-center">
+                <div class="col-3">
+                    <div class="logo">
+                        <a href="<?php echo $this->getBaseUrl(); ?>"><img src="<?php echo $this->getPubUrl('frontend/images/logo.png') ?>" /><span class="font-24" style="line-height: 2rem;display: inline-block;">&nbsp;REDSEA</span></a>
+                    </div>
+                </div>
+                <div class="col-9" style="padding-top: 0.4rem;">
+                    <div class="input-group">
+                        <input type="text" class="form-control search-input" placeholder="<?php echo $this->translate('Please enter products keyword') ?>" aria-label="<?php echo $this->translate('Please enter products keyword') ?>" aria-describedby="global-search-button" name="q" value="<?php echo!empty($query) ? $query : '' ?>" />
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary search-button" type="submit" id="global-search-button"><?php echo $this->translate('Search') ?></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="header-nav">
+    <div class="container p-0">
+        <ul class="d-md-none list-inline m-0 ps-2 pe-2 pb-3 pt-3 justify-content-between align-items-center" id="navbar-toggle">
+            <li>
+                <a class="navbar-toggler p-2 inline-bolck" type="button" data-bs-toggle="offcanvas" href="#mobileleftnav" role="button" aria-controls="mobileleftnav">
+                    <i data-text="fa-navicon" class="fa fa-navicon"></i>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->getBaseUrl(); ?>" style="font-size:18px;display: inline-block;">
+                    <img src="<?php echo $this->getBaseUrl() ?>pub/theme/default/frontend/images/logo.png" style="width: 30px; height: 30px;" />
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->getBaseUrl() ?>checkout/cart/" role="button" class="p-2 inline-bolck"><i data-text="fa-shopping-cart" class="fa fa-shopping-cart"></i></a>
+                <a class="p-2 inline-bolck" type="button" data-bs-toggle="offcanvas" href="#mobilerightnav" role="button" aria-controls="mobilerightnav">
+                    <i data-text="fa-ellipsis-h" class=" fa fa-ellipsis-h"></i>
+                </a>
+            </li>
+        </ul>
+        <div class="d-md-block d-none">
+            <div class="pt-0 d-flex justify-content-between">
+                <nav class="nav-main d-flex">
+                    <ul class="nav d-flex flex-row pt-2" role="menu">
+                        <li class="nav-item" role="presentation"><a class="nav-link" href="<?php echo $this->getBaseUrl(); ?>" role="menuitem"><?php echo $this->translate('Home') ?></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("allcategory.html"); ?>" role="menuitem"><?php echo $this->translate('All Categories') ?></a></li>
+                        <?php echo $this->getChild('category'); ?>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("bulk/view/list/"); ?>" role="menuitem"><?php echo $this->translate('Bulks') ?></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("bargain/index/list/"); ?>" role="menuitem"><?php echo $this->translate('Bargains') ?></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("retailer/list/"); ?>" role="menuitem"><?php echo $this->translate('Stores') ?></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("customerlevel.html"); ?>" role="menuitem"><?php echo $this->translate('Customer Level') ?></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("customergroup.html"); ?>" role="menuitem"><?php echo $this->translate('Customer Group') ?></a></li>
+
+                    </ul>
+                </nav>
+                <div class="col-sm-2 d-none d-md-block"><?php echo $this->getChild('minicart'); ?></div>
+            </div>
+        </div>
+
+        <div class="offcanvas offcanvas-start" id="mobileleftnav" tabindex="-1">
+            <div class="offcanvas-header border-bottom">
+                <p class="offcanvas-title d-flex align-items-center justify-content-center" id="mobileleftnavLabel">
+                    <a href="<?php echo $this->getBaseUrl(); ?>">
+                        <img src="<?php echo $this->getPubUrl('frontend/images/logo.png') ?>" width="30" height="30" />
+                        REDSEANET
+                    </a>
+                </p>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body pt-0">
+                <nav class="nav-main" id="main-menu">
+                    <ul class="navbar-nav nav" role="menu">
+                        <li class="nav-item" role="presentation"><a class="nav-link" href="<?php echo $this->getBaseUrl(); ?>" role="menuitem"><?php echo $this->translate('Home') ?></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("allcategory.html"); ?>" role="menuitem"><?php echo $this->translate('All Categories') ?></a></li>
+                        <?php echo $this->getChild('category'); ?>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("bulk/view/list/"); ?>" role="menuitem"><?php echo $this->translate('Bulks') ?></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("bargain/index/list/"); ?>" role="menuitem"><?php echo $this->translate('Bargains') ?></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("retailer/list/"); ?>" role="menuitem"><?php echo $this->translate('Stores') ?></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("customerlevel.html"); ?>" role="menuitem"><?php echo $this->translate('Customer Level') ?></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("customergroup.html"); ?>" role="menuitem"><?php echo $this->translate('Customer Group') ?></a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo $this->getBaseUrl("forum/category/"); ?>" role="menuitem"><?php echo $this->translate('Explore') ?></a></li>
+                    </ul>
+                </nav>
+                <div class="col-sm-2 d-none d-md-block"><?php echo $this->getChild('minicart'); ?></div>
+                <div class=""><?php echo $this->getChild('quick-search'); ?></div>
+            </div>
+        </div>
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="mobilerightnav" aria-labelledby="mobilegightnavLabel">
+            <div class="offcanvas-header border-bottom">
+                <p class="offcanvas-title d-flex align-items-center justify-content-center" id="mobilerightnavLabel">
+                    <a href="<?php echo $this->getBaseUrl() ?>customer/account/" class="">
+                        <img alt="<?php echo (!empty($customer['username']) ? $customer['username'] : 'Guest') ?>" class="img-fluid rounded-circle shadow" width="50" src="<?php echo!empty($customer['avatar']) ? $this->getUploadedUrl('customer/avatar/' . $customer['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" />
+                        <?php echo (!empty($customer['username']) ? $customer['username'] : $this->translate('Guest')) ?>
+                    </a>
+                </p>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body pt-0">
+                <?php echo $this->getChild('rightnav'); ?>
+            </div>
+        </div>
+
+
+    </div> 
+</div>

@@ -1,0 +1,37 @@
+<header class="header">
+    <h2 class="page-title"><span lang="en">DanQiNet</span> <span><?php echo $this->translate('Admin Panel') ?></span></h2>
+</header>
+<div class="main-container">
+    <div class="panel panel-login clearfix">
+        <div class="panel-body">
+            <form action="<?php echo $this->getAdminUrl('index/resetpost/') ?>" method="post" class="form-inline">
+                <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+                <input type="hidden" name="token" value="<?php echo $this->getQuery('token') ?>" />
+                <div class="input-box">
+                    <label for="login:username" class="control-label"><?php echo $this->translate('Username') ?>: </label>
+                    <input type="text" name="username" class="form-control required" spellcheck="false" id="login:username" autocomplete="off" />
+                </div>
+                <div class="input-box">
+                    <label for="login:password" class="control-label"><?php echo $this->translate('Password') ?>: </label>
+                    <input type="password" name="password" class="form-control required" minlength="6" id="login:password" autocomplete="off" />
+                </div>
+                <div class="input-box">
+                    <label for="login:cpassword" class="control-label"><?php echo $this->translate('Confirm Password') ?>: </label>
+                    <input type="password" name="cpassword" class="form-control required" id="login:cpassword" autocomplete="off" data-rule-equalto="#login:password" />
+                </div>
+                <div class="input-box">
+                    <label for="login:captcha" class="control-label"><?php echo $this->translate('Captcha') ?>: </label>
+                    <input type="text" name="captcha" id="login:captcha" class="form-control required captcha" maxlength="5" autocomplete="off" spellcheck="false" />
+                    <img src="<?php echo $this->getAdminUrl('index/captcha/') ?>" class="captcha" alt="" />
+                </div>
+                <div class="additional"></div>
+                <div class="buttons-set text-center">
+                    <button type="submit" class="btn"><span><?php echo $this->translate('Submit') ?></span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+    <address class="copyright" lang="en"><?php echo $this->getVariable('copyright') ?></address>
+</footer>

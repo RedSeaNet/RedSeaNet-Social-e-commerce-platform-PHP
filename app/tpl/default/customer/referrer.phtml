@@ -1,0 +1,31 @@
+<?php
+$referrer = $this->getReferrer();
+?>
+<div class="fieldset">
+    <div class="profile d-flex">
+        <?php
+        if (count($referrer) > 0) {
+            foreach ($referrer as $customer) {
+                ?>
+                <div class="avatar">
+                    <img class="img-fluid rounded" src="<?php
+                    if ($customer->offsetGet('avatar')) {
+                        echo $this->getUploadedUrl('customer/avatar/' . $customer->offsetGet('avatar'));
+                    } else {
+                        echo $this->getPubUrl('frontend/images/avatar-holderplace.jpg');
+                    }
+                    ?>" alt="<?php echo $customer->offsetGet('username'); ?>" width="60" />
+                </div>
+                <div class="info">
+                    <h5><?php echo $customer->offsetGet('username'); ?></h5>
+                    <p>ID:<?php echo $customer->offsetGet('increment_id'); ?></p>
+                </div>
+                <?php
+            }
+        } else {
+            echo '<div class="p-2">'.$this->translate('It have not referrer').'.</div>';
+        }
+        ?>
+    </div>
+</div>
+

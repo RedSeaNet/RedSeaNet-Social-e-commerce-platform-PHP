@@ -1,0 +1,9 @@
+---
+orders:
+    data: sales_order/chart/
+    title: Order
+    color: '#00F'
+amount:
+    data: sales_order/amount/
+    title: Total Amount
+    color: '#0F0'

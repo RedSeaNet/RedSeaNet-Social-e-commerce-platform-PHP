@@ -1,0 +1,72 @@
+<?php
+$cart = $this->getCart();
+?>
+<table style="width: 100%">
+    <tr>
+        <td class="text-end"><?php echo $this->translate('%d item(s)', [$cart->getQty()]) ?>  <?php echo $this->translate('Subtotal') ?>:<?php echo $this->getCurrency()->format($this->getCart()['subtotal']) ?></td>
+    </tr>
+    <?php
+    if ((float) $cart['tax']):
+        ?>
+        <tr>
+            <td class="text-end"><?php echo $this->translate('Tax', [], 'checkout') ?>  <?php echo $this->getCurrency()->format($cart['tax']) ?></td>
+        </tr>
+        <?php
+    endif;
+    ?>
+    <?php
+    if ((float) $cart['shipping']):
+        ?>
+        <tr>
+
+            <td class="text-end">
+                <?php echo $this->translate('Shipping', [], 'checkout') ?>  
+                <?php echo $this->getCurrency()->format($cart['shipping']) ?>
+            </td>
+        </tr>
+        <?php
+    endif;
+    ?>
+    <?php
+    if ((float) $cart['discount']):
+        foreach (json_decode($cart['discount_detail'], true) as $type => $discount):
+            ?>
+            <tr>
+                <td class="text-end">
+                    <?php
+                    $text = $this->translate('Discount(' . ucwords($type) . ')', [], 'sales');
+                    echo $text[0] === 'D' ? $this->translate('Discount(%s)', [$type], 'sales') : $text
+                    ?>  
+        <?php echo $this->getCurrency()->convert($discount["total"], true) ?>
+                </td>
+            </tr>
+            <?php
+            if ($discount["detail"] && is_array($discount["detail"]) && count($discount["detail"]) > 0) {
+                foreach ($discount["detail"] as $storeId => $promotionStoreData) {
+                    if ($promotionStoreData && is_array($promotionStoreData) && count($promotionStoreData) > 0) {
+                        foreach ($promotionStoreData as $promationKey => $promotionData) {
+                            $promotionType = '';
+                            if ($promotionData["use_coupon"] == 1) {
+                                $promotionType = '优惠券(' . $promotionData["storename"] . ")-";
+                            } else {
+                                $promotionType = '促销活动(' . $promotionData["storename"] . ")-";
+                            }
+                            echo '<p class="mb-0 font-12">' . $promotionType . $promotionData["name"] . ': -' . $promotionData['discount'] . '</p>';
+                        }
+                    }
+                }
+            }
+            ?>
+            <?php
+        endforeach;
+
+    endif;
+    ?>   
+    <tr class="grand-total">
+        <td class="text-end">
+            <?php echo $this->translate('Grand Total', [], 'checkout') ?>  
+<?php echo $this->getCurrency()->format($cart['total']) ?>
+            <input type="hidden" name="total" value="<?php echo $cart['base_total'] ?>" />
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,60 @@
+<?php
+$sorters = $this->getSorters();
+$current = $this->getCurrentSorter();
+$mode = $this->getQuery('mode', 'grid');
+$default = $this->getQuery('limit', $this->getConfig()['catalog/frontend/default_per_page_' . $mode]);
+?>
+<div class="view-by justify-content-between">
+    <ul class="d-flex sort-by">
+        <?php
+        $i = 0;
+        foreach ($sorters as $key => $label):
+            ?>
+            <li class="<?php
+            echo(($this->getCurrentSorter() == $key) ? 'active ' : '');
+            echo ($this->isAscending() ? 'asc ' : 'desc ');
+            echo ($i >= 3 ? 'd-none d-md-block ' : '');
+            ?>">
+                <a href="<?php echo $this->getSorterUrl($key) ?>" rel="nofollow"><?php echo $label ?></a>
+            </li>
+            <?php
+            $i++;
+        endforeach;
+        ?>
+    </ul>
+ <div class="d-flex">
+    <ul class="d-flex mode mb-0">
+        <li>
+            <a href="<?php echo $this->getSorterUrl('mode', 'grid') ?>" rel="nofollow">
+                <span class="fa fa-th-large" aria-hidden="true"></span>
+                <span class="sr-only"><?php echo $this->translate('Grid') ?></span>
+            </a>
+        </li>
+        <li>
+            <a href="<?php echo $this->getSorterUrl('mode', 'list') ?>" rel="nofollow">
+                <span class="fa fa-th-list" aria-hidden="true"></span>
+                <span class="sr-only"><?php echo $this->translate('List') ?></span>
+            </a>
+        </li>
+    </ul>
+    <div class="limit dropdown">
+        <a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+            <?php echo $default === 'all' ? $this->translate('All Products') : $this->translate('View %d per page', [$default]) ?>
+        </a>
+        <ul class="dropdown-menu">
+            <?php if ($this->getConfig()['catalog/frontend/allowed_all_products']): ?>
+                <li<?php if ($default === 'all'): ?> class="active"<?php endif ?>>
+                    <a href="<?php echo $this->getSorterUrl('limit', 'all') ?>" rel="nofollow"><?php echo $this->translate('All Products') ?></a>
+                </li>
+                <?php
+            endif;
+            foreach (explode(',', trim($this->getConfig()['catalog/frontend/allowed_per_page_' . $mode], ',')) as $limit):
+                ?>
+                <li<?php if ($default == $limit): ?> class="active"<?php endif ?>>
+                    <a href="<?php echo $this->getSorterUrl('limit', $limit) ?>" rel="nofollow"><?php echo $limit ?></a>
+                </li>
+            <?php endforeach ?>
+        </ul>
+    </div>
+    </div>
+</div>

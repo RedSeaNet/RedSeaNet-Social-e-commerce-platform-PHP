@@ -1,0 +1,44 @@
+<?php
+$tabs = $this->getTabs();
+if (count($tabs)):
+    $flag = $this->getMainTabLabel();
+    ?>
+    <ul class="nav nav-tabs clearfix" role="tablist">
+        <?php if ($flag): ?>
+            <li role="presentation" class=" tab-main-tab">
+                <a href="#main-tab" aria-controls="main-tab" role="tab" data-bs-toggle="tab" class="active">
+                    <?php echo $this->translate($this->getMainTabLabel()) ?>
+                </a>
+            </li>
+        <?php endif ?>
+        <?php foreach ($tabs as $id => $tab): ?>
+            <li role="presentation" class="tab-<?php
+            echo $id, ' ';
+            if (!$flag) {
+                echo 'active';
+                $flag = true;
+            }
+            ?>">
+                <a href="#tab-<?php echo $id ?>" aria-controls="<?php echo $id ?>" role="tab" data-bs-toggle="tab">
+                    <?php echo $this->translate($tab) ?>
+                </a>
+            </li>
+        <?php endforeach ?>
+        <li class="view-more">
+            <a href="javascript:void(0);" class="btn" style="display:none"><?php echo $this->translate('More') ?></a>
+        </li>
+    </ul>
+    <?php
+    if ($this->generateTabPane()):
+        foreach ($tabs as $id => $tab):
+            if ($this->hasTab($id)):
+                ?>
+                <div role="tabpanel" class="tab-pane table" id="tab-<?php echo $id ?>">
+                    <?php echo $this->getChild($id)->setVariable('model', $this->getVariable('model')) ?>
+                </div>
+                <?php
+            endif;
+        endforeach;
+    endif;
+endif;
+?>

@@ -1,0 +1,46 @@
+<div class="reviews" data-part="review">
+    <h5 class="title"><?php echo $this->translate('Reviews') ?></h5>
+    <dl class="review-list clearfix"><?php
+        $reviews = $this->getReviews();
+        foreach ($reviews as $review):
+            ?>
+            <dt class="col-12 col-sm-4 col-md-2">
+                <?php $customer = $review->getCustomer() ?>
+                <h5 class="username"><?php echo $review->offsetGet('anonymous') || !$customer ? $this->translate('Guest') : $customer->offsetGet('username') ?></h5>
+                <table class="ratings table table-no-border text-center">
+                    <?php
+                    $ratings = $review->getRatings(true);
+                    foreach ($ratings as $rating):
+                        ?>
+                        <tr>
+                            <th<?php if (count($ratings) === 1): ?> hidden="hidden"<?php endif ?>><?php echo $this->translate($rating['title']) ?></th>
+                            <td>
+                                <div class="rating">
+                                    <span class="fa fa-star" style="width:<?php echo $rating['value'] * 20 ?>%"></span>
+                                    <span class="fa fa-star-o"></span>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach ?>
+                </table>
+            </dt>
+            <dd class="col-12 col-sm-4 col-md-7">
+                <p class="content"><?php echo $review->offsetGet('content') ?></p>
+                <?php if ($review->offsetGet('images')): ?>
+                    <ul class="images list-inline d-flex">
+                        <?php foreach (json_decode($review->offsetGet('images')) as $image): ?>
+                            <li><img src="<?php echo $this->getBaseUrl('pub/upload/review/'), $image ?>" class="zoombox" alt="" /></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif ?>
+                <?php if ($reply = $review->offsetGet('reply')): ?>
+                    <p class="reply"><?php echo $this->translate('Reply'), ': ', $reply ?></p>
+                <?php endif ?>
+            </dd>
+            <dd class="col-12 col-sm-4 col-md-3 text-end">
+                <span class="date"><?php echo date('Y-m-d H:i', strtotime($review->offsetGet('created_at'))) ?></span>
+            </dd>
+        <?php endforeach ?></dl>
+    <p class="empty-list text-center"><?php echo $this->translate('There has been no review yet.') ?></p>
+    <?php echo $this->getChild('pager')->setCollection($reviews) ?>
+</div>

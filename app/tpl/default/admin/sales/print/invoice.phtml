@@ -1,0 +1,120 @@
+<?php
+$invoice = $this->getInvoice();
+$order = $this->getOrderModel();
+$currency = $order->getCurrency();
+$customer = $this->getCustomer();
+$logo = $this->getVariable('pdf')->Image(BP . 'pub/theme/default/frontend/images/logo.png',15,30,10,10);
+$barcode = $this->getVariable('pdf')->write1DBarcode($invoice['increment_id'], 'C39', '115', '23', 80, 25, 0.4, array('position' => 'S', 'border' => false, 'padding' => 4, 'fgcolor' => array(0, 0, 0), 'bgcolor' => array(255, 255, 255), 'text' => true, 'font' => 'helvetica', 'fontsize' => 8, 'stretchtext' => 4), 'N');
+?>
+<style>
+    table{font-family:stsongstdlight;border: 1px solid #ddd;font-size:12px}
+    td{border: 1px solid #ddd;}
+    .head{width:298px;font-size:14px;background-color:#999;color:#fff}
+    .head_line{font-size:14px;background-color:#999;color:#fff}
+    .title{width:78px;}
+    .content{width:220px}
+    .background{background-color:#f5f8fd}
+    .spacing{width:44px;background-color:#fff;}
+    .product-name{width:140px;}
+    .product-sku{width:100px;}
+    .product-options{width:100px;}
+    .product-price{width:100px;}
+    .product-qty{width:100px;}
+    .product-total{width:100px;}
+    .colspan{width:298px;}
+</style>
+<tcpdf data="<?php echo $logo ?>" />
+<tcpdf data="<?php echo $barcode;?>" />
+<table class="first" cellpadding="4" cellspacing="0">
+    <tr class="background">
+        <td class="head" colspan="2" align="center"><b><?php echo $this->translate('Invoice Infomation', [], 'sales') ?></b></td>
+        <td class="spacing" rowspan="5" align="center"></td>
+        <td class="head" colspan="2" align="center"><b><?php echo $this->translate('Customer Infomation', [], 'sales') ?></b></td>
+    </tr>
+    <tr>
+        <td class="title" align="center"><b><?php echo $this->translate('ID') ?></b></td><td class="content"><?php echo $invoice['increment_id'] ?></td>
+        <td class="title" align="center"><b><?php echo $customer ? $this->translate('ID') : '' ?></b></td><td class="content"><?php echo $customer ? $this->getCustomer()->getId() : '' ?></td>
+    </tr>
+    <tr class="background">
+        <td class="title" align="center"><b><?php echo $this->translate('Order ID') ?></b></td><td class="content"><?php echo $order['increment_id'] ?></td>
+        <td class="title" align="center"><b><?php echo $customer ? $this->translate('Username') : '' ?></b></td><td class="content"><?php echo $customer ? $this->getCustomer()['username'] : '' ?></td>
+    </tr>
+    <tr>
+        <td class="title" align="center"><b><?php echo $store = $order->getStore() ? $this->translate('Store') : '' ?></b></td><td class="content"><?php echo $store ? $order->getStore()->offsetGet('name') : '' ?></td>
+        <td class="title" align="center"><b></b></td><td class="content"></td>
+    </tr>
+    <tr class="background">
+        <td class="title" align="center"><b><?php echo $language = $order->getLanguage() ? $this->translate('Language') : '' ?></b></td><td class="content" ><?php echo $language ? $order->getLanguage()->offsetGet('name') : '' ?></td>
+        <td class="title" align="center"><b></b></td><td class="content"></td>
+    </tr>
+    <tr>
+        <td colspan="4" width="640px"></td>
+    </tr>
+    <tr>
+        <td class="head" colspan="4" width="640px" align="center"><b><?php echo $this->translate('Product(s)') ?></b></td>
+    </tr>
+    <tr>
+        <td class="product-name" align="center"><b><?php echo $this->translate("Product Name", [], "sales") ?></b></td>
+        <td class="product-sku" align="center"><b><?php echo $this->translate("SKU", [], "sales") ?></b></td>
+        <td class="product-options" align="center"><b><?php echo $this->translate("Options", [], "sales") ?></b></td>
+        <td class="product-price" align="center"><b><?php echo $this->translate("Price", [], "sales") ?></b></td>
+        <td class="product-qty" align="center"><b><?php echo $this->translate("Qty", [], "sales") ?></b></td>
+        <td class="product-total" align="center"><b><?php echo $this->translate("Total", [], "sales") ?></b></td>
+    </tr>
+    <?php
+    $product = '';
+    $num = 0;
+    foreach ($this->getCollection() as $key => $item) {
+        $options = json_decode($item['options'], true);
+        $option_str = '';
+        if ($item['product_id'] && count($options)) {
+            foreach ($item['product']->getOptions() as $option) {
+                if (isset($options[$option->getId()])) {
+                    $option_str .= $option_str !== '' ? '<br/>' : '';
+                    $option_str .= $option['title'] . ': ' . (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                            $option->getValue($options[$option->getId()]) : $options[$option->getId()]);
+                }
+            }
+        }
+        $product .= ($num % 2 == 0) ? '<tr class="background">' : '<tr>';
+        $product .= '
+         <td align="center">' . $item['product_name'] . '</td>
+         <td align="center">' . $item['sku'] . '</td>
+         <td align="center">' . $option_str . '</td>
+         <td align="center">' . $currency->format($item['price']) . '</td>
+         <td align="center">' . $item['qty'] . '</td>
+         <td align="center">' . $currency->format($item['total']) . '</td></tr>
+        ';
+        $num++;
+    }
+    echo $product;
+    ?>
+    <tr>
+        <td colspan="4" width="640px"></td>
+    </tr>
+    <tr class="background">
+        <td class="head" colspan="2" align="center"><b><?php echo $this->translate('Payment Method', [], 'sales') ?></b></td>
+        <td class="spacing" rowspan="6" align="center"></td>
+        <td class="head" colspan="2" align="center"><b><?php echo $this->translate('Total', [], 'sales') ?></b></td>
+    </tr>
+    <tr>
+        <td class="colspan" colspan="2" align="center"><?php echo $this->translate($order->getPaymentMethod()->getLabel()) ?></td>
+        <td class="title" align="center"><b><?php echo $this->translate('Subtotal', [], 'sales') ?></b></td><td class="content"><?php echo $currency->format($order->offsetGet('subtotal')) ?></td>
+    </tr>
+    <tr class="background">
+        <td class="colspan" colspan="2" align="center"><?php echo $this->translate('The order was placed using %s', [$order->offsetGet('currency')], 'sales') ?></td>
+        <td class="title" align="center"><b><?php echo $this->translate('Shipping &amp; Handling', [], 'sales') ?></b></td><td class="content"><?php echo $currency->format($order->offsetGet('shipping')) ?></td>
+    </tr>
+    <tr >
+        <td class="colspan" colspan="2" align="center"><?php echo $invoice->offsetGet('comment') ?></td>
+        <td class="title" align="center"><b><?php echo $this->translate('Tax', [], 'sales') ?></b></td><td class="content"><?php echo $currency->format($order->offsetGet('tax')) ?></td>
+    </tr>
+    <tr class="background">
+        <td class="colspan" colspan="2" align="center"></td>
+        <td class="title" align="center"><b><?php echo $this->translate('Discount', [], 'sales') ?></b></td><td class="content"><?php echo $currency->format($order->offsetGet('discount')) ?></td>
+    </tr>
+    <tr>
+        <td class="colspan" colspan="2" align="center"></td>
+        <td class="title" align="center"><b><?php echo $this->translate('Grand Total', [], 'sales') ?></b></td><td class="content"><?php echo $currency->format($order->offsetGet('total')) ?></td>
+    </tr>
+</table>

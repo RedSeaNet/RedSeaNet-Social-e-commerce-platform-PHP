@@ -1,0 +1,36 @@
+<?php
+$product = $this->getVariable('product');
+$currency = $this->getCurrency();
+$format = $currency['format'];
+$symbol = $currency['symbol'];
+
+?>
+
+<?php if ($product->getFinalPrice(1, false) == $product['prices']['regular']): ?>
+    <span class="regular-price">
+        <span class="badge text-bg-danger"><?php echo $this->translate('Price') ?></span>
+        <span class="price font-20" data-price="<?php echo $product['prices']['regular'] ?>"><?php printf($format, $symbol, $product['prices']['regular']) ?></span>
+    </span>
+    <?php if ($msrp = (float) $product['msrp']): ?>
+        <span class="old-price">
+            <span class="badge text-bg-secondary"><?php echo $this->translate('MSRP') ?></span>
+            <span class="price text-decoration-line-through" data-price="<?php echo $msrp ?>"><?php printf($format, $symbol, $msrp) ?></span>
+        </span>
+    <?php endif ?>
+<?php else: ?>
+    <span class="special-price">
+        <span class="badge text-bg-danger"><?php echo $this->translate('Special Price') ?></span>
+        <span class="price" data-price="<?php echo $product->getFinalPrice() ?>"><?php printf($format, $symbol, $product->getFinalPrice()) ?></span>
+    </span>
+    <?php if ($msrp = (float) $product['msrp']): ?>
+        <span class="old-price">
+            <span class="badge text-bg-secondary"><?php echo $this->translate('MSRP') ?></span>
+            <span class="price text-decoration-line-through" data-price="<?php echo $msrp ?>"><?php printf($format, $symbol, $msrp) ?></span>
+        </span>
+    <?php else: ?>
+        <span class="old-price">
+            <span class="badge text-bg-secondary"><?php echo $this->translate('Old Price') ?></span>
+            <span class="price text-decoration-line-through" data-price="<?php echo $product['prices']['regular'] ?>"><?php printf($format, $symbol, $product['prices']['regular']) ?></span>
+        </span>
+    <?php endif ?>
+<?php endif; ?>

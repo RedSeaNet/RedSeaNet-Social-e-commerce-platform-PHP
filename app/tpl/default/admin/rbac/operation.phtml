@@ -1,0 +1,51 @@
+<?php
+$collection = $this->getVariable('collection');
+$others = $collection[0];
+unset($collection[0]);
+$model = $this->getModel();
+$children = is_object($model) ? $model->getChildren() : [];
+?>
+<div class="input-box">
+    <label for="operation:all" class="control-label">
+        <?php echo $this->translate('Grant') ?>
+    </label>
+    <div class="cell">
+        <select name="operation_id[]" class="form-control" onchange="$('.operation-list').toggle(this.value != -1)">
+            <option value=""><?php echo $this->translate('Custom') ?></option>
+            <option value="-1"<?php if ($model && $model->hasPermission('ALL')): ?> selected="selected"<?php endif ?>><?php echo $this->translate('ALL') ?></option>
+        </select>
+    </div>
+</div>
+<div class="input-box operation-list"<?php if ($model && $model->hasPermission('ALL')): ?> style="display:none"<?php endif ?>>
+    <label class="control-label">
+        <?php echo $this->translate('Custom') ?>
+    </label>
+    <div class="cell grid">
+        <?php foreach ($collection as $role_id => $items): ?>
+            <dl>
+                <dt>
+                    <input type="checkbox" name="child_id[]" class="selectall"<?php if (in_array($role_id, $children)): ?> checked="checked"<?php endif ?> id="role:<?php echo $role_id ?>" value="<?php echo $role_id ?>" />
+                    <label for="role:<?php echo $role_id ?>"><?php echo $items[0]['role'] ?></label>
+                </dt>
+                <?php foreach ($items as $item): ?>
+                    <dd>
+                        <input type="checkbox" name="operation_id[]"<?php if (in_array($role_id, $children) || $model && $model->hasPermission($item['name'])): ?> checked="checked"<?php endif ?> id="operation:<?php echo $item['id'] ?>" value="<?php echo $item['id'] ?>" />
+                        <label for="operation:<?php echo $item['id'] ?>"><?php echo $this->translate($item['name'], [], 'rbac') ?></label>
+                    </dd>
+                <?php endforeach ?>
+            </dl>
+        <?php endforeach ?>
+        <dl class="others">
+            <dt>
+                <input type="checkbox" class="selectall" id="role:others" />
+                <label for="role:others"><?php echo $this->translate('Others') ?></label>
+            </dt>
+            <?php foreach ($others as $item): ?>
+                <dd>
+                    <input type="checkbox" name="operation_id[]"<?php if ($model && $model->hasPermission($item['name'])): ?> checked="checked"<?php endif ?> id="operation:<?php echo $item['id'] ?>" value="<?php echo $item['id'] ?>" />
+                    <label for="operation:<?php echo $item['id'] ?>"><?php echo $this->translate($item['name'], [], 'rbac') ?></label>
+                </dd>
+            <?php endforeach ?>
+        </dl>
+    </div>
+</div>

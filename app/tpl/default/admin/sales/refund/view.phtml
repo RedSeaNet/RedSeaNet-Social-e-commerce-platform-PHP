@@ -1,0 +1,165 @@
+<?php
+$application = $this->getVariable('model');
+$order = $application->getOrder();
+$status = $application['status'];
+$currency = $this->getCurrency();
+$paymentLog=$this->getOrderLogPayment();
+$shipment=$order->getShipment();
+?>
+<div class="refund-detail">
+    <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="#order" data-bs-toggle="tab" data-toggle="tab"><?php echo $this->translate('Order Infomation') ?></a></li>
+        <li role="presentation"><a href="#products" data-bs-toggle="tab" data-toggle="tab"><?php echo $this->translate('Product Infomation') ?></a></li>
+        <li role="presentation"><a href="#address" data-bs-toggle="tab" data-toggle="tab"><?php echo $this->translate('Shipping Address') ?></a></li>
+    </ul>
+    <div class="tab-content">
+    <div role="tabpanel" class="tab-pane fade in active" id="order">
+    <?php echo $this->translate('Order ID'), ': <a href="'.$this->getAdminUrl('sales_order/view/?id=' .$order['id']).'">', $order['increment_id'],'</a>' ?> &nbsp;&nbsp;&nbsp;&nbsp;
+    <?php echo $this->translate('Store'), ': <a href="'.$this->getAdminUrl('i18n_store/edit/?id='.$order->getStore()['id']).'">', $order->getStore()['name'],'</a>' ?>        <br />
+    <?php 
+    
+    echo $this->translate('Ordered Date').': '.$order['created_at'];
+    if(isset($paymentLog['created_at'])&&$paymentLog['created_at']!=''){
+    	echo '&nbsp&nbsp&nbsp&nbsp'.$this->translate('Payed at').': '.$paymentLog['created_at'];
+    }
+    echo '<br />';
+    if(count($shipment)>0){
+    	echo $this->translate('Shipment').': ';
+    	foreach ($shipment as $k => $v){
+    		echo '<a href="'.$this->getAdminUrl('sales_shipment/view/?id='.$v['id']).'">'.$v['increment_id'].'</a> , ';
+    	}
+    }
+    ?>
+    </div>
+        <div role="tabpanel" class="tab-pane fade" id="products">
+            <div class="table-responsive">
+                <table class="table table-no-border">
+                    <thead>
+                        <tr class="text-nowrap">
+                            <th class="text-start" colspan="2"><?php echo $this->translate('Product Infomation') ?></th>
+                            <th class="text-center"><?php echo $this->translate('Price') ?></th>
+                            <th class="text-center"><?php echo $this->translate('Refund Qty') ?></th>
+                            <th class="text-center"><?php echo $this->translate('Details') ?></th>
+                            <th class="text-center"><?php echo $this->translate('Total') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $items = $application->getItems();
+                        $flag = true;
+                        foreach ($items as $item):
+                            $product = $item['product'];
+                            $options = json_decode($item['options'], true);
+                            $thumbnail = $product->getThumbnail($options);
+                            ?>
+                            <tr class="refund-list">
+                                <td><a href="<?php echo $this->getAdminUrl('catalog_product/edit/?id='.$product['id']);?>">
+                                    <img src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" alt="<?php echo $product['name'] ?>" width="100" height="100" />
+                                </a>
+                                </td>
+                                <td>
+                                    <h4 class="product-name"><a href="<?php echo $this->getAdminUrl('catalog_product/edit/?id='.$product['id']);?>"><?php echo $product['name'] ?></a></h4>
+                                    <?php
+                                    if ($item['product_id'] && count($options)):
+                                        ?>
+                                        <dl class="options">
+                                            <?php
+                                            foreach ($product->getOptions() as $option):
+                                                if (isset($options[$option->getId()])):
+                                                    ?>
+                                                    <dt><?php echo $option['title'] ?></dt>
+                                                    <dd>
+                                                        <?php
+                                                        echo (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                                                $option->getValue($options[$option->getId()]) : $options[$option->getId()])
+                                                        ?>
+                                                    </dd>
+                                                    <?php
+                                                endif;
+                                            endforeach;
+                                            ?>
+                                        </dl>
+                                    <?php endif ?>
+                                </td>
+                                <td class="text-center"><?php echo $currency->convert($item['base_price'], true) ?></td>
+                                <td class="text-center"><?php echo (float) $item['refunded_qty'] ?></td>
+                                <?php if ($flag): ?>
+                                    <td class="text-center detail" rowspan="<?php echo count($items) ?>">
+                                        <span><?php echo $this->translate($this->getService($application['service'])) ?></span>
+                                        <span><?php echo date('Y-m-d<\b\r />H:i:s', strtotime($application['created_at'])) ?></span>
+                                    </td>
+                                    <td class="text-center amount" rowspan="<?php echo count($items) ?>"><?php echo $currency->convert($application['amount'] ?: $item['base_price'] * $item['refunded_qty'], true) ?></td>
+                                    <?php
+                                    $flag = false;
+                                endif;
+                                ?>
+                            </tr>
+                        <?php endforeach ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="address">
+            <?php echo nl2br($order['shipping_address']) ?>
+        </div>
+    </div>
+    <div class="handler text-end"><?php echo $this->getHandler($application['service'], $status) ?></div>
+    <div class="flow">
+        <div class="step active"><?php echo $this->translate('Applied') ?></div>
+        <?php if ($status == -1): ?>
+            <div class="step active"><?php echo $this->translate('Refused') ?></div>
+        <?php elseif ($status == -2): ?>
+            <div class="step active"><?php echo $this->translate('Canceled') ?></div>
+        <?php else: ?>
+            <div class="step<?php if ($status): ?> active<?php endif ?>"><?php echo $this->translate('Approved') ?></div>
+            <?php if ($application['service'] > 1): ?>
+                <div class="step<?php if ($status > 1): ?> active<?php endif ?>"><?php echo $this->translate('Delivering') ?></div>
+                <div class="step<?php if ($status > 2): ?> active<?php endif ?>"><?php echo $this->translate('Repairing') ?></div>
+                <div class="step<?php if ($status > 3): ?> active<?php endif ?>"><?php echo $this->translate('Delivering') ?></div>
+            <?php elseif ($application['service']): ?>
+                <div class="step<?php if ($status > 1): ?> active<?php endif ?>"><?php echo $this->translate('Delivering') ?></div>
+                <div class="step<?php if ($status > 2): ?> active<?php endif ?>"><?php echo $this->translate('Confirming') ?></div>
+                <div class="step<?php if ($status > 3): ?> active<?php endif ?>"><?php echo $this->translate('Refunding') ?></div>
+            <?php endif ?>
+            <div class="step<?php if ($status > 4): ?> active<?php endif ?>"><?php echo $this->translate('Complete') ?></div>
+        <?php endif ?>
+    </div>
+    <div class="log">
+        <?php foreach ($application->getComments() as $key => $comment): ?>
+            <div class="item clearfix">
+                <div class="user col-xs-2 col-md-1"><?php echo $this->translate($comment['is_customer'] ? 'Buyer' : 'Seller') ?></div>
+                <div class="content col-xs-10 col-md-11">
+
+                    <p class="comment"><?php echo $this->translate('Comment').': '.$comment['comment'] ?></p>
+                    <p class="date"><?php echo $this->translate('Date').': '.$comment['created_at'] ?></p>
+                    <?php if ($images = @json_decode($comment['image'], true)): ?>
+                        <ul class="images list-inline">
+                            <?php foreach ($images as $i => $image): ?>
+                                <li>
+                                    <img src="<?php echo $this->getBaseUrl('pub/upload/refund/' . $image) ?>" class="thumbnail zoombox" alt="" />
+                                </li>
+                            <?php endforeach ?>
+                        </ul>
+                    <?php endif ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+        <?php if ($status >= 0 && $status < 5): ?>
+            <form action="<?php echo $this->getCommentUrl() ?>" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+                <input type="hidden" name="rma_id" value="<?php echo $this->getQuery('id') ?>" />
+                <div class="input-box">
+                    <textarea name="comment" class="form-control required"></textarea>
+                </div>
+                <div class="input-box images">
+                    <input type="file" name="voucher[]" id="voucher" hidden="hidden" accept="image/jpeg,image/gif,image/png" />
+                    <label for="voucher" class="add-image"><span class="fa fa-camera"></span></label>
+                    <span>(<?php echo $this->translate('%d images allowed at most. The maximum size of each image is %s.', [5, '2MB']) ?>)</span>
+                </div>
+                <div class="buttons-set">
+                    <button type="submit" name="success_url" value="<?php echo $this->getUri() ?>" class="btn btn-submit"><?php echo $this->translate('Submit') ?></button>
+                </div>
+            </form>
+        <?php endif ?>
+    </div>
+</div>

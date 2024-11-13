@@ -1,0 +1,46 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+$parent = $this->getVariable('parent');
+?>
+<div class="form-group <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label for="<?php echo $id ?>" class="col-form-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell">
+        <select name="<?php echo $key ?>" id="<?php echo $id ?>" hidden="hidden" disabled="disabled"<?php if (!empty($item['value'])): ?> data-default-value="<?php echo is_array($item['value']) ? json_encode($item['value']) : $item['value'] ?>"<?php
+        endif;
+        if (!isset($item['attrs']['class'])):
+            ?> class="form-control<?php if (isset($item['required'])): ?> required<?php endif ?> <?php
+                    if (isset($item['class'])) {
+                        echo $item['class'];
+                    }
+                    ?>"<?php endif ?> <?php
+                if (isset($item['attrs'])) {
+                    echo $parent->getAttrs($item['attrs']);
+                }
+                ?> data-msg-required="<?php echo $this->translate('Please choose ').(isset($item['label'])?$item['label']:$key);?>">
+            <option value=""><?php echo $this->translate($item['empty_string'] ?? 'Please Select') ?></option>
+        </select>
+        <input type="text" name="<?php echo $key ?>" id="<?php echo $id ?>-text"<?php if (isset($item['value'])): ?> value="<?php echo $item['value'] ?>"<?php
+        endif;
+        if (!isset($item['attrs']['class'])):
+            ?> class="form-control<?php if (isset($item['required'])): ?> required<?php endif ?> <?php
+                   if (isset($item['class'])) {
+                       echo $item['class'];
+                   }
+                   ?>"<?php endif ?> <?php
+               if (isset($item['attrs'])) {
+                   echo $parent->getAttrs($item['attrs']);
+               }
+               ?> data-msg-required="<?php echo $this->translate('Please enter ').(isset($item['label'])?$item['label']:$key);?>"/>
+               <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

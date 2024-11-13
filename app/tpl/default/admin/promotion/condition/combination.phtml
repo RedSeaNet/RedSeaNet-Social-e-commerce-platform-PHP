@@ -1,0 +1,28 @@
+<span class="title">
+    <input type="hidden" name="condition[pid][]" />
+    <input type="hidden" name="condition[identifier][]" value="combination" />
+    <?php
+    echo $this->translate('If %s of these conditions are %s.', [
+        '<span class="param form-inline"><select class="form-control" name="condition[operator][]"><option value="and">' .
+        $this->translate('All', [], 'promotion') .
+        '</option><option value="or">' .
+        $this->translate('Any', [], 'promotion') .
+        '</option></select></span>', '<span class="param form-inline"><select class="form-control" name="condition[value][]"><option value="1">' .
+        $this->translate('Eligible', [], 'promotion') .
+        '</option><option value="0">' .
+        $this->translate('Not Eligible', [], 'promotion') .
+        '</option></select></span>'], 'promotion')
+    ?>
+</span>
+<a href="javascript:void(0);" class="delete">
+    <span class="fa fa-times-circle" aria-hidden="true"></span>
+    <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+</a>
+<ul class="children" data-tmpl="#tmpl-condition-parent">
+    <li class="last">
+        <a href="javascript:void(0);" class="add">
+            <span class="fa fa-plus-circle" aria-hidden="true"></span>
+            <span class="sr-only"><?php echo $this->translate('Add') ?></span>
+        </a>
+    </li>
+</ul>

@@ -1,0 +1,17 @@
+<div style="padding:10px">
+    <div style="float:left;width:50px;margin-right:10px">
+        <a href="<?php echo $this->getVariable('url') ?>" target="_blank">
+            <img src="<?php echo $this->getVariable('image') ?>" alt="" style="max-width:50px;max-height:50px" />
+        </a>
+    </div>
+    <div style="float:left;width:calc(100% - 60px)">
+        <h1 style="font-size:16px;line-height:1.325;white-space:nowrap;margin:0;overflow:hidden;text-overflow:ellipsis">
+            <a href="<?php echo $this->getVariable('url') ?>" target="_blank"><?php echo $this->getVariable('title') ?></a>
+        </h1>
+        <p style="font-size:12px;line-height:1.2;color:#999;max-height:2.4em;overflow:hidden;margin:0">
+            <a href="<?php echo $this->getVariable('url') ?>" target="_blank"><?php echo $this->getVariable('description') ?></a>
+        </p>
+    </div>
+    <div style="clear:both"></div>
+</div>
+<style>body{margin:0}a{color:inherit;text-decoration:none}</style>

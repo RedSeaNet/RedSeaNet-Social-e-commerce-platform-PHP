@@ -1,0 +1,58 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$parent = $this->getVariable('parent');
+?>
+<div class="input-box <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label class="control-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell widget-upload">
+        <?php foreach ($item['options'] as $id => $name): ?>
+            <div class="input-box <?php echo $this->getVariable('boxClass') ?>">
+                <label for="<?php echo $key ?>-<?php echo $id ?>" class="control-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+                    <?php echo $name ?>
+                </label>
+                <div class="cell">
+                    <?php
+                    if (!empty($item['value'][$id])):
+                        ?>
+                        <div class="inline-box" <?php if (isset($item['base'])): ?> data-base="{'<?php echo $item['base'] ?>':'<?php echo $id ?>'}"<?php endif ?>>
+                            <button type="button" class="btn" data-toggle="modal" data-target="#modal-insert" data-param="file_type=image%25" title="<?php echo $this->translate('Select Resource') ?>">
+                               <img src="<?php echo $this->getResourceUrl('image/' . $item['value'][$id]) ?>" alt="" />
+                            </button>
+                            <a href="javascript:void(0);" class="delete">
+                                <span class="fa fa-trash-o" aria-hidden="true"></span>
+                                <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                            </a>
+                            <input type="hidden" class="imagesrc" name="<?php echo $key ?>[<?php echo $id ?>]" id="<?php echo $key ?>-<?php echo $id ?>" value="<?php echo $item['value'][$id] ?? '' ?>" />
+                        </div>
+                        <?php
+                    else:
+                        ?>
+                        <div class="inline-box" <?php if (isset($item['base'])): ?> data-base="{'<?php echo $item['base'] ?>':'<?php echo $id ?>'}"<?php endif ?>>
+                            <button type="button" class="btn" data-toggle="modal" data-target="#modal-insert" data-param="file_type=image%25" title="<?php echo $this->translate('Select Resource') ?>">
+                                <img src="<?php echo $this->getPubUrl('backend/images/placeholder.png') ?>" alt="" />
+                            </button>
+                            <a href="javascript:void(0);" class="delete">
+                                <span class="fa fa-trash-o" aria-hidden="true"></span>
+                                <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                            </a>
+                            <input type="hidden" class="imagesrc" name="<?php echo $key ?>[<?php echo $id ?>]" id="<?php echo $key ?>-<?php echo $id ?>" value="" />
+                        </div>
+                    <?php
+                    endif;
+                    ?>
+                </div>
+            </div>
+        <?php endforeach
+        ?>
+        <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

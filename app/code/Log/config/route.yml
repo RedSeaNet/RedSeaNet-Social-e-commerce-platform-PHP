@@ -1,0 +1,5 @@
+---
+log:
+    method: [GET]
+    route: /log/{file}.js
+    controller: Redseanet\Log\Controller\VisitorController

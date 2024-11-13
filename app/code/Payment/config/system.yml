@@ -1,0 +1,474 @@
+---
+payment:
+    label: Payment Method
+    children:
+        payment_free:
+            label: No Payment Infomation Required
+            scope: [merchant]
+            children:
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 1
+                    default: No Payment Infomation Required
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Payment\Model\Free
+                new_status:
+                    type: select
+                    scope: merchant
+                    label: New Order Status
+                    required: required
+                    source: Redseanet\Sales\Source\Order\Status
+                    default: 3
+                    priority: 5
+        bank_transfer:
+            label: Bank Transfer
+            scope: [merchant,store]
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 0
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 1
+                    default: Bank Transfer
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Payment\Model\BankTransfer
+                new_status:
+                    type: select
+                    scope: merchant
+                    label: New Order Status
+                    required: required
+                    source: Redseanet\Sales\Source\Order\Status
+                    default: 1
+                    priority: 5
+                description:
+                    type: textarea
+                    label: Description
+                    priority: 10
+                country:
+                    type: multiselect
+                    label: Available Countries
+                    source: Redseanet\I18n\Source\Country
+                    comment: Select none if all countries are available
+                    priority: 20
+                currency:
+                    type: multiselect
+                    label: Available Currencies
+                    source: Redseanet\I18n\Source\AvailableCurrency
+                    comment: Select none if all currencies are available
+                    priority: 21
+                min_total:
+                    type: price
+                    label: Minimum Order Total
+                    default: 1
+                    priority: 50
+                max_total:
+                    type: price
+                    label: Maximum Order Total
+                    default: ''
+                    priority: 51
+        check_money_order:
+            label: Check / Money Order
+            scope: [merchant,store]
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 0
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 1
+                    default: Check / Money Order
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Payment\Model\CheckMoneyOrder
+                new_status:
+                    type: select
+                    scope: merchant
+                    label: New Order Status
+                    required: required
+                    source: Redseanet\Sales\Source\Order\Status
+                    default: 1
+                    priority: 5
+                description:
+                    type: textarea
+                    label: Description
+                    priority: 10
+                country:
+                    type: multiselect
+                    label: Available Countries
+                    source: Redseanet\I18n\Source\Country
+                    comment: Select none if all countries are available
+                    priority: 20
+                currency:
+                    type: multiselect
+                    label: Available Currencies
+                    source: Redseanet\I18n\Source\AvailableCurrency
+                    comment: Select none if all currencies are available
+                    priority: 21
+                min_total:
+                    type: price
+                    label: Minimum Order Total
+                    default: 1
+                    priority: 50
+                max_total:
+                    type: price
+                    label: Maximum Order Total
+                    default: ''
+                    priority: 51
+        cash_on_delivery:
+            label: Cash on Delivery
+            scope: [merchant,store]
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 0
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 1
+                    default: Cash on Delivery
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Payment\Model\CashOnDelivery
+                new_status:
+                    type: select
+                    scope: merchant
+                    label: New Order Status
+                    required: required
+                    source: Redseanet\Sales\Source\Order\Status
+                    default: 1
+                    priority: 5
+                description:
+                    type: textarea
+                    label: Description
+                    priority: 10
+                country:
+                    type: multiselect
+                    label: Available Countries
+                    source: Redseanet\I18n\Source\Country
+                    comment: Select none if all countries are available
+                    priority: 20
+                currency:
+                    type: multiselect
+                    label: Available Currencies
+                    source: Redseanet\I18n\Source\AvailableCurrency
+                    comment: Select none if all currencies are available
+                    priority: 21
+                min_total:
+                    type: price
+                    label: Minimum Order Total
+                    default: 1
+                    priority: 50
+                max_total:
+                    type: price
+                    label: Maximum Order Total
+                    default: ''
+                    priority: 51
+        saved_cc:
+            label: Saved CC
+            scope: [merchant,store]
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 0
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 1
+                    default: Saved CC
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Payment\Model\SavedCc
+                new_status:
+                    type: select
+                    label: New Order Status
+                    scope: merchant
+                    required: required
+                    source: Redseanet\Sales\Source\Order\Status
+                    default: 1
+                    priority: 5
+                cctype:
+                    type: multiselect
+                    label: Credit Card Type
+                    priority: 10
+                    required: required
+                    source: Redseanet\Payment\Source\CcType
+                    default: AE,VI,MC,DI
+                country:
+                    type: multiselect
+                    label: Available Countries
+                    source: Redseanet\I18n\Source\Country
+                    comment: Select none if all countries are available
+                    priority: 20
+                currency:
+                    type: multiselect
+                    label: Available Currencies
+                    source: Redseanet\I18n\Source\AvailableCurrency
+                    comment: Select none if all currencies are available
+                    priority: 21
+                min_total:
+                    type: price
+                    label: Minimum Order Total
+                    default: 1
+                    priority: 50
+                max_total:
+                    type: price
+                    label: Maximum Order Total
+                    default: ''
+                    priority: 51
+        alipay_direct_pay:
+            label: Alipay Direct Pay
+            scope: [merchant,store]
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 0
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 1
+                    default: Alipay Direct Pay
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Payment\Model\AlipayDirectPay
+                new_status:
+                    type: select
+                    scope: merchant
+                    label: New Order Status
+                    required: required
+                    source: Redseanet\Sales\Source\Order\Status
+                    default: 2
+                    priority: 5
+                description:
+                    type: textarea
+                    label: Description
+                    priority: 10
+                country:
+                    type: multiselect
+                    label: Available Countries
+                    source: Redseanet\I18n\Source\Country
+                    comment: Select none if all countries are available
+                    priority: 20
+                currency:
+                    type: multiselect
+                    label: Available Currencies
+                    source: Redseanet\I18n\Source\AvailableCurrency
+                    comment: Select none if all currencies are available
+                    priority: 21
+                    default: [CNY]
+                gateway:
+                    type: url
+                    scope: merchant
+                    label: Gateway
+                    required: required
+                    default: https://mapi.alipay.com/gateway.do
+                    priority: 30
+                    attrs:
+                        data-base: '#alipay_direct_pay-enable'
+                partner:
+                    type: number
+                    scope: [merchant,scope]
+                    label: Partner ID
+                    required: required
+                    priority: 31
+                    attrs:
+                        minlength: 16
+                        maxlength: 16
+                        data-base: '#alipay_direct_pay-enable'
+                security_key:
+                    type: text
+                    scope: [merchant,scope]
+                    label: Security Key
+                    required: required
+                    priority: 32
+                    attrs:
+                        data-base: '#alipay_direct_pay-enable'
+                seller_type:
+                    type: select
+                    scope: [merchant,scope]
+                    label: Seller ID Type
+                    required: required
+                    priority: 35
+                    options:
+                        seller_id: Seller ID
+                        seller_email: Seller Email
+                        seller_account_name: Seller Account Name
+                    default: seller_id
+                    attrs:
+                        data-base: '#alipay_direct_pay-enable'
+                seller_id:
+                    type: text
+                    scope: [merchant,scope]
+                    label: Seller ID
+                    required: required
+                    priority: 36
+                    attrs:
+                        data-base: "#alipay_direct_pay-enable"
+                anti_phishing:
+                    type: select
+                    scope: [merchant,scope]
+                    label: Anti Phishing Service
+                    priority: 40
+                    required: required
+                    default: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    attrs:
+                        data-base: '#alipay_direct_pay-enable'
+                min_total:
+                    type: price
+                    label: Minimum Order Total
+                    default: 1
+                    priority: 50
+                max_total:
+                    type: price
+                    label: Maximum Order Total
+                    default: ''
+                    priority: 51
+        wechat_pay:
+            label: WeChat Pay
+            scope: [merchant,store]
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 0
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 1
+                    default: WeChat Pay
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Payment\Model\WeChatPay
+                new_status:
+                    type: select
+                    scope: merchant
+                    label: New Order Status
+                    required: required
+                    source: Redseanet\Sales\Source\Order\Status
+                    default: 2
+                    priority: 5
+                description:
+                    type: textarea
+                    label: Description
+                    priority: 10
+                country:
+                    type: multiselect
+                    label: Available Countries
+                    source: Redseanet\I18n\Source\Country
+                    comment: Select none if all countries are available
+                    priority: 20
+                currency:
+                    type: multiselect
+                    label: Available Currencies
+                    source: Redseanet\I18n\Source\AvailableCurrency
+                    comment: Select none if all currencies are available
+                    priority: 21
+                    default: [CNY]
+                gateway:
+                    type: url
+                    scope: merchant
+                    label: Gateway
+                    required: required
+                    default: https://api.mch.weixin.qq.com/
+                    priority: 30
+                    attrs:
+                        data-base: '#wechat_pay-enable'
+                app_id:
+                    type: text
+                    scope: [merchant,scope]
+                    label: App ID
+                    required: required
+                    priority: 32
+                    attrs:
+                        data-base: '#wechat_pay-enable'
+                jsapi_id:
+                    type: text
+                    scope: [merchant,scope]
+                    label: JSAPI App ID
+                    required: required
+                    priority: 32
+                    attrs:
+                        data-base: '#wechat_pay-enable'
+                app_secret:
+                    type: text
+                    scope: [merchant,scope]
+                    label: Secret Code
+                    required: required
+                    priority: 33
+                    attrs:
+                        data-base: '#wechat_pay-enable'
+                mch_id:
+                    type: text
+                    scope: [merchant,scope]
+                    label: Merchant ID
+                    required: required
+                    priority: 34
+                    attrs:
+                        data-base: '#wechat_pay-enable'
+                min_total:
+                    type: price
+                    label: Minimum Order Total
+                    default: 1
+                    priority: 50
+                max_total:
+                    type: price
+                    label: Maximum Order Total
+                    default: ''
+                    priority: 51

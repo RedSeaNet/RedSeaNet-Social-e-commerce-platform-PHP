@@ -1,0 +1,168 @@
+---
+forum:
+    label: Forum Configuration
+    children:
+        general:
+            label: General
+            scope: merchant
+            priority: 0
+            children:
+                uri_key:
+                    label: Uri Key
+                    type: text
+                    priority: 1
+                    scope: merchant
+                    default: forum
+                dislike:
+                    label: Show Dislike Button
+                    type: select
+                    required: required
+                    priority: 10
+                    default: 0
+                    options:
+                        0: No
+                        1: Yes
+        post:
+            label: Post
+            scope: merchant
+            priority: 10
+            children:
+                new_days:
+                    label: Set Post as New in Days
+                    type: tel
+                    required: required
+                    priority: 10
+                    default: 0
+                wysiwyg:
+                    label: Using WYSIWYG Editor
+                    type: select
+                    required: required
+                    priority: 0
+                    default: 1
+                    options:
+                        - No
+                        - Yes
+                description:
+                    label: Is Description Required
+                    type: select
+                    required: required
+                    priority: 10
+                    default: 0
+                    options:
+                        -1: Hidden
+                        0: No
+                        1: Yes
+                anonymous:
+                    label: Allow to Post Anonymously
+                    type: select
+                    required: required
+                    priority: 20
+                    default: 0
+                    options:
+                        - No
+                        - Yes
+                status:
+                    label: Status Before Approval
+                    type: select
+                    required: required
+                    priority: 30
+                    default: 1
+                    options:
+                        - Disabled
+                        - Enabled
+                    comment: The post could be viewed after approved if Disabled is specified.
+                captcha:
+                    label: CAPTCHA
+                    type: select
+                    required: required
+                    priority: 40
+                    default: 1
+                    options:
+                        - Disabled
+                        - Enabled
+                impeach:
+                    label: Impeachment
+                    type: select
+                    required: required
+                    priority: 31
+                    default: 1
+                    options:
+                        - Disabled
+                        - Enabled
+                expiration:
+                    label: Default Expiration of Poll
+                    type: tel
+                    required: required
+                    priority: 35
+                    default: 7
+                    comment: In days
+        review:
+            label: Review
+            scope: merchant
+            children:
+                wysiwyg:
+                    label: Using WYSIWYG Editor
+                    type: select
+                    required: required
+                    priority: 0
+                    default: 1
+                    options:
+                        - No
+                        - Yes
+                subject:
+                    label: Is Subject Required
+                    type: select
+                    required: required
+                    priority: 10
+                    default: -1
+                    options:
+                        -1: Hidden
+                        0: No
+                        1: Yes
+                anonymous:
+                    label: Allow to Review Anonymously
+                    type: select
+                    required: required
+                    priority: 20
+                    default: 0
+                    options:
+                        - No
+                        - Yes
+                status:
+                    label: Status Before Approval
+                    type: select
+                    required: required
+                    priority: 30
+                    default: 1
+                    options:
+                        - Disabled
+                        - Enabled
+                    comment: The review could be viewed after approved if Disabled is specified.
+                impeach:
+                    label: Impeachment
+                    type: select
+                    required: required
+                    priority: 31
+                    default: 1
+                    options:
+                        - Disabled
+                        - Enabled
+                captcha:
+                    label: CAPTCHA
+                    type: select
+                    required: required
+                    priority: 40
+                    default: 1
+                    options:
+                        - Disabled
+                        - Enabled
+                vote:
+                    label: Allow to Review Before Vote
+                    type: select
+                    required: required
+                    priority: 50
+                    default: 0
+                    options:
+                        - No
+                        - Yes
+                    comment: It is not allowed to review until voted if No is specified.

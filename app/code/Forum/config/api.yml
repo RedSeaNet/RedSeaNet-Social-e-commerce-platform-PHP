@@ -1,0 +1,176 @@
+---
+rpcport:
+    getForumCategory:
+        params: 
+            id: string
+            token: string
+            conditionData: array
+            languageId: int
+        respone: json array 
+        documentation: get forum category list
+    getForumPostList: 
+        params: 
+            id: string
+            token: string
+            condition: array
+            languageId: int
+        respone: json array 
+        documentation: get forum post list
+    addForumPost: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            data: array
+            languageId: int
+        respone: json array 
+        documentation: add forum post
+    getForumPostById: 
+        params: 
+            id: string
+            token: string
+            postId: int
+            languageId: int
+        respone: json array 
+        documentation: get forum post by id
+    forumPostReviewSave: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            postId: int
+            data: array
+            languageId: int
+        respone: json array 
+        documentation: add or update post review
+    forumLikePost: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            postId: int
+        respone: json array 
+        documentation: add or cancel post like
+    forumDeletePost: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            postId: int
+        respone: json array 
+        documentation: delete post in forum
+    forumPostReviewList: 
+        params: 
+            id: string
+            token: string
+            conditon: array
+            page: int
+            limit: int
+        respone: json array 
+        documentation: get forum post review list
+    forumPostReplyList: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            page: int
+            limit: int
+        respone: json array 
+        documentation: get forum post review reply list
+    getMyLiked: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            page: int
+            limit: int
+        respone: json array 
+        documentation: get forum my liked list
+    getBeLikes: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            page: int
+            limit: int
+        respone: json array 
+        documentation: get forum post be like list
+    getFollow: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            page: int
+            limit: int
+        respone: json array 
+        documentation: get forum follow list
+    getFans: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            page: int
+            limit: int
+        respone: json array 
+        documentation: get forum belike list
+    getBeCollected: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            page: int
+            limit: int
+        respone: json array 
+        documentation: get forum beCollected list
+    getFavoritedWithPosts: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            page: int
+            limit: int
+        respone: json array 
+        documentation: get forum favorited list
+    forumToLikeCustomer: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            toLikeCustomerId: int
+        respone: json array 
+        documentation: follow the customer in forum
+    forumFavoritePost: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            postId: int
+        respone: json array 
+        documentation: favorite post
+    forumSpaceData: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            currentCustomerId: int
+        respone: json array 
+        documentation: customer space data
+rpc:
+    getForumCategory: \Redseanet\Forum\Model\Api\Rpc\Category
+    getForumPostList: \Redseanet\Forum\Model\Api\Rpc\Post
+    addForumPost: \Redseanet\Forum\Model\Api\Rpc\Post
+    getForumPostById: \Redseanet\Forum\Model\Api\Rpc\Post
+    forumPostReviewSave: \Redseanet\Forum\Model\Api\Rpc\Post
+    forumLikePost: \Redseanet\Forum\Model\Api\Rpc\Post
+    forumDeletePost: \Redseanet\Forum\Model\Api\Rpc\Post
+    forumPostReviewList: \Redseanet\Forum\Model\Api\Rpc\Post
+    forumPostReplyList: \Redseanet\Forum\Model\Api\Rpc\Post
+    getMyLiked: \Redseanet\Forum\Model\Api\Rpc\Post
+    getBeLikes: \Redseanet\Forum\Model\Api\Rpc\Post
+    getFollow: \Redseanet\Forum\Model\Api\Rpc\Post
+    getFans: \Redseanet\Forum\Model\Api\Rpc\Post
+    getBeCollected: \Redseanet\Forum\Model\Api\Rpc\Post
+    getFavoritedWithPosts: \Redseanet\Forum\Model\Api\Rpc\Post
+    forumToLikeCustomer: \Redseanet\Forum\Model\Api\Rpc\Post
+    forumFavoritePost: \Redseanet\Forum\Model\Api\Rpc\Post
+    forumSpaceData: \Redseanet\Forum\Model\Api\Rpc\Post

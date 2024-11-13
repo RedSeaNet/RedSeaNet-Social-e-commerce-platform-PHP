@@ -1,0 +1,14 @@
+version: '3'
+services:
+  fastcgi-php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    volumes:
+      - ../:/var/www/html/:rw
+      - ./tmp/:/tmp/livechat/:rw
+      - ./config/php.ini:/usr/local/etc/php-fpm.d/www.conf:rw
+      - ./config/php-fpm.conf:/usr/local/etc/php/php.ini:rw
+      

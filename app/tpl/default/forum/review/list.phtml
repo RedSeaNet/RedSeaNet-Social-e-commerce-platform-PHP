@@ -1,0 +1,61 @@
+<ul class="reviews-list"><?php
+    $config = $this->getConfig();
+    $current = $this->getSegment('customer')->get('hasLoggedIn') ? $this->getSegment('customer')->get('customer')['id'] : 0;
+    foreach ($this->getReviews() as $review):
+        $customer = $review->getCustomer();
+        ?><li class="clearfix">
+            <div class="avatar">
+                <img class="img-fluid" src="<?php echo $customer['avatar'] ? $this->getUploadedUrl('customer/avatar/') . $customer['avatar'] : $this->getPubUrl('frontend/images/placeholder.png') ?>" alt="" />
+            </div>
+            <div class="review">
+                <article>
+                    <h5 class="user">
+                        <?php echo $customer['username'] ?>
+                        <?php if ($review['reference']): ?>
+                            <span class="reference"><?php echo $this->translate('Reply to') ?></span>
+                            <span class="reference-name"><?php echo $review->getReference()->getCustomer()['username'] ?></span>
+                        <?php endif ?>
+                    </h5>
+                    <h3 class="subject"><?php echo $review['subject'] ?></h3>
+                    <div class="content sina-emotion-content"><?php echo $review['content'] ?></div>
+                </article>
+                <div class="time"><?php echo $this->getTime($review['created_at']) ?></div>
+                <?php if ($current): ?>
+                    <div class="toolbar clearfix">
+                        <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/like/') ?>" class="like" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $review->getId() ?>">
+                            <span class="fa fa-thumbs-o-up" aria-hidden="true"></span>
+                            <span class="number"><?php echo $review['like'] ?></span>
+                            <span class="sr-only"><?php echo $this->translate('Like') ?></span>
+                        </a>
+                        <?php if ($config['forum/general/dislike']): ?>
+                            <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/dislike/') ?>" class="dislike" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $review->getId() ?>">
+                                <span class="fa fa-thumbs-o-down" aria-hidden="true"></span>
+                                <span class="number"><?php echo $review['dislike'] ?></span>
+                                <span class="sr-only"><?php echo $this->translate('Dislike') ?></span>
+                            </a>
+                        <?php endif ?>
+                        <?php if ($review['status'] > 0 && $config['forum/review/impeach']): ?>
+                            <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/impeach/') ?>" class="impeach" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $review->getId() ?>">
+                                <span class="fa fa-exclamation-triangle" aria-hidden="true"></span>
+                                <span><?php echo $this->translate('Impeach') ?></span>
+                            </a>
+                        <?php endif ?>
+                        <a href="#modal-review" data-bs-toggle="modal" data-post="<?php echo $review['post_id'] ?>" class="reply" data-ref-user="<?php echo $customer['username'] ?>" data-ref-content="<?php echo htmlspecialchars(mb_substr(preg_replace('/<[^<]+>/', '', $review['content']), 0, 50), 51) . '...' ?>" data-ref-id="<?php echo $review->getId() ?>">
+                            <span class="fa fa-commenting-o" aria-hidden="true"></span>
+                            <span><?php echo $this->translate('Reply') ?></span>
+                        </a>
+                        <?php if ($customer->getId() === $current): ?>
+                            <a href="#modal-review" data-bs-toggle="modal" data-post="<?php echo $review['post_id'] ?>" class="edit" data-id="<?php echo $review->getId() ?>">
+                                <span class="fa fa-file-text-o" aria-hidden="true"></span>
+                                <span><?php echo $this->translate('Edit') ?></span>
+                            </a>
+                            <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/remove/') ?>" class="remove" data-method="delete" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $review->getId() ?>">
+                                <span class="fa fa-trash" aria-hidden="true"></span>
+                                <span><?php echo $this->translate('Remove') ?></span>
+                            </a>
+                        <?php endif ?>
+                    </div>
+                <?php endif ?>
+            </div>
+        </li><?php endforeach ?></ul>
+<p class="empty"><?php echo $this->translate('No review available right now.') ?></p>

@@ -1,0 +1,29 @@
+<?php
+$customer = $this->getCustomer();
+$avatar = $customer['avatar'];
+?>
+<div class="profile pt-2 pt-md-4">
+    <div class="avatar pe-2">
+        <a href="<?php echo $this->getBaseUrl('customer/account/edit/') ?>">
+            <img alt="<?php echo $customer->offsetGet('username') ?>" class="img-fluid rounded-circle shadow" width="100" src="<?php echo $avatar ? $this->getUploadedUrl('customer/avatar/' . $avatar) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" />
+        </a>
+    </div>
+    <div class="info">
+        <div class="name">
+            <span class="font-24"><?php echo $customer->offsetGet('username') ?></span>
+            <span class="level"><?php echo $customer->getLevel() ?></span>
+            <a href="<?php echo $this->getBaseUrl('customer/account/logout/') ?>" class="visible-xs-inline-block"><?php echo $this->translate('Logout') ?></a>
+        </div>
+        <div class="balance">
+            <span class="badge text-bg-danger"><?php echo $this->translate('My Account') ?>:</span>
+            <span><?php echo $this->translate('Balance') ?><a href="<?php echo $this->getBaseUrl('balance/statement/'); ?>"><span class="count"><?php echo $this->getCurrency()->convert($customer->getBalance(), true) ?></span></a></span>
+            <span><?php echo $this->translate($this->getConfig()['rewardpoints/general/title']) ?><a href="<?php echo $this->getBaseUrl('rewardpoints/statement/'); ?>"><span class="count"><?php echo (int) $customer->getPoints(); //$customer['rewardpoints']   ?></span></a></span>
+        </div>
+        <div class="transaction">
+            <span class="badge text-bg-danger"><?php echo $this->translate('My Orders') ?>:</span>
+            <a href="<?php echo $this->getBaseUrl('sales/order/list/?status=1') ?>"><?php echo $this->translate('Pending Payment') ?><span class="count">(<?php echo $this->getPendingPayment() ?>)</span></a>
+            <a href="<?php echo $this->getBaseUrl('sales/order/list/?status=2') ?>"><?php echo $this->translate('Delivering', [], 'customer') ?><span class="count">(<?php echo $this->getShipping() ?>)</span></a>
+            <a href="<?php echo $this->getBaseUrl('sales/order/list/?status=3') ?>"><?php echo $this->translate('Reviewing', [], 'customer') ?><span class="count">(<?php echo $this->getReviewing() ?>)</span></a>
+        </div>
+    </div>
+</div>

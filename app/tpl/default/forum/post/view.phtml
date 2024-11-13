@@ -1,0 +1,618 @@
+<?php
+$current = $this->getSegment('customer')->get('hasLoggedIn') ? $this->getSegment('customer')->get('customer')['id'] : 0;
+$customer_id = $current;
+$post = $this->getVariable('post');
+$post_id = $post->getId();
+$customer = $post->getCustomer();
+$images = $post->getThumbnails();
+$video = $post->getVideo();
+$config = $this->getConfig();
+$new = strtotime('-' . $config['forum/post/new_days'] . 'days');
+$reviews = $this->getReviews();
+$references = $this->getReferences();
+$count = $post->getLikeCount();
+$collects = $post->getCollectCount();
+$products = $post->getLinkedProducts();
+$posts = $post->getSelfPosts();
+$relatePosts = $post->getCategoryRelatePosts($post['category_id']);
+$liked = $post->liked($customer_id);
+$favorited = $post->favorited($customer_id);
+$followed = false;
+if ($this->getSegment('customer')->get('hasLoggedIn')) {
+    if ($post->customerFollowed($current, $post['customer_id'])) {
+        $followed = true;
+    }
+}
+$postUrl = $post->getUrl();
+?>
+<div class="container">
+    <div class="mobile-post-top d-block d-sm-none pt-2 pb-2">
+        <div class="col-2"><a href="javascript:void(0)" onclick="javascript:history.back(-1);"><span class="fa fa-arrow-left"></span></a></div> 
+    </div>
+    <div class="page-title clearfix d-none">
+        <h2 class="title text-center"><?php echo $post['title'] ?></h2>
+    </div>
+    <?php
+    if ($video != '') {
+        ?>
+        <div class="Article-video">
+            <video id="post_video_<?php echo $post['id']; ?>" class="video-js vjs-big-play-centered vjs-16-9 vjs-theme-city" controls preload="auto" style="width:100%;height:100%;" type="video/mp4" webkit-playsinline="true"
+                   playsinline="true"
+                   x-webkit-airplay="allow"
+                   x5-video-player-type="h5"
+                   x5-video-orientation="landscape">
+            </video>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var player = videojs('post_video_<?php echo $post['id']; ?>', {
+                    muted: true,
+                    controls: true,
+                    loop: true,
+                    autoplay: true,
+                    currentTimeDisplay: true,
+                    timeDivider: true,
+                    durationDisplay: true,
+                    remainingTimeDisplay: false,
+                    controlBar: {
+                        skipButtons: {
+                            forward: 10,
+                            backward: 10
+                        }
+                    }
+
+                }, function () {
+                    var player = this;
+                    player.controlBar.addChild('QualitySelector');
+                });
+                player.on('pause', function () {
+
+                });
+                player.src([
+                    {
+                        src: 'http://192.168.0.105/pub/upload/forum/videos/花店的鲜切花和布置.mp4',
+                        type: 'video/mp4',
+                        label: '720P',
+                    },
+                    {
+                        src: '<?php echo $this->getUploadedUrl('forum/videos/' . $video); ?>',
+                        type: 'video/mp4',
+                        label: '480P',
+                        selected: true,
+                    },
+                    {
+                        src: 'http://192.168.0.105/pub/upload/forum/videos/ING_VID_2414133.mp4',
+                        type: 'video/mp4',
+                        label: '360P',
+                    },
+                ]);
+                player.on('touchstart', function (e) {
+                    if (e.target.nodeName === 'VIDEO') {
+                        if (player.paused()) {
+                            player.play();
+                        } else {
+                            player.pause();
+                        }
+                    }
+                });
+            }
+            );
+        </script>
+
+    <?php } else { ?>
+        <div class="Article-img">
+            <div id="product-media" class="carousel slide clearfix" data-bs-ride="carousel">
+                <?php
+                if (count($images)):
+                    ?>
+                    <div class="carousel-inner" role="listbox">
+                        <?php
+                        foreach ($images as $key => $image):
+                            ?>
+                            <div class="carousel-item <?php echo ($key == 0) ? 'active' : ''; ?>" data-bs-interval="10000">
+                                <img src="<?php echo $this->getUploadedUrl('forum/' . $image); ?>" loading="lazy" />
+                            </div>
+                            <?php
+                        endforeach;
+                        ?>
+                    </div>
+                    <ol class="carousel-indicators">
+                        <?php
+                        foreach ($images as $key => $image):
+                            ?>
+                            <li class="<?php echo ($key == 0) ? 'active' : ''; ?>" data-bs-slide-to="<?php echo $key; ?>" data-bs-target="#product-media">
+                            </li>
+                            <?php
+                        endforeach;
+                        ?>
+                    </ol>
+                <?php else: ?>
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active">
+                            <img src="<?php echo $this->getPubUrl('frontend/images/placeholder.png') ?>" />
+                        </div>
+                    </div>
+                <?php
+                endif;
+                ?>
+            </div>
+
+        </div>
+
+    <?php } ?>
+    <div class="col-lg-12 col-12">
+        <div class="action-ico" style="color:#000;display:flex;justify-content: space-between;font-size:18px; padding:4px;">
+            <?php if ($customer_id == 0) { ?>
+                <a id="article-like-<?php echo $post_id ?>" class="like" href="<?php echo $this->getBaseUrl('customer/account/logion/') ?>" data-id="<?php echo $post_id ?>" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post_id ?>"><i class="fa fa-heart-o"></i></a>
+                <?php
+            } else {
+                if ($liked) {
+                    ?>
+                    <a style="color:#DC143C;" id="article-like-<?php echo $post_id ?>" class="liked" href="#" data-id="<?php echo $post_id; ?>"><i class="fa fa-heart"></i></a>
+                <?php } else { ?>
+                    <a id="article-like-<?php echo $post_id ?>" class="like" href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/like/') ?>" data-id="<?php echo $post_id ?>" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post_id ?>"><i class="fa fa-heart-o"></i></a>
+                    <?php
+                }
+            }
+            ?>
+
+            <a class="like" data-copy="forward" data-title="<?php echo $post['title'] ?>" data-link="<?php echo $postUrl; ?>">
+                <i class="fa fa-mail-forward" aria-hidden="true" title="<?php echo $this->translate('Forward'); ?>"></i>
+            </a >
+
+            <?php if ($customer_id == 0) { ?> 
+                <a class="favorite" href="<?php echo $this->getBaseUrl('customer/account/logion/') ?>" data-id="<?php echo $post_id ?>" id="article-favorite-<?php echo $post_id ?>" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post_id ?>"><i class="fa fa-bookmark-o"></i></a>
+                <?php
+            } else {
+                if ($favorited) {
+                    ?>
+                    <a style="color:#DC143C;" class="favorited" href="#" data-id="<?php echo $post_id ?>" id="article-favorite-<?php echo $post_id ?>"><i class="fa fa-bookmark"></i></a>
+                <?php } else { ?>
+                    <a class="favorite" href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/favorite/') ?>" data-id="<?php echo $post_id ?>" id="article-favorite-<?php echo $post_id ?>" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post_id ?>"><i class="fa fa-bookmark-o"></i></a>
+                    <?php
+                }
+            }
+            ?>
+        </div>
+
+    </div>
+    <div class="author d-block d-md-none text-center">
+        <div class="d-flex align-items-center">
+            <div class="col-8">
+                <img src="<?php echo $customer['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $customer['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" class="rounded-circle user-titleImg mx-auto d-block" alt="<?php echo $customer['username'] ?>">
+                <p><?php echo $customer['username'] ?></p>
+            </div>
+            <div class="col-4 text-center follow">
+                <?php if ($customer_id == 0) { ?>
+                    <a href="<?php echo $this->getBaseUrl('customer/account/logion/') ?>" class="attention-btn"><?php echo $this->translate('Add Following'); ?></a>
+                    <?php
+                } else {
+                    if ($current != $post['customer_id'] && !$followed) {
+                        ?>
+                        <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/account/like/') ?>" class="attention-btn" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $customer['id']; ?>"><?php echo $this->translate('Add Following'); ?></a>
+                        <?php
+                    } else {
+                        ?>
+                        <a class="attention-btn"><?php echo $this->translate('Followed'); ?></a>
+                        <?php
+                    }
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+    <div class="more-user col-12 d-none d-md-block">
+        <ul class="row padding-10-10">
+            <li class="col-md-3 col-sm-6 col-12">
+                <a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $customer['id']) ?>"><img src="<?php echo $customer['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $customer['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" class="rounded-circle user-titleImg mx-auto d-block" alt="<?php echo $customer['username'] ?>" /> </a>              
+                <div class="user-name text-center">
+                    <span><?php echo $customer['username'] ?></span>
+                    <?php if ($customer_id == 0) { ?>
+                        <a href="<?php echo $this->getBaseUrl('customer/account/logion/') ?>" class="attention-btn">
+                            <?php echo $this->translate('Add Following'); ?>
+                        </a>
+                        <?php
+                    } else {
+                        if ($current != $post['customer_id'] && !$followed) {
+                            ?>
+                            <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/account/like/') ?>" class="attention-btn" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $customer['id']; ?>">
+                                <?php echo $this->translate('Add Following'); ?>
+                            </a>
+                            <?php
+                        } else {
+                            ?>
+                            <a class="attention-btn">
+                                <?php echo $this->translate('Followed'); ?>
+                            </a>
+                            <?php
+                        }
+                    }
+                    ?>
+                </div>
+                <span class="user-signature"><?php echo $customer['motto'] ?? ''; ?></span>
+            </li>
+            <li class="col-md-4 col-sm-6 change-user">
+                <h5 class="padding-0-10 text-center likely" style="line-height:80px"><?php echo $this->translate('The User Likely to be Interested'); ?></h5>
+            </li>
+            <li class="col-md-5 col-sm-12 apply_nav d-flex">
+                <?php
+                $relateCustomer = $this->getCategoryUnLikeCustomer($post['category_id'], [$post['customer_id']]);
+                foreach ($relateCustomer as $value):
+                    ?>
+                    <div class="col-md-4 col-sm-4 col-4 text-center apply_array">
+                        <a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $value['id']) ?>"><img src="<?php echo $value['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $value['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="<?php echo $value['username']; ?>" class="small-img rounded-circle" /></a>
+                        <h6 class="user-Similar"><?php echo $this->translate('Similar to Ta'); ?></h6>
+                        <h5 class="padding-0-10"><a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $value['id']) ?>"><?php echo $value['username']; ?></a></h5>
+                        <?php
+                        if ($current == 0) {
+                            ?>
+                            <a href="<?php echo $this->getBaseUrl('customer/account/logion/') ?>" class="attention-btn"><?php echo $this->translate('Add Following'); ?></a>
+                            <?php
+                        } else {
+                            $relationFollow = $this->customerFollowed($current, $value['id']);
+                            if ($relationFollow) {
+                                ?>
+                                <a class="attention-btn"><?php echo $this->translate('Followed'); ?></a>
+                            <?php } else { ?>
+                                <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/account/like/') ?>" class="attention-btn" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $value['id']; ?>"><?php echo $this->translate('Add Following'); ?></a>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </div>
+                    <?php
+                endforeach;
+                ?>
+            </li>
+        </ul>
+    </div>
+    <div class="post-content">
+        <h4 class="text-center"><?php echo $post['title'] ?></h4>
+
+        <p class="text-indent-2 font-14"><?php echo $post['content']; ?></p>
+        <div><?php
+            if (!empty($post['tags'])) {
+                foreach (explode(",", $post['tags']) as $tag) {
+                    echo "<span style='background-color:#f5f4f4;display:inline-block;margin:5px; padding:5px;border-radius:5px;'><a href='".$this->getBaseUrl('forum/post/search?q='.$tag)."'>" . $tag . "</a></span>";
+                }
+            }
+            ?>
+        </div>
+        <div><?php
+            $links = $post->getLinks();
+            if (count($links) > 0) {
+                foreach ($links as $link) {
+                    echo "<span style='background-color:#f5f4f4;display:inline-block;margin:5px; padding:5px;border-radius:5px;'><a href='" . $post->checkLink($link['link']) . "' target='_blank'>" . $link['name'] . "</a></span>";
+                }
+            }
+            ?>
+        </div>
+    </div>
+    <?php
+    if ($this->getSegment('customer')->get('hasLoggedIn')):
+        echo $this->getChild('form')->setVariable('post_id', $post->getId());
+    else:
+        ?>
+        <p class="required-login text-center"><?php echo $this->translate('You have to review after %sLogin/Register%s', ['<a href="' . $this->getBaseUrl('customer/account/login/?success_url=') . str_replace(['+', '/', '='], ['-', '_', ''], urlencode($this->getRequest()->getUri())) . '">', '</a>']) ?></p>
+    <?php endif; ?>
+    <ol class="post-view showMoreNChildren" pagesize="2">
+        <?php
+        if (count($reviews)):
+            foreach ($reviews as $review):
+                $customer = $review->getCustomer();
+                if (empty($review['reference'])):
+                    ?>
+                    <li>
+                        <div class="profile">
+                            <div class="avatar">
+                                <a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $customer['id']) ?>"><img src="<?php echo $customer['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $customer['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="<?php echo $customer['username'] ?>" class="rounded-circle small-img" /></a>
+                            </div>
+                            <h4 class="name"><a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $customer['id']) ?>"><?php echo $customer['username'] ?></a></h4>
+                        </div>
+                        <article class="details">
+                            <h3 class="subject"><?php echo $post['subject'] ?></h3>
+                            <p class="post-review-content sina-emotion-content"><?php echo $config['forum/review/wysiwyg'] ? $review['content'] : htmlspecialchars($review['content'], 51) ?></p>
+                            <p>
+                                <span class="time"><?php echo $this->getTime($review['created_at']); ?></span>
+                            </p>
+                            <div class="toolbar float-end">
+                                <?php if ($review['status'] > 0 && $config['forum/review/impeach']): ?>
+                                    <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/impeach/') ?>" class="impeach" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $review->getId() ?>">
+                                        <span class="fa fa-exclamation-triangle" aria-hidden="true"></span>
+                                        <span><?php echo $this->translate('Impeach') ?></span>
+                                    </a>
+                                <?php endif ?>
+                                <?php if ($current): ?>
+                                    <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/like/') ?>" class="like" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $review->getId() ?>">
+                                        <span class="fa fa-thumbs-o-up" aria-hidden="true"></span>
+                                        <span class="number"><?php echo $review['like'] ?></span>
+                                        <span class="sr-only"><?php echo $this->translate('Like') ?></span>
+                                    </a>
+                                    <?php if ($config['forum/general/dislike']): ?>
+                                        <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/dislike/') ?>" class="dislike" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $review->getId() ?>">
+                                            <span class="fa fa-thumbs-o-down" aria-hidden="true"></span>
+                                            <span class="number"><?php echo $review['dislike'] ?></span>
+                                            <span class="sr-only"><?php echo $this->translate('Dislike') ?></span>
+                                        </a>
+                                    <?php endif ?>
+                                    <a href="#modal-review" data-bs-toggle="modal" data-post="<?php echo $review['post_id'] ?>" class="reply" data-ref-user="<?php echo $customer['username'] ?>" data-ref-content="<?php echo htmlspecialchars(mb_substr(preg_replace('/<[^<]+>/', '', $review['content']), 0, 50), 51) . '...' ?>" data-ref-id="<?php echo $review->getId() ?>">
+                                        <span class="fa fa-commenting-o" aria-hidden="true"></span>
+                                        <span><?php echo $this->translate('Reply') ?></span>
+                                    </a>
+                                    <?php if ($customer->getId() === $current): ?>
+                                        <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/remove/') ?>" class="remove" data-method="delete" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $review->getId() ?>">
+                                            <span class="fa fa-trash" aria-hidden="true"></span>
+                                            <span><?php echo $this->translate('Remove') ?></span>
+                                        </a>
+                                    <?php endif ?>
+                                <?php endif ?>
+                            </div>
+                        </article>
+                        <?php
+                        if ($references):
+                            foreach ($references as $ref):
+                                $customer = $ref->getCustomer();
+                                if ($ref['status'] != 0 && $ref['reference'] === $review['id']):
+                                    ?>
+                                    <div class="replies">
+                                        <h4 class="name"><?php echo $customer['username'] ?>：</h4>
+                                        <article class="details">
+                                            <h3 class="subject"><?php echo $post['subject'] ?></h3>
+                                            <p><?php echo $config['forum/review/wysiwyg'] ? $ref['content'] : htmlspecialchars($ref['content'], 51) ?></p>
+                                            <p class="">
+                                                <span class="time"><?php echo $this->getTime($ref['created_at']); //date('m-d H:i', strtotime($ref['created_at']))                                                                                                                                                                                                                                                                                                                                                            ?></span>
+                                            </p>
+                                            <div class="toolbar float-end">
+                                                <?php if ($ref['status'] > 0 && $config['forum/review/impeach']): ?>
+                                                    <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/impeach/') ?>" class="impeach" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $ref->getId() ?>">
+                                                        <span class="fa fa-exclamation-triangle" aria-hidden="true"></span>
+                                                        <span><?php echo $this->translate('Impeach') ?></span>
+                                                    </a>
+                                                <?php endif ?>
+                                                <?php if ($current): ?>
+                                                    <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/like/') ?>" class="like" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $ref->getId() ?>">
+                                                        <span class="fa fa-thumbs-o-up" aria-hidden="true"></span>
+                                                        <span class="number"><?php echo $ref['like'] ?></span>
+                                                        <span class="sr-only"><?php echo $this->translate('Like') ?></span>
+                                                    </a>
+                                                    <?php if ($config['forum/general/dislike']): ?>
+                                                        <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/dislike/') ?>" class="dislike" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $ref->getId() ?>">
+                                                            <span class="fa fa-thumbs-o-down" aria-hidden="true"></span>
+                                                            <span class="number"><?php echo $ref['dislike'] ?></span>
+                                                            <span class="sr-only"><?php echo $this->translate('Dislike') ?></span>
+                                                        </a>
+                                                    <?php endif ?>
+                                                    <a href="#modal-review" data-bs-toggle="modal" data-post="<?php echo $ref['post_id'] ?>" class="reply" data-ref-user="<?php echo $customer['username'] ?>" data-ref-content="<?php echo htmlspecialchars(mb_substr(preg_replace('/<[^<]+>/', '', $ref['content']), 0, 50), 51) . '...' ?>" data-ref-id="<?php echo $ref->getId() ?>">
+                                                        <span class="fa fa-commenting-o" aria-hidden="true"></span>
+                                                        <span><?php echo $this->translate('Reply') ?></span>
+                                                    </a>
+                                                    <?php if ($customer->getId() === $current): ?>
+                                                        <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/remove/') ?>" class="remove" data-method="delete" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $ref->getId() ?>">
+                                                            <span class="fa fa-trash" aria-hidden="true"></span>
+                                                            <span><?php echo $this->translate('Remove') ?></span>
+                                                        </a>
+                                                    <?php endif ?>
+                                                <?php endif ?>
+                                            </div>
+                                        </article>
+                                    </div>
+                                    <?php
+                                endif;
+                            endforeach;
+                        endif;
+                        ?>
+                    </li>
+                    <?php
+                endif;
+            endforeach;
+        else:
+            ?>
+            <p class="text-center"><?php echo $this->translate('Last comment was by.'); ?></p>
+        <?php
+        endif;
+        ?>
+    </ol>
+    <div class="pagination"><?php echo $this->getChild('pager')->setCollection($reviews) ?></div>
+
+    <?php if (count($products) > 0) { ?>
+        <div class="correlation col-12">
+            <div class="title-correlation">
+                <h5><?php echo $this->translate('Retaled Product'); ?></h5>
+            </div>
+            <ul class="col-12 row">
+                <?php
+                if (count($products)):
+                    $products->limit(4);
+                    foreach ($products as $product):
+                        $relatePro = new Redseanet\Catalog\Model\Product;
+                        $relatePro->load($product['product_id']);
+                        $thumbnail = $relatePro->getThumbnail();
+                        $price = (new Redseanet\Catalog\ViewModel\Category\ProductList)->getPriceBox($relatePro);
+                        ?>
+                        <li class="col-md-3 col-6">
+                            <div class="item-list">
+                                <a href="<?php echo $relatePro->getUrl() ?>" class="product-image">
+                                    <img src="<?php echo $thumbnail ? $thumbnail : $this->getPubUrl('frontend/images/placeholder.png'); ?>" class="img-fluid" alt="<?php echo $relatePro['name'] ?>" />
+                                </a>
+                                <div class="product-text">
+                                    <h5 class="product-name">
+                                        <a href="<?php echo $relatePro->getUrl() ?>"><?php echo $relatePro['name'] ?></a>
+                                    </h5>
+                                    <div class="price-box">
+                                        <?php echo $price ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <?php
+                    endforeach;
+                else:
+                    ?>
+                    <p class="text-center"><?php echo $this->translate('No related products! '); ?></p>
+                <?php
+                endif;
+                ?>
+            </ul>
+        </div>
+    <?php } ?>
+    <?php if (count($posts) > 0) { ?>
+        <div class="col-12 correlation-two">
+            <div class="title-correlation">
+                <h5><?php echo $this->translate('His Posts'); ?></h5>
+            </div>
+            <div class="correlation-list">
+                <ul class="products-grid d-flex flex-wrap">
+                    <?php
+                    if (count($posts)):
+                        $posts->limit(4);
+                        foreach ($posts as $relate):
+                            $thumbnail = $relate->getThumbnail();
+                            $count = $relate->getLikeCount();
+                            $customer = $relate->getCustomer();
+                            $avatar = $customer['avatar'];
+                            ?>
+                            <li class="item col-6 col-md-3<?php if ($relate['poll_id']): ?> poll<?php
+                            endif;
+                            if (strtotime($relate['created_at']) >= $new):
+                                ?> new<?php
+                                endif;
+                                if (strtotime($relate['is_hot']) >= $new):
+                                    ?> hot<?php endif ?>">
+                                <div class="item-list">
+                                    <a href="<?php echo $relate->getUrl() ?>" class="product-image">
+                                        <img src="<?php echo $thumbnail ? $this->getUploadedUrl('forum/' . $thumbnail) : $this->getPubUrl('frontend/images/placeholder.png'); ?>" alt="" loading="lazy">
+                                    </a>
+                                    <div class="product-text">
+                                        <h6 class="product-name"><a href="<?php echo $relate->getUrl() ?>"><?php echo $relate['title'] ?></a></h6>
+                                        <div class="product-user">
+                                            <a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $customer['id']) ?>"><img class="rounded-circle" src="<?php echo (!empty($avatar) ? $this->getUploadedUrl('customer/avatar/' . $avatar) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg')) ?>" alt="<?php echo $relate['title'] ?>" /></a>
+                                            <span class="product-userName">
+                                                <?php echo $relate->getCustomer()['username'] ?>
+                                            </span>
+                                            <?php if ($current): ?>
+                                                <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/like/') ?>" class="like product-heart" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $relate->getId() ?>">
+                                                    <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                                    <span><?php echo $count; ?></span>
+                                                </a>
+                                                <?php
+                                            else:
+                                                ?>
+                                                <a href="<?php echo $this->getBaseUrl('customer/account/logion/') ?>" class="like product-heart">
+                                                    <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                                    <span><?php echo $count; ?></span>
+                                                </a>
+                                            <?php
+                                            endif;
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <?php
+                        endforeach;
+                    else:
+                        ?>
+                        <p class="text-center"><?php echo $this->translate('There is no relate post now'); ?></p>
+                    <?php
+                    endif;
+                    ?>
+                </ul>
+            </div>
+        </div>
+    <?php } ?> 
+    <?php
+    echo $this->getChild('poll');
+    ?>
+    <?php if (count($relatePosts) > 0) { ?>
+        <div class="col-12 correlation-two">
+            <div class="title-correlation">
+                <h5><?php echo $this->translate('Retaled Post'); ?></h5>
+            </div>
+            <div class="correlation-list">
+                <ul class="products-grid masonry clearfix" id="masonry">
+                    <?php
+                    if (count($relatePosts)):
+                        $relatePosts->limit(12);
+                        foreach ($relatePosts as $relate):
+                            $thumbnail = $relate->getThumbnail();
+                            $count = $relate->getLikeCount();
+                            $customer = $relate->getCustomer();
+                            ?>
+                            <li class="item col-6 col-md-3 col-md-3<?php if ($relate['poll_id']): ?> poll<?php
+                            endif;
+                            if (strtotime($relate['created_at']) >= $new):
+                                ?> new<?php
+                                endif;
+                                if (strtotime($relate['is_hot']) >= $new):
+                                    ?> hot<?php endif ?>">
+                                <div class="item-list">
+                                    <a href="<?php echo $relate->getUrl() ?>" class="product-image">
+                                        <img src="<?php echo $thumbnail ? $this->getUploadedUrl('forum/' . $thumbnail) : $this->getPubUrl('frontend/images/placeholder.png'); ?>" alt="" loading="lazy">
+                                    </a>
+                                    <div class="product-text">
+                                        <h6 class="product-name"><a href="<?php echo $relate->getUrl() ?>"><?php echo $relate['title'] ?></a></h6>
+                                        <div class="product-user">
+                                            <a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $customer['id']) ?>"><img class="rounded-circle" src="<?php echo!empty($customer['avatar']) ? $this->getUploadedUrl('customer/avatar/' . $customer['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="<?php echo $customer['username'] ?>" /></a>
+                                            <span class="product-userName">
+                                                <a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $customer['id']) ?>"><?php echo $customer['username'] ?></a>
+                                            </span>
+                                            <?php if ($current): ?>
+                                                <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/like/') ?>" class="like product-heart" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $relate->getId() ?>">
+                                                    <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                                    <span><?php echo $count; ?></span>
+                                                </a>
+                                                <?php
+                                            else:
+                                                ?>
+                                                <a href="<?php echo $this->getBaseUrl('customer/account/logion/') ?>" class="like product-heart">
+                                                    <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                                    <span><?php echo $count; ?></span>
+                                                </a>
+                                            <?php
+                                            endif;
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <?php
+                        endforeach;
+                    else:
+                        ?>
+                        <p class="text-center"><?php echo $this->translate('There is no relate post now'); ?></p>
+                    <?php
+                    endif;
+                    ?>
+                </ul>
+            </div>
+        </div>
+    <?php } ?>
+    <div class="mobile-post-bottom d-block d-sm-none">
+        <div class="d-flex col-12">
+            <div class="col-4 text-center">
+                <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/like/') ?>" class="like product-heart" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post->getId() ?>">                
+                    <span class="fa fa-heart-o" aria-hidden="true"></span>
+                    <span><?php echo $this->translate('Like'); ?></span>
+                    <span>·</span>
+                    <span class="number" id="number"><?php echo $this->translate('Likes: %d', [$count]); ?></span>
+                </a>
+            </div>
+            <div class="col-4 text-center">
+                <a href="#form-review">
+                    <span class="fa fa-commenting-o"></span> 
+                    <span><?php echo $this->translate('Review'); ?></span>
+                    <span>·</span>
+                    <span><?php echo $post['reviews']; ?></span>
+                </a>
+            </div>
+            <div class="col-4 text-center">
+                <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/collect/') ?>" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post['id'] ?>">
+                    <span class="fa fa-star-o"></span>
+                    <span><?php echo $this->translate('Favorites'); ?></span>
+                    <span>·</span>
+                    <span><?php echo $collects; ?></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+---
+livechat:
+    icon: headphones
+    title: Live Chat
+    priority: 55
+    link: livechat/
+    operation: 'Admin\Config::livechat'
+system:
+    children:
+        -
+            link: config/livechat/
+            operation: 'Admin\Config::livechat'
+            title: Live Chat Configuration
+            priority: 150

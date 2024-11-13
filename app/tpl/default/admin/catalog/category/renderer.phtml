@@ -1,0 +1,25 @@
+<?php
+$level = $this->getVariable('level');
+$item = $this->getVariable('category');
+?>
+<li data-id="<?php echo $item['id'] ?>">
+    <input type="hidden" name="order[]" value="<?php echo (int) $item['parent_id'] ?>" />
+    <input type="hidden" name="id[]" value="<?php echo $item['id'] ?>" />
+    <span class="title"><?php echo $item['name'] ?></span>
+    <span class="action">
+        <?php
+        foreach ($this->getAction() as $action) {
+            if (is_callable([$this, $action])) {
+                echo $this->$action($item);
+            }
+        }
+        ?>
+    </span>
+    <ul class="sortable level-<?php echo $this->getVariable('level') ?>">
+        <?php
+        foreach ($this->getVariable('children') as $item) {
+            echo $this->renderCategory($item, $level + 1);
+        }
+        ?>
+    </ul>
+</li>

@@ -1,0 +1,5 @@
+---
+oauth:
+    method: [GET,POST]
+    route: /oauth/{controller}/[{action}[/]]
+    namespace: Redseanet\Oauth\Controller

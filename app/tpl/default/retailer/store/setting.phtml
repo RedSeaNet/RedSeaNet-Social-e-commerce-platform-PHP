@@ -1,0 +1,119 @@
+<?php
+$retailer = $this->getRetailer();
+$customer = $this->getCustomer();
+$customerId = $customer['id'];
+?>
+<form action="<?php echo $this->getBaseUrl('retailer/store/save/') ?>" method="post" class="form-inline" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+    <div class="fieldset">
+        <div class="input-box">
+            <label class="col-form-label required" for="profile"><?php echo $this->translate('Avatar') ?></label>
+            <div class="cell">
+                <input name="profile" id="profile" type="hidden" />
+                <a data-bs-target="div#chooseAvatarModal" data-bs-toggle="modal" data-img-input="input#profile" data-img-preview="img#profile-img-preview" >
+                    <div class="avatar">
+                        <img src="<?php if ($retailer->offsetGet('profile')): ?> <?php
+                            echo $this->getUploadedUrl('store/' . $retailer["store_id"] . '/' . $retailer->offsetGet('profile'));
+                        else:
+                            echo $this->getPubUrl('frontend/images/placeholder.png');
+                        endif;
+                        ?>" alt="profile" class="" width="100" height="100" id="profile-img-preview" />
+                        <span class="update"><?php echo $this->translate('Update Image') ?></span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="col-form-label required" for="store-name"><?php echo $this->translate('Store Name') ?></label>
+            <div class="cell">
+                <input type="text" name="store[name]" class="form-control required" id="store-name" value="<?php echo $this->getStore()->offsetGet('name') ?>" />
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="col-form-label required" for="uri_key"><?php echo $this->translate('Uri Key') ?></label>
+            <div class="cell">
+                <input type="text" name="uri_key" class="form-control required" id="uri_key" value="<?php echo $retailer->offsetGet('uri_key') ?>" />
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="col-form-label" for="address"><?php echo $this->translate('Address') ?></label>
+            <div class="cell">
+                <input type="text" name="address" id="address" class="form-control" value="<?php echo $retailer->offsetGet('address') ?>" />
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="col-form-label" for="tel"><?php echo $this->translate('Phone Number') ?></label>
+            <div class="cell">
+                <input type="tel" name="tel" id="tel" class="form-control" value="<?php echo $retailer->offsetGet('tel') ?>" />
+            </div>
+        </div>
+        <?php
+        $contact = $retailer->offsetGet('contact');
+        $json = !empty($contact) ? json_decode($contact, true) : [];
+        if (!$json) {
+            $json = ['trade' => $contact];
+        }
+        ?>
+        <div class="input-box">
+            <label class="col-form-label" for="contact"><?php echo $this->translate('Trade Manager') ?></label>
+            <div class="cell">
+                <input type="text" name="contact[trade]" id="contact" class="form-control" value="<?php echo $json['trade'] ?>" />
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="col-form-label" for="contact-wechat"><?php echo $this->translate('WeChat') ?></label>
+            <div class="cell">
+                <input name="contact[wechat]" id="wechat" type="hidden" />
+                <a data-bs-target="div#chooseAvatarModal" data-bs-toggle="modal" data-img-input="input#wechat" data-img-preview="img#wechat-img-preview" >
+                    <div class="avatar">
+                        <img src="<?php if (!empty($json['wechat'])): ?> <?php
+                            echo $this->getUploadedUrl('store/' . $retailer["store_id"] . '/' . $json['wechat']);
+                        else:
+                            echo $this->getPubUrl('frontend/images/placeholder.png');
+                        endif;
+                        ?>" alt="wechat" class="" width="100" height="100" id="wechat-img-preview" />
+                        <span class="update"><?php echo $this->translate('Update Image') ?></span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="col-form-label" for="description"><?php echo $this->translate('Introduction') ?></label>
+            <div class="cell">
+                <textarea name="description" id="description" class="form-control"><?php echo $retailer->offsetGet('description') ?></textarea>
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="col-form-label" for="keywords"><?php echo $this->translate('Keywords') ?>：</label>
+            <div class="cell">
+                <textarea name="keywords" id="keywords" class="form-control"><?php echo $retailer->offsetGet('keywords') ?></textarea>
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="col-form-label" for="watermark"><?php echo $this->translate('Watermark') ?>：</label>
+            <div class="cell">              
+                <input name="watermark" id="watermark" type="hidden" />
+                <a data-bs-target="div#chooseAvatarModal" data-bs-toggle="modal" data-img-input="input#watermark" data-img-preview="img#watermark-img-preview" >
+                    <div class="avatar">
+                        <img src="<?php if ($retailer->offsetGet('watermark')): ?> <?php
+                            echo $this->getUploadedUrl('store/' . $retailer["store_id"] . '/' . $retailer->offsetGet('watermark'));
+                        else:
+                            echo $this->getPubUrl('frontend/images/placeholder.png');
+                        endif;
+                        ?>" alt="watermark" class="" width="100" height="100" id="watermark-img-preview" />
+                        <span class="update"><?php echo $this->translate('Update Image') ?></span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="buttons-set">
+            <div class="cell">&nbsp;</div>
+            <div class="cell">
+                <button type="submit" class="btn btn-theme">
+                    <span><?php echo $this->translate('Submit') ?></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+<?php echo $this->getChild('imagecropper'); ?>

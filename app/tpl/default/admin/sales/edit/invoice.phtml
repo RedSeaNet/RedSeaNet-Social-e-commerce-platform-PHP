@@ -1,0 +1,155 @@
+<?php
+$order = $this->getOrder();
+$currency = $this->getOrder()->getCurrency();
+?>
+<div class="view clearfix">
+    <form action="<?php echo $this->getAdminUrl('sales_invoice/save/') ?>" method="post" class="form-sales">
+        <div class="panel">
+            <div class="panel-heading">
+                <h4 class="panel-title"><?php echo $this->translate('Order Infomation', [], 'sales') ?></h4>
+            </div>
+            <div class="panel-body">
+                <?php echo $this->translate('ID'), ': ', $order['increment_id'] ?><br />
+                <?php echo $this->translate('Status'), ': ', $this->translate($this->getStatus()->offsetGet('name'), [], 'sales') ?><br />
+                <?php
+                if ($store = $order->getStore()) {
+                    echo $this->translate('Store'), ': ', $store->offsetGet('name');
+                }
+                ?><br />
+                <?php
+                if ($language = $order->getLanguage()) {
+                    echo $this->translate('Language'), ': ', $language->offsetGet('name');
+                }
+                ?>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading">
+                <h4 class="panel-title"><?php echo $this->translate('Customer Infomation', [], 'sales') ?></h4>
+            </div>
+            <div class="panel-body"><?php if ($customer = $this->getCustomer()): ?>
+                    ID: <?php echo $customer->getId() ?><br />
+                    <?php echo $this->translate('Username'), ': ', $customer['username'] ?>
+                <?php endif ?></div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading">
+                <h4 class="panel-title"><?php echo $this->translate('Billing Address', [], 'sales') ?></h4>
+            </div>
+            <div class="panel-body">
+                <?php echo nl2br($order->offsetGet('billing_address')) ?>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading">
+                <h4 class="panel-title"><?php echo $this->translate('Payment Method', [], 'sales') ?></h4>
+            </div>
+            <div class="panel-body">
+                <?php echo $this->translate($order->getPaymentMethod()->getLabel()), '<br />', $this->translate('The order was placed using %s', [$order->offsetGet('currency')], 'sales') ?>
+            </div>
+        </div>
+        <div class="panel wide">
+            <div class="panel-heading">
+                <h4 class="panel-title"><?php echo $this->translate('Product(s)') ?></h4>
+            </div>
+            <div class="panel-body grid table-responsive">
+                <table class="table table-hover table-striped table-no-border">
+                    <thead class="sort-by">
+                        <tr>
+                            <th><?php echo $this->translate('Product Name', [], 'sales') ?></th>
+                            <th><?php echo $this->translate('SKU', [], 'sales') ?></th>
+                            <th><?php echo $this->translate('Options', [], 'sales') ?></th>
+                            <th><?php echo $this->translate('Price', [], 'sales') ?></th>
+                            <th><?php echo $this->translate('Qty', [], 'sales') ?></th>
+                            <th><?php echo $this->translate('Total', [], 'sales') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($this->getCollection() as $item):
+                            $max = $this->getMaxQty($item);
+                            if ($max):
+                                ?>
+                                <tr<?php if (isset($item['id'])): ?> data-id="<?php echo $item['id'] ?>"<?php endif ?>>
+                                    <td><?php echo $item['product_name'] ?></td>
+                                    <td><?php echo $item['sku'] ?></td>
+                                    <td>
+                                        <?php
+                                        $options = json_decode($item['options'], true);
+                                        if ($item['product_id'] && count($options)) {
+                                            foreach ($item['product']->getOptions() as $option) {
+                                                if (isset($options[$option->getId()])) {
+                                                    echo $option['title'], ': ', (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                                            $option->getValue($options[$option->getId()]) : $options[$option->getId()]), '<br />';
+                                                }
+                                            }
+                                        }
+                                        ?>
+                                    </td>
+                                    <td class="price" data-price="<?php echo $item['price'] ?>"><?php echo $currency->format($item['price']) ?></td>
+                                    <td>
+                                        <input type="hidden" name="item_id[]" value="<?php echo $item['id'] ?>" />
+                                        <input type="range" name="qty[]" max="<?php echo $max ?>" min="0" value="<?php echo $max ?>" />
+                                    </td>
+                                    <td class="total"><?php echo $currency->format($item['total']) ?></td>
+                                </tr>
+                                <?php
+                            endif;
+                        endforeach;
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading">
+                <h4 class="panel-title"><?php echo $this->translate('Comment', [], 'sales') ?></h4>
+            </div>
+            <div class="panel-body">
+                <textarea class="form-control" name="comment"></textarea>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading">
+                <h4 class="panel-title"><?php echo $this->translate('Order Totals', [], 'sales') ?></h4>
+            </div>
+            <div class="panel-body">
+                <dl class="dl-horizontal totals">
+                    <dt><?php echo $this->translate('Subtotal', [], 'sales') ?></dt>
+                    <dd>
+                        <span class="price subtotal">
+                            <?php echo $currency->format($order->offsetGet('subtotal')) ?>
+                        </span>
+                    </dd>
+                    <dt><?php echo $this->translate('Shipping &amp; Handling', [], 'sales') ?></dt>
+                    <dd>
+                        <input type="checkbox" name="include_shipping" value="1" checked="checked" />
+                        <span class="price shipping" data-price="<?php echo $order->offsetGet('shipping') ?>">
+                            <?php echo $currency->format($order->offsetGet('shipping')) ?>
+                        </span>
+                    </dd>
+                    <dt><?php echo $this->translate('Tax', [], 'sales') ?></dt>
+                    <dd>
+                        <input type="checkbox" name="include_tax" value="1" checked="checked" />
+                        <span class="price tax" data-price="<?php echo $order->offsetGet('tax') ?>">
+                            <?php echo $currency->format($order->offsetGet('tax')) ?>
+                        </span>
+                    </dd>
+                    <dt><?php echo $this->translate('Grand Total', [], 'sales') ?></dt>
+                    <dd>
+                        <span class="price total">
+                            <?php echo $currency->format($order->offsetGet('total')) ?>
+                        </span>
+                    </dd>
+                </dl>
+                <div class="buttons-set text-end">
+                    <button type="submit" class="btn btn-submit">
+                        <span><?php echo $this->translate('Submit') ?></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+        <input type="hidden" name="order_id" value="<?php echo $this->getQuery('id') ?>" />
+    </form>
+</div>

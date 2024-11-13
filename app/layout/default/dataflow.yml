@@ -1,0 +1,342 @@
+---
+dataflow_product_import:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Import Products
+            content:
+                children:
+                    form:
+                        type: Redseanet\Admin\ViewModel\Dataflow\Import
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - title
+                                    - Import Products
+                            -
+                                method: setVariable
+                                params:
+                                    - save_url
+                                    - 'dataflow_product/prepareimport/'
+                            -
+                                method: setVariable
+                                params:
+                                    - tmpl_url
+                                    - 'dataflow_product/template/'
+dataflow_product_prepare_import:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Import Products
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/dataflow.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: admin/dataflow/import
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - title
+                                    - Import Products
+                            -
+                                method: setVariable
+                                params:
+                                    - import_url
+                                    - 'dataflow_product/processimport/'
+dataflow_product_export:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Export Products
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/dataflow.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    form:
+                        type: Redseanet\Admin\ViewModel\Dataflow\Export
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - title
+                                    - Export Products
+                            -
+                                method: setVariable
+                                params:
+                                    - save_url
+                                    - 'dataflow_product/processexport/'
+dataflow_stock_import:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Import Product Stocks
+            content:
+                children:
+                    form:
+                        type: Redseanet\Admin\ViewModel\Dataflow\Import
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - title
+                                    - Import Product Stocks
+                            -
+                                method: setVariable
+                                params:
+                                    - save_url
+                                    - 'dataflow_stock/prepareimport/'
+                            -
+                                method: setVariable
+                                params:
+                                    - tmpl_url
+                                    - 'dataflow_stock/template/'
+dataflow_stock_prepare_import:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Import Product Stocks
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/dataflow.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: admin/dataflow/import
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - title
+                                    - Import Product Stocks
+                            -
+                                method: setVariable
+                                params:
+                                    - import_url
+                                    - 'dataflow_stock/processimport/'
+dataflow_stock_export:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Export Product Stocks
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/dataflow.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    form:
+                        type: Redseanet\Admin\ViewModel\Dataflow\Export
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - titles
+                                    - Export Product Stocks
+                            -
+                                method: setVariable
+                                params:
+                                    - save_url
+                                    - 'dataflow_stock/processexport/'
+                            -
+                                method: setVariable
+                                params:
+                                    - filter
+                                    - false
+dataflow_customer_import:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Import Customers
+            content:
+                children:
+                    form:
+                        type: Redseanet\Admin\ViewModel\Dataflow\Import
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - title
+                                    - Import Customers
+                            -
+                                method: setVariable
+                                params:
+                                    - save_url
+                                    - 'dataflow_customer/prepareimport/'
+                            -
+                                method: setVariable
+                                params:
+                                    - tmpl_url
+                                    - 'dataflow_customer/template/'
+dataflow_customer_prepare_import:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Import Customer
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/dataflow.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: admin/dataflow/import
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - title
+                                    - Import Customer
+                            -
+                                method: setVariable
+                                params:
+                                    - import_url
+                                    - 'dataflow_customer/processimport/'
+dataflow_customer_export:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Export Customers
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/dataflow.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    form:
+                        type: Redseanet\Admin\ViewModel\Dataflow\Export
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - title
+                                    - Export Customers
+                            -
+                                method: setVariable
+                                params:
+                                    - save_url
+                                    - 'dataflow_customer/processexport/'
+dataflow_address_import:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Import Customer Addresses
+            content:
+                children:
+                    form:
+                        type: Redseanet\Admin\ViewModel\Dataflow\Import
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - title
+                                    - Import Customer Addresses
+                            -
+                                method: setVariable
+                                params:
+                                    - save_url
+                                    - 'dataflow_address/prepareimport/'
+                            -
+                                method: setVariable
+                                params:
+                                    - tmpl_url
+                                    - 'dataflow_address/template/'
+dataflow_address_prepare_import:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Import Customer Addresses
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/dataflow.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: admin/dataflow/import
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - title
+                                    - Import Customer Addresses
+                            -
+                                method: setVariable
+                                params:
+                                    - import_url
+                                    - 'dataflow_address/processimport/'
+dataflow_address_export:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Export Customer Addresses
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/dataflow.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    form:
+                        type: Redseanet\Admin\ViewModel\Dataflow\Export
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - title
+                                    - Export Customer Addresses
+                            -
+                                method: setVariable
+                                params:
+                                    - save_url
+                                    - 'dataflow_address/processexport/'

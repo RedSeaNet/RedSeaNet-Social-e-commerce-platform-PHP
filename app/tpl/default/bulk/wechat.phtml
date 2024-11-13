@@ -1,0 +1,56 @@
+<?php
+$segment = $this->getSegment('customer');
+?>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script>
+    $(window).on('load', function () {
+        var referer = '<?php echo $this->getQuery('referer', '') ?>';
+        if (referer) {
+            $.cookie('referer', referer);
+        }
+        wx.config(<?php echo $this->getConfigJson() ?>);
+        wx.ready(function () {
+            var referer = '<?php echo $segment->get('hasLoggedIn') ? $segment->get('customer')['increment_id'] : '' ?>';
+            var link = referer ? (location.href.indexOf('?') === -1 ? location.href + '?referer=' + referer : location.href + '&referer=' + referer) : location.href;
+            wx.onMenuShareTimeline({
+                title: $('title').text(),
+                link: link,
+                imgUrl: $('#images img').length ?
+                        $('#images img').first().attr('src') :
+                        '<?php echo $this->getPubUrl('frontend/images/share.png') ?>'
+            });
+            wx.onMenuShareAppMessage({
+                title: $('title').text(),
+                desc: $('meta[name="description"]').attr('content'),
+                link: link,
+                imgUrl: $('#images img').length ?
+                        $('#images img').first().attr('src') :
+                        '<?php echo $this->getPubUrl('frontend/images/share.png') ?>'
+            });
+            wx.onMenuShareQQ({
+                title: $('title').text(),
+                desc: $('meta[name="description"]').attr('content'),
+                link: link,
+                imgUrl: $('#images img').length ?
+                        $('#images img').first().attr('src') :
+                        '<?php echo $this->getPubUrl('frontend/images/share.png') ?>'
+            });
+            wx.onMenuShareWeibo({
+                title: $('title').text(),
+                desc: $('meta[name="description"]').attr('content'),
+                link: link,
+                imgUrl: $('#images img').length ?
+                        $('#images img').first().attr('src') :
+                        '<?php echo $this->getPubUrl('frontend/images/share.png') ?>'
+            });
+            wx.onMenuShareQZone({
+                title: $('title').text(),
+                desc: $('meta[name="description"]').attr('content'),
+                link: link,
+                imgUrl: $('#images img').length ?
+                        $('#images img').first().attr('src') :
+                        '<?php echo $this->getPubUrl('frontend/images/share.png') ?>'
+            });
+        });
+    });
+</script>

@@ -1,0 +1,58 @@
+<?php
+$options = $this->getOptions();
+$values = $this->getFormData();
+$price = $this->getVariable('product')->getFinalPrice() / 100;
+foreach ($options as $option):
+    ?>
+    <div class="input-box <?php echo $option->offsetGet('input') ?>">
+        <label for="option-<?php echo $option->getId() ?>" class="col-form-label">
+            <?php echo $option->offsetGet('title') ?>
+        </label>
+        <div class="cell">
+            <?php
+            switch ($option->offsetGet('input')):
+                case 'textarea':
+                    ?>
+                    <textarea name="options[<?php echo $option->getId() ?>]" class="form-control<?php if ($option->offsetGet('is_required')): ?> required<?php endif ?>"<?php if ((float) $option->offsetGet('price')): ?> data-price="<?php echo $this->getCurrency()->convert($option->offsetGet('is_fixed') ? $option->offsetGet('price') : $price * $option->offsetGet('price')) ?>"<?php endif ?> data-sku="<?php echo $option->offsetGet('sku') ?>" data-msg-required="<?php echo $this->translate('Please choose ').$option->offsetGet('title') ?>" data-vaild-alert="true"><?php echo isset($values[$option->getId()]) ? $values[$option->getId()] : '' ?></textarea>
+                    <?php
+                    break;
+                case 'select':
+                case 'multiselect':
+                    ?>
+                    <select name="options[<?php echo $option->getId() ?>]" class="form-control<?php if ($option->offsetGet('is_required')): ?> required<?php endif ?>"<?php if ($option->offsetGet('input') === 'multiselect'): ?> multiple="multiple"<?php endif ?> data-msg-required="<?php echo $this->translate('Please choose ').$option->offsetGet('title') ?>" data-vaild-alert="true">
+                        <?php if (!$option->offsetGet('is_required') && $option->offsetGet('input') !== 'multiselect'): ?>
+                            <option value=""></option>
+                        <?php endif ?>
+                        <?php foreach ($option->offsetGet('value') as $value): ?>
+                            <option value="<?php echo $value['id'] ?>"<?php if (isset($values[$option->getId()]) && $values[$option->getId()] == $value['id']): ?> selected="selected"<?php endif ?> data-price="<?php echo $this->getCurrency()->convert($value['is_fixed'] ? $value['price'] : $value['price'] * $price) ?>" data-sku="<?php echo $value['sku'] ?>"><?php echo $value['title'] ?></option>
+                        <?php endforeach ?>
+                    </select>
+                    <?php
+                    break;
+                case 'bool':
+                    ?>
+                    <select name="options[<?php echo $option->getId() ?>]" class="form-control<?php if ($option->offsetGet('is_required')): ?> required<?php endif ?>" data-msg-required="<?php echo $this->translate('Please choose ').$option->offsetGet('title') ?>" data-vaild-alert="true">
+                        <?php if (!$option->offsetGet('is_required')): ?>
+                            <option value=""></option>
+                        <?php endif ?>
+                        <option value="0"<?php if (isset($values[$option->getId()]) && $values[$option->getId()] == 0): ?> selected="selected"<?php endif ?><?php if ((float) $option->offsetGet('price')): ?>  data-price="0"<?php endif ?> data-sku="<?php echo $option['sku'] ?>"><?php echo $this->translate('No') ?></option>
+                        <option value="1"<?php if (isset($values[$option->getId()]) && $values[$option->getId()] == 1): ?> selected="selected"<?php endif ?><?php if ((float) $option->offsetGet('price')): ?>  data-price="<?php echo $this->getCurrency()->convert($value['is_fixed'] ? $value['price'] : $value['price'] * $price) ?>"<?php endif ?> data-sku="<?php echo $option['sku'] ?>"><?php echo $this->translate('Yes') ?></option>
+                    </select>
+                    <?php
+                    break;
+                case 'radio':
+                case 'checkbox':
+                    ?>
+                    <?php foreach ($option->offsetGet('value') as $value): ?>
+                        <input type="<?php echo $option->offsetGet('input') ?>"<?php if ($option->offsetGet('is_required')): ?> class="required"<?php endif ?><?php if (isset($values[$option->getId()]) && $values[$option->getId()] == $value['id']): ?> checked="checked"<?php endif ?> name="options[<?php echo $option->getId() ?>]" id="options-<?php echo $option->getId() ?>-<?php echo $value['id'] ?>" value="<?php echo $value['id'] ?>" data-price="<?php echo $this->getCurrency()->convert($value['is_fixed'] ? $value['price'] : $value['price'] * $price) ?>" data-sku="<?php echo $value['sku'] ?>" data-msg-required="<?php echo $this->translate('Please choose ').$option->offsetGet('title') ?>" data-vaild-alert="true" />
+                        <label for="options-<?php echo $option->getId() ?>-<?php echo $value['id'] ?>" title="<?php echo $value['title'] ?>"><?php echo $value['title'] ?></label>
+                        <?php
+                    endforeach;
+                    break;
+                default:
+                    ?>
+                    <input type="<?php echo $option->offsetGet('input') ?>" name="options[<?php echo $option->getId() ?>]" class="form-control<?php if ($option->offsetGet('is_required')): ?> required<?php endif ?>"<?php if ((float) $option->offsetGet('price')): ?> data-price="<?php echo $this->getCurrency()->convert($option->offsetGet('is_fixed') ? $option->offsetGet('price') : $price * $option->offsetGet('price')) ?>"<?php endif ?> data-sku="<?php echo $option->offsetGet('sku') ?>" value="<?php echo isset($values[$option->getId()]) ? $values[$option->getId()] : '' ?>" data-msg-required="<?php echo $this->translate('Please choose ').$option->offsetGet('title') ?>" data-vaild-alert="true" />
+            <?php endswitch ?>
+        </div>
+    </div>
+<?php endforeach; ?>

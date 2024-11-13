@@ -1,0 +1,21 @@
+---
+promotion:
+    icon: gift
+    title: Promotion
+    priority: 40
+    children: 
+        -
+            link: promotion/
+            operation: 'Admin\Promotion::index'
+            title: Preferential Promotion
+            priority: 0
+        -
+            link: bulk/
+            operation: 'Admin\Bulk::index'
+            title: Bulk Product
+            priority: 1
+        -
+            link: bulk/bulking/
+            operation: 'Admin\Bulk::bulk'
+            title: Bulking
+            priority: 2

@@ -1,0 +1,91 @@
+<div class="col-9 col-sm-9 col-md-10 wishlist mg-bottom-40">
+    <h3><?php echo $this->translate('Brand Management') ?></h3>
+    <div class="wrap brand_wrap">
+        <div class="StoreSettings Brand">
+            <button data-bs-toggle="modal" data-target="#modal-newbrand">新增品牌</button>
+        </div>
+        <div class="row">
+            <div class="Brand_name">
+                <form method="get">
+                    品牌名称:
+                    <input type="text" value="" name="brand_name" />
+                    <input type="submit" value="搜索" />
+                </form>
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th>品牌名称</th>
+                    <th>品牌图标</th>
+                    <th>类别</th>
+                    <th>操作</th>
+                </tr>
+                <tr>
+                    <td>ESprit</td>
+                    <td><img height="30" src="<?php echo $this->getBaseUrl('/pub/theme/default/frontend/images/placeholder.png') ?>"></td>
+                    <td>Sports</td>
+                    <td><a href="javascript:void(0);" data-bs-toggle="modal" data-target="#modal-newbrand">编辑</a>&nbsp;&nbsp;<a href="javascript:void(0);">删除</a></td>
+                </tr>
+                <tr>
+                    <td >李宁</td>
+                    <td><img height="30" src="<?php echo $this->getBaseUrl('/pub/theme/default/frontend/images/placeholder.png') ?>"></td>
+                    <td>Sports</td>
+                    <td><a href="javascript:void(0);" data-bs-toggle="modal" data-target="#modal-newbrand">编辑</a>&nbsp;&nbsp;<a href="javascript:void(0);">删除</a></td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        <div class="text-end">
+                            <a>共 2 个项目</a>
+                            <a href="#" >上一页</a>
+                            <a href="#">1</a>
+                            <a>1 / 1</a>
+                            <a href="#">下一页</a>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="modal-newbrand" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="newbrandModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="newbrandModalLabel">新增品牌</h4>
+                </div>
+                <div class="modal-body">
+                    <div >
+                        <ul>
+                            <li>
+                                <h3>品牌名称:</h3>
+                                <p><input type="text" value="" name="brand_name" /><b>*</b></p>
+                            </li>
+                            <li>
+                                <h3>类别:</h3>
+                                <p><input type="text" value="" name="tag" /></p>
+                            </li>
+                            <li>
+                                <h3>品牌图标:</h3>
+                                <div>
+                                    <div>
+                                        <div>
+                                            <img width="150" height="50" src="<?php echo $this->getBaseUrl('/pub/theme/default/frontend/images/placeholder.png') ?>">
+                                        </div>
+                                        <div>
+                                            <button>图片上传</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <div><input type="submit" value="提交" /></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

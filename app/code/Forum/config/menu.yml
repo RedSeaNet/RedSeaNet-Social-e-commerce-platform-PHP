@@ -1,0 +1,58 @@
+---
+forum:
+    icon: newspaper-o
+    title: Forum Management
+    priority: 15
+    children:
+        -
+            link: forum_category/
+            operation: 'Admin\Forum\Category::index'
+            title: Category Management
+            priority: 20
+        -
+            link: forum_post/
+            operation: 'Admin\Forum\Post::index'
+            title: Post Management
+            priority: 10
+        -
+            link: forum_review/
+            operation: 'Admin\Forum\Review::index'
+            title: Review Management
+            priority: 30
+        -
+            link: forum_tags/
+            operation: 'Admin\Forum\Tags::index'
+            title: Hashtags management
+            priority: 40
+        -
+            link: forum_poll/
+            operation: 'Admin\Forum\Poll::index'
+            title: Poll management
+            priority: 50
+        -
+            link: forum_customerLike/
+            operation: 'Admin\Forum\CustomerLike::index'
+            title: Subscription Management
+            priority: 60
+        -
+            link: forum_post/likelist
+            operation: 'Admin\Forum\Post::likeList'
+            title: Post Like Management
+            priority: 70
+        -
+            link: forum_post/statistics
+            operation: 'Admin\Forum\Post::statistics'
+            title: Post Statistics
+            priority: 80
+        -
+            link: forum_post/quickedit
+            operation: 'Admin\Forum\Post::quickedit'
+            title: Post Quick Edit
+            priority: 100
+system:
+    children:
+        -
+            link: config/forum/
+            operation: 'Admin\Config::forum'
+            title: Forum Configuration
+            priority: 85

@@ -1,0 +1,125 @@
+<div id="debug-toolbar">
+    <!--[if (gte IE 9)|(!IE)]><!-->
+    <img src="<?php echo $this->getPubUrl('backend/images/logo-o.svg') ?>" class="logo" alt="" />
+    <!--<![endif]-->
+    <!--[if lt IE 9]><img src="<?php echo $this->getPubUrl('backend/images/logo-o.png') ?>" class="logo" alt="" /><![endif]-->
+    <ul class="nav nav-pills">
+        <li class="d-none"><span class="fa fa-microchip" title="<?php echo $this->translate('Peak Memory') ?>"></span><span><?php echo $this->getMemory() ?></span></li>
+        <li><a href="#debug-db" data-bs-toggle="tab"><?php echo $this->translate('Database') ?></a></li>
+        <li><a href="#debug-cache" data-bs-toggle="tab"><?php echo $this->translate('Cache') ?></a></li>
+        <li><a href="#debug-settings" data-bs-toggle="tab"><?php echo $this->translate('Settings') ?></a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane" id="debug-db">
+            <div class="table-responsive">
+                <table class="table">
+                    <colgroup>
+                        <col />
+                        <col width="1" />
+                        <col width="1" />
+                        <col width="1" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th><?php echo $this->translate('SQL') ?></th>
+                            <th><?php echo $this->translate('Parameters') ?></th>
+                            <th><?php echo $this->translate('Elapse') ?></th>
+                            <th><?php echo $this->translate('Action') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($this->getSqls() as $sql): ?>
+                            <tr>
+                                <td><?php echo $sql['sql'] ?></td>
+                                <td><?php echo is_array($sql['parameters']) ? json_encode($sql['parameters']) : '' ?></td>
+                                <td><?php echo $sql['elapse'] ?></td>
+                                <td>
+                                    <a title="<?php echo $this->translate('Explain') ?>" href="<?php echo $this->getBaseUrl('debug/sql/explain/') ?>" data-params="sql=<?php echo str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($sql['sql'])) ?>">
+                                        <span class="fa fa-pie-chart" aria-hidden="true"></span>
+                                        <span class="sr-only"><?php echo $this->translate('Explain') ?></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane" id="debug-cache">
+            <div class="table-responsive">
+                <table class="table">
+                    <colgroup>
+                        <col width="1" />
+                        <col />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th><?php echo $this->translate('Key') ?></th>
+                            <th><?php echo $this->translate('Value') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($this->getCacheList() as $prefix => $list):
+                            if ($prefix):
+                                ?>
+                                <tr>
+                                    <th><?php echo $this->translate($prefix, [], 'cache') ?></th>
+                                    <td><?php echo $this->translate('%d record(s)', [count($list)]) ?></td>
+                                </tr>
+                                <?php
+                            endif;
+                            foreach ($list as $key => $value):
+                                ?>
+                                <tr>
+                                    <th><?php echo $key ?></th>
+                                    <td>
+                                        <?php if (is_null($value) || $value === ''): ?>
+                                            UNHIT
+                                        <?php else: ?>
+                                            <a href="javascript:void(0);" class="loaded"><?php echo $this->translate('View') ?></a>
+                                        <?php endif ?>
+                                    </td>
+                                </tr>
+                                <?php if (!is_null($value) && $value !== ''): ?>
+                                    <tr style="display:none">
+                                        <td colspan="2"><?php echo htmlspecialchars(is_array($value) ? json_encode($value) : (is_object($value) ? serialize($value) : $value)) ?></td>
+                                    </tr>
+                                <?php endif ?>
+                            <?php endforeach ?>
+                        <?php endforeach ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane" id="debug-settings">
+            <ul class="list-unstyled">
+                <li>
+                    <input type="checkbox" data-url="<?php echo $this->getBaseUrl('debug/tip/switch/') ?>" <?php if ($this->showTip()): ?> checked="checked"<?php endif ?> id="template-tip" />
+                    <label for="template-tip"><?php echo $this->translate('Template Tip') ?></label>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <a href="javascript:void(0);" class="toggle-button">
+        <span class="fa fa-power-off" aria-hidden="true"></span>
+    </a>
+    <style>
+        #debug-toolbar{position:fixed;bottom:0;right:0;z-index:99;width:100%;background:#007dc6;color:#fff;height:50px;padding:0 60px 0 20px;left:auto;transition:right linear .3s;border:none}
+        #debug-toolbar.collapsed{right:100%}
+        #debug-toolbar .logo{float:left;width:auto;height:30px;margin:10px 20px 0 0}
+        #debug-toolbar .nav{float:left;margin:0}
+        #debug-toolbar .nav li{line-height:30px;display:block;float:left;position:relative}
+        #debug-toolbar .nav li>span{font-size:14px;line-height:50px;margin-right:4px}
+        #debug-toolbar .nav li>a{position:relative;display:block;padding:10px 15px}
+        #debug-toolbar .nav li a:hover,#debug-toolbar .nav li a:focus,#debug-toolbar .nav li.active a{color:#333;background:#fff;border-radius:0;border:none}
+        #debug-toolbar .tab-content{position:absolute;bottom:100%;left:0;width:100%;max-height:300px;overflow:auto;background:#fff;box-shadow:0 0 3px #aaa;border-top:#aaa;color:#333}
+        #debug-toolbar .tab-content th{white-space:nowrap;text-align:left}
+        #debug-toolbar .tab-content td{word-break:break-all;white-space:normal;text-align:left}
+        #debug-toolbar .tab-content .tab-pane{display:none}
+        #debug-toolbar .tab-content .tab-pane.active{display:block}
+        #debug-toolbar .toggle-button{display:block;width:20px;border-radius:0 15px 15px 0;background:#007dc6;position:absolute;top:0;right:20px;line-height:50px;font-size:14px;text-align:center;transition:right linear .3s}
+        #debug-toolbar.collapsed .toggle-button{right:-20px}
+    </style>
+    <script src="<?php echo $this->getPubUrl('backend/js/debug.js') ?>" defer="defer" async="async"></script>
+</div>

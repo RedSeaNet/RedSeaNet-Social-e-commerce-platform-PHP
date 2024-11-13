@@ -1,0 +1,5 @@
+---
+Redseanet\Sales\Model\Shipment.model.save.after:
+    -
+        listener: [\Redseanet\TrackingMore\Listeners\TrackingMore, schedule]
+        priority: 30

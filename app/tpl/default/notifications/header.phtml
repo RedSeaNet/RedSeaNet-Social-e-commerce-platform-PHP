@@ -1,0 +1,14 @@
+<?php
+$segment = $this->getSegment('customer');
+if ($segment->get('hasLoggedIn')) {
+    $notifucatuibCount = $this->getNotificationsCount(["status" => 0]);
+    ?>
+<a href="<?php echo $this->getBaseUrl('notifications/'); ?>" class="position-relative"><i class="fa fa-fw fa-bell-o font-18"></i><span class="badge badge-danger badge-pill position-absolute" style="top:-6px;left:10px;"><?php echo $notifucatuibCount; ?></span></a>
+    <?php
+} else {
+    ?>
+    <a href="<?php echo $this->getBaseUrl('notifications/'); ?>" class="position-relative"><i class="fa fa-fw fa-bell-o font-18"></i><span class="badge badge-danger badge-pill position-absolute" style="top:-6px;left:10px;">0</span></a>
+
+    <?php
+}
+?>

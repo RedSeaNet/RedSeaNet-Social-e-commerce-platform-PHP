@@ -1,0 +1,8 @@
+---
+order.place.after.mq:
+    -
+        listener: [\Redseanet\RewardPoints\Mq\Gather, afterOrderPlace]
+        priority: 20
+    -
+        listener: [\Redseanet\RewardPoints\Mq\Using, afterOrderPlace]
+        priority: 20

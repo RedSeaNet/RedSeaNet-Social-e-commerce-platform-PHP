@@ -1,0 +1,96 @@
+DirectoryIndex index.php
+Options +FollowSymLinks
+SetEnv DEVELOPER_MODE "0"
+<IfModule mod_php5.c>
+    php_value memory_limit 256M
+    php_value max_execution_time 18000
+    php_flag magic_quotes_gpc off
+    php_flag session.auto_start off
+    #php_flag zlib.output_compression on
+    php_flag suhosin.session.cryptua off
+</IfModule>
+<IfModule mod_security.c>
+    SecFilterEngine Off
+    SecFilterScanPOST Off
+</IfModule>
+<IfModule mod_deflate.c>
+    #AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript image/svg+xml
+    #BrowserMatch ^Mozilla/4 gzip-only-text/html
+    #BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    #BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+    #SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+    #Header append Vary User-Agent env=!dont-vary
+</IfModule>
+<IfModule mod_rewrite.c>
+    Options +FollowSymLinks
+    RewriteEngine on
+    #RewriteBase /
+    RewriteRule ^\. - [F,L]
+    RewriteCond %{REQUEST_METHOD} ^TRAC[EK]
+    RewriteRule .* - [L,R=405]
+    RewriteCond %{REQUEST_URI} !^/pub/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-l
+    RewriteRule .* index.php [L]
+</IfModule>
+<IfModule mod_ssl.c>
+    SSLOptions StdEnvVars
+</IfModule>
+<IfModule mod_expires.c>
+    ExpiresDefault "access plus 1 year"
+    ExpiresByType text/html A0
+    ExpiresByType text/plain A0
+    ExpiresByType application/zip A0
+    ExpiresByType application/x-gzip A0
+    ExpiresByType application/x-compressed A0
+    ExpiresByType application/x-gzip A0
+    ExpiresByType application/x-bzip2 A0
+    ExpiresByType application/x-tar A0
+    ExpiresByType application/xml A0
+    ExpiresByType application/json A0
+</IfModule>
+FileETag none
+AddDefaultCharset Off
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Cache-Control "no-store"
+</IfModule>
+############################################
+## APACHE 2.2
+##
+Order allow,deny
+Allow from all
+<FilesMatch ^\.>
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+<FilesMatch \.ya?ml$>
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+<FilesMatch \.xml$>
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+<FilesMatch sitemap(?:\-\d+)?\.xml$>
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+############################################
+## APACHE 2.4
+##
+#Require all granted
+#<FilesMatch ^\.>
+#    Require all denied
+#</FilesMatch>
+#<FilesMatch \.ya?ml$>
+#    Require all denied
+#</FilesMatch>
+#<FilesMatch \.xml$>
+#    Require all denied
+#</FilesMatch>
+#<FilesMatch sitemap\.xml$>
+#    Require all granted
+#</FilesMatch>

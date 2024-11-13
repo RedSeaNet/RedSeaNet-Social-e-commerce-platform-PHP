@@ -1,0 +1,17 @@
+<div class="container p-2">
+    <div class="checkout-flow">
+        <div class="item col-4 active"><?php echo $this->translate('Shopping Cart', [], 'checkout') ?></div>
+        <div class="item col-4 active"><?php echo $this->translate('Order Confirmation', [], 'checkout') ?></div>
+        <div class="item col-4"><?php echo $this->translate('Complate', [], 'checkout') ?></div>
+    </div>
+    <h4 class="page-title"><?php echo $this->translate('Please confirm the order infomation') ?></h4>
+    <div class="checkout-steps bg-white ps-2 pe-2">
+        <?php
+        $steps = $this->getConfig()['checkout'];
+        ksort($steps);
+        foreach ($steps as $step) {
+            echo $this->getChild($step);
+        }
+        ?>
+    </div>
+</div>

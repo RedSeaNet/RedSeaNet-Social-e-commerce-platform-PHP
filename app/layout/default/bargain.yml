@@ -1,0 +1,295 @@
+---
+bargain_list:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Bargain
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{label: 'Bargain'}]
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: catalog
+                            -
+                                method: addHandledSegment
+                                params: customer
+                            -
+                                method: addHandledSegment
+                                params: checkout
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: bargain/list
+bargain_view:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Join the Bargain
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/zoombox.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: '/bargain/index/list/',label: 'Bargain'}]
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: bargain
+                            -
+                                method: addHandledSegment
+                                params: customer
+                            -
+                                method: addHandledSegment
+                                params: checkout
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: bargain/view
+                        children:
+                            media:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: bargain/media
+                            share:
+                                type: Redseanet\Bargain\ViewModel\Share
+                                template: bargain/share
+            extra:
+                children:
+                    wechat_jsapi:
+                        template: bargain/wechat
+bargain_sale_bargain_view:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Create a bargain order
+                    -
+                        method: addScript
+                        params: frontend/js/locate.js
+                    -
+                        method: addScript
+                        params: frontend/js/bargain.js
+            content:
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: catalog
+                            -
+                                method: addHandledSegment
+                                params: customer
+                            -
+                                method: addHandledSegment
+                                params: checkout
+                    main:
+                        type: Redseanet\Bargain\ViewModel\Bargain
+                        template: bargain/order/view
+                        children:
+                            address:
+                                type: Redseanet\Checkout\ViewModel\Order\Address
+                                template: bargain/order/address
+                            payment:
+                                type: Redseanet\Checkout\ViewModel\Order\Payment
+                                template: checkout/order/payment
+                            shipping:
+                                type: Redseanet\Checkout\ViewModel\Order\Shipping
+                                template: checkout/order/shipping
+            extra:
+                children:
+                    modal:
+                        type: Redseanet\Customer\ViewModel\Address
+                        template: bargain/order/addressmodal
+admin_bargain_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Bargain
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/bargain/',label: 'Bargain'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/bargain/edit/',label: 'Add Bargain'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Bargain\Grid\Bargain
+admin_bargain_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/bargain.js',async: 'async',defer: 'defer'}]
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/modal.js',async: 'async',defer: 'defer'}]
+                    -
+                        method: addScript
+                        params: backend/js/collapse.js
+                    -
+                        method: addLink
+                        params: backend/css/resource.css
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/mouse.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/draggable.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/droppable.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/sortable.js
+                    -
+                        method: addScript
+                        params: backend/vendor/jquery.fileupload/jquery.fileupload.js
+                    -
+                        method: addScript
+                        params: backend/js/resource.js
+                    -
+                        method: addLink
+                        params: backend/css/jquery-ui.min.css
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/bargain/',label: 'Bargain'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/bargain/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Bargain\Edit\Bargain
+                        children:
+                            upload:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: admin/resource/widget
+                            productoptions:
+                                type: Redseanet\Admin\ViewModel\Bargain\Edit\Option
+                                template: admin/bargain/productoption
+            extra:
+                children:
+                    product: 
+                       type: Redseanet\Admin\ViewModel\Bargain\Edit\Product
+                       template: admin/bargain/product   
+                       children:
+                           pager:
+                               type: Redseanet\Lib\ViewModel\Pager
+                    insert:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/insert
+                        children:
+                            list:
+                                type: Redseanet\Admin\ViewModel\Resource\Explorer
+                                template: admin/resource/explorer
+                    upload:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/upload
+admin_bargain_product_list:
+    update: admin
+    root:
+        template: page/ajax
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    main:
+                        type: Redseanet\Admin\ViewModel\Catalog\Edit\Category\Product
+                        template: admin/bargain/productlist
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager                                           
+admin_bargain_product_option:
+    update: admin
+    root:
+        template: page/ajax
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    main:
+                        type: Redseanet\Admin\ViewModel\Bargain\Edit\Option
+                        template: admin/bargain/productoption
+admin_bargain_case_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Bargain Case
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/bargain/',label: 'Bargain'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Bargain Case'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Bargain\Grid\BargainCase
+admin_bargain_case_help_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Bargain Case Help List
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/bargain/',label: 'Bargain'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/bargain/',label: 'Bargain Case'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Bargain Case Help'}]
+                                    
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Bargain\Grid\BargainCaseHelp  

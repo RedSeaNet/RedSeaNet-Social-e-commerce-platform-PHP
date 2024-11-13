@@ -1,0 +1,110 @@
+<?php
+$item = $this->getVariable('item');
+$product = $item['product'];
+$options = json_decode($item['options'], true);
+$thumbnail = $product->getThumbnail($options);
+$inventory = $item->getInventory();
+$tier = $product['tier_price'] ? json_decode($product['tier_price'], true) : [];
+$tiers = $tier[-1] ?? [];
+if ($this->getSegment('customer')->get('hasLoggedIn')) {
+    $groups = $this->getCustomer()->getGroup();
+    foreach ($groups as $group) {
+        if (isset($tiers[$group->getId()])) {
+            $tiers = array_merge([$tiers[$group->getId()]]);
+        }
+    }
+} else if (isset($tiers[0])) {
+    $tiers = array_merge($tiers[0]);
+}
+krsort($tiers, SORT_NUMERIC);
+?>
+<div class="row product-list p-2" data-id="<?php echo $item['id'] ?>">
+    <div class="col-md-7 col-12 product-info">
+        <div class="">
+            <input type="checkbox"<?php if ($item['disabled']): ?> disabled="disabled"<?php elseif ($item['status']): ?> checked="checked"<?php endif ?> class="checkbox-<?php echo $item['store_id'] ?> product" name="item[]" value="<?php echo $item['id'] ?>" />
+        </div>
+        <div class="product-image">
+            <a href="<?php echo $item['product']->getUrl() ?>">
+                <?php
+                if (strpos($thumbnail, '//') === false):
+                    ?>
+                    <img src="<?php echo $this->getResourceUrl('image/' . $thumbnail) ?>" />
+                    <?php
+                else:
+                    ?>
+                    <img src="<?php echo $thumbnail ?>" width="88" />
+                <?php
+                endif;
+                ?>
+            </a>
+        </div>
+        <div class="cell product-name">
+            <a href="<?php echo $item['product']->getUrl() ?>">
+                <?php echo $item['product_name'] ?>
+            </a>
+            <?php
+            if ($item['product_id']):
+                ?>
+                <dl class="options">
+                    <?php
+                    foreach ($item['product']->getOptions() as $option):
+                        if (isset($options[$option->getId()])):
+                            ?>
+                            <dt><?php echo $option['title'] ?></dt>
+                            <dd>
+                                <?php
+                                echo (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                        $option->getValue($options[$option->getId()]) : $options[$option->getId()])
+                                ?>
+                            </dd>
+                        <?php elseif ($option['is_required']): ?>
+                            <dt class="error"><?php echo $option['title'] ?></dt>
+                            <dd class="error">
+                                <?php echo $this->translate('This option is required and cannot be empty.') ?>
+                            </dd>
+                            <?php
+                        endif;
+                    endforeach;
+                    ?>
+                </dl>
+            <?php endif; ?>
+            <div class="d-md-none text-end">
+                <p class="p-0 m-0 pe-2"><?php echo $this->getCurrency()->format($item['price']) ?></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-1 col-1 price d-none d-md-block" data-price="<?php echo $item['price'] ?>" data-tier='<?php echo json_encode($tiers) ?>' data-price-id="<?php echo $item['id'] ?>">
+        <?php echo $this->getCurrency()->format($item['price']) ?>
+    </div>
+    <div class="col-md-2 col-9 qty justify-content-center">
+        <div class="text-nowrap d-flex">
+            <?php if (!empty($item['disabled']) && !$this->canSold($item)): ?>
+                <p><?php echo $this->translate('Out of Stock') ?></p>
+            <?php elseif ($item->getCart()->getAdditional('bulk')): ?>
+                <?php echo (float) $item['qty'] ?>
+            <?php else: ?>
+                <label class="spin minus" for="qty-<?php echo $item['id'] ?>">-</label>
+                <input type="number" name="qty[<?php echo $item['id'] ?>]" id="qty-<?php echo $item['id'] ?>" data-qty-id="<?php echo $item['id'] ?>"
+                       min="<?php echo (float) $inventory['min_qty'] ?>"
+                       max="<?php echo min((float) $inventory['max_qty'], (float) $inventory['qty']) ?>"
+                       step="<?php echo (float) $inventory['increment'] ?>"
+                       class="form-control required qty-input" value="<?php echo (float) $item['qty'] ?>" />
+                <label class="spin plus" for="qty-<?php echo $item['id'] ?>">+</label>
+            <?php endif ?>
+        </div>
+    </div>
+    <div class="col-md-1 col-1 subtotal d-none d-md-block" data-additional="<?php echo $item['discount'] ?>" data-additional-id="<?php echo $item['id'] ?>">
+        <?php echo $this->getCurrency()->format($item['total']) ?>
+    </div>
+    <div class="col-md-1 col-3 text-center font-24 sys-blue actions">
+        <a href="<?php echo $this->getBaseUrl('checkout/cart/movetowishlist/') ?>?csrf=<?php echo $this->getCsrfKey() ?>&item=<?php echo $item->getId() ?>">
+            <span class="fa fa-gift" aria-hidden="true"></span>
+            <span class="d-none"><?php echo $this->translate('Move to Wishlist') ?></span>
+        </a>
+        <a href="<?php echo $this->getBaseUrl('checkout/cart/remove/') ?>" data-method="delete" data-params="csrf=<?php echo $this->getCsrfKey() ?>&item=<?php echo $item['id'] ?>">
+            <span class="fa fa-trash" aria-hidden="true"></span>
+            <span class="d-none"><?php echo $this->translate('Delete') ?></span>
+        </a>
+    </div>
+</div>

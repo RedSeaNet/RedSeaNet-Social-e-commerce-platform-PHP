@@ -1,0 +1,57 @@
+<?php
+$collection = $this->getStatement();
+?>
+<div class="statement">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="text-center"><?php echo $this->translate('Code') ?></th>
+                <th class="text-center"><?php echo $this->translate('Customer') ?></th>
+                <th class="text-center"><?php echo $this->translate('Orders') ?></th>
+                <th class="text-center"><?php echo $this->translate('Date') ?></th>
+            </tr>
+        </thead>
+        <?php if (count($collection)): ?>
+            <tbody>
+                <?php foreach ($collection as $item): ?>
+                    <tr class="text-center">
+                        <td><?php echo $item['code'] ?></td>
+                        <td>
+                            <?php if ($this->hasPermission('Admin\Customer\Manage::edit')): ?>
+                                <a href="<?php echo $this->getAdminUrl('customer_manage/edit/?id='), $item['customer_id'] ?>">
+                                    <?php echo $item['customer_id'] ?>
+                                </a>
+                            <?php else: ?>
+                                <?php echo $this->translate('No Permission') ?>
+                            <?php endif ?>
+                        </td>
+                        <td>
+                            <?php if ($this->hasPermission('Admin\Sales\Order::view')): ?>
+                                <a href="<?php echo $this->getAdminUrl('sales_order/view/?id='), $item['order_id'] ?>">
+                                    <?php echo $item['increment_id'] ?>
+                                </a>
+                            <?php else: ?>
+                                <?php echo $this->translate('No Permission') ?>
+                            <?php endif ?>
+                        </td>
+                        <td><?php echo $item['created_at'] ?></td>
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-end">
+                        <?php echo $this->getChild('pager')->setCollection($collection); ?>
+                    </td>
+                </tr>
+            </tfoot>
+        <?php else: ?>
+            <tfoot>
+                <tr>
+                    <td colspan="4"><?php echo $this->translate('No data to display') ?></td>
+                </tr>
+            </tfoot>
+        <?php endif; ?>
+    </table>
+</div>
+

@@ -1,0 +1,7 @@
+<?php
+$cart=$this->getCart();
+?>
+<span class="selected sys-red"><?php echo $this->getQty() ?></span>
+<span class="badge text-bg-danger"><?php echo $this->translate('Item(s) Selected') ?></span>
+<span class="badge text-bg-danger total-title"><?php echo $this->translate('Total') ?>:</span>
+<span class="total"><?php echo $this->getCurrency()->format($cart['total']) ?></span>

@@ -1,0 +1,5 @@
+---
+payment:
+    method: [GET,POST]
+    route: /payment/{controller}/[{action}[/]]
+    namespace: Redseanet\Payment\Controller

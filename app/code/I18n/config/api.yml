@@ -1,0 +1,28 @@
+---
+rpcport:
+    getLocateInfo:
+        params: 
+            id: string
+            token: string
+            conditionData: array, part->id, ex region->48 48 is a country id
+            countryIosCode: string
+            languageId: int
+        respone: json array string
+        documentation: get locate information
+    getLanguages:
+        params: 
+            id: string
+            token: string
+            languageId: int
+        respone: json array string
+        documentation: get locate information
+    getCurrencies:
+        params: 
+            id: string
+            token: string
+        respone: json array string
+        documentation: get currency information
+rpc:
+    getLocateInfo: \Redseanet\I18n\Model\Api\Rpc\Locate
+    getLanguages: \Redseanet\I18n\Model\Api\Rpc\Locate
+    getCurrencies: \Redseanet\I18n\Model\Api\Rpc\Locate

@@ -1,0 +1,191 @@
+<?php
+$collection = $this->getVariable('collection');
+$product = $this->getProduct();
+$images = $product->offsetGet('images');
+$warehouse = new Redseanet\Catalog\Model\Warehouse;
+$warehouse->load(1);
+$inventory = $warehouse->getInventory($product->getId(), $product['sku']);
+$canSold = $product->canSold() && isset($inventory['status']) && $inventory['status'] && $inventory['qty'] > $inventory['reserve_qty'] && min((float) $inventory['max_qty'], (float) $inventory['qty']) > (float) $inventory['min_qty'];
+$store = $product->getStore();
+$retailer = new Redseanet\Retailer\Model\Retailer;
+$retailer->load($store->getId(), 'store_id');
+$bulk = $product->offsetGet('bulk_price') ? json_decode($product->offsetGet('bulk_price'), true) : false;
+$storeManger = $store->getManagers();
+?>
+<div class="container">
+    <form action="<?php echo $this->getBaseUrl('checkout/cart/add/') ?>" method="post" enctype="multipart/form-data" id="form-product">
+        <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+        <input type="hidden" name="product_id" value="<?php echo $product->getId() ?>" />
+        <input type="hidden" name="warehouse_id" value="<?php echo 1 ?>" />
+        <div class="product-essential">
+            <div class="col-12 col-md-5 p-0">
+                <?php echo $this->getChild('media')->setVariable('product', $product) ?>
+            </div>
+            <div class="col-12 col-md-5 product-info">
+                <h5 class="product-name">
+                    <?php
+                    echo $product['name'];
+                    if ($retailer->getId() && !empty($contact = $retailer['contact'])) {
+                        $json = json_decode($contact, true);
+                        if (!$json) {
+                            $json = ['trade' => $contact];
+                        }
+                    }
+                    ?>
+                </h5>
+                <?php
+                if (!empty($product['short_description'])) {
+                    echo '<p class="sys-gray font-12">' . $product['short_description'] . '</p>';
+                }
+                ?>
+                <div class="price-box">
+                    <?php echo $this->getPriceBox() ?>
+                </div>
+                <?php if ($promotion = trim((string) $this->getChild('promotion')->setVariable('product', $product))): ?>
+                    <div class="sale-box">
+                        <?php echo $promotion ?>
+                    </div>
+                <?php endif ?>
+                <div class="options">
+                    <?php if ($canSold): ?>
+                        <?php echo $this->getChild('option')->setVariable('product', $product) ?>
+                        <div class="input-box">
+                            <label for="qty" class="col-form-label"><?php echo $this->translate('Qty') ?></label>
+                            <div class="cell qty">
+                                <label for="qty" class="spin minus">-</label>
+                                <input id="qty" class="form-control required" value="<?php echo (float) $inventory['min_qty'] ?>" 
+                                       min="<?php echo (float) $inventory['min_qty'] ?>" 
+                                       max="<?php echo min((float) $inventory['max_qty'], (float) $inventory['qty']) ?>" 
+                                       step="<?php echo (float) $inventory['increment'] ?>" name="qty" type="number" />
+                                <label for="qty" class="spin plus">+</label>
+                                <span class="inventory"><?php echo $this->translate('pcs'), $this->translate('(%d pcs in stock)', [$inventory['qty']]) ?></span>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <p><?php echo $this->translate('This product is currently out of stock.') ?></p>
+                    <?php endif ?>
+                </div>
+                <?php if ($canSold): ?>
+                    <div class="clearfix action">
+                        <?php if ($this->getQuery('bulk')): ?>
+                            <a class="btn btn-bulk" href="<?php echo $this->getBaseUrl('bulk/view/?bulk=' . $this->getQuery('bulk')) ?>">
+                                <span><?php echo $this->translate('Back to the Bulk') ?></span>
+                            </a>
+                        <?php else: ?>
+                            <button type="submit" class="btn"><?php echo $this->translate('Buy Now') ?></button>
+                            <button type="submit" class="btn btn-checkout">
+                                <span class="fa fa-shopping-cart" aria-hidden="true"></span>
+                                <span><?php echo $this->translate('Add to Cart') ?></span>
+                            </button>
+                        <?php endif ?>
+                        <?php if ($bulk): ?>
+                            <button type="submit" class="btn btn-bulk" formaction="<?php echo $this->getBaseUrl('bulk/process/apply/') ?>">
+                                <span><?php echo $this->translate('Create a New Bulk') ?></span>
+                            </button>
+                        <?php endif ?>
+                    </div>
+                    <?php
+                endif;
+                if ($bulk) {
+                    echo $this->getChild('bulk_sale_simple')->setVariable('product', $product);
+                }
+                echo $this->getChild('share');
+                ?>
+
+            </div>
+            <div class="col-2 d-none d-md-block">
+                <?php
+                echo $this->getChild('crosssells')
+                        ->setVariable('product', $product)
+                        ->setLimit(2)
+                        ->setVariable('class', 'col-12');
+                ?>
+            </div>
+        </div>
+    </form>
+    <div class="product-detail">
+        <ul class="nav nav-tabs" role="tablist">
+            <?php if ($retailer->getId()): ?>
+                <li role="presentation"><a href="<?php echo $this->getBaseUrl($retailer->getStoreUrl()); ?>"><?php echo $store['name'] ?></a>&nbsp;<a href="<?php echo $this->getBaseUrl(count($storeManger) > 0 ? "livechat/?chat=" . $storeManger[0]["customer_id"] : "livechat/"); ?>"><i class="fa fa-comments-o" aria-hidden="true"></i><?php echo $this->translate('Customer Service') ?></a></li>
+            <?php endif ?>
+            <li role="presentation"><a href="#description" class="active" aria-controls="description" role="tab" data-bs-toggle="tab"><?php echo $this->translate('Description') ?></a></li>
+            <?php if ($attribute = trim((string) $this->getChild('attribute'))): ?>
+                <li role="presentation"><a href="#attribute" aria-controls="attribute" role="tab" data-bs-toggle="tab"><?php echo $this->translate('Specifications') ?></a></li>
+            <?php endif ?>
+            <li role="presentation"><a href="#review" aria-controls="review" role="tab" data-bs-toggle="tab"><?php echo $this->translate('Review(s)') ?></a></li>
+            <?php if ($service = trim((string) $this->getChild('service'))): ?>
+                <li role="presentation"><a href="#service" aria-controls="service" role="tab" data-bs-toggle="tab"><?php echo $this->translate('After-sales Service') ?></a></li>
+            <?php endif ?>
+            <?php if ($bulk): ?>
+                <li role="presentation"><a href="#bulk-sale" aria-controls="bulk-sale" role="tab" data-bs-toggle="tab"><?php echo $this->translate('Bulk Sale') ?></a></li>
+            <?php endif ?>
+            <li role="presentation"><a href="#forum" aria-controls="forum" role="tab" data-bs-toggle="tab"><?php echo $this->translate('Forum') ?></a></li>
+            <?php if ($product->canSold() && !$this->getQuery('bulk')): ?>
+                <li role="presentation" class="visible-affix">
+                    <button type="submit" class="btn btn-checkout" form="form-product">
+                        <span class="fa fa-shopping-cart" aria-hidden="true"></span>
+                        <span><?php echo $this->translate('Add to Cart') ?></span>
+                    </button>
+                </li>
+            <?php endif; ?>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="description">
+                <div class="d-flex">
+                    <div class="col-12 col-md-10">
+                        <?php echo $product->offsetGet('description') ?>  
+                    </div>
+                    <div class="col-2 d-none d-md-block">
+                        <?php
+                        echo $this->getChild('crosssells')
+                                ->setVariable('product', $product)
+                                ->setVariable('title', 'Crosssells')
+                                ->setLimit(8)
+                                ->setVariable('class', 'col-12');
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <?php if ($attribute): ?>
+                <div role="tabpanel" class="tab-pane" id="attribute">
+                    <?php echo $attribute ?>
+                </div>
+            <?php endif ?>
+            <div role="tabpanel" class="tab-pane" id="review">
+                <span class="fa fa-spin fa-spinner" data-url="<?php echo $this->getBaseUrl('catalog/review/load/?id=' . $product['id']); ?>"></span>
+
+            </div>
+            <?php if ($service): ?>
+                <div role="tabpanel" class="tab-pane" id="service">
+                    <?php echo $service ?>
+                </div>
+            <?php endif ?>
+            <?php if ($bulk): ?>
+                <div role="tabpanel" class="tab-pane" id="bulk-sale">
+                    <?php echo $this->getChild('bulk_sale')->setVariable('product', $product) ?>
+                </div>
+            <?php endif ?>
+            <div role="tabpanel" class="tab-pane" id="forum">
+                <?php echo $this->getChild('forum') ?>
+            </div>
+        </div>
+        <div class="upsells">
+            <?php
+            echo $this->getChild('upsells')
+                    ->setVariable('product', $product)
+                    ->setVariable('title', 'You May Also Like')
+                    ->setLimit(4)
+                    ->setVariable('class', 'col-6 col-md-3');
+            ?>
+        </div>
+        <div class="related">
+            <?php
+            echo $this->getChild('related')
+                    ->setVariable('product', $product)
+                    ->setVariable('title', 'Featured Products')
+                    ->setLimit(4)
+                    ->setVariable('class', 'col-6 col-md-3');
+            ?>
+        </div>
+    </div>
+</div>

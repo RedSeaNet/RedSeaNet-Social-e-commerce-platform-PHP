@@ -1,0 +1,14 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+$parent = $this->getVariable('parent');
+?>
+<div class="select-icon">
+    <?php foreach (['qq', 'wechat', 'weibo', 'renren', 'tencent-weibo', 'facebook', 'twitter', 'linkedin', 'pinterest', 'google-plus-official', 'google-plus-square', 'tumblr', 'instagram', 'vk', 'flickr', 'pinterest-p', 'pinterest-square', '500px', 'dashcube', 'delicious', 'deviantart', 'digg', 'empire', 'envira', 'first-order', 'foursquare', 'get-pocket', 'gratipay', 'hacker-news', 'houzz', 'lastfm', 'leanpub', 'odnoklassniki', 'optin-monster', 'product-hunt', 'ra', 'reddit', 'reddit-alien', 'reddit-square', 'sellsy', 'share-alt', 'share-alt-square', 'shirtsinbulk', 'simplybuilt', 'slack', 'snapchat', 'spotify', 'tripadvisor', 'twitch', 'viacoin', 'vimeo', 'whatsapp', 'xing', 'yelp', 'yoast', 'youtube'] as $code): ?>
+        <input type="radio" name="<?php echo $key ?>" <?php if (isset($item['required'])): ?> class="required"<?php endif ?> <?php if ($item['value'] == $code): ?> checked="checked"<?php endif ?> value="<?php echo $code ?>" id="<?php echo $code ?>" />
+        <label for="<?php echo $code ?>">
+            <span class="fa fa-fw fa-<?php echo $code ?>"></span>
+        </label>
+    <?php endforeach ?>
+</div>

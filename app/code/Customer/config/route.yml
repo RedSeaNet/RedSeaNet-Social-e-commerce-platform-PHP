@@ -1,0 +1,5 @@
+---
+customer:
+    method: [GET,POST,DELETE]
+    route: /customer/{controller}/[{action}[/]]
+    namespace: Redseanet\Customer\Controller

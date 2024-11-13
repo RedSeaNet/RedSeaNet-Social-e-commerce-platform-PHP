@@ -1,0 +1,29 @@
+<?php
+$product = $this->getProduct();
+if ($product['tier_price']):
+    $final = $product->getFinalPrice(1, false);
+    if ($prices = $this->getPrices()):
+        $currency = $this->getCurrency();
+        $format = $currency['format'];
+        $symbol = $currency['symbol'];
+        $saved = $this->getVariable('show_saved', true);
+        ksort($prices);
+        ?>
+        <ul class="tier-price">
+            <?php foreach ($prices as $qty => $price): ?>
+                <li>
+                    <?php
+                    echo $this->translate('Buy %s for %s each', [
+                        '<span class="qty" data-qty="' . $qty . '">' . $qty . '</span>',
+                        '<span class="price" data-price="' . $price . '">' . sprintf($format, $symbol, $price) . '</span>'
+                    ]);
+                    if ($saved):
+                        ?><span class="saved"><?php echo $this->translate('(Saved %d%%)', [100 - 100 * $price / $final]) ?></span>
+                    <?php endif ?>
+                </li>
+            <?php endforeach ?>
+        </ul>
+        <?php
+    endif;
+endif;
+?>

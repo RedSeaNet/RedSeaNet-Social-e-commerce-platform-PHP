@@ -1,0 +1,50 @@
+<table class="table additional widget-upload">
+    <caption><?php echo $this->translate('Additional Attributes') ?></caption>
+    <thead>
+        <tr>
+            <th><?php echo $this->translate('Label') ?></th>
+            <th><?php echo $this->translate('Value') ?></th>
+            <th><?php echo $this->translate('Action') ?></th>
+        </tr>
+    </thead>
+    <tbody class="target"><?php
+        if ($attributes = $this->getAttributes()):
+            foreach ($attributes as $key => $value):
+                ?>
+                <tr>
+                    <td><input type="text" name="additional[key][]" class="form-control required" value="<?php echo $key ?>" /></td>
+                    <td><input type="text" name="additional[value][]" class="form-control required" value="<?php echo $value ?>" /></td>
+                    <td>
+                        <a href="javascript:void(0);" class="delete">
+                            <span class="fa fa-trash-o" aria-hidden="true"></span>
+                            <span class="sr-only"><?php echo $this->translate('Remove') ?></span>
+                        </a>
+                    </td>
+                </tr>
+                <?php
+            endforeach;
+        endif;
+        ?></tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3">
+                <a href="javascript:void(0);" class="add">
+                    <span class="fa fa-plus-square font-32" aria-hidden="true"></span>
+                    <span class="sr-only"><?php echo $this->translate('Add') ?></span>
+                </a>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+<template id="tmpl-additional">
+    <tr>
+        <td><input type="text" name="additional[key][]" class="form-control required" /></td>
+        <td><input type="text" name="additional[value][]" class="form-control required" /></td>
+        <td>
+            <a href="javascript:void(0);" class="delete">
+                <span class="fa fa-trash-o" aria-hidden="true"></span>
+                <span class="sr-only"><?php echo $this->translate('Remove') ?></span>
+            </a>
+        </td>
+    </tr>
+</template>

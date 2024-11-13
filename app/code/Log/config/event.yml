@@ -1,0 +1,5 @@
+---
+customer.login.after:
+    -
+        listener: [\Redseanet\Log\Listeners\Customer, log]
+        priority: 20

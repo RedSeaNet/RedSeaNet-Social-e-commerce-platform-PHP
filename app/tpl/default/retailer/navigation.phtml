@@ -1,0 +1,39 @@
+<?php
+$current = $this->getUri()->withQuery('')->withFragment('')->__toString();
+?>
+<div class="d-block d-md-none">
+    <button type="button" class="navbar-toggle collapsed" data-bs-toggle="collapse" data-target="#navbar-customer-account">
+        <span class="fa fa-navicon fa-fw"></span>
+    </button>
+</div>
+<div class="navbar navbar-expand-md">
+    <div class="nav collapse navbar-collapse" id="navbar-customer-account">
+        <h3 class="page-title col-12">
+            <a href="<?php echo $this->getBaseUrl('retailer/account/') ?>">
+                <span class="fa fa-user" aria-hidden="true"></span>
+                <span><?php echo $this->translate('Retailer Center') ?></span>
+            </a>
+        </h3>
+        <nav class="nav-item col-12">    		
+            <dl>
+                <?php foreach ($this->getGroups() as $group): ?>
+                    <dt>
+                        <span class="fa fa-fw fa-<?php echo $group['icon'] ?>" aria-hidden="true"></span>
+                        <span><?php echo $this->translate($group['label']) ?></span>
+                    </dt>
+                    <?php foreach ($this->getLinks() as $link): ?>
+                        <?php if ($link['group'] == $group['label']): ?>
+                            <dd<?php if (!empty($link['class'])): ?> class="<?php echo $link['class'] ?>"<?php endif ?>>
+                                <a href="<?php echo $this->getBaseUrl($link['link']) ?>" <?php if (strpos($current, $link['link']) !== false): ?> class="active"<?php endif ?>>
+                                    <span><?php echo $this->translate($link['label']) ?></span>
+                                </a>
+                            </dd>
+                        <?php endif; ?>
+                    <?php endforeach; ?>                
+                <?php endforeach; ?>              
+            </dl>
+        </nav>
+    </div>
+
+</div>
+

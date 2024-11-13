@@ -1,0 +1,64 @@
+<?php
+$this->clearNewBeLikeCount();
+$config = $this->getConfig();
+$current = $this->getSegment('customer')->get('hasLoggedIn') ? $this->getSegment('customer')->get('customer')['id'] : 0;
+$belikes = $this->getBeLikes();
+?>
+<div class="draft-cont linked-cont praiseList-cont">
+    <ul class="col-12 row">
+        <?php
+        if (count($belikes)):
+            foreach ($belikes as $belike):
+                ?>
+                <li class="col-md-6 col-sm-6 col-12">
+                    <div class="draft-list product-user linked-listBox">
+                        <div class="text-end">
+                            <span class="publish-time"><?php echo $this->getTime($belike['created_at']) ?></span>
+
+                        </div>
+                        <div class="col-12 linked-user">
+                            <div class="inline-bolck linked-userImg">
+                                <a href="<?php echo $this->getBaseUrl('forum/space/?customer_id=' . $belike['customer_id']); ?>">
+                                    <img src="<?php echo $belike['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $belike['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="Avatar">
+                                </a>
+                            </div>
+                            <?php
+                            if (isset($belike['review_id'])):
+                                ?>
+                                <div class="product-text2 linked-userName col-10">
+                                    <p class="col-12 inline-bolck">
+                                        <?php echo $this->translate('The user %s praised my reply', [$belike['author']]); ?>:
+                                    </p>
+                                </div>
+                                <p class="col-12 padding-0 linked-link">
+                                    <?php echo mb_substr($belike['review_content'], 0, 30, 'utf-8') ?>
+                                </p>
+                                <p class="col-12 padding-0 linked-link">
+                                    <a href="" class="a"><label><?php echo $this->translate('From Post'); ?></label>：<?php echo $belike['title'] ?></a>
+                                </p>
+                            <?php else: ?>
+                                <div class="product-text2 linked-userName col-10">
+                                    <p class="col-12 inline-bolck">
+                                        <?php echo $this->translate('The user %s praised my post', [$belike['author']]); ?>:
+                                    </p>
+                                </div>
+                                <p class="col-12 padding-0 linked-link">
+                                    <a href="" class="a"><?php echo $belike['title']; ?></a>
+                                </p>
+                            <?php
+                            endif;
+                            ?>
+                        </div>
+                        <a href="<?php echo $this->getBaseUrl('forum/space/?customer_id=' . $belike['customer_id']); ?>" class="btn btn-secondary color-c6 publish-btn float-end"><?php echo $this->translate('View'); ?></a>
+                    </div>
+                </li>
+                <?php
+            endforeach;
+        else:
+            ?>
+            <p class="empty text-center"><?php echo $this->translate('No post available right now.') ?></p>
+        <?php
+        endif;
+        ?>
+    </ul>
+</div>

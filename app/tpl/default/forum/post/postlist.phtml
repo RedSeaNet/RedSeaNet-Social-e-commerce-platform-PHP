@@ -1,0 +1,66 @@
+<div class="main-container attention-main">
+    <div class="mobile-post-top d-block d-sm-none pt-2 pb-2">
+        <div class="col-2">
+            <a href="javascript:void(0)" onclick="javascript:history.back(-1);"><span class="fa fa-arrow-left"></span></a>
+        </div>
+        <div class="col-8 text-center font-14">              
+            <?php echo $this->translate('His Posts'); ?>
+        </div>
+        <div class="col-2 text-end"></div>
+    </div>
+    <div class="container">
+        <ul class="products-grid masonry clearfix" id="masonry">
+            <?php
+            $id = $this->getQuery('customer_id');
+            $current = $this->getSegment('customer')->get('hasLoggedIn') ? $this->getSegment('customer')->get('customer')['id'] : '';
+            $posts = $this->getPosts();
+            $customer=$post->getCustomer();
+            if (count($posts)):
+                foreach ($posts as $post):
+                    $thumbnail = $post->getThumbnail();
+                    $count = $post->getLikeCount();
+                    ?><li class="item col-6 col-sm-4 col-md-4">
+                        <div class="item-list">
+                            <a href="<?php echo $post->getUrl() ?>" class="product-image">
+                                <img src="<?php echo $thumbnail ? $this->getBaseUrl('pub/upload/forum/') . $thumbnail : $this->getPubUrl('frontend/images/placeholder.png'); ?>" />
+                            </a>
+                            <div class="product-text">
+                                <h3 class="product-name"><a href="<?php echo $post->getUrl() ?>"><?php echo $post['title'] ?></a></h3>
+                                <div class="product-user">
+                                    <a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $customer['id']) ?>"><img class="rounded-circle" src="<?php echo !empty($customer['avatar']) ? $this->getUploadedUrl('customer/avatar/' . $customer['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="<?php echo $customer['username'] ?>" /></a>
+                                    <span class="product-userName">
+                                        <a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $customer['id']) ?>"><?php echo $customer['username'] ?></a>
+                                        <span class="publish-time"><?php echo $this->getTime($post['created_at']); ?></span>
+                                    </span>
+                                    <?php if ($current): ?>
+                                        <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/like/') ?>" class="like product-heart" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post->getId() ?>" class="product-heart">
+                                            <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                            <span><?php echo $count; ?></span>
+                                        </a>
+                                        <?php
+                                    else:
+                                        ?>
+                                        <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/like/') ?>" class="like" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post->getId() ?>" class="product-heart">
+                                            <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                            <span><?php echo $count; ?></span>
+                                        </a>
+                                    <?php
+                                    endif;
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <?php
+                endforeach;
+                ?>
+                <?php
+            else:
+                ?>
+                <p class="empty text-center"><?php echo $this->translate('No post available right now.') ?></p>
+            <?php
+            endif;
+            ?>
+        </ul>
+    </div>
+</div>

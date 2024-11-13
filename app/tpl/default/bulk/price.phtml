@@ -1,0 +1,53 @@
+<?php
+$product = $this->getVariable('product');
+?>
+<div class="bulk-price-edit">
+    <form action="<?php echo $this->getBaseUrl('bulk/price/save/') ?>" method="post">
+        <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+        <input type="hidden" name="id" value="<?php echo $this->getQuery('id') ?>" />
+        <div class="page-content">
+            <div class="input-box">
+                <label class="col-form-label">
+                    <?php echo $this->translate('Product Name') ?>
+                </label>
+                <div class="cell">
+                    <?php echo $product['name'] ?>
+                </div>
+            </div>
+            <div class="input-box">
+                <label class="col-form-label">
+                    <?php echo $this->translate('Old Price') ?>
+                </label>
+                <div class="cell">
+                    <?php echo $this->getContainer()->get('base_currency')->format($product->getFinalPrice()) ?>
+                </div>
+            </div>
+            <?php
+            echo $this->getChild('price')->setVariables([
+                'parent' => $this,
+                'item' => [
+                    'label' => 'Bulk Price',
+                    'value' => $product['bulk_price']
+                ],
+                'key' => 'bulk_price'
+            ]);
+            ?>
+            <div class="input-box">
+                <label class="col-form-label">
+                    <?php echo $this->translate('Bulk Expiration') ?>
+                </label>
+                <div class="cell">
+                    <div class="input-group">
+                        <input type="tel" name="bulk_expiration" class="form-control" value="<?php echo $product['bulk_expiration'] ?: $this->getConfig()['catalog/bulk_sale/default_expiration'] ?>" />
+                        <span class="input-group-addon"><?php echo $this->translate('Days') ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="buttons-set">
+            <button type="button" class="btn btn-back" onclick="javascript:history.go(-1);"><?php echo $this->translate('Back') ?></button>
+            <button type="reset" class="btn btn-reset"><span><?php echo $this->translate('Reset') ?></span></button>
+            <button type="submit" class="btn btn-submit"><span><?php echo $this->translate('Save') ?></span></button>
+        </div>
+    </form>
+</div>

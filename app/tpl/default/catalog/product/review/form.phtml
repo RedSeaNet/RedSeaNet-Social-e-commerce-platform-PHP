@@ -1,0 +1,17 @@
+<?php
+$canReview = $this->canReview();
+if ($canReview):
+    ?>
+    <div class="review-form">
+        <form action="<?php echo $this->getBaseUrl('catalog/review/save') ?>" method="post" class="form-inline">
+            <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+            <input type="hidden" name="product_id" value="<?php echo $this->getVariable('id') ?>" />
+            <div class="d-flex align-items-center">
+                <div class="input-box col-9">
+                    <textarea rows="4" name="content" id="review-content" class="form-control required" style="width:90%"></textarea>
+                </div>
+                <div class="col-2"><button class="btn" type="submit"><?php echo $this->translate('Submit') ?></button></div>
+            </div>
+        </form>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,109 @@
+<?php
+$model = $this->getVariable('model');
+$language = @$model->getCustomer()->getLanguage()['code'];
+$currency = is_callable([$model, 'getCurrency']) ? $model->getCurrency() : null;
+?>
+<table class="table">
+    <colgroup>
+        <col width="1" />
+        <col />
+        <?php if ($currency): ?>
+            <col width="1" />
+            <col width="1" />
+            <col width="1" />
+        <?php endif ?>
+    </colgroup>
+    <thead>
+        <tr>
+            <th colspan="2" style="white-space:nowrap"><?php echo $this->translate('Product Infomation', [], 'catalog', $language) ?></th>
+            <?php if ($currency): ?>
+                <th style="white-space:nowrap"><?php echo $this->translate('Price', [], 'catalog', $language) ?></th>
+                <th style="white-space:nowrap"><?php echo $this->translate('Qty', [], 'catalog', $language) ?></th>
+                <th style="white-space:nowrap"><?php echo $this->translate('Subtotal', [], 'catalog', $language) ?></th>
+            <?php endif ?>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        foreach ($model->getItems() as $item):
+            $product = $item['product'];
+            $options = json_decode($item['options'], true);
+            $thumbnail = $product->getThumbnail($options);
+            ?>
+            <tr>
+                <td>
+                    <a href="<?php echo $product->getUrl() ?>">
+                        <img class="product-image" src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" alt="<?php echo $item['product_name'] ?>" />
+                    </a>
+                </td>
+                <td>
+                    <a href="<?php echo $product->getUrl() ?>">
+                        <?php echo $item['product_name'] ?>
+                    </a>
+                    <?php
+                    if ($item['product_id'] && count($options)):
+                        ?>
+                        <dl class="options">
+                            <?php
+                            foreach ($product->getOptions() as $option):
+                                if (isset($options[$option->getId()])):
+                                    ?>
+                                    <dt><?php echo $option['title'] ?></dt>
+                                    <dd><?php echo in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ? $option->getValue($options[$option->getId()]) : $options[$option->getId()] ?></dd>
+                                    <?php
+                                endif;
+                            endforeach;
+                            ?>
+                        </dl>
+                    <?php endif ?>
+                </td>
+                <?php if ($currency): ?>
+                    <td class="text-center"><?php echo $currency->format($item['price']) ?></td>
+                    <td class="text-center"><?php echo (float) $item['qty'] ?></td>
+                    <td class="text-center"><?php echo $currency->format($item['total']) ?></td>
+                <?php endif ?>
+            </tr>
+        <?php endforeach ?>
+    </tbody>
+    <?php if ($currency): ?>
+        <tfoot>
+            <tr>
+                <td colspan="5" style="text-align:right">
+                    <p>
+                        <?php echo $this->translate('Subtotal', [], 'sales', $language) ?>: 
+                        <?php echo $currency->format($model->offsetGet('subtotal')) ?>
+                    </p>
+                    <p><?php echo $this->translate('Shipping &amp; Handling', [], 'sales', $language) ?>:
+                        <?php echo $currency->format($model->offsetGet('shipping')) ?>
+                    </p>
+                    <?php if ((float) $model->offsetGet('tax')): ?>
+                        <p>
+                            <?php echo $this->translate('Tax', [], 'sales', $language) ?>: 
+                            <?php echo $currency->format($model->offsetGet('tax')) ?>
+                        </p>
+                    <?php endif ?>
+                    <?php
+                    if ((float) $model->offsetGet('discount')):
+                        $discount = json_decode($model->offsetGet('discount_detail'), true);
+                        foreach ($discount as $type => $price):
+                            ?>
+                            <p>
+                                <?php
+                                $text = $this->translate('Discount(' . $type . ')', [], 'sales', $language);
+                                echo $text[0] === 'D' ? $this->translate('Discount(%s)', [$type], 'sales', $language) : $text
+                                ?>:
+                                <?php echo (!empty($price["total"]) ? $currency->convert($price["total"], true) : 0) ?>
+                            </p>
+                            <?php
+                        endforeach;
+                    endif;
+                    ?>
+                    <p>
+                        <?php echo $this->translate('Grand Total', [], 'sales', $language) ?>:
+                        <?php echo $currency->format($model->offsetGet('total')) ?>
+                    </p>
+                </td>
+            </tr>
+        </tfoot>
+    <?php endif ?>
+</table>

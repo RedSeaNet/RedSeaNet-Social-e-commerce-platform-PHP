@@ -1,0 +1,20 @@
+<?php
+$crumbs = $this->getCrumbs();
+if (count($crumbs)):
+    $last = array_pop($crumbs);
+    ?>
+    <div class="container">
+        <ol class="breadcrumb">
+            <?php if ($this->showLabel): ?>
+                <li class="label breadcrumb-item"><span><?php echo $this->translate('Location') ?>: </span></li>
+            <?php endif ?>
+            <?php if ($this->showHome): ?>
+                <li class="home breadcrumb-item"><a href="<?php echo $this->isAdminPage() ? $this->getAdminUrl() : $this->getBaseUrl() ?>" title="<?php echo $this->translate('Home') ?>"><?php echo $this->translate('Home') ?></a></li>
+            <?php endif ?>
+            <?php foreach ($crumbs as $crumb): ?>
+                <li class="breadcrumb-item"><a href="<?php echo $this->isAdminPage() ? $this->getAdminUrl($crumb['link']) : $this->getBaseUrl($crumb['link']) ?>" title="<?php echo $this->translate($crumb['label']) ?>"><?php echo $this->translate($crumb['label']) ?></a></li>
+            <?php endforeach ?>
+            <li class="breadcrumb-item active"><span><?php echo $this->translate($last['label']) ?></span></li>
+        </ol>
+    </div>
+<?php endif; ?>

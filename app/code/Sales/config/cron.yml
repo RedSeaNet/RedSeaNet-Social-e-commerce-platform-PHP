@@ -1,0 +1,7 @@
+---
+-
+    time: '0 0 * * *'
+    code: 'Redseanet\Sales\Listeners\Cron::pudgeExpiredCart'
+-
+    time: '0 0 * * *'
+    code: 'Redseanet\Sales\Listeners\Cron::pudgeExpiredOrder'

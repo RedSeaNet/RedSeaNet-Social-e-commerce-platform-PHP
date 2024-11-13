@@ -1,0 +1,140 @@
+<?php
+$product=$this->getProduct();
+    ?>
+    <div class="edit">
+        <h2 class="page-title"><?php echo $product["name"] ?></h2>
+        <form action="<?php echo $this->getSaveUrl() ?>" method="post"<?php if ($this->hasUploadingFile()): ?> enctype="multipart/form-data"<?php endif ?>>
+            <?php echo $this->getChild('tabs') ? $this->getChild('tabs')->setVariable('model', $this->getVariable('model')) : '' ?>
+            <div class="page-content table tab-pane fade active in" id="main-tab">
+             
+            <table class="table table-hover table-striped">
+                <caption><?php echo $this->translate('Inventory') ?></caption>
+                <thead>
+                    <tr>
+                        <th><?php echo $this->translate('Warehouse') ?></th>
+                        <th><?php echo $this->translate('Qty') ?></th>
+                        <th><?php echo $this->translate('Reserved Qty') ?></th>
+                        <th><?php echo $this->translate('Minimum Qty') ?></th>
+                        <th><?php echo $this->translate('Maximum Qty') ?></th>
+                        <th><?php echo $this->translate('Qty Uses Decimals') ?></th>
+                        <th><?php echo $this->translate('Backorders') ?></th>
+                        <th><?php echo $this->translate('Qty Increments') ?></th>
+                        <th><?php echo $this->translate('Status') ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $ids = [];
+                    $json = [];
+                    foreach ($this->getWarehouses() as $warehouse):
+                        if (!empty($warehouse['sku'])) {
+                            $json[$warehouse['sku']] = [
+                                'barcode' => $warehouse['barcode'],
+                                'qty' => (float) $warehouse['qty']
+                            ];
+                        }
+                        if (in_array($warehouse['id'], $ids)) {
+                            continue;
+                        } else {
+                            $ids[] = $warehouse['id'];
+                        }
+                        ?>
+                        <tr>
+                            <td>
+                                <?php echo $warehouse['name'] ?>
+                                <input type="hidden" name="inventory[<?php echo $warehouse['id'] ?>][sku][]" value="" />
+                            </td>
+                            <td><input type="number" name="inventory[<?php echo $warehouse['id'] ?>][qty][]" class="form-control required" min="0" value="<?php echo isset($warehouse['qty']) ? (float) $warehouse['qty'] : '' ?>" /></td>
+                            <td><input type="number" name="inventory[<?php echo $warehouse['id'] ?>][reserve_qty][]" class="form-control" value="<?php echo isset($warehouse['reserve_qty']) ? (float) $warehouse['reserve_qty'] : 0 ?>" /></td>
+                            <td><input type="number" name="inventory[<?php echo $warehouse['id'] ?>][min_qty][]" class="form-control" min="1" value="<?php echo isset($warehouse['min_qty']) ? (float) $warehouse['min_qty'] : 1 ?>" /></td>
+                            <td><input type="number" name="inventory[<?php echo $warehouse['id'] ?>][max_qty][]" class="form-control" min="1" value="<?php echo isset($warehouse['max_qty']) ? (float) $warehouse['max_qty'] : 10000 ?>" /></td>
+                            <td>
+                                <select name="inventory[<?php echo $warehouse['id'] ?>][is_decimal][]" class="form-control">
+                                    <option value="0"><?php echo $this->translate('No') ?></option>
+                                    <option value="1"<?php if (isset($warehouse['is_decimal']) && $warehouse['is_decimal']): ?> selected="selected"<?php endif ?>><?php echo $this->translate('Yes') ?></option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="inventory[<?php echo $warehouse['id'] ?>][backorders][]" class="form-control">
+                                    <option value="0"><?php echo $this->translate('No Backorders') ?></option>
+                                    <option value="1"<?php if (isset($warehouse['backorders']) && $warehouse['backorders']): ?> selected="selected"<?php endif ?>><?php echo $this->translate('Allow Qty Below 0') ?></option>
+                                </select>
+                            </td>
+                            <td><input type="number" name="inventory[<?php echo $warehouse['id'] ?>][increment][]" class="form-control" min="1" value="<?php echo isset($warehouse['increment']) ? (float) $warehouse['increment'] : 1 ?>" /></td>
+                            <td>
+                                <select name="inventory[<?php echo $warehouse['id'] ?>][status][]" class="form-control required">
+                                    <option value="1"><?php echo $this->translate('In Stock') ?></option>
+                                    <option value="0"<?php if (isset($warehouse['status']) && $warehouse['status'] == 0): ?> selected="selected"<?php endif ?>><?php echo $this->translate('Out of Stock') ?></option>
+                                </select>
+                            </td>
+                        </tr>
+                    <?php endforeach ?>
+                </tbody>
+            </table>
+            <?php
+            $ids = [];
+            foreach ($this->getWarehouses() as $warehouse):
+                if (in_array($warehouse['id'], $ids)) {
+                    continue;
+                }
+                $ids[] = $warehouse['id'];
+                ?>
+                <table class="table table-hover branch" style="display:none">
+                    <caption style="padding:1rem 0;"><?php echo $this->translate('Branch %s', [$warehouse['name']]) ?></caption>
+                    <thead>
+                        <tr>
+                            <th><?php echo $this->translate('Title') ?></th>
+                            <th><?php echo $this->translate('SKU') ?></th>
+                            <th>
+                                <p class="form-inline" style="margin-bottom: 0;display: flex;align-items: center;justify-content: center;"><?php echo $this->translate('Barcode') ?>&nbsp;
+                                    (<input type="text" id="inventorybarcode<?php echo $warehouse['id'] ?>" name="inventorybarcode[<?php echo $warehouse['id'] ?>]" class="form-control" value="" />&nbsp;
+                                    <a class="inventorybarcode" data-warehouse="<?php echo $warehouse['id'] ?>"><?php echo $this->translate('Confirm') ?></a>)</p>
+                            </th>
+                            <th><p class="form-inline" style="margin-bottom: 0;display: flex;align-items: center;justify-content: center;"><?php echo $this->translate('Qty') ?>
+                                    &nbsp;
+                                    (<input type="number" id="inventoryqty<?php echo $warehouse['id'] ?>" name="inventoryqty[<?php echo $warehouse['id'] ?>]" class="form-control" value="" />&nbsp;
+                                    <a class="inventoryqty" data-warehouse="<?php echo $warehouse['id'] ?>"><?php echo $this->translate('Confirm') ?></a>)</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <template class="tmpl-inventory-branch" data-inventory='<?php echo json_encode($json) ?>'>
+                    <tr>
+                        <td>{$title}</td>
+                        <td><input type="hidden" name="inventory[<?php echo $warehouse['id'] ?>][sku][]" value="{$sku}" />{$sku}</td>
+                        <td><input type="text" name="inventory[<?php echo $warehouse['id'] ?>][barcode][]" class="form-control barcode" value="{$barcode}" data-warehouse="<?php echo $warehouse['id'] ?>" /></td>
+                        <td><input type="number" name="inventory[<?php echo $warehouse['id'] ?>][qty][]" class="form-control required qty" min="0" value="{$qty}" data-warehouse="<?php echo $warehouse['id'] ?>" /></td>
+                    </tr>
+                </template>
+                <?php
+            endforeach;
+            ?>
+
+            <?php
+            if ($this->hasTitle()):
+                ?>
+            </div>
+            <div class="buttons-set">
+                <?php if ($this->getSaveUrl()): ?>
+                    <button type="submit" class="btn btn-submit"><span><?php echo $this->translate('Save') ?></span></button>
+                <?php endif ?>
+                <?php if ($this->getDeleteUrl()): ?>
+                    <button type="submit" class="btn btn-theme" name="success_url" value="<?php echo $this->getUri() ?>"><span><?php echo $this->translate('Save and Continue Edit') ?></span></button>
+                <?php endif ?>
+                <button type="reset" class="btn btn-reset"><span><?php echo $this->translate('Reset') ?></span></button>
+
+            </div>
+        </form>
+    </div>
+<?php endif; ?>
+
+
+
+
+
+
+
+
+

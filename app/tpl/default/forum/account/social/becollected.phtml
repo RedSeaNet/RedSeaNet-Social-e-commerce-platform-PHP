@@ -1,0 +1,44 @@
+<?php
+$this->clearNewBeCollectCount();
+$config = $this->getConfig();
+$be_collects = $this->getBeCollected();
+?>
+<div class="draft-cont  linked-cont praiseList-cont">
+    <ul class="col-12 row">
+        <?php
+        if (count($be_collects)):
+            foreach ($be_collects as $collect):
+                ?>
+                <li class="col-md-6 col-sm-6 col-12">
+                    <div class="draft-list product-user linked-listBox">
+                        <div class="text-end">
+                            <span class="publish-time"><?php echo $this->getTime($collect['created_at']); ?></span>
+                        </div>
+                        <div class="col-12 linked-user">
+                            <div class="inline-bolck linked-userImg">
+                                <a href="<?php echo $this->getBaseUrl('forum/space/?customer_id=' . $collect['customer_id']); ?>">
+                                    <img src="<?php echo $collect['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $collect['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="">
+                                </a>
+                            </div>
+                            <div class="product-text2 linked-userName col-10 ">
+                                <p class="col-12 inline-bolck">
+                                    <?php echo $this->translate('The user %s has collected my post', [$collect['author']]); ?>:
+                                </p>
+                            </div>
+                            <p class="col-12 padding-0 linked-link">
+                                <a href="" class="a"><?php echo $collect['title'] ?></a>
+                            </p>
+                        </div>
+                        <a href="<?php echo $this->getBaseUrl('forum/space/?customer_id=' . $collect['customer_id']); ?>" class="btn btn-secondary color-c6 publish-btn float-end"><?php echo $this->translate('View'); ?></a>
+                    </div>
+                </li>
+                <?php
+            endforeach;
+        else:
+            ?>
+            <p class="empty text-center"><?php echo $this->translate('No post available right now.') ?></p>
+        <?php
+        endif;
+        ?>
+    </ul>
+</div>

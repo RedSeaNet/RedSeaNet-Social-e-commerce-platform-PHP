@@ -1,0 +1,13 @@
+---
+rpcport:
+    getBannerByCode:
+        params: 
+            id: string
+            token: string
+            code: string
+            limit: int
+            languageId: int
+        respone: json array string
+        documentation: get banner by code
+rpc:
+    getBannerByCode: \Redseanet\Banner\Model\Api\Rpc\Banner

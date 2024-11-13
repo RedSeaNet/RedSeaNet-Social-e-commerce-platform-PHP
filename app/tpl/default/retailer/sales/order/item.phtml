@@ -1,0 +1,118 @@
+<?php
+$order = $this->getVariable('order');
+if ($bulk = $order->getAdditional('bulk')) {
+    $bulk = (new \Redseanet\Bulk\Model\Bulk)->load($bulk)->canShip();
+} else {
+    $bulk = true;
+}
+?>
+<div class="d-flex description">
+    <div class="col-md-4 text-start d-none d-md-block"><?php echo $this->translate('Recipient') ?>: <?php echo $order['recipient'] ?></div>
+    <div class="col-md-4 text-md-end col-6"><?php echo $this->translate('Order ID') ?>: <?php echo $order['increment_id'] ?></div>
+    <div class="col-md-4 text-end col-6"><?php echo $this->translate('Placed at') ?>: <?php echo $order['created_at'] ?></div>
+</div>
+<?php
+$flag = true;
+$items = $order->getItems();
+$currency = $order->getCurrency();
+$count = count($items);
+foreach ($items as $item):
+    $product = $item['product'];
+    $options = json_decode($item['options'], true);
+    $thumbnail = $product->getThumbnail($options);
+    ?>
+    <div>
+        <div class="d-flex text-end">
+            <div class="status text-end col-12">
+                <span class="badge  text-bg-danger"><?php echo $this->translate($order->getStatus()['name']) ?></span>
+                <a href="<?php echo $this->getBaseUrl('retailer/sales_order/view/?id=' . $order->getId()) ?>"><?php echo $this->translate('View Details') ?></a>
+            </div>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="d-flex col-10 align-items-center">
+                <div class="pe-2">
+                    <a href="<?php echo $product->getUrl(); ?>"><img src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" alt="<?php echo $product['name'] ?>" width="60" /></a>
+                </div>
+                <div>
+                    <a href="<?php echo $product->getUrl(); ?>"><h6 class="product-name"><?php echo $product['name'] ?></h6></a>
+                    <?php
+                    if ($item['product_id'] && count($options)):
+                        ?>
+                        <dl class="options">
+                            <?php
+                            foreach ($item['product']->getOptions() as $option):
+                                if (isset($options[$option->getId()])):
+                                    ?>
+                                    <dt><?php echo $option['title'] ?></dt>
+                                    <dd>
+                                        <?php
+                                        echo (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                                $option->getValue($options[$option->getId()]) : $options[$option->getId()])
+                                        ?>
+                                    </dd>
+                                    <?php
+                                endif;
+                            endforeach;
+                            ?>
+                        </dl>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="col-2 d-md-flex">
+                <div class="text-center col-6"><?php echo $currency->format($item['price']) ?></div>
+                <div class="text-center col-6">x<?php echo (float) $item['qty'] ?></div>
+            </div>
+        </div>
+        <div class="actions text-end">    
+            <?php if ($application = $order->getRefundApplication()): ?>
+                <a href="<?php echo $this->getBaseUrl('retailer/refund/view/?id=' . $application['id']) ?>"><?php echo $this->translate('Refund Details') ?></a>
+            <?php endif ?>
+            <?php
+            if ($order->canHold()) :
+                ?>
+                <a href="<?php echo $this->getBaseUrl('retailer/sales_order/hold/?id=' . $order->getId()) ?>">
+                    <?php echo $this->translate('Hold', [], 'sales') ?>
+                </a>
+                <?php
+            endif;
+            if ($order->canUnhold()) :
+                ?>
+                <a href="<?php echo $this->getBaseUrl('retailer/sales_order/unhold/?id=' . $order->getId()) ?>">
+                    <?php echo $this->translate('Unhold', [], 'sales') ?>
+                </a>
+                <?php
+            endif;
+            if ($order->canInvoice()) :
+                ?>
+                <a class="invoice" href="<?php echo $this->getBaseUrl('retailer/sales_order/invoice/?id=' . $order->getId()) ?>">
+                    <?php echo $this->translate('Invoice', [], 'sales') ?>
+                </a>
+                <?php
+            endif;
+            if ($bulk && $order->canShip()) :
+                ?>
+                <a class="ship" href="<?php echo $this->getBaseUrl('retailer/sales_order/ship/?id=' . $order->getId()) ?>">
+                    <?php echo $this->translate('Ship', [], 'sales') ?>
+                </a>
+            <?php endif ?>
+            <a href="<?php echo $this->getBaseUrl('retailer/sales_order/print/?id=' . $order->getId()) ?>">
+                <?php echo $this->translate('Print', [], 'sales') ?>
+            </a>
+            <?php if ($order->canCancel()): ?>
+                <a href="<?php echo $this->getBaseUrl('retailer/sales_order/cancel/?id=' . $order->getId()) ?>">
+                    <?php echo $this->translate('Cancel', [], 'sales') ?>
+                </a>
+                <?php
+            endif;
+            ?>
+        </div>
+        <div class="col-12 text-end">
+            <div class="grand-total text-center text-nowrap d-flex justify-content-end mb-2 border-bottom pt-4 pb-4">
+                <?php echo $this->translate('Total', [], 'sales') ?>: 
+                <?php echo $currency->format($order->offsetGet('total')) ?>
+                <span class="shipping">(<?php echo $this->translate('Including Shipping Fee: %s', [$currency->format($order->offsetGet('shipping'))]) ?>)</span>
+            </div>
+        </div>
+    </div>
+<?php endforeach ?>
+

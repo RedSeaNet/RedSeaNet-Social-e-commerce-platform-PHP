@@ -1,0 +1,26 @@
+<div class="modal fade" id="productLinkModal" tabindex="-1" data-keyboard="false">
+    <div class="modal-dialog modal-lg" style="background-color:#fff;">
+        <form action="<?php echo $this->getAdminUrl('catalog_product/productlinksave/');?>" method="post">
+            <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+            <input name="id" id="productid" value="" type="hidden" />
+        <div class="modal-header">
+            <h4></h4>
+        </div>
+        <div class="modal-content grid">
+
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-submit"><span><?php echo $this->translate('Confirm') ?></span></button>
+            <a class="btn" data-dismiss="modal"><span><?php echo $this->translate('Close') ?></span></a>
+        </div>
+            </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('div#productLinkModal').on('show.bs.modal', function (e) {
+        $("div#productLinkModal .modal-header h4").html($(e.relatedTarget).data('title'));
+        $("div#productLinkModal input[name=id]").val($(e.relatedTarget).data('id'));
+        $("div#productLinkModal .modal-content").load($(e.relatedTarget).data('href'));
+    });
+</script>

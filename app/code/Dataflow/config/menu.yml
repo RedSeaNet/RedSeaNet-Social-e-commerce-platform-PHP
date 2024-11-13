@@ -1,0 +1,46 @@
+---
+dataflow:
+    icon: retweet
+    title: Import/Export
+    priority: 17
+    children:
+        -
+            link: dataflow_product/import/
+            operation: 'Admin\Dataflow\Product::import'
+            title: Import Products
+            priority: 10
+        -
+            link: dataflow_product/export/
+            operation: 'Admin\Dataflow\Product::export'
+            title: Export Products
+            priority: 11
+        -
+            link: dataflow_stock/import/
+            operation: 'Admin\Dataflow\Stock::import'
+            title: Import Product Stocks
+            priority: 15
+        -
+            link: dataflow_stock/export/
+            operation: 'Admin\Dataflow\Stock::export'
+            title: Export Product Stocks
+            priority: 16
+        -
+            link: dataflow_customer/import/
+            operation: 'Admin\Dataflow\Customer::import'
+            title: Import Customers
+            priority: 20
+        -
+            link: dataflow_customer/export/
+            operation: 'Admin\Dataflow\Customer::export'
+            title: Export Customers
+            priority: 21
+        -
+            link: dataflow_address/import/
+            operation: 'Admin\Dataflow\Address::import'
+            title: Import Customer Addresses
+            priority: 25
+        -
+            link: dataflow_address/export/
+            operation: 'Admin\Dataflow\Address::export'
+            title: Export Customer Addresses
+            priority: 26

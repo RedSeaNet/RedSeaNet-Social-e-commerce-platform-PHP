@@ -1,0 +1,116 @@
+---
+customer_account:
+    root:
+        children:
+            content:
+                children:
+                    nav:
+                        action:
+                            -
+                                method: addLink
+                                params: [{link: 'rewardpoints/statement/',label: 'Reward Points',group: 'Asset Center'}]
+admin_customer_edit:
+    root:
+        children:
+            content:
+                children:
+                    edit:
+                        children:
+                            tabs:
+                                action:
+                                    -
+                                        method: addTab
+                                        params:
+                                            - rewardpoints
+                                            - Reward Points
+                                            - 100
+                                children:
+                                    rewardpoints:
+                                        type: Redseanet\Admin\ViewModel\RewardPoints\Edit
+                                        template: admin/rewardpoints/edit
+                                        children:
+                                            statement:
+                                                type: Redseanet\RewardPoints\ViewModel\Statement
+                                                template: rewardpoints/statement
+                                                children:
+                                                    pager:
+                                                        type: Redseanet\Lib\ViewModel\Pager
+rewardpoints_statement:
+    update: customer_account
+    root:  
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Reward Points Statement
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Reward Points Statement
+                children:
+                    main:
+                        type: Redseanet\RewardPoints\ViewModel\Statement
+                        template: rewardpoints/statement
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+checkout_order:
+    root:
+        children:
+            content:
+                children:
+                    rewardpoints:
+                        type: Redseanet\RewardPoints\ViewModel\Checkout
+                        template: rewardpoints/apply
+checkout_order_rewardpoints:
+    update: frontend
+    root:
+        unset: [head]
+        template: page/ajax
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    rewardpoints:
+                        type: Redseanet\RewardPoints\ViewModel\Checkout
+                        template: rewardpoints/apply
+admin_rewardpoints_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Reward Points Management
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/rewardpoints/',label: 'Reward Points Management'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\RewardPoints\BGrid
+admin_rewardpoints_statistics_customer_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer Reward Points Statistics
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/rewardpoints/',label: 'Reward Points Management'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\RewardPoints\CustomerStatistics

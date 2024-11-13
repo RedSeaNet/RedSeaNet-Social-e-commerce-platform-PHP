@@ -1,0 +1,21 @@
+<div class="reviews" data-part="inquiry">
+    <h5 class="title"><?php echo $this->translate('Inquiries') ?></h5>
+    <dl class="inquiry-list clearfix"><?php
+        $reviews = $this->getInquiries();
+        foreach ($reviews as $review):
+            ?>
+            <dt class="col-12 col-sm-4 col-md-2">
+                <?php $customer = $review->getCustomer() ?>
+                <h5 class="username"><?php echo $review->offsetGet('anonymous') || !$customer ? $this->translate('Guest') : $customer->offsetGet('username') ?></h5>
+            </dt>
+            <dd class="col-12 col-sm-8 col-md-7">
+                <p class="content"><?php echo $review->offsetGet('content') ?></p>
+                <p class="reply"><?php echo $this->translate('Reply'), ': ', $review->offsetGet('reply') ?></p>
+            </dd>
+            <dd class="col-12 col-sm-4 col-md-3 text-end">
+                <span class="date"><?php echo date('Y-m-d H:i', strtotime($review->offsetGet('created_at'))) ?></span>
+            </dd>
+        <?php endforeach ?></dl>
+    <p class="empty-list text-center"><?php echo $this->translate('There has been no inquiry yet.') ?></p>
+    <?php echo $this->getChild('pager')->setCollection($reviews) ?>
+</div>

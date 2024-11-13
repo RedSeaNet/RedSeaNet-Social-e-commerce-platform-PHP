@@ -1,0 +1,64 @@
+---
+rpcport:
+    bargainList:
+        params: 
+            id: string
+            token: string
+            conditionData: array
+            customerId: int
+            languageId: int
+            currencyCode: string
+        respone: json array 
+        documentation: get bargain list
+    getBargain:
+        params: 
+            id: string
+            token: string
+            bargainId: array
+            customerId: int
+            bargainCaseId: int
+            languageId: int
+            currencyCode: string
+        respone: json array 
+        documentation: get bargain detail
+    startBargain:
+        params: 
+            id: string
+            token: string
+            bargainId: array
+            customerId: int
+            languageId: int
+            currencyCode: string
+        respone: json array 
+        documentation: start new bargain
+    helpBargain:
+        params: 
+            id: string
+            token: string
+            bargainId: int
+            customerId: int
+            bargainCaseId: int
+            languageId: int
+            currencyCode: string
+        respone: json array 
+        documentation: start new bargain
+    bargainOrder:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            bargainId: array
+            bargainCaseId: int
+            data: array
+            languageId: int
+            currencyCode: string
+        respone: json array 
+        documentation: create an order with a bargain
+rest:
+    bargainList: \Redseanet\Bargain\Model\Api\Rpc\Bargain
+rpc:
+    bargainList: \Redseanet\Bargain\Model\Api\Rpc\Bargain
+    getBargain: \Redseanet\Bargain\Model\Api\Rpc\Bargain
+    startBargain: \Redseanet\Bargain\Model\Api\Rpc\Bargain
+    helpBargain: \Redseanet\Bargain\Model\Api\Rpc\Bargain
+    bargainOrder: \Redseanet\Bargain\Model\Api\Rpc\Bargain

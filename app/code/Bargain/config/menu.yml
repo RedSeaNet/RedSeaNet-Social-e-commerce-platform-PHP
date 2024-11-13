@@ -1,0 +1,11 @@
+---
+promotion:
+    icon: gift
+    title: Promotion
+    priority: 40
+    children: 
+        -
+            link: bargain/
+            operation: 'Admin\Bargain::index'
+            title: Bargain
+            priority: 3

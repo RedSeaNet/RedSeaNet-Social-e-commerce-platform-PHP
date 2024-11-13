@@ -1,0 +1,31 @@
+<?php
+$customers= new Redseanet\Customer\ViewModel\Account;
+$customer = $customers->getCustomer();
+$product = new Redseanet\Catalog\ViewModel\Product\View;
+$warehouse = new Redseanet\Catalog\Model\Warehouse;
+$cart = new Redseanet\Sales\Model\Cart;
+$warehouse->load(1);
+$id = $this->getConfig()['balance/general/product_for_recharge'];
+?>
+<div class="recharge">
+    <form action="<?php echo $this->getBaseUrl('balance/statement/add/') ?>" method="post" class="form-inline" enctype="multipart/form-data">
+        <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+        <input type="hidden" name="product_id" value="<?php echo $id ? $id : '' ?>" />
+        <input type="hidden" name="customer_id" value="<?php echo $customer['id']; ?>" />
+        <input type="hidden" name="warehouse_id" value="<?php echo 1 ?>" />
+        <div class="fieldset">
+            <div class="input-box">
+                <label class="col-form-label" for="balance"><?php echo $this->translate('Recharge Amount'); ?>:</label>
+                <div class="cell">
+                    <input class="form-control required" name="qty" type="number" min="<?php echo 10 ?>" /><span><?php //echo $this->translate('Recharge Products Price');          ?><?php //echo $this->getPriceBox();          ?></span>                
+                </div>
+            </div>
+            <div class="buttons-set">
+                <div class="cell">&nbsp;</div>
+                <div class="cell">
+                    <button type="submit" class="btn btn-theme"><?php echo $this->translate('To Pay'); ?></button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

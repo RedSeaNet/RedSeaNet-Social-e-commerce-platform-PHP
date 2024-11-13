@@ -1,0 +1,381 @@
+---
+default:
+    root:
+        type: Redseanet\Lib\ViewModel\Root
+        children:
+            head:
+                type: Redseanet\Lib\ViewModel\Head
+                action:
+                    -
+                        method: addMeta
+                        params: ["viewport","width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"]
+                children:
+                    translate:
+                        type: Redseanet\Lib\ViewModel\Translate
+            content:
+                type: Redseanet\Lib\ViewModel\Wrapper
+                children:
+                    breadcrumb:
+                        type: Redseanet\Lib\ViewModel\Breadcrumb
+                    messages:
+                        type: Redseanet\Lib\ViewModel\Message
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: core
+            extra:
+                type: Redseanet\Lib\ViewModel\Wrapper
+            header:
+                type: Redseanet\Lib\ViewModel\Wrapper
+            footer:
+                type: Redseanet\Lib\ViewModel\Wrapper
+            globalNotice:
+                type: Redseanet\Lib\ViewModel\GlobalNotice
+            beforeContent:
+                type: Redseanet\Lib\ViewModel\Wrapper
+            afterContent:
+                type: Redseanet\Lib\ViewModel\Wrapper
+frontend:
+    update: default
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addMeta
+                        params: ["baidu-site-verification","code-9FwX1kdWmA"]
+                    -
+                        method: addLink
+                        params:
+                            - frontend/favicon.ico
+                            - shortcut icon
+                    -
+                        method: addLink
+                        params: frontend/vendor/bootstrap5/css/bootstrap.css
+                    -
+                        method: addLink
+                        params: frontend/vendor/font-awesome-4.7.0/css/font-awesome.min.css
+                    -
+                        method: addLink
+                        params: frontend/css/styles.css
+                    -
+                        method: addLink
+                        params: [frontend/css/styles-ie.css,stylesheet,lt IE 9]
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery/jquery.min.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/vendor/jquery.cookie/jquery.cookie.min.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: frontend/js/translate.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery.validate/jquery.validate.min.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery.validate/config.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/vendor/modernizr/modernizr.custom.min.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: frontend/vendor/bootstrap5/js/bootstrap.bundle.min.js
+                    -    
+                        method: addScript
+                        params: frontend/js/app.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/selectivizr.js',defer: 'defer'},lt IE 9]
+                    -
+                        method: addScript
+                        params: frontend/vendor/animsition/js/animsition.min.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/wow/wow.min.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/animsition/css/animsition.min.css
+                    -
+                        method: addLink
+                        params: frontend/vendor/wow/animate.css
+            header:
+                type: Redseanet\Lib\ViewModel\Header
+                template: page/header
+                children:
+                    welcome:
+                        type: Redseanet\Customer\ViewModel\Welcome
+                    category:
+                        type: Redseanet\Catalog\ViewModel\Navigation
+                        template: catalog/navigation/top
+                    navigation:
+                        type: Redseanet\Cms\ViewModel\Navigation
+                    quick-search:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: catalog/navrightsearch
+                    minicart:
+                        type: Redseanet\Checkout\ViewModel\Cart
+                        template: checkout/minicart
+                        hildren:
+                            total:
+                                type: Redseanet\Checkout\ViewModel\Cart
+                                template: checkout/minicart/total
+                    rightnav:
+                        type: Redseanet\Customer\ViewModel\NavigationRight
+                        template: customer/navigationright
+                        action:
+                            -
+                                method: addGroup
+                                params: [{label: 'My Following',priority: 30,icon: 'star'}]
+                            -
+                                method: addGroup
+                                params: [{label: 'Account Infomation',priority: 0,icon: 'address-card'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/wishlist/',label: 'My Wishlist',group: 'My Following'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/history/',label: 'Browsing History',group: 'My Following'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/account/edit/',label: 'Account Infomation/Password Edit',group: 'Account Infomation'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/account/address/',label: 'Address Book',group: 'Account Infomation'}]
+                            -                                   
+                                method: addGroup
+                                params: [{label: 'Asset Center',priority: 10,icon: 'money'}]
+                            -
+                                method: addLink
+                                params: [{link: 'balance/statement/',label: 'Balance',group: 'Asset Center'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/account/referees/',label: 'My referees',group: 'Account Infomation'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/account/referrer/',label: 'Referrer',group: 'Account Infomation'}]
+                    links:
+                        type: Redseanet\Lib\ViewModel\Links
+                        action:
+                            -
+                                method: setClass
+                                params: text-right
+                            -
+                                method: addLink
+                                params:
+                                - {block: 'headermessage',priority: 5}
+                            -
+                                method: addLink
+                                params:
+                                -
+                                    link: #
+                                    label: 000-0000000
+                                    priority: 10
+                            -
+                                method: addLink
+                                params:
+                                -
+                                    link: 'help/'
+                                    label: Help Center
+                                    riority: 15
+                            -
+                                method: addLink
+                                params:
+                                -
+                                    link: 'retailer/account/'
+                                    label: 'Retailer Center'
+                                    priority: 20
+                            -
+                                method: addLink
+                                params:
+                                -
+                                    link: 'forum/category/'
+                                    label: Explore
+                                    priority: 25
+                            -
+                                method: addLink
+                                params:
+                                - 
+                                    block: welcome
+                                    priority: 30
+                            -
+                                method: addLink
+                                params:
+                                - {block: 'language',priority: 35}
+                            -
+                                method: addLink
+                                params:
+                                - {block: 'currency',priority: 40}
+                        children:
+                            welcome:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: customer/welcome
+                            headermessage:
+                                type: Redseanet\Notifications\ViewModel\Notifications
+                                template: notifications/header
+                                action:
+                                    -
+                                        method: setWrapper
+                                        params: li
+                            language:
+                                type: Redseanet\Lib\ViewModel\Language
+                                action:
+                                    -
+                                        method: setWrapper
+                                        params: li
+                            currency:
+                                type: Redseanet\I18n\ViewModel\Currency
+                                action:
+                                    -
+                                        method: setWrapper
+                                        params: li
+            footer:
+                type: Redseanet\Lib\ViewModel\Footer
+                template: page/footer
+                children:
+                    category:
+                        type: Redseanet\Catalog\ViewModel\Navigation
+                        template: catalog/navigation/bottom
+                    store:
+                        type: Redseanet\Catalog\ViewModel\Navigation
+                        template: catalog/navigation/storeli
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: showHome
+                                params: true
+            extra:
+                children:
+                    wechat_jsapi:
+                        type: Redseanet\Cms\ViewModel\WeChat
+                        template: cms/wechat
+forum_frontend:
+    update: default
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addLink
+                        params:
+                            - frontend/favicon.ico
+                            - shortcut icon
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery/jquery.min.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/bootstrap5/css/bootstrap.css
+                    -
+                        method: addLink
+                        params: frontend/vendor/font-awesome-4.7.0/css/font-awesome.min.css
+                    -
+                        method: addLink
+                        params: frontend/css/forum/style.css
+                    -
+                        method: addLink
+                        params: [frontend/css/styles-ie.css,stylesheet,lt IE 9]
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/vendor/jquery.cookie/jquery.cookie.min.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: frontend/js/translate.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery.validate/jquery.validate.min.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery.validate/config.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/vendor/modernizr/modernizr.custom.min.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: frontend/vendor/bootstrap5/js/bootstrap.bundle.min.js
+                    -    
+                        method: addScript
+                        params: frontend/vendor/masonry/masonry.pkgd.min.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/imagesloaded/imagesloaded.pkgd.min.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/infinite-scroll/infinite-scroll.pkgd.min.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/selectivizr.js',defer: 'defer'},lt IE 9]
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery-sina-emotion-4.1.0/jquery-sina-emotion.min.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/jquery-sina-emotion-4.1.0/jquery-sina-emotion.min.css
+            header:
+                children:
+                    block:
+                        type: Redseanet\Cms\ViewModel\Block
+                        action:
+                            -
+                                method: setBlockId
+                                params: forum-header
+                        children:
+                            quick-search:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/search
+                            links:
+                                type: Redseanet\Lib\ViewModel\Links
+                                template: forum/links
+                                action:
+                                    -
+                                        method: addLink
+                                        params:
+                                            -
+                                                link: #
+                                                label: Find
+                                                priority: 10
+                                    -
+                                        method: addLink
+                                        params:
+                                            -
+                                                link: #
+                                                label: Buy
+                                                priority: 15
+                                    -
+                                        method: addLink
+                                        params:
+                                            -
+                                                link: '#'
+                                                label: Following
+                                                priority: 20
+                                    -
+                                        method: addLink
+                                        params:
+                                            -
+                                                link: '#'
+                                                label: Me
+                                                priority: 25
+
+            footer:
+                children:
+                    block:
+                        type: Redseanet\Cms\ViewModel\Block
+                        action:
+                            -
+                                method: setBlockId
+                                params: forum-footer
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: showHome
+                                params: true  
+            extra:
+                children:
+                    wechat_jsapi:
+                        type: Redseanet\Cms\ViewModel\WeChat
+                        template: cms/wechat

@@ -1,0 +1,26 @@
+<div class="modal fade" id="modal-edit-address">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="<?php echo $this->getSaveUrl() ?>" method="post" data-ajax="true">
+                <div class="modal-header">
+                    <h4 class="modal-title"><?php echo $this->translate('Address Infomation') ?></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <?php
+                    foreach ($this->getElements() as $key => $item) {
+                        echo $this->getInputBox($key, $item);
+                    }
+                    ?>
+                    <script>
+                        new Locate();
+                    </script>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-bs-dismiss="modal"><?php echo $this->translate('Close') ?></button>
+                    <button type="submit" class="btn btn-theme"><?php echo $this->translate('Save') ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

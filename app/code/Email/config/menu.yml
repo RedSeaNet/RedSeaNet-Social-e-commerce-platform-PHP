@@ -1,0 +1,28 @@
+---
+email:
+    icon: envelope
+    title: E-mail
+    priority: 50
+    children:
+        -
+            link: 'email_template/'
+            operation: 'Admin\Email\Template::index'
+            title: 'Email Template'
+            priority: 40
+        -
+            link: 'email_subscriber/'
+            operation: 'Admin\Email\Subscriber::index'
+            title: 'Newsletter Subscriber'
+            priority: 50
+        -
+            link: 'email_queue/'
+            operation: 'Admin\Email\Queue::index'
+            title: 'Email Queue'
+            priority: 55
+system:
+    children:
+        -
+            link: config/email/
+            operation: 'Admin\Config::email'
+            title: Email Configuration
+            priority: 20

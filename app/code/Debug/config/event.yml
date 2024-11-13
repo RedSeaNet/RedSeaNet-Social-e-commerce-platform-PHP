@@ -1,0 +1,9 @@
+---
+cache.fetch.after:
+    -
+        listener: [\Redseanet\Debug\Listeners\Log, logCache]
+        priority: 99
+cache.fetchMultiple.after:
+    -
+        listener: [\Redseanet\Debug\Listeners\Log, logCaches]
+        priority: 99

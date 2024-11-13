@@ -1,0 +1,5 @@
+---
+order.place.after.mq:
+    -
+        listener: [\Redseanet\Promotion\Mq\Coupon, log]
+        priority: 10

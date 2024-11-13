@@ -1,0 +1,21 @@
+<?php
+$root = $this->getRootCategory();
+foreach ($root->getChildrenCategories(1) as $category):
+    $children = $category->getChildrenCategories(1);
+    $count = $children->count();
+    ?>
+    <li<?php if ($count): ?> class="dropdown"<?php endif ?> role="presentation">
+        <a href="<?php echo $category->getUrl() ?>"<?php if ($count): ?> class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"<?php endif ?> role="menuitem"><?php echo $category['name'] ?></a>
+        <?php if ($count): ?>
+            <ul class="dropdown-menu children" role="menu">
+                <?php
+                foreach ($children as $child):
+                    ?>
+                <li role="presentation" class="dropdown-item">
+                        <a href="<?php echo $child->getUrl() ?>" role="menuitem"><?php echo $child['name'] ?></a>
+                    </li>
+                <?php endforeach ?>
+            </ul>
+        <?php endif; ?>
+    </li>
+<?php endforeach; ?>

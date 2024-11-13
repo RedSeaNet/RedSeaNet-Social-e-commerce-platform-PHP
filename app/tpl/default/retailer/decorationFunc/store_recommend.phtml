@@ -1,0 +1,185 @@
+<?php
+$data_tag = $this->getVariable("data_tag");
+$part_id = $this->getVariable("part_id");
+ ?>
+ 
+ <ul class="nav nav-tabs" id="myTab" style="margin:11px 18px" > 
+      <li><a href="#basic">基本属性</a></li> 
+      <li><a href="#selectPic">选择图片</a></li> 
+ </ul> 
+ 
+ <div class="tab-content"> 
+  <div class="tab-pane" id="basic" >
+<div style="margin:20px" >
+标题文字:
+<input type="text" id='title' class="params" value="店长推荐" ><br><br> 
+关键字：<input type="text" id="hot_text" class="params" > <br><br>
+
+价格范围:
+<input class="params" type="text" value="" id="price_from"> - <input class="params" type="text" value="" id="price_to"> 	
+</div>
+   </div> 
+   
+   <div class="tab-pane" id="selectPic" >
+<div style="margin:20px" >
+<div>搜索关键字: <input type="text"  id="product_text" value="" > &nbsp; <input type="checkbox" id=selectedBOX > 只查看选中的产品  
+&nbsp;&nbsp; <button onclick="getProductInfo(1)" class="btn btn-danger btn-sm">搜 索</button>
+</div>
+<hr width="99%" style="border-color:#e8c7b6" > 
+<div class="ajaxPageDiv" >已选  <span class="selectedNum">0</span> 个  &nbsp; 共  <span class="pageNum" >0</span> / <span class="AllPageNum" >0</span> 页    &nbsp;  <span class="prePage" onclick="prePage()" >上一页</span>  <span class="nextPage" onclick="nextPage()">下一页</span> </div>
+<ul class="selectPic">
+
+</ul>
+<div style="clear:both"></div>
+<div class="ajaxPageDiv" >已选  <span class="selectedNum">0</span> 个  &nbsp; 共  <span class="pageNum" >0</span> / <span class="AllPageNum" >0</span> 页    &nbsp;  <span class="prePage" onclick="prePage()" >上一页</span>  <span class="nextPage" onclick="nextPage()">下一页</span> </div>	
+</div>
+   </div>   
+   
+ </div>
+ 
+ 	
+ <input type="hidden" id='focusBtn' >	
+
+<script> 
+      $(function () { 
+      $('#myTab a:first').tab('show');
+        $('#myTab a').click(function (e) {          
+          e.preventDefault();//阻止a链接的跳转行为 
+          $(this).tab('show');//显示当前选中的链接及关联的content
+ 
+        });
+		
+	      getProductInfo(1); 
+      }) 
+</script>
+
+<script>
+    var page = 1;
+    var allpage = 0;
+	var data_tag = '<?php echo $data_tag; ?>';
+	var part_id = '<?php echo $part_id; ?>';
+	var obj = $('#'+part_id,parent.document).find('.view').find('.content.function-tag');
+	var data_param = $.trim(obj.attr('data-param'))=="" ? {} : JSON.parse(decodeURIComponent(obj.attr('data-param')));
+	var product_ids = typeof(data_param["product_ids"])=='undefined' ? [] : data_param["product_ids"];
+	$(document).ready(function(){	
+
+  		for (key in data_param) {
+  			$("#"+key).val(data_param[key]);
+  		}
+  		
+  	$(".ajaxPageDiv .selectedNum").html(product_ids.length);	
+	});	
+
+	$('#focusBtn').click(function(){
+		data_param = {};
+		$('.params').each(function(){
+			var tempID = $(this).attr('id');
+			var tempVal = $(this).val();
+			data_param[tempID] = tempVal; 
+		});
+		data_param['product_ids'] = product_ids;
+		data_param = encodeURIComponent(JSON.stringify(data_param));
+		obj.attr('data-param',data_param);
+		window.parent.call_ajax_data(part_id,data_tag);
+	});
+	
+	function prePage(){
+		if(page==1)
+			return;
+		page--;
+		getProductInfo(0);
+	}
+	
+	function nextPage(){
+		if(page==allpage)
+			return;
+		page++;
+		getProductInfo(0);
+	}
+	
+	function getProductInfo(judge){
+		var name = $("#product_text").val();
+		if($("#selectedBOX").prop("checked"))
+			temp_product_ids = product_ids;
+		else
+			temp_product_ids = [];
+		$.ajax({  
+          url: '<?php echo $this->getBaseUrl('retailer/store/getProductInfo') ?>' ,  
+          type: 'POST',  
+          data: {name:name,product_ids:temp_product_ids,page:page},  
+          beforeSend:function(){
+            layer.load(1, {shade: [0.1,'#fff'] });	
+          },  
+          success: function (json) {  
+        	if(json.status==0){
+        		var Info = {info1:{}};
+        		Info.info1 = JSON.parse(json.Info);
+        		
+        		$('ul.selectPic').html(template('li_pic',Info));
+        		$('ul.selectPic li').each(function(){
+        			var productid = $(this).attr("productid");
+        			if($.inArray(parseInt(productid),product_ids)!=-1)
+        			{
+        				$(this).addClass("selected");
+        			}
+        		});
+        		if(judge)
+        		page = 1;
+        		allpage = json.AllPage;
+        		$(".ajaxPageDiv .pageNum").html(page);
+        		$(".ajaxPageDiv .AllPageNum").html(json.AllPage);
+        		
+        		if(page==1)
+        			$(".ajaxPageDiv .prePage").addClass("disabled");
+        		else
+        			$(".ajaxPageDiv .prePage").removeClass("disabled");
+        		if(page==allpage)
+        			$(".ajaxPageDiv .nextPage").addClass("disabled");
+        		else
+        			$(".ajaxPageDiv .nextPage").removeClass("disabled");			
+        	}
+
+        	layer.closeAll();
+          },  
+          error: function (json) {  
+           
+          }  
+     }); 
+	}
+	
+	function enterProductInfo(id,obj){
+		var myLi = $(obj).closest("li");
+		if(myLi.hasClass("selected"))
+		{
+			myLi.removeClass("selected");
+			 if($.inArray(id, product_ids)!=-1)
+  			{
+   				product_ids.splice($.inArray(id, product_ids),1);
+  			}
+		}else{
+			myLi.addClass('selected');
+			product_ids.push(id);
+		}
+		
+		//console.log(product_ids);
+		$(".ajaxPageDiv .selectedNum").html(product_ids.length);
+	}
+</script>
+
+<script id="li_pic" type="text/html" >
+{{each info1 as value i}}
+<li productid={{value.id}} >
+<div>
+   <a href="javascript:void(0)" onclick="enterProductInfo({{value.id}},this)" >
+   	<img class="pic" src="{{ value.picURL }}">
+   	<span class="icon"></span>	
+   	</a>
+   <p class="price"><span class="actural">{{ value.acturalPrice }} </span>
+   <br>
+  <a href="javascript:void(0)" onclick="enterProductInfo({{value.id}},this)" >{{ value.name }} </a>
+ </p>
+                       
+</div>
+</li>
+{{/each}}
+</script>

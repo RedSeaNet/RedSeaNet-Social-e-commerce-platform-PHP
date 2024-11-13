@@ -1,0 +1,59 @@
+<div class="col-9 col-sm-9 col-md-10 wishlist mg-bottom-40">
+    <h3><?php echo $this->translate('Member Relationship Management'); ?></h3>
+    
+    <div id="scarch_order">
+        <form method="get">
+            <div >
+                <span>会员名称:</span>
+                <input type="text" value="" name="member_name">
+                <span>交易时间:</span>
+                <input type="text" value="" name="transaction_time">
+                <span>交易状态:</span>
+                <select name="transaction_status">
+                    <option value="1">交易成交</option>
+                    <option value="0">交易未成交</option>
+                </select>
+                <input type="submit" value="搜索"  />
+            </div>
+        </form>
+    </div>
+    <br /><br />
+    
+    <div class="row">
+        <table class="table table-bordered">
+            <tr>
+                <th>会员信息</th>
+                <th>交易总额（元）</th>
+                <th>交易笔数</th>
+                <th>上次交易时间</th>
+                <th>操作</th>
+            </tr>
+            <tr>
+                <td>雪儿lisa_l 普通会员</td>
+                <td>75.80</td>
+                <td>1</td>
+                <td>2016-07-14</td>
+                <td><a href="<?php echo $this->getBaseUrl('retailer/marketing/memberdetail') ?>">详情</a>&nbsp;&nbsp;<a href="<?php echo $this->getBaseUrl('retailer/marketing/record') ?>">交易记录</a></td>
+            </tr>
+            <tr>
+                <td>小nonocindy 普通会员</td>
+                <td>455.22</td>
+                <td>5</td>
+                <td>2016-07-14</td>
+                <td><a href="<?php echo $this->getBaseUrl('retailer/marketing/memberdetail') ?>">详情</a>&nbsp;&nbsp;<a href="<?php echo $this->getBaseUrl('retailer/marketing/record') ?>">交易记录</a></td>
+            </tr>
+            <tr>
+                <th colspan="5">
+                    <div class="text-end">
+                        <a>共 2 个项目</a>
+                        <a href="#">上一页</a>
+                        <a href="#">1</a>
+                        <span>1 / 1</span>
+                        <a href="#">下一页</a>
+                    </div>
+                </th>
+            </tr>
+        </table>
+    </div>
+
+</div>

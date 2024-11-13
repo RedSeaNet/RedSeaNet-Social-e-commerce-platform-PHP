@@ -1,0 +1,34 @@
+<?php
+$products = $this->getProducts();
+?>
+<div class="container">
+    <?php if (count($products)): ?>
+        <ul class="products-list me-0 ps-0">
+            <?php
+            foreach ($products as $product):
+                $thumbnail = $product->getThumbnail(null, '100x');
+                ?>
+                <li class="item col-12 w-100 wow fadeInUp d-flex pm-5">
+                    <a href="<?php echo $product->getUrl($this->getCategory()) ?>" title="<?php echo $product['name'] ?>" class="product-image pe-2 d-block">
+                        <img loading="lazy" src="<?php echo $thumbnail ?>" alt="<?php echo $product['name'] ?>" />
+                    </a>
+                    <div class="">
+                        <h6 class="product-name">
+                            <a href="<?php echo $product->getUrl($this->getCategory()) ?>" title="<?php echo $product['name'] ?>">
+                                <?php echo $product['name'] ?>
+                            </a>
+                        </h6>
+                        <div class="price-box">
+                            <?php echo $this->getPriceBox($product) ?>
+                        </div>
+                    </div>
+                </li>
+            <?php endforeach ?>
+        </ul>
+    <?php else: ?>
+        <div class="text-center">
+            <p><img src="<?php echo $this->getPubUrl('frontend/images/empty-search.png'); ?>" /></p>
+            <p class="no-product"><?php echo $this->translate('There are no products matching the selection.') ?></p>
+        </div>
+    <?php endif ?>
+</div>

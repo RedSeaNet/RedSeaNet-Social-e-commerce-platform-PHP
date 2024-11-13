@@ -1,0 +1,26 @@
+<?php
+$item = $this->getVariable('item');
+$parent = $this->getVariable('parent');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+?>
+<div class="form-group <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label for="<?php echo $id ?>" class="col-form-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell widget-<?php echo $item['widget'] ?>">
+        <?php
+        echo $parent->getChild($item['widget'])
+                ->setVariable('item', $item)
+                ->setVariable('key', $key)
+                ->setVariable('parent', $parent)
+        ?>
+        <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

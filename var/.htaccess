@@ -1,0 +1,11 @@
+<IfModule mod_headers.c>
+    Header set X-Frame-Options "SAMEORIGIN"
+    <FilesMatch \.(ico|jpe?g|png|gif|w?bmp|svg|js|css|swf|eot|ttf|otf|woff|woff2)$>
+        Header set Cache-Control "public"
+        Header set X-Frame-Options "SAMEORIGIN"
+    </FilesMatch>
+    <FilesMatch \.(zip|gz|gzip|bz2|csv|xml)$>
+        Header set Cache-Control "no-store"
+        Header set X-Frame-Options "SAMEORIGIN"
+    </FilesMatch>
+</IfModule>

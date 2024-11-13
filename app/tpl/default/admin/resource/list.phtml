@@ -1,0 +1,31 @@
+<?php
+$tree = $this->getCategoryTree();
+$cid = $this->getQuery('category_id', 0);
+$resources = $this->getResources();
+?>
+<ul>
+    <?php
+    if (isset($tree[$cid])):
+        foreach ($tree[$cid] as $category):
+            $title = $category['name'][$this->getLanguageId()] ?? $category['name'][0] ?? current($category['name']);
+            ?>
+            <li class="item folder" data-id="<?php echo $category->getId() ?>">
+                <span class="fa fa-folder" aria-hidden="true"></span>
+                <span class="filename" title="<?php echo $title ?>"><?php echo $title ?></span>
+            </li>
+            <?php
+        endforeach;
+    endif;
+    foreach ($resources as $resource):
+        ?>
+        <li class="item" data-id="<?php echo $resource->getId() ?>" data-href="<?php echo $this->getResourceUrl($resource['real_name']) ?>" data-name="<?php echo $resource['real_name'] ?>" data-id="<?php echo $resource['id'] ?>" data-type="<?php echo $this->getResourceType($resource['file_type']) ?>">
+            <?php if (substr($resource['file_type'], 0, 5) === 'image'): ?>
+            <span class="img"><img src="<?php echo $this->getResourceUrl('image/resized/100x/' . $resource['real_name']) ?>" alt="<?php echo $resource['real_name']?>" /></span>
+            <?php else: ?>
+                <span class="fa fa-<?php echo $this->getResourceType($resource['file_type']) ?>-o" aria-hidden="true"></span>
+            <?php endif ?>
+            <span class="filename"><?php echo rawurldecode($resource['uploaded_name']) ?></span>
+        </li>
+    <?php endforeach ?>
+</ul>
+<?php echo $this->getChild('pager')->setCollection($resources) ?>

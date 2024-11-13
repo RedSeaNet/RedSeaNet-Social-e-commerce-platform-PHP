@@ -1,0 +1,46 @@
+<?php
+$attributes = $this->getAttributes();
+$privileges = $this->getPrivileges();
+$group = [];
+?>
+<table class="table table-hover table-striped" id="table-attributes">
+    <thead>
+        <tr>
+            <th><?php echo $this->translate('Attribute', [], 'api') ?></th>
+            <th><?php echo $this->translate('Readable', [], 'api') ?></th>
+            <th><?php echo $this->translate('Writeable', [], 'api') ?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($attributes as $type => $attribute): ?>
+            <tr class="head">
+                <th><?php echo $type ?></th>
+                <th><input type="checkbox" class="select-readable" /></th>
+                <th><input type="checkbox" class="select-writeable" /></th>
+            </tr>
+            <?php foreach ($attribute as $code => $label): ?>
+                <tr>
+                    <td><?php echo $this->translate($label) ?></td>
+                    <td class="readable"><input type="checkbox" name="attribute[<?php echo $type ?>][readable][]"<?php if (isset($privileges['1' . $type]) && in_array($code, $privileges['1' . $type])): ?> checked="checked"<?php endif ?> value="<?php echo $code ?>" /></td>
+                    <td class="writeable"><input type="checkbox" name="attribute[<?php echo $type ?>][writeable][]"<?php if (isset($privileges['0' . $type]) && in_array($code, $privileges['0' . $type])): ?> checked="checked"<?php endif ?> value="<?php echo $code ?>" /></td>
+                </tr>
+            <?php endforeach ?>
+        <?php endforeach ?>
+    </tbody>
+</table>
+<script>
+    var select = function (c, flag) {
+        $(this).prop('checked', flag);
+        var n = $(this).parents('tr').first().next().not('.head');
+        if (n.length) {
+            select.call($(n).children(c).children('[type=checkbox]'), c, flag);
+        }
+    };
+    $('#table-attributes .select-readable,#table-attributes .select-writeable').click(function () {
+        if ($(this).is('.select-readable')) {
+            select.call(this, '.readable', this.checked);
+        } else if ($(this).is('.select-writeable')) {
+            select.call(this, '.writeable', this.checked);
+        }
+    });
+</script>

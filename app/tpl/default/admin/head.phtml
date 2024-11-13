@@ -1,0 +1,21 @@
+<?php
+$title = $this->getTitle();
+if (strpos($title, '/')) {
+    $t = [];
+    foreach (explode('/', $title) as $part) {
+        $t[] = $this->translate(trim($part));
+    }
+    $title = implode(' / ', $t);
+}
+?>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="renderer" content="webkit" />
+<title><?php echo $title ?></title>
+<meta name="description" content="<?php echo $this->getDescription() ?>" />
+<meta name="keywords" content="<?php echo $this->getKeywords() ?>" />
+<meta name="robots" content="NOINDEX,NOFOLLOW,NOARCHIVE" />
+<?php echo $this->getMeta(), $this->getLink(), $this->getScript() ?>
+<script>
+    window.GLOBAL = {BASE_URL: '<?php echo $this->getBaseUrl() ?>',PUB_URL:'<?php echo $this->getPubUrl() ?>',LOCALE:'<?php echo $this->getLocale() ?>',ADMIN_PATH:'<?php echo $this->getConfig()['global/url/admin_path'] ?>',FORMAT:'<?php echo $this->getFormat() ?>'};
+    <?php echo $this->translate ?>
+</script>

@@ -1,0 +1,26 @@
+---
+cms:
+    icon: code
+    title: CMS
+    priority: 10
+    children:
+        -
+            link: 'cms_page/'
+            operation: 'Admin\Cms\Page::index'
+            title: 'Page Management'
+            priority: 0
+        -
+            link: 'cms_category/'
+            operation: 'Admin\Cms\Category::index'
+            title: 'Category Management'
+            priority: 10
+        -
+            link: 'cms_block/'
+            operation: 'Admin\Cms\Block::index'
+            title: 'Block Management'
+            priority: 20
+        -
+            link: 'banner/'
+            operation: 'Admin\Cms\Banner::index'
+            title: 'Banner Management'
+            priority: 30

@@ -1,0 +1,87 @@
+---
+livechat:
+    update: frontend
+    root:
+        template: page/empty
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Live Chat
+                    -
+                        method: addLink
+                        params: frontend/css/livechat.css
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/livechat.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    livechat:
+                        type: \Redseanet\LiveChat\ViewModel\Wrapper
+                        template: livechat/wrapper
+                        children:
+                            chat:
+                                type: \Redseanet\Lib\ViewModel\Template
+                                template: livechat/chat
+            extra:
+                children:
+                    history:
+                        type: \Redseanet\Lib\ViewModel\Template
+                        template: livechat/modal
+livechat_preview:
+    update: default
+    root:
+        template: page/ajax
+        children:
+            content:
+                unset: [messages,breadcrumb]
+                children:
+                    main:
+                        type: \Redseanet\Lib\ViewModel\Template
+                        template: livechat/preview
+livechat_admin:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Live Chat
+                    -
+                        method: addLink
+                        params: backend/css/livechat.css
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/tab.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/modal.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/collapse.js
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/livechat.js',defer: 'defer',async: 'async'}]
+            content:
+                unset: [breadcrumb]
+                children:
+                    livechat:
+                        type: \Redseanet\Admin\ViewModel\LiveChat\Wrapper
+                        template: livechat/wrapper
+                        children:
+                            chat:
+                                type: \Redseanet\Lib\ViewModel\Template
+                                template: livechat/chat
+            extra:
+                children:
+                    history:
+                        type: \Redseanet\Lib\ViewModel\Template
+                        template: livechat/modal                    
+livechat_test:
+    root:
+        type: Redseanet\Lib\ViewModel\Root
+        template: livechat/test
+                
+                        

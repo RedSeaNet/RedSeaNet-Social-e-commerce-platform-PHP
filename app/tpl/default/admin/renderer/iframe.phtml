@@ -1,0 +1,22 @@
+<?php
+$item = $this->getVariable('item');
+?>
+<div class="input-box <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label class="control-label">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell">
+        <iframe src="<?php echo $item['value'] ?>" <?php
+               if (isset($item['attrs'])) {
+                   echo $parent->getAttrs($item['attrs']);
+               }
+               ?>></iframe>
+        <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

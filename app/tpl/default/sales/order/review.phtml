@@ -1,0 +1,115 @@
+<?php
+$ratings = $this->getOrderRating();
+$order = $this->getVariable('model');
+$retailer = $this->getRetailer();
+?>
+<form action="<?php echo $this->getBaseUrl('sales/order/reviewPost/') ?>" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+    <input type="hidden" name="order_id" value="<?php echo $this->getVariable('model')->getId() ?>" />
+    <table class="table-no-border table review-form">
+        <thead>
+            <tr>
+                <th<?php if (count($ratings) === 0): ?> colspan="2"<?php endif ?> class="store text-start">
+                    <div class="profile">
+                        <img class="rounded-circle" src="<?php echo (!empty($retailer['profile']) ? $this->getUploadedUrl('store/'.$retailer["store_id"] .'/'.$retailer->offsetGet('profile')) : $this->getPubUrl('frontend/images/placeholder.png')) ?>" width="100" height="100" />
+                    </div>
+                    <div class="info">
+                        <h4 class="name"><?php echo $order->getStore()->offsetGet('name') ?></h4>
+                        <p class="description"><?php echo $retailer['description'] ?? '' ?></p>
+                    </div>
+                </th>
+                <?php if (count($ratings)): ?>
+                    <td>
+                        <div class="fieldset">
+                            <?php foreach ($ratings as $rating): ?>
+                                <div class="input-box">
+                                    <label class="col-form-label"><?php echo $this->translate($rating['title']) ?></label>
+                                    <div class="cell">
+                                        <div class="ratings clearfix">
+                                            <?php for ($i = 5; $i > 0; $i--): ?>
+                                                <input type="radio" name="rating[0][<?php echo $rating['id'] ?>]" hidden id="rating-0-<?php echo $rating['id'], '-', $i ?>" value="<?php echo $i ?>" />
+                                                <label for="rating-0-<?php echo $rating['id'], '-', $i ?>" class="fa fa-fw"><span class="sr-only"><?php echo $i ?></span></label>
+                                            <?php endfor ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach ?>
+                        </div>
+                    </td>
+                <?php endif ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            foreach ($this->getVariable('model')->getItems() as $item):
+                $product = $item['product'];
+                $options = json_decode($item['options'], true);
+                $thumbnail = $product->getThumbnail($options);
+                ?>
+                <tr>
+                    <th class="text-start">
+                        <img src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" alt="<?php echo $product['name'] ?>" width="100" />
+                        <h6><?php echo $product['name'] ?></h6>
+                        <?php
+                        if ($item['product_id'] && count($options)):
+                            ?>
+                            <dl class="options">
+                                <?php
+                                foreach ($product->getOptions() as $option):
+                                    if (isset($options[$option->getId()])):
+                                        ?>
+                                        <dt><?php echo $option['title'] ?></dt>
+                                        <dd>
+                                            <?php
+                                            echo (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                                    $option->getValue($options[$option->getId()]) : $options[$option->getId()])
+                                            ?>
+                                        </dd>
+                                        <?php
+                                    endif;
+                                endforeach;
+                                ?>
+                            </dl>
+                        <?php endif; ?>
+                    </th>
+                    <td>
+                        <div class="fieldset">
+                            <?php foreach ($this->getProductRating() as $rating): ?>
+                                <div class="input-box">
+                                    <label class="col-form-label"><?php echo $this->translate($rating['title']) ?></label>
+                                    <div class="cell">
+                                        <div class="ratings clearfix">
+                                            <?php for ($i = 5; $i > 0; $i--): ?>
+                                                <input type="radio" name="rating[<?php echo $product->getId() ?>][<?php echo $rating['id'] ?>]" hidden id="rating-<?php echo $product->getId(), '-', $rating['id'], '-', $i ?>" value="<?php echo $i ?>" />
+                                                <label for="rating-<?php echo $product->getId(), '-', $rating['id'], '-', $i ?>" class="fa fa-fw"><span class="sr-only"><?php echo $i ?></span></label>
+                                            <?php endfor ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach ?>
+                            <label for="review-<?php echo $product->getId() ?>" class="col-form-label"><?php echo $this->translate('Add Review') ?></label>
+                            <div class="cell">
+                                <textarea name="review[<?php echo $product->getId() ?>]" class="form-control required" id="review-<?php echo $product->getId() ?>"></textarea>
+                                <div class="images">
+                                    <input type="file" hidden="hidden" accept="image/jpeg,image/gif,image/png" name="image[<?php echo $product->getId() ?>][]" id="review-image-<?php echo $product->getId() ?>" />
+                                    <label for="review-image-<?php echo $product->getId() ?>" class="add-image"><span class="fa fa-camera" aria-hidden="true"></span></label>
+                                    <span>(<?php echo $this->translate('%d images allowed at most.', [5]) ?>)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            <?php endforeach ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th></th>
+                <td class="text-end">
+                    <input type="checkbox" name="anonymous" id="anonymous" value="1" />
+                    <label for="anonymous" class="col-form-label"><?php echo $this->translate('Review Anonymously') ?></label>
+                    <button type="submit" class="btn btn-theme"><?php echo $this->translate('Submit') ?></button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</form>

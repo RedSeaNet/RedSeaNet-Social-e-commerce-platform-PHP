@@ -1,0 +1,13 @@
+<?php
+$item = $this->getVariable('item');
+?>
+<div class="input-box <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label class="control-label">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell">
+        <?php echo $this->translate($item['content'] ?? ($item['value'] ?? '')) ?>
+    </div>
+</div>

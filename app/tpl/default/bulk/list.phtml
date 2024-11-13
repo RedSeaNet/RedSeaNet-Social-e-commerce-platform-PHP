@@ -1,0 +1,20 @@
+<?php
+$bulks = $this->getBulks();
+?>
+<ul><?php
+    foreach ($bulks as $bulk):
+        $progress = min((int) ($bulk['count'] / $bulk['size'] * 100), 100);
+        ?>
+        <li class="clearfix">
+            <div class="subject col-6">
+                <a href="<?php echo $this->getBaseUrl('bulk/view/?bulk='), $bulk->getId() ?>">
+                    <?php echo $this->translate('Creator: %s', [mb_substr($bulk['customer_name'], 0, 1) . '****' . mb_substr($bulk['customer_name'], -1)]) ?>
+                </a>
+            </div>
+            <div class="progress col-4">
+                <div class="progress-bar" role="progressbar" aria-valuenow="<?php echo $progress ?>" aria-valuemin="0" aria-valuemax="100" style="width:<?php echo $progress ?>%"></div>
+                <div class="text-center"><?php echo $bulk['count'], ' / ', $bulk['size'] ?></div>
+            </div>
+            <div class="date col-2 text-end"><?php echo date('m/d', strtotime($bulk['created_at'])) ?></div>
+         </li>
+    <?php endforeach ?></ul>

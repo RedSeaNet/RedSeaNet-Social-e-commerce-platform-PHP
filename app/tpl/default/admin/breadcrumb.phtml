@@ -1,0 +1,53 @@
+<div class="breadcrumb clearfix">
+    <?php
+    $additional = $this->getAdditional();
+    if (count($additional)):
+        ?>
+        <div class="buttons-set">
+            <?php
+            foreach ($additional as $crumb):
+                if (isset($crumb['link'])):
+                    ?>
+                    <a href="<?php
+                    echo $this->isAdminPage() ?
+                            $this->getAdminUrl($crumb['link']) :
+                            $this->getBaseUrl($crumb['link'])
+                    ?>" title="<?php echo $this->translate($crumb['label'])
+                    ?>">
+                        <?php echo $this->translate($crumb['label']) ?>
+                    </a>
+                <?php else: ?>
+                    <button type="button" class="btn"<?php
+                    if (isset($crumb['data'])):
+                        foreach ($crumb['data'] as $key => $value):
+                            ?>
+                                    data-<?php echo $key ?>="<?php echo $value ?>"
+                                    <?php
+                                endforeach;
+                            endif;
+                            ?>>
+                                <?php echo $this->translate($crumb['label']) ?>
+                    </button>
+                <?php endif ?>
+            <?php endforeach; ?>
+        </div>
+        <?php
+    endif;
+    $crumbs = $this->getCrumbs();
+    if (count($crumbs)):
+        $last = array_pop($crumbs);
+        ?>
+        <ol>
+            <?php if ($this->showLabel): ?>
+                <li class="label"><span><?php echo $this->translate('Location') ?>: </span></li>
+            <?php endif ?>
+            <?php if ($this->showHome): ?>
+                <li class="home"><a href="<?php echo $this->isAdminPage() ? $this->getAdminUrl() : $this->getBaseUrl() ?>" title="<?php echo $this->translate('Home') ?>"><?php echo $this->translate('Home') ?></a></li>
+            <?php endif ?>
+            <?php foreach ($crumbs as $crumb): ?>
+                <li><a href="<?php echo $this->isAdminPage() ? $this->getAdminUrl($crumb['link']) : $this->getBaseUrl($crumb['link']) ?>" title="<?php echo $this->translate($crumb['label']) ?>"><?php echo $this->translate($crumb['label']) ?></a></li>
+            <?php endforeach ?>
+            <li class="current"><span><?php echo $this->translate($last['label']) ?></span></li>
+        </ol>
+    <?php endif; ?>
+</div>

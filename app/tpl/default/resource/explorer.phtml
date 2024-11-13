@@ -1,0 +1,113 @@
+<?php
+$tree = $this->getCategoryTree();
+?>
+<div class="resource-explorer">
+    <div class="filters">
+        <form action="<?php echo $this->getCurrentUrl() ?>" method="get" class="">
+            <div class="input-box">
+                <label for="uploaded_name" class="col-form-label"><?php echo $this->translate('Filename') ?></label>
+                <input type="text" name="uploaded_name" id="uploaded_name" class="form-control" value="" placeholder="<?php echo $this->translate('Filename') ?>" />
+            </div>
+            <div class="input-box">
+                <label for="file_type" class="col-form-label"><?php echo $this->translate('File Type') ?></label>
+                <select name="file_type" id="file_type" class="form-control">
+                    <option value=""><?php echo $this->translate('Please Select') ?></option>
+                    <?php foreach ($this->getFileTypes() as $type): ?>
+                        <option value="<?php echo $type['file_type'] ?>"><?php echo $type['file_type'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="input-box">
+                <label class="col-form-label" for="sortby:limit"><?php echo $this->translate('Item(s) per page') ?></label>
+                <input type="tel" name="limit" id="sortby:limit" class="form-control" value="<?php echo $this->getQuery('limit', 20) ?>">
+            </div>
+            <div class="buttons-set">
+                <button type="submit" class="btn btn-theme"><?php echo $this->translate('Search') ?></button>
+                <button type="reset" class="btn btn-reset"><?php echo $this->translate('Reset') ?></button>
+            </div>
+        </form>
+    </div>
+    <div class="table">
+        <nav class="nav">
+            <?php echo $this->getChildrenCategories() ?>
+        </nav>
+        <div class="content">
+            <header class="d-flex">
+                <h4 class="title col-6">
+                    <span class="fa fa-fw fa-folder" aria-hidden="true"></span>
+                    <span class="folder-name"><?php echo $this->translate('Resource Management') ?></span>
+                </h4>
+                <div class="buttons-set col-6 text-end">
+                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#modal-upload" data-upload="1" data-category="<?php echo $this->getQuery('category_id', 0) ?>">
+                        <span class="fa fa-cloud-upload fa-fw" aria-hidden="true"></span>
+                        <span><?php echo $this->translate('Upload') ?></span>
+                    </button>
+                </div>
+            </header>
+            <div class="toolbar d-flex" data-csrf="<?php echo $this->getCsrfKey() ?>">
+                <ul class="d-flex col-md-8 col-12">
+                    <li>
+                        <a href="javascript:void(0);" class="back">
+                            <span class="fa fa-fw fa-arrow-left" aria-hidden="true"></span>
+                            <span><?php echo $this->translate('Back') ?></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);" class="forward">
+                            <span class="fa fa-fw fa-arrow-right" aria-hidden="true"></span>
+                            <span><?php echo $this->translate('Forward') ?></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);" class="folder">
+                            <span class="fa fa-fw fa-plus" aria-hidden="true"></span>
+                            <span><?php echo $this->translate('New Folder') ?></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);" class="rename">
+                            <span class="fa fa-fw fa-pencil" aria-hidden="true"></span>
+                            <span><?php echo $this->translate('Rename') ?></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);" class="delete">
+                            <span class="fa fa-fw fa-times" aria-hidden="true"></span>
+                            <span><?php echo $this->translate('Delete') ?></span>
+                        </a>
+                    </li>
+                </ul>
+                <div class="col-md-4 col-12 text-end">
+                    <div class="sort-by">
+                        <label for="desc"><?php echo $this->translate('Sort by') ?></label>
+                        <select name="desc" id="desc">
+                            <option value="created_at"><?php echo $this->translate('Uploaded at') ?></option>
+                            <option value="uploaded_name"><?php echo $this->translate('Filename') ?></option>
+                            <option value="file_type"><?php echo $this->translate('File Type') ?></option>
+                            <option value="size"><?php echo $this->translate('File Size') ?></option>
+                        </select>
+                    </div>
+                    <div class="mode">
+                        <a href="javascript:void(0);" class="grid"><span class="fa fa-fw fa-th-large" aria-hidden="true"></span></a>
+                        <a href="javascript:void(0);" class="list"><span class="fa fa-fw fa-th-list" aria-hidden="true"></span></a>
+                    </div>
+                </div>
+                <menu class="context">
+                    <li>
+                        <a href="javascript:void(0);" class="rename">
+                            <span class="fa fa-fw fa-pencil" aria-hidden="true"></span>
+                            <span><?php echo $this->translate('Rename') ?></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);" class="delete">
+                            <span class="fa fa-fw fa-times" aria-hidden="true"></span>
+                            <span><?php echo $this->translate('Delete') ?></span>
+                        </a>
+                    </li>
+                </menu>
+            </div>
+            <div class="resource-list"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,4 @@
+---
+-
+    time: '0 0 * * *'
+    code: 'Redseanet\LiveChat\Listeners\Cron::schedule'

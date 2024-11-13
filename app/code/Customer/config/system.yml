@@ -1,0 +1,198 @@
+---
+customer:
+    label: Customer Configuration
+    children:
+        login:
+            label: Login Options
+            scope: merchant
+            priority: 0
+            children:
+                redirect_dashboard:
+                    label: Redirect Customer to Account Dashboard after Logging in
+                    type: select
+                    priority: 0
+                    default: 1
+                    comment: Customer will stay on the current page if "No" is selected.
+                    options:
+                        1: Yes
+                        0: No
+                sso:
+                    label: Allowed SSO
+                    type: select
+                    priority: 10
+                    required: required
+                    default: 0
+                    options:
+                        1: Yes
+                        0: No
+                allowed_sso_url:
+                    label: Allowed SSO Url
+                    type: text
+                    priority: 20
+                    attrs:
+                        data-base: '#login-sso'
+                    comment: Separated by semicolon(;)
+                sso_key:
+                    label: SSO Key
+                    type: text
+                    priority: 30
+                    required: required
+                    attrs:
+                        data-base: '#login-sso'
+                    comment: We use the key to encrypt/decrypt sso result.
+        registion:
+            label: Registion Options
+            scope: merchant
+            priority: 10
+            children:
+                enabled:
+                    label: Enabled
+                    type: select
+                    priority: 10
+                    required: required
+                    default: 1
+                    options:
+                        1: Yes
+                        0: No
+                set:
+                    label: Default Attribute Set
+                    type: select
+                    priority: 0
+                    required: required
+                    default: 1
+                    source: \Redseanet\Customer\Source\Set
+                group:
+                    label: Default Customer Group
+                    type: select
+                    priority: 0
+                    required: required
+                    default: 1
+                    source: \Redseanet\Customer\Source\Group
+                confirm:
+                    label: Require Emails Confirmation
+                    type: select
+                    priority: 10
+                    required: required
+                    default: 0
+                    options:
+                        1: Yes
+                        0: No
+        address:
+            label: Address
+            scope: merchant
+            priority: 30
+            children:
+                one_line:
+                    label: Format in One Line
+                    type: textarea
+                    priority: 0
+                    required: required
+                    default: '{{name}},{{tel}}  {{county}},{{city}},{{region}},{{country}}'
+                multi_line:
+                    label: Format in Multiple Lines
+                    type: textarea
+                    priority: 0
+                    required: required
+                    default: "{{label:name}}: {{name}}\n{{label:tel}}: {{tel}}\n{{label:country}}: {{country}}\n{{label:region}}: {{region}}\n{{label:city}}: {{city}}\n{{label:county}}: {{county}}"
+        captcha:
+            label: CAPTCHA
+            scope: merchant
+            priority: 90
+            children:
+                form[]:
+                    label: Forms
+                    type: multiselect
+                    priority: 0
+                    scope: merchant
+                    options:
+                        login: Login
+                        register: Register
+                        forgotpwd: Forgot Password
+                mode:
+                    label: Displaying Mode
+                    type: select
+                    priority: 1
+                    scope: merchant
+                    required: required
+                    default: 0
+                    options:
+                        - Always
+                        - After number of attempts to login
+                attempt:
+                    label: Number of Unsuccessful Attempts to Login
+                    type: tel
+                    priority: 2
+                    scope: merchant
+                    default: 0
+                    attrs:
+                        data-base: '#captcha-mode'
+                    comment: If 0 is specified, CAPTCHA on the Login form will be always available.
+                symbol:
+                    label: Symbols Used in CAPTCHA
+                    type: text
+                    default: abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789
+                    comment: 'Please use only letters (a-z or A-Z) or numbers (0-9) in this field. No spaces or other characters are allowed. Similar looking characters (e.g. "i", "l", "1") decrease chance of correct recognition by customer.'
+                number:
+                    label: Number of Symbols
+                    type: range
+                    default: 5
+                    attrs:
+                        min: 1
+                        max: 8
+        message:
+            label: SMS Message
+            scope: merchant
+            priority: 100
+            children:
+                register_template:
+                    type: text
+                    label: Register vaild template code
+                    priority: 0
+                forget_password_template:
+                    type: text
+                    label: Foreget password template code
+                    priority: 1
+                change_phone_template:
+                    type: text
+                    label: Change phone template code
+                    priority: 2
+email:
+    children:
+        customer:
+            label: Customer
+            scope: merchant
+            priority: 20
+            children:
+                sender_email:
+                    label: Sender Email
+                    type: email
+                    scope: merchant
+                sender_name:
+                    label: Sender Name
+                    type: text
+                    scope: merchant
+                forgot_template:
+                    label: Password Forgotten Email Template
+                    type: select
+                    scope: merchant
+                    default: forgot_password
+                    source: \Redseanet\Email\Source\Template
+                modified_template:
+                    label: Password Modified Email Template
+                    type: select
+                    scope: merchant
+                    default: modified_password
+                    source: \Redseanet\Email\Source\Template
+                welcome_template:
+                    label: Welcome Email Template
+                    type: select
+                    scope: merchant
+                    default: new_customer
+                    source: \Redseanet\Email\Source\Template
+                confirm_template:
+                    label: Confirmation Email Template
+                    type: select
+                    scope: merchant
+                    default: customer_confirmation
+                    source: \Redseanet\Email\Source\Template
+                            

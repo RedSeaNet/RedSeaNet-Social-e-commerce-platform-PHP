@@ -1,0 +1,5 @@
+---
+sales:
+    method: [GET,POST,DELETE]
+    route: /sales/{controller}/[{action}[/]]
+    namespace: Redseanet\Sales\Controller

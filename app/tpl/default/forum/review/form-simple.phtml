@@ -1,0 +1,35 @@
+<?php
+if ($this->getSegment('customer')->get('hasLoggedIn')):
+    $config = $this->getConfig();
+    ?>
+    <form action="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/save/') ?>" method="post" class="form-review simple">
+        <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+        <input type="hidden" name="post_id" value="<?php echo $this->getVariable('post_id') ?>" />
+        <input type="hidden" name="reference" value="" />
+        <div class="fieldset">
+            <div class="avatar">
+                <img src="<?php echo $this->getSegment('customer')->get('hasLoggedIn') && ($avatar = $this->getSegment('customer')->get('customer')['avatar']) ? $this->getUploadedUrl('customer/avatar/') . $avatar : $this->getPubUrl('frontend/images/placeholder.png') ?>" alt="" />
+            </div>
+            <div class="input-box">
+                <label for="review:content" class="col-form-label required sr-only"><?php echo $this->translate('Content') ?></label>
+                <div class="cell">
+                    <input type="text" name="content" id="review:content" class="form-control required" />
+                </div>
+            </div>
+            <?php if ($config['forum/review/captcha']): ?>
+                <div class="input-box captcha">
+                    <div class="mask"></div>
+                    <div class="inner">
+                        <label for="review:captcha" class="col-form-label"><?php echo $this->translate('Captcha') ?></label>
+                        <input type="text" name="captcha" class="form-control required captcha" maxlength="5" id="review:captcha" autocomplete="off" spellcheck="false" data-rule-remote="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/validCaptcha/') ?>" />
+                        <img data-src="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/captcha/') ?>" alt="" class="captcha" height="26" width="70" />
+                        <button type="submit" class="btn btn-theme"><?php echo $this->translate('Submit') ?></button>
+                    </div>
+                </div>
+            <?php endif ?>
+            <div class="buttons-set">
+                <button type="submit" class="btn btn-theme"><?php echo $this->translate('Submit') ?></button>
+            </div>
+        </div>
+    </form>
+<?php endif; ?>

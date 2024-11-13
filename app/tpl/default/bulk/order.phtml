@@ -1,0 +1,73 @@
+<?php
+$collection = $this->getCollection();
+$filters = $this->getFilters();
+$bulk = false;
+?>
+<div class="filters">
+    <form action="<?php echo $this->getUri()->withQuery('')->withFragment('') ?>" method="get" class="form-inline">
+        <div class="fieldset d-flex flex-wrap align-items-center">
+            <?php
+            foreach ($filters as $key => $filter) {
+                echo $this->getInputBox($key, $filter)->setVariable('boxClass', 'col-md-4 col-6');
+            }
+            ?>
+            <div class="buttons-set col-md-4 col-6">
+                <button type="submit" class="btn btn-theme"><?php echo $this->translate('Search') ?></button>
+                <a href="<?php echo $this->getUri()->withQuery('')->withFragment('') ?>" class="btn btn-theme"><?php echo $this->translate('Reset') ?></a>
+            </div>
+        </div>
+    </form>
+</div>
+<table class="table orders-list">
+    <tbody>
+        <?php
+        if (count($collection)):
+            foreach ($collection as $order):
+                if ($order['bulk_id'] !== $bulk):
+                    ?>
+                    <tr>
+                        <th colspan="9" class="bulk">
+                            <a href="<?php echo $this->getBaseUrl('bulk/view/?id='), $order['bulk_id'] ?>">
+                                <?php
+                                echo $this->translate('Bulk #%d', [$order['bulk_id']]), ' ', $order['bulk'], ' ',
+                                $this->translate('Progress: %d/%d', [$order['bulk_count'], $order['bulk_size']]),
+                                ($order['bulk_status'] ? '' : ' (' . $this->translate('Closed') . ')')
+                                ?>
+                            </a>
+                        </th>
+                    </tr>
+                    <?php
+                    $bulk = $order['bulk_id'];
+                endif;
+                echo $this->renderItem($order);
+            endforeach;
+        else:
+            ?>
+            <tr>
+                <td colspan="9" class="text-center"><?php echo $this->translate('There are no orders in your store with the condition.') ?></td>
+            </tr>
+        <?php
+        endif;
+        ?>
+    </tbody>
+    <thead>
+        <tr class="text-center text-nowrap">
+            <th class="text-nowrap"><?php echo $this->translate('Product Infomation') ?></th>
+            <th></th>
+            <th class="text-center text-nowrap"><?php echo $this->translate('Price') ?></th>
+            <th class="text-center text-nowrap"><?php echo $this->translate('Qty') ?></th>
+            <th></th>
+            <th class="text-center text-nowrap"><?php echo $this->translate('After Sales') ?></th>
+            <th class="text-center text-nowrap"><?php echo $this->translate('Order Status') ?></th>
+            <th class="text-center text-nowrap"><?php echo $this->translate('Grand Total') ?></th>
+            <th class="text-center text-nowrap"><?php echo $this->translate('Action') ?></th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr class="hidden-empty">
+            <td colspan="9" class="text-center">
+                <?php echo count($collection) ? $this->getChild('pager')->setCollection($collection) : '' ?>
+            </td>
+        </tr>
+    </tfoot>
+</table>

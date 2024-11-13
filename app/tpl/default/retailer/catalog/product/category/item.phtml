@@ -1,0 +1,16 @@
+<?php
+$category = $this->getVariable('category');
+$hasChildren = isset($this->getCategories()[$category['id']]);
+?>
+<li class="pt-2">
+        <?php if ($hasChildren): ?>
+            <a href="javascript:void(0);" class="dropdown-toggle"></a>
+        <?php endif ?>
+        <input type="checkbox" name="category[]" class="required" id="category-<?php echo $category['id'] ?>" value="<?php echo $category['id'] ?>"<?php echo (in_array($category['id'], $this->getActiveIds()) ? ' checked="checked"' : '') ?>  data-msg-required="<?php echo $this->translate('Please choose ').$this->translate('Category') ?>" />
+        <label for="category-<?php echo $category['id'] ?>"><?php echo $category['name'] ?></label>
+        <?php if ($hasChildren): ?>
+            <ul>
+                <?php echo $this->renderCategory($category['id']) ?>
+            </ul>
+        <?php endif; ?>
+</li>

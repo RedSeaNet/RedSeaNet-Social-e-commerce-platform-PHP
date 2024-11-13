@@ -1,0 +1,89 @@
+<?php
+//$sessions = $this->getSessions();
+$sessions = $this->getVariable('sessions', false);
+//print_r($sessions);exit();
+$groups = $this->getGroups();
+$current = $this->getVariable('current', false);
+$goupsIds = [];
+$config = $this->getConfig();
+?>
+<div id="livechat" class="container clearfix">
+    <form id="chat-form">
+        <img width="30" src="<?php echo empty($avatar = $this->getSegment('customer')->get('customer')['avatar']) ? $this->getPubUrl('frontend/images/avatar-holderplace.jpg') : $this->getUploadedUrl('customer/avatar/' . $avatar) ?>" id="avatar-0" class="img-fluid rounded-circle" alt="" />
+        <div>
+            <div style="display:flex; justify-content:space-between;align-items: center;z-index: 10;">
+                <div class="page-back-btn" style="padding-left:2px;">
+                    <a href="<?php echo $this->getBaseUrl(); ?>"><span class="fa fa-arrow-left"></span></a>
+                </div>
+                <div class="d-block d-sm-none">
+                    <button type="button" class="navbar-toggler navbar-toggle d-block d-sm-none" data-bs-toggle="collapse" data-target="#livechat-nav"><span class="fa fa-list-ul"></span></button>
+                </div>
+            </div>  
+        </div>
+        <div class="livechat-left col-12 col-md-3">
+            <div class="navbar navbar-expand-md">
+                <div class="navbar-collapse collapse" id="livechat-nav">
+                     <div class="categorycontainer">
+                        <a href="javascript:void(0);" class="category show" data-class="important" id="category-important">
+                            <?php echo $this->translate('Tipped') ?>
+                        </a>
+                        <a href="javascript:void(0);" class="category" data-class="general" id="category-general">
+                            <?php echo $this->translate('General') ?>
+                        </a>
+                    </div>
+                    <ul class="flex-column nav nav-tabs" role="tablist">
+                        <?php
+                        foreach ($sessions as $session):
+                            if (!$current) {
+                                $current = $session['id'];
+                            }
+                            ?>
+                            <li role="presentation" class="nav-item" data-href="<?php echo $session['id'] ?>" data-last-message-date="<?php echo (isset($session['last_message_date_sent']) && $session['last_message_date_sent'] != '' ? $session['last_message_date_sent'] : 0) ?>" >
+                                <a href="#chat-<?php echo $session['id'] ?>" aria-controls="<?php echo $session['id'] ?>" id="<?php echo $session['id'] ?>-tab" role="tab" data-bs-toggle="tab" data-badge="0" class="nav-link<?php if ($current == $session['id']): ?> active<?php endif ?>" data-class="<?php echo ($session['tipped'] > 0 ? "important" : "general"); ?>">
+                                    <?php echo $session['name'] ?>
+                                </a>
+                                <!--<a href="<?php echo $this->getBaseUrl('livechat/index/close/') ?>" data-method="post" data-params="id=<?php echo $session['id'] ?>" class="close" title="<?php echo $this->translate('Close') ?>"><span class="fa fa-times"></span></a>-->
+                            </li>
+                        <?php endforeach ?>
+                        <?php
+                        foreach ($groups as $group) {
+                            $goupsIds[] = $group['id'];
+                            ?>
+                            <li role="presentation"<?php if ($current == $group['id']): ?> class="active"<?php endif ?>>
+                                <a href="#<?php echo $group['id'] ?>" role="tab" data-bs-toggle="tab" data-badge="0">
+                                    <?php echo $group['name'] ?>
+                                </a>
+                                <!--<a href="<?php echo $this->getBaseUrl('livechat/index/close/') ?>" data-method="post" data-params="id=<?php echo $group['id'] ?>" class="close" title="<?php echo $this->translate('Close') ?>"><span class="fa fa-times"></span></a>-->
+                            </li>
+                        <?php } ?>    
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <?php if ($this->getSegment('customer')->get('hasLoggedIn')): ?>
+            <input type="hidden" name="sender" value="<?php echo $this->getSegment('customer')->get('customer')['id'] ?>" />
+            <input type="hidden" name="group_list" value="<?php echo implode(',', $goupsIds) ?>" />
+        <?php endif ?>
+        <div class="tab-content col-12 col-sm-9">      
+            <?php foreach ($sessions as $session): ?>
+                <div role="tabpanel" aria-labelledby="<?php echo $session['id']; ?>-tab" class="tab-pane fade <?php if ($current == $session['id']): ?> show active <?php endif ?>" id="chat-<?php echo $session['id'] ?>">
+                    <?php echo $this->getChild('chat')->setVariable('session', $session) ?>
+
+                </div>
+            <?php endforeach ?>
+
+
+            <?php foreach ($groups as $goup): ?>
+                <div role="tabpanel" class="tab-pane fade card<?php if ($current == $goup['id']): ?> show active in<?php endif ?>" id="<?php echo $goup['id'] ?>">
+                    <?php echo $this->getChild('chat')->setVariable('session', $goup) ?>
+                </div>
+            <?php endforeach ?>
+        </div>
+        <input type="hidden" name="pubnub_publishKey" id="pubnub_publishKey" value="<?php echo $config['livechat/pubnub_publishKey']; ?>" />
+        <input type="hidden" name="pubnub_subscribeKey" id="pubnub_subscribeKey" value="<?php echo $config['livechat/pubnub_subscribeKey']; ?>" />
+
+    </form>
+</div>
+<script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.37.0.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->getBaseUrl('pub/theme/default/frontend/js/pubnub.js'); ?>" defer="defer" async="async" ></script>
+

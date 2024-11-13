@@ -1,0 +1,45 @@
+<?php
+$addresses = $this->getAddress();
+$isVirtual = $this->getVariable('isVirtual');
+$attributes = $this->getAddressAttribute();
+if (!$isVirtual):
+    ?>
+    <section class="section address">
+        <h5 class="title"><?php echo $this->translate('Shipping Address') ?></h5>
+        <ul class="list ps-0"><?php foreach ($addresses as $address): ?>
+                <li data-id="<?php echo $address->getId() ?>" data-json='<?php echo json_encode($address->toArray()) ?>' class="d-flex">
+                    <input class="required" type="radio" name="shipping_address_id" id="shipping-address-<?php echo $address->getId() ?>" value="<?php echo $address->getId() ?>"<?php if ($address['is_default'] == 1): ?> checked="checked"<?php endif; ?> data-msg-required="<?php echo $this->translate('Please choose shipping address') ?>." />
+                    <label for="shipping-address-<?php echo $address->getId() ?>" class="ps-1">
+                        <?php echo $address->display() ?>
+                    </label>
+                    <div class="ps-4 d-none d-md-block">
+                        <?php if ($this->hasLoggedIn()): ?>
+                            <?php if ($address->offsetGet('is_default') != 1): ?>
+                                <a class="default btn btn-success" href="<?php echo $this->getBaseUrl('checkout/order/defaultAddress/?id='), $address->getId() ?>" class="default"><?php echo $this->translate('Set as Default') ?></span></a>
+                            <?php else: ?>
+                                <span class="btn-Address"><?php echo $this->translate('Default Address'); ?></span>
+                            <?php endif ?>
+                        <?php endif ?>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifyaddressmodal"><?php echo $this->translate('Edit') ?></button>
+                        <a href="<?php echo $this->getBaseUrl('checkout/order/deleteaddress/') ?>" class="delete btn btn-danger" data-method="delete" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $address->getId() ?>"><?php echo $this->translate('Delete') ?></a>
+                    </div>
+                </li>
+            <?php endforeach ?></ul>
+        <template id="tmpl-address-list">
+            <li data-id="{id}" data-json='{json}' class="d-flex">
+                <input type="radio" name="shipping_address_id" id="shipping-address-{id}" value="{id}" />
+                <label for="shipping-address-{id}" class="ps-1">
+                    {content}
+                </label>
+                <div class="ps-4 d-none d-md-block">
+                    <button href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifyaddressmodal"><?php echo $this->translate('Edit') ?></button>
+                    <a href="<?php echo $this->getBaseUrl('checkout/order/deleteaddress/') ?>" class="delete btn btn-danger" data-method="delete" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id={id}"><?php echo $this->translate('Delete') ?></a>
+                </div>
+            </li>
+        </template>
+        <?php if ($this->hasLoggedIn()): ?>
+            <button type="button" class="btn btn-add" data-bs-toggle="modal" data-bs-target="#modifyaddressmodal"><?php echo $this->translate('Add New Address') ?></button>
+        <?php endif ?>
+    </section>
+<?php endif; ?>
+

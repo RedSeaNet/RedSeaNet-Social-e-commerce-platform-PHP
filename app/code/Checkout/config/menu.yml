@@ -1,0 +1,8 @@
+---
+system:
+    children:
+        -
+            link: config/checkout/
+            operation: 'Admin\Config::checkout'
+            title: Checkout Configuration
+            priority: 90

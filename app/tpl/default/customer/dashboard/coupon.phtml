@@ -1,0 +1,64 @@
+<?php
+$coupons = $this->getCoupons();
+$flag = true;
+?>
+<div class="card coupon p-0 m-0 p-md-4 pb-2">
+    <div class="card-header p-0 m-0">
+        <h6 class="card-title"><?php echo $this->translate('My Coupons') ?></h6>
+    </div>
+    <div class="card-body carousel slide p-0 m-0 mt-2" data-ride="carousel" id="carousel-coupon" data-interval="false">
+        <div class="carousel-inner" role="listbox">
+            <?php
+            $count = 0;
+            foreach ($coupons as $coupon):
+                if (!$coupon['price'] && !$coupon['free_shipping']) {
+                    continue;
+                }
+                ?>
+                <div class="carousel-item item<?php echo ($count===0?' active':'')?>">
+                    <div class="content">
+                        <div class="inner clearfix">
+                            <?php if ($coupon['price']): ?>
+                                <div class="col-12 price">
+                                    <?php echo $coupon['is_fixed'] ? $this->getCurrency()->convert($coupon['price'], true) : ($coupon['price'] . '%') ?>
+                                </div>
+                            <?php else: ?>
+                                <div class="col-12 free-shipping">
+                                    <span><?php echo $this->translate('Free Shipping') ?></span>
+                                </div>
+                            <?php endif ?>
+                            <div class="col-12 store"><?php if ($stores = $coupon->getStores()): ?>
+                                    <span class="badge text-bg-danger"><?php echo $this->translate('Available Store') ?>:</span>
+                                    <?php foreach ($stores as $store): ?>
+                                        <span>
+                                            <?php echo $store->offsetGet('name') ?>
+                                        </span>
+                                    <?php endforeach ?>
+                                <?php endif ?></div>
+                            <div class="col-12 condition">
+                                <span class="badge text-bg-danger"><?php echo $this->translate('Condition', [], 'customer') ?>:</span>
+                                <span><?php echo $coupon['description'] ?></span>
+                            </div>
+                            <div class="col-12 date"><?php if ($coupon['to_date']): ?>
+                                    <span class="badge text-bg-danger"><?php echo $this->translate('Available Date') ?>:</span>
+                                    <span><?php echo date('Y.m.d', strtotime($coupon['to_date'])) ?></span>
+                                <?php endif ?></div>
+                        </div>
+                    </div>
+                </div>
+                <?php
+                $count++;
+            endforeach;
+            ?>
+        </div>
+    </div>
+    <a class="left carousel-control carousel-control-prev" href="div#carousel-coupon" data-bs-target="div#carousel-coupon" role="button" data-bs-slide="prev">
+        <span class="fa fa-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">&lt;</span>
+    </a>
+    <a class="right carousel-control carousel-control-next" href="#carousel-coupon" data-bs-target="div#carousel-coupon" role="button" data-bs-slide="next">
+        <span class="fa fa-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">&gt;</span>
+    </a>
+</div>
+</div>

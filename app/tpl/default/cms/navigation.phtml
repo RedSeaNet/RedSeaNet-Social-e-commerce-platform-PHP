@@ -1,0 +1,34 @@
+<?php
+$parent = $this->getTopCategory();
+?>
+<nav id="cms-layered-nav" class="collapse show">
+    <h2 class="title">
+        <?php echo $parent['name'][$this->getLanguageId()]; ?>
+    </h2>
+    <dl class="nav d-flex flex-column">
+        <?php
+        foreach ($parent->getChildrenCategories() as $category):
+            $children = $category->getPages();
+            $count = $children->count();
+            ?>
+            <dt>
+                <a data-bs-toggle="collapse" href="#nav-<?php echo $category['id'] ?>">
+                    <?php echo $category['name'][$this->getLanguageId()]; ?>
+                </a>
+            </dt>
+            <ul id="nav-<?php echo $category['id'] ?>" class="collapse show" role="menu">
+                <?php
+                foreach ($children as $child):
+                    $url = $child->getUrl();
+                    ?>
+                    <li role="presentation">
+                        <a href="<?php echo $url ? $this->getBaseUrl($url . '.html') : 'javascript:void(0);' ?>" role="menuitem">
+                            <?php echo $child['title']; ?>
+                        </a>
+                    </li>
+                <?php endforeach ?>
+            </ul>
+        <?php endforeach ?>
+    </dl>
+</nav>
+<a href="#cms-layered-nav" data-bs-toggle="collapse" class="visible-xs-block navbar-toggle"></a>

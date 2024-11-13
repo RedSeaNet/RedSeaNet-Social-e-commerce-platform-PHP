@@ -1,0 +1,54 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+$parent = $this->getVariable('parent');
+?>
+<div class="input-box <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label for="<?php echo $id ?>" class="control-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell widget-upload">
+        <?php
+        if (!empty($item['value'])):
+            $value = (new \Redseanet\Resource\Model\Resource)->load($item['value']);
+            ?>
+            <div class="inline-box">
+                <button type="button" class="btn" data-toggle="modal" data-target="#modal-insert" title="<?php echo $this->translate('Select Resource') ?>">
+                    <?php if (!empty($value['file_type']) && strpos($value['file_type'], 'image') === 0): ?>
+                        <img src="<?php echo $this->getResourceUrl('image/' . $value['real_name']) ?>" alt="" width="100" height="100" />
+                    <?php else: ?>
+                        <span><?php echo $value['real_name'] ?></span>
+                    <?php endif ?>
+                </button>
+                <a href="javascript:void(0);" class="delete">
+                    <span class="fa fa-trash-o" aria-hidden="true"></span>
+                    <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                </a>
+                <input type="hidden" name="<?php echo $key ?>" value="<?php echo $value->getId() ?>" class="imageid" />
+                <input type="hidden" name="<?php echo $key ?>" value="<?php echo $value->getId() ?>" class="imagesrc" />
+            </div>
+            <?php
+        else:
+            ?>
+            <div class="inline-box">
+                <button type="button" class="btn" data-toggle="modal" data-target="#modal-insert" title="<?php echo $this->translate('Select Resource') ?>">
+                    <img src="<?php echo $this->getPubUrl('backend/images/placeholder.png') ?>" alt="" />
+                </button>
+                <a href="javascript:void(0);" class="delete">
+                    <span class="fa fa-trash-o" aria-hidden="true"></span>
+                    <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                </a>
+                <input type="hidden" name="<?php echo $key ?>" value=""  class="imageid" />
+                <input type="hidden" name="<?php echo $key ?>src" value=""  class="imagesrc" />
+            </div>
+        <?php endif ?>
+        <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

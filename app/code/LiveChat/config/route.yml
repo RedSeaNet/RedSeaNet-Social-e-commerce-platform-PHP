@@ -1,0 +1,5 @@
+---
+livechat:
+    method: [GET,POST]
+    route: /livechat/[{controller}/[{action}[/]]]
+    namespace: Redseanet\LiveChat\Controller

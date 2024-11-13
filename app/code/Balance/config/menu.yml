@@ -1,0 +1,28 @@
+---
+balance:
+    icon: money
+    title: Balance Management
+    priority: 18
+    children:
+        -
+            link: balance/
+            operation: 'Admin\Balance::index'
+            title: Balance List
+            priority: 10
+        -
+            link: customer_draw/
+            operation: 'Admin\Customer\Draw::index'
+            title: Withdraw Balance Application
+            priority: 20
+        -
+            link: balance/statisticsWithCustomer/
+            operation: 'Admin\Balance::statisticsWithCustomer'
+            title: Balance Statistics With Customer
+            priority: 30
+system:
+    children:
+        -
+            link: 'config/balance/'
+            operation: 'Admin\Config::balance'
+            title: 'Account Balance'
+            priority: 90

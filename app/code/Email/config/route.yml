@@ -1,0 +1,5 @@
+---
+email:
+    method: [GET,POST]
+    route: /email/{controller}/[{action}[/]]
+    namespace: Redseanet\Email\Controller

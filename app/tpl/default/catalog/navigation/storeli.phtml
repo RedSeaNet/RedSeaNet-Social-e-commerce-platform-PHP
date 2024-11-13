@@ -1,0 +1,8 @@
+<?php
+$stores = $this->getRecomentStore();
+foreach ($stores as $store):
+    ?>
+    <li>
+        <a href="<?php echo $this->getBaseUrl("store/".$store["uri_key"].".html") ?>" role="menuitem"><?php echo $store['name'] ?></a>
+    </li>
+<?php endforeach; ?>

@@ -1,0 +1,83 @@
+---
+wsdl:
+    message:
+        oauthLogin:
+            sessionId: string
+            serverName: string
+            openId: string
+        oauthLoginResponse:
+            customerId: int
+        oauthBind:
+            sessionId: string
+            customerId: int
+            serverName: string
+            openId: string
+        oauthBindedServer:
+            sessionId: string
+            customerId: int
+        oauthBindedServerResponse:
+            servers: string[]
+    port:
+        -
+            name: oauthLogin
+            input: tns:oauthLogin
+            output: tns:oauthLoginResponse
+            documentation: Valid open id provided by oauth server
+        -
+            name: oauthBind
+            input: tns:oauthBind
+            documentation: Bind open id to customer
+        -
+            name: oauthBindedServer
+            input: tns:oauthBindedServer
+            output: tns:oauthBindedServerResponse
+            documentation: Get binded servers
+rpcport:
+    oauthLogin:
+        params: 
+            id: string
+            token: string
+            serverName: string
+            openId: string
+            data: array
+        respone: json array 
+        documentation: oauth login
+    oauthBind:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            serverName: string
+            openId: string
+        respone: json array 
+        documentation: oauth bind
+    oauthBindedServer:
+        params: 
+            id: string
+            token: string
+            customerId: int
+        documentation: get oauth binded server list
+    wechatCodeToOpenId:
+        params: 
+            id: string
+            token: string
+            code: string
+        documentation: wechat code to open id
+    wechatMiniprogramLogin:
+        params: 
+            id: string
+            token: string
+            code: string
+            username: string
+            password: string
+        documentation: wechat code to open id
+soap:
+    oauthLogin: \Redseanet\Oauth\Model\Api\Soap\Oauth
+    oauthBind: \Redseanet\Oauth\Model\Api\Soap\Oauth
+    oauthBindedServer: \Redseanet\Oauth\Model\Api\Soap\Oauth
+rpc:
+    oauthLogin: \Redseanet\Oauth\Model\Api\Rpc\Oauth
+    oauthBind: \Redseanet\Oauth\Model\Api\Rpc\Oauth
+    oauthBindedServer: \Redseanet\Oauth\Model\Api\Rpc\Oauth
+    wechatCodeToOpenId: \Redseanet\Oauth\Model\Api\Rpc\Wechat
+    wechatMiniprogramLogin: \Redseanet\Oauth\Model\Api\Rpc\Wechat

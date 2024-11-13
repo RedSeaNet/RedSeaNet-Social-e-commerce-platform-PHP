@@ -1,0 +1,52 @@
+<?php
+$cards = $this->getCards();
+if (count($cards) !== 0):
+    ?>
+    <select name="payment_data[cc]" class="form-control required" disabled="disabled">
+        <?php foreach ($cards as $card): ?>
+            <option value="<?php echo $card->getId() ?>"><?php echo preg_replace('/^(.{4}).+(.{4})$/', '$1 **** **** $2', $card->offsetGet('number')) ?></option>
+        <?php endforeach ?>
+        <option value="0"><?php echo $this->translate('Add New Card') ?></option>
+    </select>
+<?php endif ?>
+<div class="fieldset credit-card<?php if (count($cards) !== 0): ?> hidden<?php endif ?>">
+    <label for="cc-name" class="col-form-label"><?php echo $this->translate('Name on Card') ?></label>
+    <input type="text" id="cc-name" name="payment_data[name]" class="form-control required" autocomplete="off" spellcheck="false" disabled="disabled" />
+    <label for="cc-type" class="col-form-label"><?php echo $this->translate('Credit Card Type') ?></label>
+    <select id="cc-type" name="payment_data[type]" class="form-control required cc-type" autocomplete="off" disabled="disabled">
+        <option value=""><?php echo $this->translate('Please Select') ?></option>
+        <?php foreach ($this->getTypes() as $value => $label): ?>
+            <option value="<?php echo $value ?>"><?php echo $this->translate($label, [], 'payment') ?></option>
+        <?php endforeach ?>
+    </select>
+    <label for="cc-number" class="col-form-label"><?php echo $this->translate('Credit Card Number') ?></label>
+    <input type="text" id="cc-number" name="payment_data[number]" class="form-control required cc-number" autocomplete="off" disabled="disabled" />
+    <label class="col-form-label"><?php echo $this->translate('Expiration Date') ?></label>
+    <select name="payment_data[exp_month]" class="form-control required" disabled="disabled">
+        <option value=""><?php echo $this->translate('Month') ?></option>
+        <?php
+        for ($month = 1; $month <= 12; $month++):
+            ?>
+            <option value="<?php echo $month ?>"><?php printf('%2d - %s', $month, $this->getMonth($month)) ?></option>
+        <?php endfor ?>
+    </select>
+    <select name="payment_data[exp_year]" class="form-control required" disabled="disabled">
+        <option value=""><?php echo $this->translate('Year') ?></option>
+        <?php
+        for ($year = $this->getYear(), $i = 0; $i < 10; $i++):
+            ?>
+            <option value="<?php echo $year + $i ?>"><?php echo $year + $i ?></option>
+        <?php endfor ?>
+    </select>
+    <label for="cc-verification" class="col-form-label dropdown">
+        <?php echo $this->translate('Card Verification Number') ?>
+        <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="fa fa-info-circle" aria-hidden="true"></span>
+            <span class="sr-only"><?php echo $this->translate('What is it?') ?></span>
+        </a>
+        <div class="dropdown-menu">
+            <img src="<?php echo $this->getPubUrl('frontend/images/cvv.gif') ?>" alt="" />
+        </div>
+    </label>
+    <input type="tel" id="cc-verification" name="payment_data[verification]" class="form-control required cc-verification" autocomplete="off" disabled="disabled" />
+</div>

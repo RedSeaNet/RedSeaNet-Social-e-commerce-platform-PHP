@@ -1,0 +1,36 @@
+<?php
+$collection = $this->getCollection();
+$filters = $this->getFilters();
+?>
+<div class="filters">
+    <form action="<?php echo $this->getUri()->withQuery('')->withFragment('') ?>" method="get" class="form-inline">
+        <div class="fieldset d-flex flex-wrap">
+            <?php
+            foreach ($filters as $key => $filter) {
+                echo $this->getInputBox($key, $filter)->setVariable('boxClass', 'col-md-4 col-6');
+            }
+            ?>
+            <div class="buttons-set col-md-4 col-6">
+                <button type="submit" class="btn btn-theme"><?php echo $this->translate('Search') ?></button>
+                <a href="<?php echo $this->getUri()->withQuery('')->withFragment('') ?>" class="btn btn-theme"><?php echo $this->translate('Reset') ?></a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="orders-list">
+    <?php
+    if (count($collection) != 0):
+        foreach ($collection as $order) {
+            echo $this->renderItem($order);
+        }
+    else:
+        ?>
+        <div class="text-center"><?php echo $this->translate('There are no orders in your store with the condition.') ?></div>
+    <?php
+    endif;
+    ?>
+    <div class="hidden-empty text-center">
+        <?php echo count($collection) ? $this->getChild('pager')->setCollection($collection) : '' ?>
+    </div>
+</div>

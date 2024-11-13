@@ -1,0 +1,74 @@
+{
+    "require": {
+        "php": "^8.1.20",
+        "gregwar/captcha": "dev-master",
+        "imagine/imagine": "^1.3.5",
+        "maxmind-db/reader": "^1.11",
+        "monolog/monolog": "~3.6.0",
+        "nikic/fast-route": "^1.3.0",
+        "pimple/pimple": "~3.5.0",
+        "psr/container": "@stable",
+        "psr/http-message": "@stable",
+        "tedivm/jshrink": "@stable",
+        "symfony/event-dispatcher": "~6.3.0",
+        "symfony/finder": "~6.3.0",
+        "symfony/yaml": "~6.3.0",
+        "laminas/laminas-crypt": "~3.10.0",
+        "laminas/laminas-db": "~2.18.0",
+        "laminas/laminas-feed": "~2.20.0",
+        "laminas/laminas-math": "~3.6.0",
+        "laminas/laminas-permissions-rbac": "^3.5.0",
+        "laminas/laminas-stdlib": "^3.17.0",
+        "webonyx/graphql-php": "^15.5.0",
+        "aws/aws-sdk-php": "@stable",
+        "qiniu/php-sdk": "^7.12.0",
+        "workerman/gateway-worker": "^v3.0.28",
+        "workerman/workerman": "^4.1.10",
+        "workerman/globaldata": "^1.0.3",
+        "aliyuncs/oss-sdk-php": "^2.6.0",
+        "abraham/twitteroauth": "^5.0",
+        "authorizenet/authorizenet": "^2.0",
+        "php-ffmpeg/php-ffmpeg": "^1.1.0",
+        "elasticsearch/elasticsearch": "^7.17",
+        "predis/predis": "^2.2.2",
+        "endroid/qr-code": "^4.8.2",
+        "doctrine/cache": "^1.13.0",
+        "php-amqplib/php-amqplib": "^3.5.3",
+        "symfony/event-dispatcher-contracts": "^3.3",
+        "pelago/emogrifier": "^7.2",
+        "tecnickcom/tcpdf": "^6.7",
+        "phpoffice/phpspreadsheet": "^2.0",
+        "ezyang/htmlpurifier": "^4.16",
+        "wechatpay/wechatpay": "^1.4"
+    },
+    "repositories": {
+        "aliyun": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        },
+        "packagist": {
+            "type": "composer",
+            "url": "https://repo.packagist.org"
+        }
+    },
+    "require-dev": {
+        "firephp/firephp-core": "~0.5.2",
+        "phpunit/phpunit": "~9.5.20",
+        "phpstan/phpstan": "^1.4",
+        "friendsofphp/php-cs-fixer": "^3.58"
+    },
+    "suggest": {
+        "ext-bcmath": "Used for calculation of converting currency",
+        "ext-intl": "Used for comparing unicode strings"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Redseanet\\": "app/code",
+            "Redseanet\\Cli\\": "cli",
+            "Redseanet\\Lib\\": "app/lib",
+            "PHPMailer\\PHPMailer\\": "app/phpmailer"
+        }
+    },
+    "type": "project"
+}

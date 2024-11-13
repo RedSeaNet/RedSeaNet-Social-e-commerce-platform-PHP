@@ -1,0 +1,65 @@
+<?php
+$config = $this->getConfig();
+$my_likes = $this->getMyLiked();
+$current = $this->getSegment('customer')->get('hasLoggedIn') ? $this->getSegment('customer')->get('customer')['id'] : 0;
+?>
+<div class="draft-cont linked-cont">
+    <ul class="col-12 row">
+        <?php
+        if (count($my_likes)):
+            foreach ($my_likes as $like):
+                ?>
+                <li class="col-md-6 col-sm-6 col-12">
+                    <div class="draft-list product-user linked-listBox">
+                        <div class="text-end">
+                            <span class="publish-time"><?php echo $this->getTime($like['created_at']); ?></span>
+                            <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/social/likedRemove/') ?>" class="close-btn" data-method="delete" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $like->getId() ?>">
+                                <i class="fa fa-close" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                        <div class="col-12 linked-user">
+                            <div class="inline-bolck linked-userImg">
+                                <a href="<?php echo $this->getBaseUrl('forum/space/?customer_id=' . $like['author_id']); ?>">
+                                    <img src="<?php echo $like['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $like['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="">
+                                </a>
+                            </div>
+                            <?php
+                            if (isset($like['review_id'])):
+                                ?>
+                                <div class="product-text2 linked-userName col-10 ">
+                                    <p class="col-12 inline-bolck">
+                                        <?php echo $this->translate('I Liked %s Reply', [$like['author']]); ?>
+                                    </p>
+                                </div>
+                                <p class="col-12 padding-0 linked-link">
+                                    <a href="" class="a"><?php echo mb_substr($like['review_content'], 0, 30, 'utf-8') ?></a>
+                                </p>
+                                <p><label><?php echo $this->translate('From Post'); ?>：</label><?php echo mb_substr($like['title'], 0, 24, 'utf-8') ?></p>
+                                <?php
+                            else:
+                                ?>
+                                <div class="product-text2 linked-userName col-10 ">
+                                    <p class="col-12 inline-bolck">
+                                        <?php echo $this->translate('I Liked %s Post', [$like['author']]); ?>
+                                    </p>
+                                </div>
+                                <p class="col-12 padding-0 linked-link">
+                                    <a href=""><?php echo mb_substr($like['title'], 0, 30, 'utf-8') ?></a>
+                                </p>
+                            <?php
+                            endif;
+                            ?>
+                        </div>
+                        <a href="<?php echo $this->getBaseUrl('forum/space/?customer_id=' . $like['author_id']); ?>" class="btn btn-secondary color-c6 publish-btn float-end"><?php echo $this->translate('View'); ?></a>
+                    </div>
+                </li>
+                <?php
+            endforeach;
+        else:
+            ?>
+            <p class="empty text-center"><?php echo $this->translate('No post available right now.') ?></p>
+        <?php
+        endif;
+        ?>
+    </ul>
+</div>

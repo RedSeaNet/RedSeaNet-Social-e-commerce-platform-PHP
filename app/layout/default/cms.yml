@@ -1,0 +1,264 @@
+---
+cms_page:
+    update: frontend
+    root:
+        children:
+            content:
+                children:
+                    page:
+                        type: Redseanet\Cms\ViewModel\Page
+cms_page_with_nav:
+    update: frontend
+    root:
+        children:
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: cms/main
+                        children:
+                            navigation:
+                                type: Redseanet\Cms\ViewModel\Navigation
+                                template: cms/navigation
+                            page:
+                                type: Redseanet\Cms\ViewModel\Page
+cms_page_category:
+    update: frontend
+    root:
+        children:
+            content:
+                type: Redseanet\Lib\ViewModel\Template
+                template: cms/twolevelcategory
+page-home:
+    update: frontend
+    root:
+        children:
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: page/home
+                        children:
+                            page:
+                                type: Redseanet\Cms\ViewModel\Page
+admin_cms_page_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Page Management / CMS
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/cms_page/',label: 'Page Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/cms_page/edit/',label: 'Add New Page'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Cms\Grid\Page
+admin_cms_page_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/modal.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/collapse.js
+                    -
+                        method: addLink
+                        params: backend/css/resource.css
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/mouse.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/draggable.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/droppable.js
+                    -
+                        method: addScript
+                        params: backend/vendor/jquery.fileupload/jquery.fileupload.js
+                    -
+                        method: addScript
+                        params: backend/js/resource.js
+                    -
+                        method: addLink
+                        params: backend/css/jquery-ui.min.css
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/cms_page/',label: 'Page Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Cms\Edit\Page
+                        children:
+                            upload:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: admin/resource/widget
+            extra:
+                children:
+                    insert:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/insert
+                        children:
+                            list:
+                                type: Redseanet\Admin\ViewModel\Resource\Explorer
+                                template: admin/resource/explorer
+                    upload:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/upload
+admin_cms_block_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Block Management / CMS
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/cms_block/',label: 'Block Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/cms_block/edit/',label: 'Add New Block'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Cms\Grid\Block
+            extra:
+                children:
+                    insert:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/insert
+                        children:
+                            list:
+                                type: Redseanet\Admin\ViewModel\Resource\Explorer
+                                template: admin/resource/explorer
+                    upload:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/upload
+admin_cms_block_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/modal.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/collapse.js
+                    -
+                        method: addLink
+                        params: backend/css/resource.css
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/mouse.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/draggable.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/droppable.js
+                    -
+                        method: addScript
+                        params: backend/vendor/jquery.fileupload/jquery.fileupload.js
+                    -
+                        method: addScript
+                        params: backend/js/resource.js
+                    -
+                        method: addLink
+                        params: backend/css/jquery-ui.min.css
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/cms_block/',label: 'Block Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Cms\Edit\Block
+            extra:
+                children:
+                    insert:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/insert
+                        children:
+                            list:
+                                type: Redseanet\Admin\ViewModel\Resource\Explorer
+                                template: admin/resource/explorer
+                    upload:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/upload
+admin_cms_category_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Category Management / CMS
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/cms_category/',label: 'Category Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/cms_category/edit/',label: 'Add New Category'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Cms\Grid\Category
+admin_cms_category_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/cms_category/',label: 'Category Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Cms\Edit\Category

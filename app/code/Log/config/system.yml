@@ -1,0 +1,54 @@
+---
+log:
+    label: Log Configuration
+    children:
+        enabled:
+            label: Enable Visiting Log
+            scope: merchant
+            type: select
+            required: required
+            default: 1
+            priority: 0
+            source: \Redseanet\Lib\Source\Yesno
+        url:
+            label: Url
+            scope: merchant
+            type: url
+            priority: 5
+            comment: The url of other statistics code you want to use instead of the built-in code. This would disable recently viewed products.
+        target:
+            label: Logged-in Customers Only
+            scope: merchant
+            type: select
+            required: required
+            default: 0
+            priority: 10
+            source: \Redseanet\Lib\Source\Yesno
+            comment: If set to "Yes" this option disables recently viewed products for not logged in customers.
+        dnt_check:
+            label: Enable DNT(Do Not Track) Checking
+            scope: merchant
+            type: select
+            required: required
+            default: 0
+            priority: 20
+            source: \Redseanet\Lib\Source\Yesno
+        auto_cleaning:
+            label: Enable Log Cleaning
+            scope: merchant
+            type: select
+            required: required
+            default: 1
+            priority: 30
+            source: \Redseanet\Lib\Source\Yesno
+        expiration:
+            label: Expiration in days
+            scope: merchant
+            type: number
+            required: required
+            default: 30
+            priority: 40
+            attrs:
+                data-base: '#auto_cleaning'
+            comment: This option will affect the statistics of data.
+                    

@@ -1,0 +1,5 @@
+---
+bargain:
+    method: [GET,POST]
+    route: /bargain/{controller}/[{action}[/]]
+    namespace: Redseanet\Bargain\Controller

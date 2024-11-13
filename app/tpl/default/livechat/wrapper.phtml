@@ -1,0 +1,74 @@
+<?php
+$sessions = $this->getSessions();
+$groups = $this->getGroups();
+$current = $this->getVariable('current', false);
+$goupsIds = [];
+?>
+<div id="livechat" class="container clearfix">
+    <form action="<?php echo $this->getWsUrl();?>" id="chat-form">
+        <img src="<?php echo empty($avatar = $this->getSegment('customer')->get('customer')['avatar']) ? $this->getPubUrl('frontend/images/avatar-holderplace.jpg') : $this->getUploadedUrl('customer/avatar/' . $avatar) ?>" id="avatar-0" class="img-fluid rounded-circle" alt="" width="30" />
+        <div class="livechat-topbar">
+            <div style="display:flex; justify-content:space-between;align-items: center;z-index: 10;">
+                <div class="page-back-btn" style="padding-left:2px;">
+                    <a href="<?php echo $this->getBaseUrl(); ?>"><span class="fa fa-arrow-left"></span></a>
+                </div>
+                <div  class="d-block d-sm-none">
+                    <button type="button" class="navbar-toggler navbar-toggle d-block d-sm-none" data-bs-toggle="collapse" data-target="#livechat-nav"><span class="fa fa-list-ul"></span></button>
+                </div>
+            </div>  
+        </div>
+
+        <div class="livechat-left col-12 col-md-3">
+            <div class="navbar navbar-expand-md">
+                <div class="navbar-collapse collapse" id="livechat-nav">
+                    <ul class="nav nav-pills flex-column" role="tablist">
+                        <?php
+                        foreach ($sessions as $session):
+                            if (!$current) {
+                                $current = $session['id'];
+                            }
+                            ?>
+                            <li role="presentation"<?php if ($current == $session['id']): ?> class="active"<?php endif ?>>
+                                <a href="#chat-<?php echo $session['id'] ?>" role="tab" data-bs-toggle="tab" data-badge="0">
+                                    <?php echo $session['name'] ?>
+                                </a>
+                                <a href="<?php echo $this->getBaseUrl('livechat/index/close/') ?>" data-method="post" data-params="id=<?php echo $session['id'] ?>" class="close" title="<?php echo $this->translate('Close') ?>"><span class="fa fa-times"></span></a>
+                            </li>
+                        <?php endforeach ?>
+                        <?php
+                        foreach ($groups as $group) {
+                            $goupsIds[] = $group['id'];
+                            ?>
+                            <li role="presentation"<?php if ($current == $group['id']): ?> class="active"<?php endif ?>>
+                                <a href="#<?php echo $group['id'] ?>" role="tab" data-bs-toggle="tab" data-badge="0">
+                                    <?php echo $group['name'] ?>
+                                </a>
+                                <a href="<?php echo $this->getBaseUrl('livechat/index/close/') ?>" data-method="post" data-params="id=<?php echo $group['id'] ?>" class="close" title="<?php echo $this->translate('Close') ?>"><span class="fa fa-times"></span></a>
+                            </li>
+                        <?php } ?>    
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <?php if ($this->getSegment('customer')->get('hasLoggedIn')): ?>
+            <input type="hidden" name="sender" value="<?php echo $this->getSegment('customer')->get('customer')['id'] ?>" />
+            <input type="hidden" name="group_list" value="<?php echo implode(',', $goupsIds) ?>" />
+        <?php endif ?>
+        <div class="tab-content col-12 col-sm-9">      
+            <?php foreach ($sessions as $session): ?>
+                <div role="tabpanel" class="tab-pane card<?php if ($current == $session['id']): ?> show active in<?php endif ?>" id="chat-<?php echo $session['id'] ?>">
+                    <?php echo $this->getChild('chat')->setVariable('session', $session) ?>
+
+                </div>
+            <?php endforeach ?>
+
+
+            <?php foreach ($groups as $goup): ?>
+                <div role="tabpanel" class="tab-pane card<?php if ($current == $goup['id']): ?> show active in<?php endif ?>" id="chat-<?php echo $goup['id'] ?>">
+                    <?php echo $this->getChild('chat')->setVariable('session', $goup) ?>
+                </div>
+            <?php endforeach ?>
+        </div>
+    </form>
+</div>

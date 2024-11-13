@@ -1,0 +1,128 @@
+<div class="col-9 col-sm-9 col-md-12 wishlist mg-bottom-40 activity_body">
+    <h3><?php echo $this->translate('Activity Registration'); ?></h3>
+<div class="activity">
+	<ul id="activity" class="nav nav-tabs">
+		<li class="active">
+			<a href="#listing" data-bs-toggle="tab">活动列表</a>
+		</li>
+		<li>
+			<a href="#enroll" data-bs-toggle="tab">我的报名</a>
+		</li>
+		<li>
+			<a href="#news" data-bs-toggle="tab">消息管理</a>
+		</li>
+	</ul>
+	<div id="myTabContent" class="tab-content">
+		<div class="tab-pane fade in active" id="listing">
+			<div>
+      			<form method="get">
+	           		<div class="activity_search">
+	           			<div>
+		           			<lable>活动名称:</lable>
+		               		<input type="text" value="" name="order_sn">
+	           			</div>
+	           			<div>
+		           			<lable>收费类型:</lable>
+		               		<input type="text" value="" name="order_sn">
+	           			</div>
+	           			<div>
+	           				<input type="submit" value="搜索" class="btn">
+	           			</div>
+	            	</div>
+       			 </form>
+  		  	</div>
+  		  	<div class="activity_list">
+  		  	  <div class="enroll">
+  		  	     <button data-bs-toggle="modal" data-target="#modal-activity" class="whole">全部活动</button>
+       			 <button data-bs-toggle="modal" data-target="#modal-activity" class="filter">可参加的活动</button>
+    		   </div>
+  		  	</div>
+  		  	<div class="activity_table">
+  		  		<table class="table address-list text-center">
+  		  			<thead>
+					    <tr class="table_head ">
+					      <th  class="text-start margin ">活动名称</th>
+					      <th  class="text-start">报名截止</th>
+					      <th  class="text-center">已成功报名</th>
+					      <th  class="text-center">状态</th>
+					      <th  class="text-center">操作</th>
+					      <th></th>
+					    </tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="text-start margin">特色中国--探秘西藏</td>
+							<td class="text-start">当天结束</td>
+							<td>293个</td>
+							<td>未报名</td>
+							<td ><a class="link" href="<?php echo $this->getBaseUrl('retailer/marketing/viewactivity')?>">查看详情</a></td>
+						</tr>
+						<tr>
+							<td class="text-start margin">特色中国--探秘西藏</td>
+							<td class="text-start">当天结束</td>
+							<td>293个</td>
+							<td>未报名</td>
+							<td ><a class="link" href="<?php echo $this->getBaseUrl('retailer/marketing/viewactivity')?>">查看详情</a></td>
+						</tr>
+						
+					</tbody>
+  		  		</table>
+  		  	</div>
+		</div>
+		<div class="tab-pane fade" id="enroll">
+		b
+		</div>
+		<div class="tab-pane fade" id="news">
+		c
+		</div>
+	</div>
+</div>
+    
+    
+    
+    
+   
+    
+    
+    
+    <div id="modal-activity" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="activityModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="activityModalLabel">我能参加的活动</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="height: 500px;overflow-y: scroll;">
+                        <table style="width: 100%;">
+                            <tr>
+                                <td><img width="230" height="80" src="<?php echo $this->getBaseUrl('/pub/theme/default/frontend/images/placeholder.png')?>" /></td>
+                                <td>
+                                    <p>【中国质造】商家入驻通道-女装</p>
+                                    <p>面向产业带传统制造企业进行招商。如果你有丰富的生产经验，优秀的设计研发团队和优良的品控管理体系，如果你愿意转型在线发展自主品牌。淘宝网面向产业带企业盛大招商，扶持传统制造企业转型升级。如果你是，非你莫属！</p>
+                                    <p>活动关键字：免费、中国质造准入</p>
+                                    <p>已报名：0&nbsp;&nbsp;活动时间：2015.08.17-长期有效</p>
+                                </td>
+                                <td><button data-bs-dismiss="modal" onclick="window.open('<?php echo $this->getBaseUrl('retailer/marketing/viewactivity')?>')">我要报名</button></td>
+                            </tr>
+                            <tr>
+                                <td><img width="230" height="80" src="<?php echo $this->getBaseUrl('/pub/theme/default/frontend/images/placeholder.png')?>" /></td>
+                                <td>
+                                    <p>玩具8.23-8.28商家清单</p>
+                                    <p>玩具8.23-8.28商家清单</p>
+                                    <p>活动关键字：免费、母婴</p>
+                                    <p>已报名：2815&nbsp;&nbsp;活动时间：2015.08.17-长期有效</p>
+                                </td>
+                                <td><button data-bs-dismiss="modal" onclick="window.open('<?php echo $this->getBaseUrl('retailer/marketing/viewactivity')?>')">我要报名</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>

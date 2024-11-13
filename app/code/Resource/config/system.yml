@@ -1,0 +1,234 @@
+---
+catalog:
+    children:
+        product:
+            children:
+                watermark:
+                    type: image
+                    label: Watermark
+                    priority: 20
+                watermark_position:
+                    type: select
+                    label: Position of Watermark
+                    default: 3
+                    priority: 21
+                    options:
+                        - Top/Left
+                        - Top/Right
+                        - Bottom/Left
+                        - Bottom/Right
+                        - Center
+                watermark_alpha:
+                    type: number
+                    label: Opacity of Watermark
+                    default: 100
+                    priority: 22
+                    attrs:
+                        min: 0
+                        max: 100
+                watermark_size:
+                    type: text
+                    label: Size of Watermark
+                    default: ''
+                    priority: 23
+                    comment: 'Example format: 200x200'
+resource:
+    label: Resouce Configuration
+    children:
+        server:
+            label: Service
+            scope: merchant
+            priority: 0
+            children:
+                service:
+                    label: Service
+                    required: required
+                    type: select
+                    priority: 1
+                    scope: merchant
+                    options:
+                        local: local
+                        aliyunoss: aliyunoss
+                        awss3: awss3
+                    default: local
+                aliyunossaccesskey:
+                    type: text
+                    label: AliYun OSS Access Key 
+                    priority: 2
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'aliyunoss'"
+                aliyunossaccessecret:
+                    type: text
+                    label: AliYun OSS Access Secret 
+                    priority: 3
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'aliyunoss'"
+                aliyunossbucket:
+                    type: text
+                    label: AliYun OSS Bucket
+                    priority: 4
+                    required: required
+                    scope: merchant   
+                    attrs:
+                        data-base: "'#server-service':'aliyunoss'"
+                aliyunossendpoint:
+                    type: text
+                    label: AliYun OSS Endpoint
+                    priority: 5
+                    required: required
+                    scope: merchant   
+                    attrs:
+                        data-base: "'#server-service':'aliyunoss'"
+                aliyunossendurl:
+                    type: text
+                    label: AliYun OSS Url
+                    priority: 6
+                    required: required
+                    scope: merchant   
+                    attrs:
+                        data-base: "'#server-service':'aliyunoss'"
+                awss3accesskey:
+                    type: text
+                    label: Aws S3 Access Key 
+                    priority: 2
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+                awss3accessecret:
+                    type: text
+                    label: Aws S3 Access Secret 
+                    priority: 3
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+                awss3bucket:
+                    type: text
+                    label: Aws S3 Bucket
+                    priority: 4
+                    required: required
+                    scope: merchant   
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+                awss3region:
+                    type: text
+                    label: Aws S3 Region
+                    priority: 5
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+                awss3version:
+                    type: text
+                    label: Aws S3 Version
+                    priority: 6
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+                awss3policy:
+                    type: text
+                    label: Aws S3 Policy
+                    priority: 7
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+                awss3acl:
+                    type: text
+                    label: Aws S3 ACL
+                    priority: 8
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+                awss3endpoint:
+                    type: text
+                    label: Aws S3 Endpoint
+                    priority: 9
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+                awss3videoconvertendpoint:
+                    type: text
+                    label: Aws Video Convert Endpoint
+                    priority: 10
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+                awss3videoconvertqueue:
+                    type: text
+                    label: Aws Video Convert Queue
+                    priority: 11
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+                awss3videoconvertrole:
+                    type: text
+                    label: Aws Video Convert Role
+                    priority: 12
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+                awss3urlsignfilepath:
+                    type: text
+                    label: Sign Url File Path
+                    priority: 13
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+                awss3urlsignpairkeyid:
+                    type: text
+                    label: Sign Url Pair Key Id
+                    priority: 14
+                    required: required
+                    scope: merchant
+                    attrs:
+                        data-base: "'#server-service':'awss3'"
+        resized:
+            label: Thumbnail
+            scope: merchant
+            priority: 1
+            children:
+               100x:
+                    type: number
+                    label: Thumbnail 100
+                    priority: 1
+                    required: required
+                    scope: merchant
+                    default: '100'
+                    comment: <a href="{{admin_url}}resource_resource/regenerateresize/" data-method="post" data-params="key=100x&value=100">Generate</a>
+               200x:
+                    type: number
+                    label: Thumbnail 200
+                    priority: 2
+                    required: required
+                    scope: merchant
+                    default: '200'
+                    comment: <a href="{{admin_url}}resource_resource/regenerateresize/" data-method="post" data-params="key=200x&value=200">Generate</a>
+               300x:
+                    type: number
+                    label: Thumbnail 300
+                    priority: 3
+                    required: required
+                    scope: merchant
+                    default: '300'
+                    comment: <a href="{{admin_url}}resource_resource/regenerateresize/" data-method="post" data-params="key=300x&value=300">Generate</a>
+               450x:
+                    type: number
+                    label: Thumbnail 450
+                    priority: 4
+                    required: required
+                    scope: merchant
+                    default: '450'
+                    comment: <a href="{{admin_url}}resource_resource/regenerateresize/" data-method="post" data-params="key=450x&value=450">Generate</a>

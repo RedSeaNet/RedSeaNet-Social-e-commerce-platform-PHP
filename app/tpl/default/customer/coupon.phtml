@@ -1,0 +1,49 @@
+<?php
+$coupons = $this->getCoupons();
+$flag = true;
+?>
+<div class="coupon d-flex">
+    <?php
+    foreach ($coupons as $coupon):
+        if (!$coupon['price'] && !$coupon['free_shipping']) {
+            continue;
+        }
+        ?>
+        <div class="content col-6">
+            <div class="inner clearfix">
+                <?php if ($coupon['price']): ?>
+                    <div class="col-12 price">
+                        <?php echo $coupon['is_fixed'] ? $this->getCurrency()->convert($coupon['price'], true) : ($coupon['price'] . '%') ?>
+                    </div>
+                <?php else: ?>
+                    <div class="col-12 free-shipping">
+                        <span><?php echo $this->translate('Free Shipping') ?></span>
+                    </div>
+                <?php endif ?>
+                <div class="col-12 store">
+                    <?php if ($stores = $coupon->getStores()): ?>
+                        <span class="badge text-bg-danger"><?php echo $this->translate('AvailableIn') ?>:</span>
+                        <?php foreach ($stores as $store): ?>
+                            <span>
+                                <?php echo $store->offsetGet('name') ?>
+                            </span>
+                        <?php endforeach ?>
+                    <?php else: ?>
+                        <span><?php echo $this->translate('Total station effective'); ?></span>
+                    <?php endif; ?>
+                </div>
+                <div class="col-12 condition">
+                    <span class="badge text-bg-danger"><?php echo $this->translate('Condition', [], 'customer') ?>:</span>
+                    <span><?php echo $coupon['description'] ?></span>
+                </div>
+                <div class="col-12 date"><?php if ($coupon['to_date']): ?>
+                        <span class="badge text-bg-danger"><?php echo $this->translate('Available Date') ?>:</span>
+                        <span><?php echo date('Y.m.d', strtotime($coupon['to_date'])) ?></span>
+                    <?php endif ?>
+                </div>
+            </div>
+        </div>
+        <?php
+    endforeach;
+    ?>
+</div>

@@ -1,0 +1,48 @@
+<div class="modal fade" id="postListModal" role="dialog" aria-labelledby="postListModalLabel" aria-hidden="true" data-url="<?php echo $this->getAdminUrl('forum_post/getPostJson/') ?>">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="grid posts-list">
+                    <div class="filters" id="postfilters">
+                        <div class="input-box">
+                            <label class="control-label" for="filterspostid">ID</label>
+                            <div class="cell">
+                                <input type="tel" name="postid" id="filterspostid" class="form-control" value="<?php echo $query['postid'] ?? '' ?>" />
+                            </div>
+                        </div>
+                        <div class="input-box">
+                            <label class="control-label" for="filtersposttitle"><?php echo $this->translate('Title') ?></label>
+                            <div class="cell">
+                                <input type="text" name="posttitle" id="filtersposttitle" class="form-control" value="<?php echo $query['Title'] ?? '' ?>" />
+                            </div>
+                        </div>
+                        <div class="input-box">
+                            <label class="control-label" for="filterspostcustomer"><?php echo $this->translate('Customer') ?></label>
+                            <div class="cell">
+                                <input type="text" name="postcustomer" id="filterspostcustomer" class="form-control" value="<?php echo $query['customer'] ?? '' ?>" />
+                            </div>
+                        </div>
+                        <div class="input-box">
+                            <label class="control-label" for="filterspostlimit"><?php echo $this->translate('Item(s) per page') ?></label>
+                            <div class="cell">
+                                <input type="tel" name="postlimit" id="filterspostlimit" class="form-control" value="<?php echo $query['limit'] ?? 20 ?>" />
+                            </div>
+                        </div>
+                        <div class="buttons-set">
+                            <a type="button" id="filterssearchbutton" class="btn" data-url="<?php echo $this->getAdminUrl('forum_post/getPostList/') ?>"><?php echo $this->translate('Search') ?></a>
+
+                        </div>
+                    </div>
+                    <div id="productpostlist" data-url="<?php echo $this->getAdminUrl('forum_post/getPostList/') ?>">
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-confirm" data-dismiss="modal"><?php echo $this->translate('Confirm') ?></button>
+            </div>
+        </div>
+    </div>
+</div>

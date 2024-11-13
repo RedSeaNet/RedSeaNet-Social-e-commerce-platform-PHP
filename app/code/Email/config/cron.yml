@@ -1,0 +1,4 @@
+---
+-
+    time: '*/5 * * * *'
+    code: 'Redseanet\Email\Listeners\Cron::schedule'

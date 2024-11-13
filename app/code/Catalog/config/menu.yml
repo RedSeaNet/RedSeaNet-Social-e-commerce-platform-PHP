@@ -1,0 +1,63 @@
+---
+catalog:
+    icon: tags
+    title: Catalog Management
+    priority: 14
+    children:
+        -
+            link: catalog_product/
+            operation: 'Admin\Catalog\Product::index'
+            title: Product Management
+            priority: 0
+        -
+            link: catalog_category/
+            operation: 'Admin\Catalog\Category::index'
+            title: Category Management
+            priority: 10
+        -
+            link: catalog_attribute/
+            operation: 'Admin\Catalog\Attribute::index'
+            title: Attribute Management
+            priority: 20
+        -
+            link: catalog_attribute_set/
+            operation: 'Admin\Catalog\Attribute\Set::index'
+            title: Attribute Set Management
+            priority: 30
+        -
+            link: catalog_product_review/
+            operation: 'Admin\Catalog\Product\Review::index'
+            title: Review Management
+            priority: 40
+        -
+            link: catalog_product_rating/
+            operation: 'Admin\Catalog\Product\Rating::index'
+            title: Rating Management
+            priority: 50
+        -
+            link: catalog_warehouse/
+            operation: 'Admin\Catalog\Warehouse::index'
+            title: Warehouse Management
+            priority: 60
+        -
+            link: catalog_inventory/
+            operation: 'Admin\Catalog\Inventory::index'
+            title: Inventory Management
+            priority: 70
+        -
+            link: catalog_forum/
+            operation: 'Admin\Catalog\Forum::index'
+            title: Product Relate Post Management
+            priority: 80
+        -
+            link: catalog_product/productlink/
+            operation: 'Admin\Catalog\Product::productlink'
+            title: Product Linked Management
+            priority: 90
+system:
+    children:
+        -
+            link: config/catalog/
+            operation: 'Admin\Config::catalog'
+            title: Catalog Configuration
+            priority: 45

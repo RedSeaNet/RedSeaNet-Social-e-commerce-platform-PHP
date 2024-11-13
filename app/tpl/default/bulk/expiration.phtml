@@ -1,0 +1,34 @@
+<?php
+$date = $this->getDate();
+$bulk = $this->getBulk();
+if ($date):
+    ?>
+    <div class="expiration">
+        
+        <h4 class="legend">
+            <?php
+            echo !$this->getQuery('bulk', false) || $bulk && $bulk['status'] ?
+                    $this->translate('The bulk will be closed at %s', [$date]) :
+                    $this->translate('The bulk has been closed.')
+            ?>
+        </h4>
+    </div>
+    <?php if ($this->getSegment('bulk')->get('cart_id', false)): ?>
+        <script>
+            $(window).on('unload.bulk', function () {
+                if (window.event.screenX - window.screenLeft > document.documentElement.scrollWidth - 20 && window.event.clientY < 0 || window.event.altKey) {
+                    if (navigator.sendBeacon) {
+                        navigator.sendBeacon('<?php echo $this->getBaseUrl('bulk/process/cancel/') ?>');
+                    } else {
+                        $.get('<?php echo $this->getBaseUrl('bulk/process/cancel/') ?>');
+                    }
+                }
+            });
+            $('form').on('submit', function () {
+                $(window).off('unload.bulk');
+            });
+        </script>
+        <?php
+    endif;
+endif;
+?>

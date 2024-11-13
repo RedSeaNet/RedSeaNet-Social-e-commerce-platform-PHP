@@ -1,0 +1,4 @@
+---
+resource:
+    route: Redseanet\Resource\Route\Router
+    priority: 101

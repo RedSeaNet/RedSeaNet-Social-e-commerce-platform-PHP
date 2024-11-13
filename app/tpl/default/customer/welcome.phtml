@@ -1,0 +1,15 @@
+<?php
+$segment = $this->getSegment('customer');
+if ($segment->get('hasLoggedIn')): ?>
+    <li>
+        <a href="<?php echo $this->getBaseUrl('customer/account/') ?>" title="<?php echo $this->translate('My Account') ?>"><?php echo $segment->get('customer')['username'] ?></a>
+    </li>
+<?php endif ?>
+<li>
+    <?php if ($segment->get('hasLoggedIn')): ?>
+        <a href="<?php echo $this->getBaseUrl('customer/account/logout/') ?>" title="<?php echo $this->translate('Log out') ?>"><?php echo $this->translate('Log out') ?></a>
+    <?php else: ?>
+        <a href="<?php echo $this->getBaseUrl('customer/account/login/') ?>" title="<?php echo $this->translate('Log in') ?>"><?php echo $this->translate('Log in') ?></a>
+        <a href="<?php echo $this->getBaseUrl('customer/account/create/') ?>" title="<?php echo $this->translate('Sign up') ?>"><?php echo $this->translate('Sign up') ?></a>
+    <?php endif ?>
+</li>

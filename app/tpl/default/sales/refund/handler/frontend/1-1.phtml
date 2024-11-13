@@ -1,0 +1,21 @@
+<?php
+/**
+ * Customer Returning
+ */
+?>
+<form action="<?php echo $this->getBaseUrl('sales/refund/deliver/') ?>" method="post" class="form-inline">
+    <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+    <input type="hidden" name="rma_id" value="<?php echo $this->getQuery('id') ?>" />
+    <h3 class="label"><?php echo $this->translate('The application has been approved.'), $this->translate('Please submit the carrier and tracking number.') ?></h3>
+    <div class="input-box">
+        <label class="col-form-label" for="carrier"><?php echo $this->translate('Carrier') ?></label>
+        <input type="text" name="carrier" class="form-control" id="carrier" />
+    </div>
+    <div class="input-box">
+        <label class="col-form-label" for="tracking_number"><?php echo $this->translate('Tracking Number') ?></label>
+        <input type="text" name="tracking_number" class="form-control" id="tracking_number" />
+    </div>
+    <div class="buttons-set">
+        <button type="submit" class="btn btn-submit" name="success_url" value="<?php echo $this->getUri() ?>"><?php echo $this->translate('Submit') ?></button>
+    </div>
+</form>

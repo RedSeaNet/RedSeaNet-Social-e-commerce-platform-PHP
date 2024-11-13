@@ -1,0 +1,77 @@
+<?php
+$reviews = $this->getReviews();
+$count = count($reviews);
+?>
+<ul class="nav nav-tabs">
+    <li role="presentation"<?php if ($this->getQuery('status') == 0): ?> class="active"<?php endif ?>><a href="<?php echo $this->getFilterUrl(['status' => null]) ?>"><?php echo $this->translate('All') ?></a></li>
+    <li role="presentation"<?php if ($this->getQuery('status') == 1): ?> class="active"<?php endif ?>><a href="<?php echo $this->getFilterUrl(['status' => 1]) ?>"><?php echo $this->translate('Pending') ?></a></li>
+</ul>
+<div class="tab-content">
+    <table class="table review-list">
+        <tbody>
+            <?php
+            if ($count):
+                foreach ($reviews as $review):
+                    $product = $review->getProduct();
+                    if ($product):
+                        ?>
+                        <tr>
+                            <td><span class="fa fa-pencil-square-o" aria-hidden="true"></span></td>
+                            <td>
+                                <h6 class="product-name">
+                                    <a href="<?php echo $product->getUrl() ?>" title="<?php echo $product->offsetGet('name') ?>"><?php echo $product->offsetGet('name') ?></a>
+                                </h6>
+                                <table class="table table-no-border">
+                                    <?php foreach ($review->getRatings() as $rating): ?>
+                                        <tr>
+                                            <th class="text-nowrap"><?php echo $this->translate($rating['title']) ?></th>
+                                            <td class="text-nowrap">
+                                                <div class="rating">
+                                                    <span class="fa fa-star" style="width:<?php echo $rating->offsetGet('value') * 20 ?>%"></span>
+                                                    <span class="fa fa-star-o"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach ?>
+                                </table>
+                            </td>
+                            <td>
+                                <p class="comment"><?php
+                                    $content = $review->offsetGet('content');
+                                    echo $this->translate('Content'), ': ', $content;
+                                    ?></p>
+                                <?php if ($review->offsetGet('images')): ?>
+                                    <ul class="images list-inline d-flex">
+                                        <?php foreach (json_decode($review->offsetGet('images')) as $image): ?>
+                                            <li><img src="<?php echo $this->getBaseUrl('pub/upload/review/'), $image ?>" class="zoombox" alt="" /></li>
+                                        <?php endforeach ?>
+                                    </ul>
+                                <?php endif ?>
+                                <?php if ($review->offsetGet('reply')): ?>
+                                    <p class="reply"><?php echo $this->translate('Reply'), ': ', $review->offsetGet('reply') ?></p>
+                                <?php endif ?>
+                                <p class="date">[<?php echo $review->offsetGet('created_at') ?>]</p>
+                            </td>
+                            <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-reply" data-info='{"id":"<?php echo $review->offsetGet('id') ?>","content":"<?php echo $review->offsetGet('content') ?>","reply":"<?php echo $review->offsetGet('reply') ?>"}'><?php echo $this->translate('Reply') ?></button></td>
+                        </tr>
+                        <?php
+                    endif;
+                endforeach;
+            else:
+                ?>
+                <tr>
+                    <td colspan="4" class="text-center"><?php echo $this->translate('There is no review about your products.') ?></td>
+                </tr>
+            <?php
+            endif;
+            ?>
+        </tbody>
+        <?php if ($count): ?>
+            <tfoot>
+                <tr>
+                    <td colspan="4"><?php echo $this->getChild('pager')->setCollection($reviews) ?></td>
+                </tr>
+            </tfoot>
+        <?php endif ?>
+    </table>
+</div>

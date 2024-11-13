@@ -1,0 +1,20 @@
+<?php
+$additional=$this->getProduct()->offsetGet('additional');
+$attributes = !empty($additional)?json_decode($additional, true):[];
+if ($attributes):
+    ?>
+    <ul class="product-attributes clearfix">
+        <?php
+        foreach ($attributes as $key => $value):
+            if ($key !== '' && $value !== ''):
+                ?>
+                <li class="col-12">
+                    <span class="badge text-bg-danger"><?php echo $key ?></span>
+                    <span class="value" title="<?php echo $value ?>"><?php echo $value ?></span>
+                </li>
+                <?php
+            endif;
+        endforeach;
+        ?>
+    </ul>
+<?php endif; ?>

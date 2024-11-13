@@ -1,0 +1,9 @@
+---
+default:
+    root:
+        children:
+            extra:
+                children:
+                    debug-toolbar:
+                        type: Redseanet\Debug\ViewModel\Toolbar
+                        template: debug/toolbar

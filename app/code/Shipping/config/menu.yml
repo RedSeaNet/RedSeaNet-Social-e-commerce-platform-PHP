@@ -1,0 +1,8 @@
+---
+system:
+    children:
+        -
+            link: 'config/shipping/'
+            operation: 'Admin\Config::shipping'
+            title: 'Shipping Method'
+            priority: 100

@@ -1,0 +1,29 @@
+<?php
+$card = $this->getVariable('model');
+?>
+<table class="table table-striped text-start">
+    <tr>
+        <th><?php echo $this->translate('Credit Card Type') ?></th>
+        <td><?php echo $card->getType() ?></td>
+    </tr>
+    <tr>
+        <th><?php echo $this->translate('Name on Card') ?></th>
+        <td><?php echo $card['name'] ?></td>
+    </tr>
+    <tr>
+        <th><?php echo $this->translate('Credit Card Number') ?></th>
+        <td><?php echo $card['number'] ?></td>
+    </tr>
+    <tr>
+        <th><?php echo $this->translate('Expiration Date') ?> MM/YY</th>
+        <td><?php printf('%02d/%02d', $card['exp_month'], $card['exp_year'] % 100) ?></td>
+    </tr>
+    <tr>
+        <th><?php echo $this->translate('Card Verification Number') ?></th>
+        <td><?php echo $card['verification'] ?></td>
+    </tr>
+</table>
+<div class="text-center">
+    <a href="javascript:void(0);" onclick="window.print();"><?php echo $this->translate('Print') ?></a>
+    <a href="javascript:void(0);" onclick="window.close();"><?php echo $this->translate('Close') ?></a>
+</div>

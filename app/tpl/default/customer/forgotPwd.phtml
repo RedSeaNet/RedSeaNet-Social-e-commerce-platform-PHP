@@ -1,0 +1,39 @@
+<header class="header">
+    <div class="container">
+        <h3 class="logo">
+            <?php echo $this->getChild('logo') ?>
+            <strong><?php echo $this->translate('Forgot Password') ?></strong>
+        </h3>
+    </div>
+</header>
+<div class="main-container">
+    <form action="<?php echo $this->getBaseUrl('customer/account/forgotpwdpost/') ?>" method="post">
+        <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+        <div class="fieldset">
+            <p><?php echo $this->translate('Please fill your username in the blank') ?></p>
+            <?php echo $this->getChild('messages') ?>
+            <div class="input-box">
+                <label class="col-form-label required" for="login:username"><?php echo $this->translate('Username') ?></label>
+                <div class="cell">
+                    <input type="text" name="username" id="login:username" class="form-control required" spellcheck="false" placeholder="<?php echo $this->translate('Username or Email') ?>"  data-msg-required="<?php echo $this->translate('Please enter Username or Email') ?>!"  />
+                </div>
+            </div>
+            <?php if (in_array('forgotpwd', $this->getConfig()['customer/captcha/form'])): ?>
+                <div class="input-box">
+                    <label for="login:captcha" class="col-form-label required"><?php echo $this->translate('Captcha') ?>: </label>
+                    <div class="cell">
+                        <input type="text" name="captcha" class="form-control required captcha" maxlength="5" autocomplete="off" spellcheck="false" id="login:captcha" />
+                        <img src="<?php echo $this->getBaseUrl('customer/account/captcha/') ?>" alt="" class="captcha" height="26" width="70" />
+                    </div>
+                </div>
+            <?php endif ?>
+            <div class="buttons-set">
+                <button type="submit" class="btn btn-submit"><span><?php echo $this->translate('Submit') ?></span></button>
+                <p><?php echo $this->translate('Please check your email after submiting') ?></p>
+            </div>
+        </div>
+    </form>
+</div>
+<footer class="footer">
+    <?php echo $this->getChild('footer') ?>
+</footer>

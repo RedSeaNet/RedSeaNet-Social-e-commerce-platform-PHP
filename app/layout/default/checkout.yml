@@ -1,0 +1,178 @@
+---
+checkout_cart:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Shopping Cart
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/cart.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: checkout
+                    cart:
+                        type: Redseanet\Checkout\ViewModel\Cart
+                        template: checkout/cart
+                        children:
+                            item:
+                                type: Redseanet\Checkout\ViewModel\Cart\Item
+                                template: checkout/cart/item
+                            total:
+                                type: Redseanet\Checkout\ViewModel\Cart
+                                template: checkout/cart/total
+                            method:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: checkout/cart/method
+                            crosssell:
+                                type: Redseanet\Checkout\ViewModel\Cart\Crosssell
+                                template: catalog/product/link
+                            viewed_product:
+                                type: Redseanet\Checkout\ViewModel\Cart\ViewedProduct
+                                template: catalog/product/link
+                            wishlist:
+                                type: Redseanet\Checkout\ViewModel\Cart\Wishlist
+                                template: catalog/product/link
+checkout_cart_mini:
+    update: frontend
+    root:
+        unset: [head]
+        template: page/ajax
+        children:
+            content:
+                children:
+                    cart:
+                        type: Redseanet\Checkout\ViewModel\Cart
+                        template: checkout/cart/mini
+                        children:
+                            total:
+                                type: Redseanet\Checkout\ViewModel\Cart
+                                template: checkout/minicart/total
+checkout_order:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Checkout
+                    -
+                        method: addScript
+                        params: frontend/js/locate.js
+                    -
+                        method: addScript
+                        params: frontend/js/checkout.js
+            content:
+                type: Redseanet\Lib\ViewModel\Template
+                template: checkout/order
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: checkout
+                    address:
+                        type: Redseanet\Checkout\ViewModel\Order\Address
+                        template: checkout/order/address
+                        children:
+                            addressmodal:
+                                type: Redseanet\Customer\ViewModel\Address
+                                template: checkout/order/addressmodal
+                    payment:
+                        type: Redseanet\Checkout\ViewModel\Order\Payment
+                        template: checkout/order/payment
+                    review:
+                        type: Redseanet\Checkout\ViewModel\Order\Review
+                        template: checkout/order/review
+                        children:
+                            coupon:
+                                type: Redseanet\Checkout\ViewModel\Order\Coupon
+                                template: checkout/order/coupon
+                            item:
+                                type: Redseanet\Checkout\ViewModel\Cart\Item
+                                template: checkout/order/review/item
+                            shipping:
+                                type: Redseanet\Checkout\ViewModel\Order\Shipping
+                                template: checkout/order/shipping
+                            total:
+                                type: Redseanet\Checkout\ViewModel\Cart
+                                template: checkout/order/total
+checkout_order_shipping:
+    update: frontend
+    root:
+        unset: [head]
+        template: page/ajax
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    shipping:
+                        type: Redseanet\Checkout\ViewModel\Order\Shipping
+                        template: checkout/order/shipping
+checkout_order_payment:
+    update: frontend
+    root:
+        unset: [head]
+        template: page/ajax
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    payment:
+                        type: Redseanet\Checkout\ViewModel\Order\Payment
+                        template: checkout/order/payment
+checkout_order_review:
+    update: frontend
+    root:
+        unset: [head]
+        template: page/ajax
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    review:
+                        type: Redseanet\Checkout\ViewModel\Cart
+                        template: checkout/order/total
+checkout_order_coupon:
+    update: frontend
+    root:
+        unset: [head]
+        template: page/ajax
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    coupon:
+                        type: Redseanet\Checkout\ViewModel\Order\Coupon
+                        template: checkout/order/coupon
+checkout_order_success:
+    update: frontend
+    root:  
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Complate
+            content:
+                children:
+                    success:
+                        type: Redseanet\Checkout\ViewModel\Success
+                        template: checkout/success
+checkout_order_failed:
+    update: frontend
+    root:
+        children:
+            content:
+                children:
+                    success:
+                        type: Redseanet\Checkout\ViewModel\Failed
+                        template: checkout/failed

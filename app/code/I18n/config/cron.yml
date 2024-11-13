@@ -1,0 +1,4 @@
+---
+-
+    time: '0 0 * * *'
+    code: 'Redseanet\I18n\Listeners\Currency::schedule'

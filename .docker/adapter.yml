@@ -1,0 +1,22 @@
+---
+db:
+    driver: pdo
+    dsn: 'mysql:host=mysql;dbname=redseanetshop;charset=utf8'
+    username: root
+    password: Testing%%2029
+session:
+    save_path: var/session
+cache:
+    adapter: redis
+    host: redis
+    db: 6
+    compress: false
+    persistent:
+        - STAT_
+        - OAUTH_
+mq:
+    host: rabbitmq
+    vhost: '/'
+    login: rabbit
+    port: 5672
+    password: 123456

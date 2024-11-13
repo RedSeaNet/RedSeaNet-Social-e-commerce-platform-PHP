@@ -1,0 +1,35 @@
+<?php
+$medias = $this->getMedia();
+?>
+<ul class="links list-inline">
+    <li>
+        <button type="submit" formaction="<?php echo $this->getBaseUrl('customer/wishlist/add/') ?>">
+            <span class="fa fa-star" aria-hidden="true"></span>
+            <span><?php echo $this->translate('Add to Wishlist'); ?></span>
+        </button>
+    </li>
+    <?php if ($medias): ?>
+        <li class="dropdown share">
+            <a href="javascript:void(0);" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="fa fa-share-alt" aria-hidden="true"></span>
+                <span><?php echo $this->translate('Share'); ?></span>
+            </a>
+            <ul class="dropdown-menu">
+                <?php foreach ($medias as $media): ?>
+                    <li>
+                        <a href="<?php echo $this->getLink($media) ?>" class="<?php echo $media['label'] ?>" rel="nofollow">
+                            <span class="fa fa-fw fa-<?php echo $media['icon'] ?>"></span>
+                            <span><?php echo $this->translate('Share to '), $this->translate($media['label']) ?></span>
+                        </a>
+                    </li>
+                <?php endforeach ?>
+                <li>
+                    <a href="javascript:void(0);" class="copy" rel="nofollow" onclick="prompt('<?php echo $this->translate('Press CTRL+C to copy link.') ?>','<?php echo $this->getSharingUrl() ?>');return false;">
+                        <span class="fa fa-fw fa-copy"></span>
+                        <span><?php echo $this->translate('Copy Link') ?></span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    <?php endif ?>
+</ul>

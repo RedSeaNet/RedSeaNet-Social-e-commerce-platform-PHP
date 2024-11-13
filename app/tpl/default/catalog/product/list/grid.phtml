@@ -1,0 +1,52 @@
+<?php
+$products = $this->getProducts();
+?>
+<div class="container">
+    <?php if (count($products)): ?>
+        <ul class="products-grid pe-1 ms-0 ps-0">
+            <?php
+            foreach ($products as $product):
+                $thumbnail = $product->getThumbnail(null, '300x');
+                ?>
+                <li class="item col-lg-3 col-md-4 col-6 ps-1">
+                    <div class="itemc">
+                        <a href="<?php echo $product->getUrl($this->getCategory()) ?>" title="<?php echo $product['name'] ?>" class="product-image">
+                            <img loading="lazy" src="<?php echo $thumbnail ?>" alt="<?php echo $product['name'] ?>" />
+                        </a>
+                        <h6 class="product-name text-center">
+                            <a href="<?php echo $product->getUrl($this->getCategory()) ?>" title="<?php echo $product['name'] ?>">
+                                <?php echo $product['name'] ?>
+                            </a>
+                        </h6>
+                        <div class="price-box">
+                            <?php echo $this->getPriceBox($product) ?>
+                        </div>
+                        <div class="actions d-none text-end">
+                            <?php if ($product->canSold()): ?>
+                                <a href="<?php echo $this->getBaseUrl('checkout/cart/add/?warehouse_id=1&qty=1&csrf='), $this->getCsrfKey(), '&product_id=', $product->getId() ?>">
+                                    <span class="fa fa-shopping-cart"></span>
+                                    <span class="sr-only"><?php echo $this->translate('Add to Cart') ?></span>
+                                </a>
+                            <?php endif ?>
+                        </div>
+                        <?php if ($product->isNew()): ?>
+                            <p class="new"><?php echo $this->translate('New Product') ?></p>
+                            <?php
+                        elseif ($product['base_prices']['regular'] < ($final = $product->getFinalPrice())):
+                            $discount = (1 - $final / $product['base_prices']['regular']) * 100;
+                            ?>
+                            <p class="discount"><?php echo $this->translate('Promoting') ?></p>
+                        <?php else: ?>
+                            <p class="placeholder"></p>
+                        <?php endif ?>
+                    </div>
+                </li>
+            <?php endforeach ?>
+        </ul>
+    <?php else: ?>
+        <div class="text-center">
+            <p><img src="<?php echo $this->getPubUrl('frontend/images/empty-search.png'); ?>" /></p>
+            <p class="no-product"><?php echo $this->translate('There are no products matching the selection.') ?></p>
+        </div>
+    <?php endif ?>
+</div>

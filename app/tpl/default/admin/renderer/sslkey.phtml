@@ -1,0 +1,64 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+$parent = $this->getVariable('parent');
+?>
+<div class="input-box <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label for="<?php echo $id ?>" class="control-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell">
+        <textarea name="<?php echo $key ?>" id="<?php echo $id ?>"<?php
+        if (!isset($item['attrs']['class'])):
+            ?> class="form-control<?php if (isset($item['required'])): ?> required<?php endif ?> <?php
+                      if (isset($item['class'])) {
+                          echo $item['class'];
+                      }
+                      ?>"<?php endif ?> <?php
+                  if (isset($item['attrs'])) {
+                      echo $parent->getAttrs($item['attrs']);
+                  }
+                  ?>><?php echo $item['value'] ?? '' ?></textarea>
+                  <?php
+                  if (!empty($item['value'])):
+                      $method = $item['method'] ?? (strpos($key, 'pub') === false ? 'openssl_pkey_get_private' : 'openssl_pkey_get_public');
+                      $params = [$item['value']];
+                      if (isset($item['phrase'])) {
+                          $params[] = trim($item['phrase']);
+                      } else if (isset($item['phrase_key'])) {
+                          $params[] = trim($parent->getVariable('model')[$item['phrase_key']]);
+                      }
+                      $details = openssl_pkey_get_details(call_user_func_array($item['method'], $params));
+                      $details = $details['rsa'] ?? $details['dsa'] ?? $details['dh'] ?? '';
+                      $json = [];
+                      if ($details) {
+                          foreach ($details as $key => $value) {
+                              $json[$key] = bin2hex($value);
+                          }
+                      }
+                      ?>
+            <textarea<?php
+            if (!isset($item['attrs']['class'])):
+                ?> class="form-control<?php if (isset($item['required'])): ?> required<?php endif ?> <?php
+                    if (isset($item['class'])) {
+                        echo $item['class'];
+                    }
+                    ?>"<?php endif ?> <?php
+                if (isset($item['attrs'])) {
+                    echo $parent->getAttrs($item['attrs']);
+                }
+                ?>><?php echo json_encode($json) ?></textarea>
+            <a href="javascript:void(0);" onclick="javascript:$('#<?php echo $id ?>').is('[hidden]') ? $('#<?php echo $id ?>').removeAttr('hidden') : $('#<?php echo $id ?>').attr('hidden', 'hidden');"><span class="fa fa-fw fa-retweet"></span></a>
+            <a href="javascript:void(0);" onclick="javascript:$(this).siblings('textarea:visible').select();document.execCommand('copy');"><span class="fa fa-fw fa-copy"></span></a>
+            <style>#<?php echo $id ?>:not([hidden])+textarea{display:none}</style>
+        <?php endif ?>
+        <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

@@ -1,0 +1,88 @@
+<?php
+$storeDiscountDetail = [];
+$cart=$this->getVariable('cart');
+$items=$this->getVariable('items');
+?>
+<section class="section review">
+    <h5 class="title"><?php echo $this->translate('Order Infomation') ?></h5>
+    <div class="">
+        <?php
+        $stores = [];
+        $subtotal = [];
+        $itemStore=[];
+        foreach ($items as $item) {
+            if (!isset($subtotal[$item['store_id']])) {
+                $subtotal[$item['store_id']] = 0;
+            }
+            $stores[$item['store_id']] = !isset($stores[$item['store_id']]) ? 1 : $stores[$item['store_id']] + 1;
+            $subtotal[$item['store_id']] += $item['total'];
+            $itemStore[$item['store_id']][] =$item;
+        }
+        $current = 0;
+        foreach ($items as $item) {
+            if ($current !== $item['store_id']):
+                $store = $item['store'];
+                ?>
+                <?php if ($current): ?>
+                    <div class="subtotal row">
+                        <div class="text-start col-md-4 col-12 pt-2">
+                            <?php echo $this->translate('Shipping Method', [], 'checkout') ?>
+                            <?php echo $this->getChild('shipping')->setVariable('store_id', $current)->setVariable('isVirtual', $cart->isVirtual($current))->setVariable('current_shipping_method', ($cart->offsetGet('shipping_method')?json_decode($cart->offsetGet('shipping_method'),true):[]))->setVariable('address', $cart->getShippingAddress())->setVariable('items', $itemStore[$current]) ?>
+                        </div>
+                        <div class="col-md-4 col-12 pt-2">
+                            <?php echo $this->translate('Message', [], 'checkout') ?>
+                            <input type="text" name="comment[<?php echo $current ?>]" class="form-control" style="display:inline-block" />
+                        </div>
+                        <div class="text-end col-md-4 col-12 pt-2">
+                            <?php echo $this->translate('Subtotal') . ': ' . $this->getCurrency()->format($subtotal[$current]) ?><br />
+                        </div>
+                    </div>
+                <?php endif ?>
+                <div class="store row">
+                    <div  class="text-start col-md-8 col-10">
+                        <?php echo $store['name'] ?>
+                        <input name="storeid[]" id="storeid-<?php echo $item['store_id'];?>" type="hidden" value="<?php echo $item['store_id'];?>" />
+                        <div class="dropdown coupon" data-store="<?php echo $item['store_id'] ?>"><?php echo $this->getChild('coupon')->setVariable('store', $item['store_id']) ?></div>
+                    </div>
+                    <div class="col-md-1 col-2 text-center">
+                        <?php echo $this->translate('Price', [], 'checkout') ?>
+                    </div>
+                    <div class="col-md-1 text-center d-none d-md-block">
+                        <?php echo $this->translate('Qty', [], 'checkout') ?>
+                    </div>
+                    <div class="col-md-2 text-center d-none d-md-block">
+                        <?php echo $this->translate('Subtotal', [], 'checkout') ?>
+                    </div>
+                </div>
+                <?php
+                $current = $item['store_id'];
+                echo $this->getRow($item, $stores[$item['store_id']]);
+            else:
+                echo $this->getRow($item);
+            endif;
+        }
+        ?>
+        <div class="subtotal row">
+            <div class="text-start col-md-4 col-12 pt-2">
+                <?php echo $this->translate('Shipping Method', [], 'checkout') ?>:
+                <div id="shipping_method_div_<?php echo $item['store_id'];?>"><?php echo $this->getChild('shipping')->setVariable('store_id', $current)->setVariable('isVirtual', $cart->isVirtual($current))->setVariable('current_shipping_method', !empty($cart->offsetGet('shipping_method'))?json_decode($cart->offsetGet('shipping_method'),true):[])->setVariable('address', $cart->getShippingAddress())->setVariable('items', $itemStore[$current]) ?></div>
+            </div>
+            <div class=" col-md-4 col-12 pt-2">
+                <?php echo $this->translate('Message', [], 'checkout') ?>
+                <input type="text" name="comment[<?php echo $current ?>]" class="form-control d-inline-block" />
+            </div>
+            <div class="text-end col-md-4 col-12 pt-2">
+                <?php echo $this->translate('Subtotal') . ': ' . $this->getCurrency()->format($subtotal[$current]) ?>
+            </div>
+        </div>
+        <div class="text-end total">
+            <?php echo $this->getChild('total') ?>
+        </div>
+        <div class="text-end buttons-set">
+            <button type="button" class="btn btn-checkout">
+                <span><?php echo $this->translate('Place Order') ?></span>
+            </button>
+        </div>
+    </div>
+
+</section>

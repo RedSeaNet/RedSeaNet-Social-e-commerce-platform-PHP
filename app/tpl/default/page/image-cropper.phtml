@@ -1,0 +1,134 @@
+<div class="modal fade" id="chooseAvatarModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><?php echo $this->translate('Image') ?></h6>
+                <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-hidden="true" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="min-height:400px;">
+                <div class="img-container hidden">
+                    <img src="" alt="" id="photo">
+                </div>
+                <div class="img-preview-box hidden">
+                    <div class="img-preview img-preview-lg">
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <label class="btn btn-danger pull-left" for="photoInput">
+                    <input type="file" class="sr-only" id="photoInput" accept="image/*">
+                    <span><?php echo $this->translate('Choose image') ?></span>
+                </label>
+                <button class="btn btn-primary" id="avatarSubmitButton" onclick="confirmPhoto(this);" data-loading-text="Loading..." autocomplete="off" data-img-input="" data-img-preview="" >
+                    <span class="spinner-border spinner-border-sm" style="display:none;"></span>
+                    <?php echo $this->translate('Confirm') ?>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    #user-photo {
+        width:300px;
+        height:300px;
+        margin-top: 10px;
+    }
+    #photo {
+        max-width:100%;
+        max-height:350px;
+    }
+    .img-preview-box {
+        text-align: center;
+        padding: 10px;
+    }
+    .img-preview-box > div {
+        display: inline-block;
+        ;
+        margin-right: 10px;
+    }
+    .img-preview {
+        overflow: hidden;
+    }
+    .img-preview-box .img-preview-lg {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+    }
+</style>
+<script type="text/javascript">
+    var initCropperInModal = function (img, input, modal) {
+        var $image = img;
+        var $inputImage = input;
+        var $modal = modal;
+        var options = {
+            aspectRatio: 1, // 纵横比
+            viewMode: 2,
+            preview: '.img-preview' // 预览图的class名
+        };
+        // 模态框隐藏后需要保存的数据对象
+        var saveData = {};
+        var URL = window.URL || window.webkitURL;
+        var blobURL;
+        $modal.on('show.bs.modal', function (e) {
+            if (!$inputImage.val()) {
+                $inputImage.click();
+            }
+            $("button#avatarSubmitButton").data('img-input', $(e.relatedTarget).data('img-input'));
+            $("button#avatarSubmitButton").data('img-preview', $(e.relatedTarget).data('img-preview'));
+        }).on('shown.bs.modal', function () {
+            $image.cropper($.extend(options, {
+                ready: function () {
+                    if (saveData.canvasData) {
+                        $image.cropper('setCanvasData', saveData.canvasData);
+                        $image.cropper('setCropBoxData', saveData.cropBoxData);
+                    }
+                }
+            }));
+        }).on('hidden.bs.modal', function () {
+            saveData.cropBoxData = $image.cropper('getCropBoxData');
+            saveData.canvasData = $image.cropper('getCanvasData');
+            $image.cropper('destroy').attr('src', blobURL);
+        });
+        if (URL) {
+            $inputImage.change(function () {
+                var files = this.files;
+                var file;
+                if (!$image.data('cropper')) {
+                    return;
+                }
+                if (files && files.length) {
+                    file = files[0];
+                    if (/^image\/\w+$/.test(file.type)) {
+                        if (blobURL) {
+                            URL.revokeObjectURL(blobURL);
+                        }
+                        blobURL = URL.createObjectURL(file);
+                        $image.cropper('reset').cropper('replace', blobURL);
+                        $('.img-container').removeClass('hidden');
+                        $('.img-preview-box').removeClass('hidden');
+                        $('#chooseAvatarModal .disabled').removeAttr('disabled').removeClass('disabled');
+                        $('#chooseAvatarModal .tip-info').addClass('hidden');
+
+                    } else {
+                        window.alert('<?php echo $this->translate('Please choose an image'); ?>!');
+                    }
+                }
+            });
+        } else {
+            $inputImage.prop('disabled', true).addClass('disabled');
+        }
+    };
+    function confirmPhoto(e) {
+        var photo = $('img#photo').cropper('getCroppedCanvas', {
+            width: 300,
+            height: 300
+        }).toDataURL('image/png');
+        $($(e).data('img-preview')).attr('src', photo);
+        $($(e).data('img-input')).val(photo);
+        $('div#chooseAvatarModal').modal('hide');
+    }
+    $(function () {
+        initCropperInModal($('#photo'), $('#photoInput'), $('div#chooseAvatarModal'));
+    });
+</script>

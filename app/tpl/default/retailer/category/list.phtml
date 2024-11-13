@@ -1,0 +1,55 @@
+<?php
+$categories = $this->getCategories();
+?>
+<div class="category-edit">
+    <div class="buttons-set text-end">
+        <button data-bs-toggle="modal" data-bs-target="#modal-edit-category" class="btn btn-theme"><span class="fa fa-plus" aria-hidden="true"></span><?php echo $this->translate('Add New Category') ?></button>
+    </div>
+</div>
+<div class="category-content">
+    <ul class="table categories-title col-12 d-flex">
+        <li class="col-10"><?php echo $this->translate('Category Name'); ?></li>
+        <li class="col-2 text-center"><?php echo $this->translate('Operation'); ?></li>
+    </ul>
+    <ul class="table categories-list">
+        <?php
+        if (count($categories) && isset($categories[0])):
+            foreach ($categories[0] as $category):
+                ?>
+                <li class="clearfix" data-id="<?php echo $category->getId() ?>">
+                    <input type="hidden" name="order[]" value="<?php echo $category->getId() ?>" />
+                    <h4 class="category-name active text-start font-14">
+                        <?php echo $category->getName() ?>
+                    </h4>
+                    <div class="action font-12">
+                        <a href="#modal-edit-category" data-bs-toggle="modal" data-info='{"parent_id":<?php echo $category->getId() ?>}'><?php echo $this->translate('Append') ?></a>
+                        <a href="#modal-edit-category" data-bs-toggle="modal" data-info='{"name":"<?php echo $category->getName() ?>","id":<?php echo $category->getId() ?>,"parent_id":<?php echo (int) $category['parent_id'] ?>,"uri_key":"<?php echo $category['uri_key'] ?>"}'><?php echo $this->translate('Edit') ?></a>
+                        <a href="<?php echo $this->getBaseUrl('retailer/category/delete/') ?>" data-method="delete" data-params="id=<?php echo $category->getId() ?>&csrf=<?php echo $this->getCsrfKey() ?>"><?php echo $this->translate('Delete') ?></a>
+                        <a href="javascript:void(0);" class="move"><span class="fa fa-arrows" aria-hidden="true"></span><span class="sr-only"><?php echo $this->translate('Move') ?></span></a>
+                    </div>
+                    <?php if (!empty($categories[$category->getId()])): ?>
+                        <ul class="children">
+                            <?php foreach ($categories[$category->getId()] as $child): ?>
+                                <li class="child clearfix" data-id="<?php echo $child->getId() ?>">
+                                    <input type="hidden" name="order[]" value="<?php echo $child->getId() ?>" />
+                                    <h4 class="category-name font-12 text-start">
+                                        <?php echo $child->getName() ?>
+                                    </h4>
+                                    <div class="action font-12">
+                                        <a href="#modal-edit-category" data-bs-toggle="modal" data-info='{"name":"<?php echo $child->getName() ?>","id":<?php echo $child->getId() ?>,"parent_id":<?php echo (int) $child['parent_id'] ?>,"uri_key":"<?php echo $child['uri_key'] ?>"}'><?php echo $this->translate('Edit') ?></a>
+                                        <a href="<?php echo $this->getBaseUrl('retailer/category/delete/') ?>" data-method="delete" data-params="id=<?php echo $child->getId() ?>&csrf=<?php echo $this->getCsrfKey() ?>"><?php echo $this->translate('Delete') ?></a>
+                                        <a href="javascript:void(0);" class="move"><span class="fa fa-arrows" aria-hidden="true"></span><span class="sr-only"><?php echo $this->translate('Move') ?></span></a>
+                                    </div>
+                                </li>
+                            <?php endforeach ?>
+                        </ul>
+                    <?php endif ?>
+                </li>
+                <?php
+            endforeach;
+        else:
+            ?>
+            <li class="text-center"><?php echo $this->translate('There is no category available.') ?></li>
+            <?php endif ?>
+    </ul>
+</div>

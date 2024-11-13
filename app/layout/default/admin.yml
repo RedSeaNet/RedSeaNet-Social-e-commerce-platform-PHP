@@ -1,0 +1,484 @@
+---
+admin_login:
+    update: default
+    root:
+        template: page/empty
+        action:
+            -
+                method: addBodyClass
+                params: admin
+        children:
+            head:
+                action:
+                    -
+                        method: addLink
+                        params:
+                            - backend/favicon.ico
+                            - shortcut icon
+                    -
+                        method: addLink
+                        params: backend/css/normalize.css
+                    -
+                        method: addLink
+                        params: backend/css/styles.css
+                    -
+                        method: addLink
+                        params: [backend/css/styles.css,stylesheet,lt IE 9]
+                    -
+                        method: addScript
+                        params: backend/js/jquery.js
+                    -
+                        method: addScript
+                        params: backend/js/validate/jquery.validate.min.js
+                    -
+                        method: addScript
+                        params: backend/js/validate/config.js
+                    -
+                        method: addScript
+                        params: backend/js/modernizr.js
+                    -
+                        method: addScript
+                        params: backend/js/app.js
+                    -
+                        method: addScript
+                        params: [backend/js/selectivizr.js,lt IE 9]
+                    -
+                        method: setTitle
+                        params: Log Into Redseanet Admin Panel
+                    -
+                        method: addScript
+                        params: backend/js/translate.js
+            content:
+                children:
+                    login:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: admin/login
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: admin
+admin_forgot_password:
+    update: admin_login
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: admin-login
+        children:
+            content:
+                children:
+                    login:
+                        template: admin/forgotPwd
+admin_reset_password:
+    update: admin_login
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: admin-login
+        children:
+            content:
+                children:
+                    login:
+                        template: admin/resetPwd
+admin:
+    update: default
+    root:
+        action:
+            method: addBodyClass
+            params: admin
+        children:
+            head:
+                template: admin/head
+                action:
+                    -
+                        method: addLink
+                        params:
+                            - backend/favicon.ico
+                            - shortcut icon
+                    -
+                        method: addLink
+                        params: backend/css/normalize.css
+                    -
+                        method: addLink
+                        params: backend/css/font-awesome.css
+                    -
+                        method: addLink
+                        params: backend/css/styles.css
+                    -
+                        method: addLink
+                        params: [backend/css/styles-ie.css,stylesheet,lt IE 9]
+                    -
+                        method: addScript
+                        params: backend/vendor/jquery3/jquery.min.js
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/jquery.cookie.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/translate.js
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/modernizr.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/dropdown.js',defer: 'defer',async: 'async'}]
+                    -    
+                        method: addScript
+                        params: [{src: 'backend/js/app.js',defer: 'defer'}]
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/selectivizr.js',defer: 'defer'},lt IE 9]
+                    -
+                        method: setTitle
+                        params: ''
+            header:
+                type: Redseanet\Lib\ViewModel\Template
+                template: admin/header
+                children:
+                    messages:
+                        type: Redseanet\Lib\ViewModel\Message
+                        template: admin/message
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: admin
+                    language:
+                        type: Redseanet\Lib\ViewModel\Language
+                        template: admin/language
+                        action:
+                            -
+                                method: showEdit
+                                params: true
+                            -
+                                method: setEditUrl
+                                params: i18n_language/list/ 
+            footer:
+                type: Redseanet\Lib\ViewModel\Footer
+                template: admin/footer
+                action:
+                    -
+                        method: addScript
+                        params: backend/js/validate/jquery.validate.min.js
+                    -
+                        method: addScript
+                        params: backend/js/validate/config.js
+            beforeContent:
+                children:
+                    nav:
+                        type: Redseanet\Admin\ViewModel\Navigation
+                        template: admin/navigation
+            content:
+                children:
+                    breadcrumb:
+                        template: admin/breadcrumb
+                        action:
+                            -
+                                method: showLabel
+                                params: true
+                unset: [messages]
+grid:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/grid.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addLink
+                        params: backend/vendor/DataTables/datatables.min.css
+                    -
+                        method: addScript
+                        params: backend/vendor/DataTables/datatables.min.js
+                    -
+                        method: addScript
+                        params: backend/vendor/DataTables/dataTables.responsive.min.js
+                    -
+                        method: addLink
+                        params: backend/vendor/DataTables/responsive.dataTables.min.css
+            content:
+                children:
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Grid
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+edit:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/tab.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/ckeditor/ckeditor.js
+                    -
+                        method: addScript
+                        params: backend/ckeditor/adapters/jquery.js
+                    -
+                        method: addScript
+                        params: backend/ckeditor.js
+                    -
+                        method: addLink
+                        params: backend/css/glyphicon.css
+admin_dashboard:
+    update: admin
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Dashboard
+                    -
+                        method: addScript
+                        params: backend/js/highcharts/highcharts.js
+                    -
+                        method: addScript
+                        params: backend/js/highcharts/modules/exporting.js
+                    -
+                        method: addScript
+                        params: backend/js/highcharts/modules/no-data-to-display.js
+                    -
+                        method: addScript
+                        params: backend/js/highcharts/config.js
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/dashboard/',label: 'Dashboard'}]
+                    dashboard:
+                        type: Redseanet\Admin\ViewModel\Dashboard
+                        template: admin/dashboard/charts
+admin_user:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: My Account
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/user/',label: 'My Account'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\User\AccountEdit
+admin_user_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: User Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/user/list/',label: 'User Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/user/edit/',label: 'Add New User'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\User\Grid
+admin_user_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/user/list/',label: 'User Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/user/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\User\Edit
+admin_role_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Role Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/role/',label: 'Role Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/role/edit/',label: 'Add New Role'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Role\Grid
+admin_role_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/role/',label: 'Role Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/role/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Role\Edit
+                        children:
+                            tabs:
+                                type: Redseanet\Admin\ViewModel\Role\Tabs
+                                action:
+                                    -
+                                        method: addTab
+                                        params: 
+                                            - operation
+                                            - Operation
+                                children:
+                                    operation:
+                                        type: Redseanet\Admin\ViewModel\Role\Tabs\Operation
+                                        template: admin/rbac/operation
+                                        children:
+                                            pager:
+                                                type: Redseanet\Lib\ViewModel\Pager
+admin_operation_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Operation Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/operation/',label: 'Operation Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/operation/edit/',label: 'Add New Operation'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Operation\Grid
+admin_operation_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/operation/',label: 'Operation Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/operation/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Operation\Edit
+admin_cache:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Cache Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/cache/',label: 'Cache Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/cache/pudgeCSS',label: 'Pudge CSS Cache'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/cache/pudgeImage',label: 'Pudge Image Cache'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/cache/flush',label: 'Flush All'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Cache
+                        template: admin/cache
+admin_indexer:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Indexer Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/indexer/',label: 'Indexer Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/indexer/schedule/',label: 'Rebuild All by Schedule'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/indexer/rebuild/',label: 'Rebuild All'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Indexer
+                        template: admin/grid-simple
+admin_config:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: backend/vendor/select2/js/select2.full.min.js
+                    -
+                        method: addLink
+                        params: backend/vendor/select2/css/select2.min.css
+            content:
+                children:
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Config
+                        children:
+                            tabs:
+                                type: Redseanet\Admin\ViewModel\Tabs
+                                action:
+                                    -
+                                        method: generateTabPane
+                                        params: false
+                            scope:
+                                type: Redseanet\Admin\ViewModel\I18n\Grid\Scope
+                                template: admin/scope

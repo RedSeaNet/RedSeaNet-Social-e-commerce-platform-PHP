@@ -1,0 +1,5 @@
+---
+rewardpoints:
+    method: [GET]
+    route: /rewardpoints/{controller}/[{action}[/]]
+    namespace: Redseanet\RewardPoints\Controller

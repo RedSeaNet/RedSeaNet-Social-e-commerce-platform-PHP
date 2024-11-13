@@ -1,0 +1,39 @@
+---
+rpcport:
+    getPageByUrikey:
+        params: 
+            id: string
+            token: string
+            uriKey: string
+            languageId: int
+        respone: json array string
+        documentation: get cms page by Urikey
+    getPageById: 
+        params: 
+            id: string
+            token: string
+            pid: int
+            languageId: int
+        respone: json array string 
+        documentation: get page by cms page id
+    getPageListByCategoryId: 
+        params: 
+            id: string
+            token: string
+            categoryId: int
+            languageId: int
+        respone: json array string
+        documentation: get cms page list by category id
+    getPageListByCategoryUrikey: 
+        params: 
+            id: string
+            token: string
+            categoryUrikey: string
+            languageId: int
+        respone: json array string
+        documentation: get page list by category urikey 
+rpc:
+    getPageByUrikey: \Redseanet\Cms\Model\Api\Rpc\Cms
+    getPageById: \Redseanet\Cms\Model\Api\Rpc\Cms
+    getPageListByCategoryId: \Redseanet\Cms\Model\Api\Rpc\Cms
+    getPageListByCategoryUrikey: \Redseanet\Cms\Model\Api\Rpc\Cms

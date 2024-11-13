@@ -1,0 +1,11 @@
+<?php
+$type = $this->getQuery('type');
+$query = $this->getQuery('q');
+?>
+<form action="<?php echo $this->getBaseUrl('catalog/search/') ?>" method="get">
+    <input type="search" class="form-control required" placeholder="<?php echo $this->translate('Enter the keywords for searching') ?>" x-webkit-speech x-webkit-grammar="builtin:search" name="q" value="<?php echo $query ?>" />
+    <button class="btn btn-submit" type="submit">
+        <span class="fa fa-search" aria-hidden="true"></span>
+        <span class="sr-only"><?php echo $this->translate('Search') ?></span>
+    </button>
+</form>

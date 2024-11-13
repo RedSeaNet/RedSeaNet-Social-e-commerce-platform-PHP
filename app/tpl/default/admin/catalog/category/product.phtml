@@ -1,0 +1,87 @@
+<?php
+$query = $this->getQuery();
+$collection = $this->getCollection();
+$order = $this->getSortOrder($collection);
+$ids = [];
+?>
+<div class="grid products-list">
+    <div class="filters">
+        <div class="input-box">
+            <label class="control-label" for="sortby:id">ID</label>
+            <div class="cell">
+                <input type="tel" name="id" id="sortby:id" class="form-control" value="<?php echo $query['id'] ?? '' ?>" />
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="control-label" for="sortby:name"><?php echo $this->translate('Name') ?></label>
+            <div class="cell">
+                <input type="text" name="name" id="sortby:name" class="form-control" value="<?php echo $query['name'] ?? '' ?>" />
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="control-label" for="sortby:sku"><?php echo $this->translate('SKU') ?></label>
+            <div class="cell">
+                <input type="text" name="sku" id="sortby:sku" class="form-control" value="<?php echo $query['sku'] ?? '' ?>" />
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="control-label" for="sortby:limit"><?php echo $this->translate('Item(s) per page') ?></label>
+            <div class="cell">
+                <input type="tel" name="limit" id="sortby:limit" class="form-control" value="<?php echo $query['limit'] ?? 20 ?>" />
+            </div>
+        </div>
+        <div class="buttons-set">
+            <button type="button" class="btn" formaction="<?php echo $this->getAdminUrl('catalog_category/product/?cid='), $query['cid'] ?>"><?php echo $this->translate('Search') ?></button>
+            <a href="<?php echo $this->getAdminUrl('catalog_category/product/?cid='), $query['cid'] ?>" class="btn"><?php echo $this->translate('Reset') ?></a>
+        </div>
+    </div>
+    <table class="table table-hover table-striped table-no-border">
+        <colgroup>
+            <col width="1" />
+            <col width="1" />
+            <col />
+            <col width="1" />
+            <col width="1" />
+        </colgroup>
+        <thead class="sort-by">
+            <tr>
+                <th class="checkbox"><input type="checkbox" class="selectall" /></th>
+                <th>ID</th>
+                <th class="text-start"><?php echo $this->translate('Name') ?></th>
+                <th><?php echo $this->translate('SKU') ?></th>
+                <th><?php echo $this->translate('Sort Order') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            foreach ($collection as $item):
+                $ids[] = $item['id'];
+                ?>
+                <tr data-id="<?php echo $item['id'] ?>">
+                    <td class="text-center checkbox">
+                        <input type="checkbox" name="product[]" value="<?php echo $item['id'] ?>"<?php if (in_array($item['id'], $this->getActiveIds())): ?> checked="checked"<?php endif ?> />
+                    </td>
+                    <td><?php echo $item['id'] ?></td>
+                    <td class="text-start"><?php echo $item['name'] ?></td>
+                    <td class="text-nowrap"><?php echo $item['sku'] ?></td>
+                    <td><input type="tel" name="order[<?php echo $item['id'] ?>]" class="form-control"<?php if (in_array($item['id'], $this->getActiveIds())): ?>  value="<?php echo $order[$item['id']] ?? 0 ?>"<?php else: ?> disabled="disabled" value="0"<?php endif ?> /></td>
+                </tr>
+            <?php endforeach ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="checkbox">
+                    <input type="checkbox" class="selectall" />
+                    <input type="hidden" name="ids" value="<?php echo implode(',', $ids) ?>" />
+                </td>
+                <td colspan="4" class="text-end">
+                    <?php
+                    if (is_object($collection)) {
+                        echo $this->getChild('pager')->setCollection($collection);
+                    }
+                    ?>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

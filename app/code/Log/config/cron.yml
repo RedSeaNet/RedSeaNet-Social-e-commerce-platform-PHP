@@ -1,0 +1,4 @@
+---
+-
+    time: '0 0 * * *'
+    code: 'Redseanet\Log\Listeners\Cron::schedule'

@@ -1,0 +1,8 @@
+---
+system:
+    children:
+        -
+            link: 'config/payment/'
+            operation: 'Admin\Config::payment'
+            title: 'Payment Method'
+            priority: 110

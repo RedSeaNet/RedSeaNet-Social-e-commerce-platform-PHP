@@ -1,0 +1,929 @@
+---
+customer_account:
+    update: frontend
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: customer-account
+        children:
+            content:
+                type: Redseanet\Lib\ViewModel\Template
+                template: customer/account
+                children:
+                    nav:
+                        type: Redseanet\Customer\ViewModel\Navigation
+                        template: customer/navigation
+                        action:
+                            -
+                                method: addGroup
+                                params: [{label: 'My Following',priority: 30,icon: 'star'}]
+                            -
+                                method: addGroup
+                                params: [{label: 'Account Infomation',priority: 0,icon: 'address-card'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/wishlist/',label: 'My Wishlist',group: 'My Following',class: 'ps-2'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/history/',label: 'Browsing History',group: 'My Following',class: 'ps-2'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/account/edit/',label: 'Account Infomation/Password Edit',group: 'Account Infomation',class: 'ps-2'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/account/address/',label: 'Address Book',group: 'Account Infomation',class: 'ps-2'}]
+                            -                                   
+                                method: addGroup
+                                params: [{label: 'Asset Center',priority: 10,icon: 'money',class: 'ps-2'}]
+                            -
+                                method: addLink
+                                params: [{link: 'balance/statement/',label: 'Balance',group: 'Asset Center',class: 'ps-2'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/account/referees/',label: 'My referees',group: 'Account Infomation',class: 'ps-2'}]
+                            -
+                                method: addLink
+                                params: [{link: 'customer/account/referrer/',label: 'Referrer',group: 'Account Infomation',class: 'ps-2'}]
+    
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: customer
+                            -
+                                method: setVariable
+                                params:
+                                    - inline
+                                    - 1
+customer_account_dashboard:
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: My Account
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Wrapper
+                        children:
+                            profile:
+                                type: Redseanet\Customer\ViewModel\Dashboard\Profile
+                                template: customer/dashboard/profile
+                            reference:
+                                type: Redseanet\Customer\ViewModel\Dashboard\Profile
+                                template: customer/dashboard/reference
+                            order:
+                                type: Redseanet\Sales\ViewModel\Order
+                                template: customer/dashboard/order
+                            coupon:
+                                type: Redseanet\Customer\ViewModel\Coupon
+                                template: customer/dashboard/coupon
+customer_account_edit:
+    update: customer_account
+    root:
+    
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Edit Account Infomation
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Account Infomation
+                children:
+                    main:
+                        type: Redseanet\Customer\ViewModel\Edit
+                        template: customer/edit
+customer_account_address:
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Address Book
+                    -
+                        method: addScript
+                        params: frontend/js/locate.js
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Address Book
+                children:
+                    main:
+                        type: Redseanet\Customer\ViewModel\Address
+                        template: customer/address/book
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+                                action:
+                                    -
+                                        method: showLabel
+                                        params: false
+            extra:
+                children:
+                    modal:
+                        type: Redseanet\Customer\ViewModel\Address
+                        template: customer/address/modal
+customer_coupon:
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: My Coupons
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - My Coupons
+                children:
+                    main:
+                        type: Redseanet\Customer\ViewModel\Coupon
+                        template: customer/coupon
+    
+customer_wishlist:
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: My Wishlist
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - My Wishlist
+                children:
+                    main:
+                        type: Redseanet\Customer\ViewModel\Wishlist
+                        template: customer/wishlist
+customer_history:
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Browsing History
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Browsing History
+                children:
+                    main:
+                        type: Redseanet\Customer\ViewModel\ViewedProduct
+                        template: customer/viewed
+                        children:
+                            price:
+                                type: Redseanet\Catalog\ViewModel\Product\Price
+customer_account_login:
+    update: frontend
+    root:
+        template: page/empty
+        children:
+            head:
+                action:                 
+                    -
+                        method: setTitle
+                        params: Customer Login
+            content:
+                unset: [breadcrumb]
+                type: Redseanet\Lib\ViewModel\Template
+                template: customer/login
+                children:
+                    logo:
+                        type: Redseanet\Cms\ViewModel\Block
+                        action:
+                            -
+                                method: setBlockId
+                                params: logo
+                    footer:
+                       type: Redseanet\Lib\ViewModel\Footer
+                       template: page/footer
+                       children:
+                           category:
+                               type: Redseanet\Catalog\ViewModel\Navigation
+                               template: catalog/navigation/bottom
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: customer
+                            -
+                                method: setVariable
+                                params:
+                                    - inline
+                                    - true
+customer_account_create:
+    update: frontend
+    root:
+        template: page/empty
+        children:
+            head:
+                action:                    
+                    -
+                        method: setTitle
+                        params: Create New Customer Account  
+                    -
+                        method: addScript
+                        params: frontend/vendor/cropper/cropper.min.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/cropper/cropper.min.css
+            content:
+                unset: [breadcrumb]
+                type: Redseanet\Lib\ViewModel\Template
+                template: customer/create
+                children:
+                    logo:
+                        type: Redseanet\Cms\ViewModel\Block
+                        action:
+                            -
+                                method: setBlockId
+                                params: logo
+                    footer:
+                       type: Redseanet\Lib\ViewModel\Template
+                       template: page/footer
+                       children:
+                           category:
+                               type: Redseanet\Catalog\ViewModel\Navigation
+                               template: catalog/navigation/bottom
+                    imagecropper:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: page/image-cropper
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: customer
+                            -
+                                method: setVariable
+                                params:
+                                    - inline
+                                    - true
+customer_account_forgotpwd:
+    update: frontend
+    root:
+        template: page/empty
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Forgot Password
+            content:
+                unset: [breadcrumb]
+                type: Redseanet\Lib\ViewModel\Template
+                template: customer/forgotPwd
+                children:
+                    logo:
+                        type: Redseanet\Cms\ViewModel\Block
+                        action:
+                            -
+                                method: setBlockId
+                                params: logo
+                    footer:
+                        type: Redseanet\Lib\ViewModel\Footer
+                        template: page/footer
+                        children:
+                            category:
+                                type: Redseanet\Catalog\ViewModel\Navigation
+                                template: catalog/navigation/bottom
+                            store:
+                                type: Redseanet\Catalog\ViewModel\Navigation
+                                template: catalog/navigation/storeli
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: customer
+                            -
+                                method: setVariable
+                                params:
+                                    - inline
+                                    - true
+customer_account_referees:
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: My referees
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - My referees
+                children:
+                    main:
+                        type: Redseanet\Customer\ViewModel\Referees
+                        template: customer/referees
+customer_account_referrer:
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Referrer
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Referrer
+                children:
+                    main:
+                        type: Redseanet\Customer\ViewModel\Referees
+                        template: customer/referrer
+admin_customer_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/customer_manage/edit/',label: 'Add New Customer'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Customer\Grid\Manage
+admin_customer_beforeedit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Customer\BeforeEdit
+                        template: admin/eav/beforeEdit
+admin_customer_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: backend/js/locate.js
+                    -
+                        method: addScript
+                        params: [{'src':'backend/js/modal.js','defer':'defer','async':'async'}]
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Customer\Edit\Manage
+                        children:
+                            tabs:
+                                type: Redseanet\Admin\ViewModel\Tabs
+                                action:
+                                    -
+                                        method: setMainTabLabel
+                                        params: General
+                                    -
+                                        method: addTab
+                                        params:
+                                            - password
+                                            - Password
+                                            - 20
+                                    -
+                                        method: addTab
+                                        params:
+                                            - wishlist
+                                            - Wishlist
+                                            - 50
+                                children:
+                                    password:
+                                        type: Redseanet\Lib\ViewModel\Template
+                                        template: admin/customer/password
+                                    wishlist:
+                                        type: Redseanet\Admin\ViewModel\Customer\Edit\Wishlist
+                                        template: admin/grid-simple
+                                        children:
+                                            pager:
+                                                type: Redseanet\Lib\ViewModel\Pager
+admin_customer_group_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer Group / Customer Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_group/',label: 'Customer Group'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/customer_group/edit/',label: 'Add New Customer Group'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Customer\Grid\Group
+admin_customer_group_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_group/',label: 'Customer Group'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_group/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Customer\Edit\Group
+admin_customer_level_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer Level / Customer Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_level/',label: 'Customer Level'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/customer_level/edit/',label: 'Add New Customer Level'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Customer\Grid\Level
+admin_customer_level_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_level/',label: 'Customer Level'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_level/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Customer\Edit\Level
+admin_customer_attribute_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer Attribute / Customer Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_attribute/',label: 'Customer Attribute'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/customer_attribute/edit/',label: 'Add New Attribute'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Customer\Grid\Attribute
+admin_customer_attribute_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: backend/js/eav.js
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_attribute/',label: 'Customer Attribute'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_attribute/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Customer\Edit\Attribute
+                        children:
+                            tabs:
+                                type: Redseanet\Admin\ViewModel\Tabs
+                                action:
+                                    -
+                                        method: setMainTabLabel
+                                        params: General
+                                    -
+                                        method: addTab
+                                        params: [label,'Label / Options']
+                                children:
+                                    label:
+                                        type: Redseanet\Admin\ViewModel\Eav\Label
+                                        template: admin/eav/label
+admin_customer_attribute_set_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer Attribute Set / Customer Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_attribute_set/',label: 'Customer Attribute Set'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/customer_attribute_set/edit/',label: 'Add New Attribute Set'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Customer\Grid\Attribute\Set
+admin_customer_attribute_set_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/mouse.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/sortable.js
+                    -
+                        method: addScript
+                        params: backend/js/eav.js
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/modal.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_attribute_set/',label: 'Customer Attribute Set'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_attribute_set/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Customer\Edit\Attribute\Set
+                        children:
+                            apply:
+                                type: Redseanet\Admin\ViewModel\Customer\Edit\Attribute\Group
+                                template: admin/eav/set
+            extra:
+                children:
+                    new-group:
+                        type: Redseanet\Admin\ViewModel\Customer\Edit\Attribute\Group
+                        template: admin/eav/group
+admin_address_attribute_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer Attribute / Customer Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_attribute_address/',label: 'Address Attribute'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/customer_attribute_address/edit/',label: 'Add New Attribute'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Customer\Grid\Attribute\Address
+admin_address_attribute_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: backend/js/eav.js
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_attribute_address/',label: 'Address Attribute'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_attribute_address/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Customer\Edit\Attribute\Address
+                        children:
+                            tabs:
+                                type: Redseanet\Admin\ViewModel\Tabs
+                                action:
+                                    -
+                                        method: setMainTabLabel
+                                        params: General
+                                    -
+                                        method: addTab
+                                        params: [label,'Label / Options']
+                                children:
+                                    label:
+                                        type: Redseanet\Admin\ViewModel\Eav\Label
+                                        template: admin/eav/label
+admin_media_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer Media / Customer Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_media/',label: 'Customer Media'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/customer_media/edit/',label: 'Add New Customer Media'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Customer\Grid\Media
+admin_media_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_media/',label: 'Customer Media'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_media/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Customer\Edit\Media
+                        children:
+                            icon:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: admin/customer/icon
+admin_customer_creditcard:
+    update: admin
+    root:
+        template: page/empty
+        children:
+            content:
+                children:
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: admin/customer/creditcard
+admin_customer_group_customer:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer in Group / Customer Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_group/',label: 'Customer Group'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Customer in Group'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/customer_group/addcustomer/',label: 'Add Customer in Group'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Customer\Grid\CustomerInGroup
+admin_customer_group_addcustomer:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: backend/vendor/select2/js/select2.full.min.js
+                    -
+                        method: addLink
+                        params: backend/vendor/select2/css/select2.min.css 
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_group/',label: 'Customer Group'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_group/addcustomer/',label: 'Add Customer'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Customer\Edit\AddCustomer
+admin_notifications_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Notifications Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_notifications/',label: 'Notifications Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/customer_notifications/edit/',label: 'Add New Notifications'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Customer\Grid\Notifications
+admin_notifications_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: backend/vendor/select2/js/select2.full.min.js
+                    -
+                        method: addLink
+                        params: backend/vendor/select2/css/select2.min.css 
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_notifications/',label: 'Notifications Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_notifications/edit/',label: 'Add Notifications'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Customer\Edit\Notifications
+admin_cutomer_address_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer Address / Address Book
+                    -
+                        method: addScript
+                        params: backend/js/locate.js
+                    -
+                        method: addScript
+                        params: [{'src':'backend/js/modal.js','defer':'defer','async':'async'}]
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Address Book'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Customer\Grid\Address

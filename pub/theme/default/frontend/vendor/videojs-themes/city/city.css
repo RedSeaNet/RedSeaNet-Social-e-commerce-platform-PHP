@@ -1,0 +1,20 @@
+.vjs-theme-city{--vjs-theme-city--primary:#bf3b4d;--vjs-theme-city--secondary:#fff}
+.vjs-theme-city .vjs-control-bar{height:70px;padding-top:20px;background:none;background-image:linear-gradient(0deg,#000,transparent)}
+.vjs-theme-city .vjs-button>.vjs-icon-placeholder:before{line-height:50px}
+.vjs-theme-city .vjs-play-progress:before{display:none}
+.vjs-theme-city .vjs-progress-control{position:absolute;top:0;right:0;left:0;width:100%;height:30px}
+.vjs-theme-city .vjs-progress-control .vjs-progress-holder{position:absolute;top:20px;right:0;left:0;width:100%;margin:0;}
+.vjs-theme-city .vjs-play-progress{background-color:var(--vjs-theme-city--primary)}
+.vjs-theme-city .vjs-skip-backward-10{order:-1;flex: 1;}
+.vjs-theme-city .vjs-skip-forward-10{order:0;flex: 1;}
+.vjs-theme-city .vjs-volume-panel{order:1;flex: 4;}
+.vjs-theme-city .vjs-time-control{order:2;flex: 2;}
+.vjs-theme-city .vjs-remaining-time{order:3;line-height:50px;text-align:left}
+.vjs-theme-city .vjs-picture-in-picture-control{order:4;}
+.vjs-theme-city .vjs-quality-selector{order:5;}
+.vjs-theme-city .vjs-fullscreen-control{order:6;flex: 2;}
+
+
+.vjs-theme-city .vjs-play-control{order:3;font-size:1.75em;display: none;}
+.vjs-theme-city .vjs-fullscreen-control,.vjs-theme-city .vjs-picture-in-picture-control,.vjs-theme-city .vjs-volume-panel{flex:1;align-items: center;}
+.vjs-paused .vjs-big-play-button{display: block!important;}

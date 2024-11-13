@@ -1,0 +1,48 @@
+<?php
+$data_tag = $this->getVariable("data_tag");
+$part_id = $this->getVariable("part_id");
+?>
+<ul class="nav nav-tabs" id="myTab" style="margin:11px 18px" > 
+    <li><a href="#uploadPic">基本属性</a></li> 
+</ul> 
+<div class="tab-content"> 
+    <div class="tab-pane" id="uploadPic" >
+        <div style="margin:26px">
+            <div class="rows">
+                <ul class="infoList"></ul> 	
+            </div>
+        </div>
+    </div>
+
+</div> 
+<input type="hidden" id='focusBtn' >
+<script>
+    $(function () {
+        $('#myTab a:first').tab('show');
+        $('#myTab a').click(function (e) {
+            e.preventDefault();//阻止a链接的跳转行为 
+            $(this).tab('show');//显示当前选中的链接及关联的content
+        });
+    });
+    var data_tag = '<?php echo $data_tag; ?>';
+    var part_id = '<?php echo $part_id; ?>';
+    var obj = $('#' + part_id, parent.document);
+    var data_param = $.trim(obj.attr('data-param')) == "" ? {} : JSON.parse(decodeURIComponent(obj.attr('data-param')));
+    $(document).ready(function () {
+        for (key in data_param) {
+            $("#" + key).val(data_param[key]);
+        }
+    });
+    $('#focusBtn').click(function () {
+        data_param = {};
+        $('.params').each(function () {
+            var tempID = $(this).attr('id');
+            var tempVal = $(this).val();
+            data_param[tempID] = tempVal;
+        });
+        data_param = encodeURIComponent(JSON.stringify(data_param));
+        obj.attr('data-param', data_param);
+        console.log(data_tag);
+        top.window.call_ajax_data(part_id, data_tag);
+    });
+</script>

@@ -1,0 +1,223 @@
+---
+admin_customer_edit:
+    root:
+        children:
+            content:
+                children:
+                    edit:
+                        children:
+                            tabs:
+                                action:
+                                    -
+                                        method: addTab
+                                        params:
+                                            - balance
+                                            - Account Balance
+                                            - 90
+                                children:
+                                    balance:
+                                        type: Redseanet\Admin\ViewModel\Balance\Edit
+                                        template: admin/balance/edit
+                                        children: 
+                                            balancedetail:   
+                                                type: Redseanet\Balance\ViewModel\BalanceDetail
+                                                template: admin/balance/balancedetail
+                                                children:
+                                                    pager:
+                                                        type: Redseanet\Lib\ViewModel\Pager
+admin_balance_draw_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Draw Balance Application / Customer Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_draw/',label: 'Draw Balance Application'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Balance\DrawGrid
+admin_balance_draw_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Draw Balance Application / Customer Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_manage/',label: 'Customer Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_draw/',label: 'Draw Balance Application'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/customer_draw/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Balance\DrawEdit
+balance_statement:
+    update: customer_account
+    root:  
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Balance Statement
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Balance Statement
+                children:
+                    main:
+                        type: Redseanet\Balance\ViewModel\BalanceDetail
+                        template: balance/balancedetail
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+balance_draw:
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Draw Balance
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/balance.js',defer: 'defer',async: 'async'}]
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Draw Balance
+                children:
+                    main:
+                        type: Redseanet\Balance\ViewModel\Draw
+                        template: balance/draw
+            extra:
+                children:
+                    account:
+                        type: Redseanet\Balance\ViewModel\Draw
+                        template: balance/account
+retailer_balance_statement:
+    update: retailer_account
+    root:  
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Balance Statement
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Balance Statement
+                children:
+                    main:
+                        type: Redseanet\Balance\ViewModel\BalanceDetail
+                        template: balance/balancedetail
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager      
+                                
+balance_statement_recharge:  
+    update: customer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Recharge
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Instant Recharge
+                children: 
+                    main:  
+                        type: Redseanet\Balance\ViewModel\Recharge
+                        template: balance/recharge
+checkout_order:
+    root:
+        children:
+            content:
+                children:
+                    balance:
+                        type: Redseanet\Balance\ViewModel\Checkout
+                        template: balance/balance
+checkout_order_balance:
+    update: frontend
+    root:
+        unset: [head]
+        template: page/ajax
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    balance:
+                        type: Redseanet\Balance\ViewModel\Checkout
+                        template: balance/balance
+admin_balance_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Balance Management
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/balance/',label: 'Balance Management'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\Balance\BGrid
+admin_balance_statistics_customer_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Customer Balance Statistics
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/balance/',label: 'Balance Management'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\Balance\CustomerStatistics

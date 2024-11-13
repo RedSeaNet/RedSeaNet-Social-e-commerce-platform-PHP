@@ -1,0 +1,96 @@
+<?php
+$attributes = $this->getVariable('attributes');
+$count = count($attributes);
+$query = $this->getQuery();
+$ids = [];
+$active = $this->getActiveIds();
+?>
+<div class="grid">
+    <div class="filters">
+        <input type="hidden" name="linktype" value="<?php echo $this->getType() ?>" />
+        <?php
+        foreach ($attributes as $attr => $name) {
+            if (isset($name['use4filter']) && !$name['use4filter']) {
+                continue;
+            }
+            if (!isset($name['type'])) {
+                $name['type'] = 'text';
+            }
+            $attr = $name['sortby'] ?? $attr;
+            if (isset($query[$attr])) {
+                $name['value'] = $query[$attr];
+            }
+            echo $this->getInputBox($attr, $name);
+        }
+        ?>
+        <div class="input-box">
+            <label class="control-label" for="sortby:limit"><?php echo $this->translate('Item(s) per page') ?></label>
+            <div class="cell">
+                <input type="tel" name="limit" id="sortby:limit" class="form-control" value="<?php echo $query['limit'] ?? 20 ?>" />
+            </div>
+        </div>
+        <div class="buttons-set">
+            <button type="button" class="btn" formaction="<?php echo $this->getAdminUrl('catalog_product/list/') ?>"><?php echo $this->translate('Search') ?></button>
+            <a href="<?php echo $this->getAdminUrl('catalog_product/list/?linktype=' . $this->getType()) ?>" class="btn"><?php echo $this->translate('Reset') ?></a>
+        </div>
+    </div>
+    <table class="table table-hover table-striped table-no-border">
+        <thead class="sort-by">
+            <tr>
+                <th class="checkbox"><input type="checkbox" class="selectall" /></th>
+                <?php foreach ($attributes as $attr => $name): ?>
+                    <th>
+                        <?php if (!isset($name['use4sort']) || $name['use4sort']): ?>
+                            <a href="<?php echo $this->getOrderByUrl($name['sortby'] ?? $attr) ?>"
+                            <?php if (isset($query['asc']) && $query['asc'] === $attr): ?>
+                                   class="asc"
+                               <?php elseif (isset($query['desc']) && $query['desc'] === $attr): ?>
+                                   class="desc"
+                               <?php endif ?>>
+                               <?php endif ?>
+                               <?php echo $this->translate($name['label'], [], $this->getTranslateDomain()) ?>
+                               <?php if (!isset($name['use4sort']) || $name['use4sort']): ?>
+                            </a>
+                        <?php endif ?>
+                    </th>
+                <?php endforeach ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            foreach ($this->getVariable('collection') as $item):
+                $ids[] = $item['id'];
+                ?>
+                <tr<?php if (isset($item['id'])): ?> data-id="<?php echo $item['id'] ?>"<?php endif ?>>
+                    <td class="text-center checkbox">
+                        <input type="checkbox" name="product_link[<?php echo $this->getType() ?>][]" value="<?php echo $item['id'] ?>"<?php if (in_array($item['id'], $active)): ?> checked="checked"<?php endif ?> />
+                    </td>
+                    <?php foreach ($attributes as $attr => $name): ?>
+                        <td<?php if (isset($name['class'])): ?> class="<?php echo $name['class'] ?>"<?php endif ?>>
+                            <?php
+                            if (isset($item[$attr])) {
+                                echo is_array($item[$attr]) ? implode(',', $item[$attr]) : (isset($name['options'][$item[$attr]]) ? $this->translate($name['options'][$item[$attr]], [], $this->getTranslateDomain()) : $item[$attr]);
+                            }
+                            ?>
+                        </td>
+                    <?php endforeach ?>
+                </tr>
+            <?php endforeach ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="checkbox">
+                    <input type="checkbox" class="selectall" />
+                    <input type="hidden" name="ids[<?php echo $this->getType() ?>]" value="<?php echo implode(',', $ids) ?>" />
+                </td>
+                <td colspan="<?php echo $count ?>" class="text-end">
+                    <?php
+                    if (is_object($this->getVariable('collection'))) {
+                        echo $this->getChild('pager')->setCollection($this->getVariable('collection'));
+                    }
+                    ?>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

@@ -1,0 +1,53 @@
+<?php
+$stat = $this->getStat();
+$events = $this->getEvents();
+$stat[] = ['template' => 'admin/dashboard/rma'];
+?>
+<div class="dashboard">
+    <div class="table">
+        <?php
+        $col = 0;
+        $mod = $col % 4;
+        foreach ($stat as $key => $item):
+            if ($mod === 0):
+                ?>
+                <div class="row">
+                    <?php
+                endif;
+                echo $this->renderCell($item);
+                if (($mod = ++$col % 4) === 0):
+                    ?>
+                </div>
+                <?php
+            endif;
+        endforeach;
+        if ($mod) {
+            echo '</div>';
+        }
+        ?>
+    </div>
+    <div class="chart">
+        <div class="filter clearfix">
+            <select id="filter">
+                <option value="d"><?php echo $this->translate('Last 24 Hours') ?></option>
+                <option value="m"><?php echo $this->translate('Last 30 Days') ?></option>
+                <option value="y"><?php echo $this->translate('Last 12 Months') ?></option>
+                <option value="c"><?php echo $this->translate('Compare') ?></option>
+            </select>
+            <input type="date" class="date" name="from1" value="<?php echo $current = date('Y-m-d') ?>" />
+            <input type="date" class="date" name="to1" value="<?php echo $current ?>" />
+            <input type="date" class="date" name="from2" value="<?php echo $current ?>" />
+            <input type="date" class="date" name="to2" value="<?php echo $current ?>" />
+            <button type="button" id="compare" class="btn"><?php echo $this->translate('Compare') ?></button>
+        </div>
+        <div id="canvas"></div>
+    </div>
+    <div class="event">
+        <h4 class="title"><?php echo $this->translate('Events') ?></h4>
+        <ul class="content">
+            <?php for ($i = 0; $i < 20 && $line = array_pop($events); $i++): ?>
+                <li><?php echo $line ?></li>
+            <?php endfor; ?>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+<div class="grid">
+    <ul class="category table">
+        <?php
+        foreach ($this->getChildrenCategories(0) as $item) {
+            echo $this->renderCategory($item);
+        }
+        ?>
+    </ul>
+</div>

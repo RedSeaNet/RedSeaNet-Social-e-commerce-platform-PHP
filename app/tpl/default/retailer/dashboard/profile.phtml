@@ -1,0 +1,68 @@
+<?php
+$retailer = $this->getRetailer();
+$store = $this->getStore();
+$ratings = $retailer->getRatings();
+$amount = new Redseanet\Balance\ViewModel\BalanceDetail;
+?>
+<div class="profile d-flex">
+    <div class="info col-12 col-md-6">
+        <div class="details d-flex">
+            <div class="col-4 align-items-center text-center d-flex justify-content-center">
+                <div class="avatar">
+                    <img class="rounded-circle" src="<?php
+                    if (!empty($retailer["profile"])):
+                        echo $this->getUploadedUrl('store/' . $retailer['store_id'] . '/' . $retailer["profile"]);
+                    else:
+                        echo $this->getPubUrl('frontend/images/placeholder.png');
+                    endif;
+                    ?>"  height="60" width="60" />
+                </div>
+            </div>
+            <div class="col-8">
+                <h4 class="title"><?php echo $store['name'] ?></h4>
+                <ul class="links list-inline mb-0">
+                    <li>
+                        <a href="<?php echo $this->getBaseUrl('retailer/store/setting/') ?>"><?php echo $this->translate('Store Settings') ?></a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $this->getBaseUrl('retailer/store/view/') ?>"><?php echo $this->translate('View Store') ?></a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $this->getBaseUrl('retailer/account/reward/') ?>"><?php echo $this->translate('Account Balance'); ?>
+                            (<span class="count"><?php echo $amount->getCurrency()->convert($amount->getAmount(), true); ?></span>)
+                        </a>
+                    </li>
+                </ul>
+                <div class="transaction">
+                    <span class="badge text-bg-danger"><?php echo $this->translate('Transaction') ?>:</span>
+                    <a href="<?php echo $this->getBaseUrl('retailer/sales_order/?status_id=1') ?>"><?php echo $this->translate('Pending Payment') ?><span class="count">(<?php echo $this->getPendingPayment() ?>)</span></a>
+                    <a href="<?php echo $this->getBaseUrl('retailer/sales_order/?status_id=3') ?>"><?php echo $this->translate('Processing', [], 'customer') ?><span class="count">(<?php echo $this->getProcessing() ?>)</span></a>
+                    <a href="<?php echo $this->getBaseUrl('retailer/sales_order/?status_id=7') ?>"><?php echo $this->translate('On Hold', [], 'customer') ?><span class="count">(<?php echo $this->getHolding() ?>)</span></a>
+                </div> 
+            </div>
+
+        </div>
+    </div>
+    <div class="col-12 col-md-6 d-none d-md-block">
+        <h4 class="title text-center"><?php echo $this->translate('Store Score') ?></h4>
+        <div class="ratings">
+            <?php
+            $sum = 0;
+            foreach ($ratings as $rating):
+                $sum += $rating['value'];
+                ?>
+                <div class="item">
+                    <span class="badge text-bg-danger"><?php echo $this->translate($rating['title']) ?></span>
+                    <span class="value"><?php printf('%.2f', $rating['value']) ?></span>
+                </div>
+                <?php
+            endforeach;
+            $avg = count($ratings) ? $sum / count($ratings) : 0;
+            ?>
+        </div>
+        <div class="rating" title="<?php printf('%.2f', $avg) ?>">
+            <span class="fa fa-star" style="width:<?php echo $avg * 20 ?>%"></span>
+            <span class="fa fa-star-o"></span>
+        </div>
+    </div>
+</div>

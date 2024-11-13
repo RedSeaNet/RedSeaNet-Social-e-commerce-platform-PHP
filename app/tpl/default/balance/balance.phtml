@@ -1,0 +1,24 @@
+<?php
+if ($this->canUse()):
+    $balances = $this->getAvailableBalances();
+    ?>
+    <section class="section balance" data-change-after="shipping" data-url="<?php echo $this->getBaseUrl('balance/index/load/'); ?>">
+        <h4 class="title"><?php echo $this->translate('Balance') ?></h4>
+        <div class="available">
+            <?php
+            if ($balances && $balances > 0):
+                ?>
+                <p>
+                    <label for="include_balance" class="badge text-bg-danger" title="<?php echo $this->translate('Available Balance') ?>"><?php echo $this->translate('Available Balance') ?>:</label>
+                    <span class="price balance sys-red" data-price="<?php echo $this->getCurrency()->convert($this->getCurrentBalances(), true) ?>"><?php echo $this->getCurrency()->convert($this->getCurrentBalances(), true) ?></span>
+                    <a href="<?php echo $this->getBaseUrl('balance/index/apply/') ?>" class="btn<?php if ($this->hasApplied()): ?> clicked<?php endif ?> btn-primary" data-method="get" data-load='shipping'><?php echo $this->translate('Apply'); ?></a>
+                    <a href="<?php echo $this->getBaseUrl('balance/index/cancel/') ?>" class="btn btn-light" data-method="get" data-load='shipping'><?php echo $this->translate('Cancel') ?></a>
+                </p>
+                <?php
+            else:
+                ?>
+                <p><?php echo $this->translate('No available balance.') ?></p>
+            <?php endif ?>
+        </div>
+    </section>
+<?php endif; ?>

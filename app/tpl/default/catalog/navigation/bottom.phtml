@@ -1,0 +1,8 @@
+<?php
+$root = $this->getRootCategory();
+foreach ($root->getChildrenCategories(1) as $category):
+    ?>
+    <li>
+        <a href="<?php echo $category->getUrl() ?>" role="menuitem"><i class="fa fa-angle-right" aria-hidden="true">&nbsp;</i><?php echo $category['name'] ?></a>
+    </li>
+<?php endforeach; ?>

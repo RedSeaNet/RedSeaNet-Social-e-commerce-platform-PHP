@@ -1,0 +1,15 @@
+---
+email:
+    children:
+        -
+            link: 'message_template/'
+            operation: 'Admin\Message\Template::index'
+            title: 'Message Template'
+            priority: 60
+system:
+    children:
+        -
+            link: config/message/
+            operation: 'Admin\Config::message'
+            title: SMS Configuration
+            priority: 21

@@ -1,0 +1,43 @@
+---
+rpcport:
+    bulkList:
+        params: 
+            id: string
+            token: string
+            conditionData: array
+            customerId: int
+            languageId: int
+            currencyCode: string
+        respone: json array 
+        documentation: get bulk
+    bulkSalesList:
+        params: 
+            id: string
+            token: string
+            productId: int
+            customerId: int
+            activeOnly: int
+            languageId: int
+            currencyCode: string
+        respone: json array 
+        documentation: get bulk sale list
+    bulkApply:
+        params: 
+            id: string
+            token: string
+            productId: int
+            customerId: int
+            bulkId: int
+            data: array
+            languageId: int
+            currencyCode: string
+        respone: json array 
+        documentation: apply bulk
+rest:
+    bulkList: \Redseanet\Bulk\Model\Api\Rpc\Bulk
+    bulkSalesList: \Redseanet\Bulk\Model\Api\Rpc\Bulk
+    bulkApply: \Redseanet\Bulk\Model\Api\Rpc\Bulk
+rpc:
+    bulkList: \Redseanet\Bulk\Model\Api\Rpc\Bulk
+    bulkSalesList: \Redseanet\Bulk\Model\Api\Rpc\Bulk
+    bulkApply: \Redseanet\Bulk\Model\Api\Rpc\Bulk

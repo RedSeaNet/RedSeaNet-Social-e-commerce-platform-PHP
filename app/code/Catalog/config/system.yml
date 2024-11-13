@@ -1,0 +1,111 @@
+---
+catalog:
+    label: Catalog Configuration
+    children:
+        frontend:
+            label: Frontend
+            scope: [merchant,store]
+            children:
+                allowed_per_page_grid:
+                    type: text
+                    label: Allowed Number of Products per Page on Grid
+                    required: required
+                    comment: Comma-separated.
+                    default: '12,24,36'
+                    priority: 10
+                default_per_page_grid:
+                    type: tel
+                    label: Default Number of Products per Page on Grid
+                    required: required
+                    default: 12
+                    priority: 11
+                allowed_per_page_list:
+                    type: text
+                    label: Allowed Number of Products per Page on List
+                    required: required
+                    comment: Comma-separated.
+                    default: '5,10,15,20,25'
+                    priority: 15
+                default_per_page_list:
+                    type: tel
+                    label: Default Number of Products per Page on List
+                    required: required
+                    default: 10
+                    priority: 16
+                allowed_all_products:
+                    type: select
+                    label: Allow All Products
+                    required: required
+                    comment: Whether to show "All" option in the "Show X Per Page" dropdown.
+                    default: 1
+                    priority: 20
+                    options:
+                        1: Yes
+                        0: No
+        product:
+            label: Product
+            scope: merchant
+            children:
+                count_in_category:
+                    type: tel
+                    label: Each Product Belongs to Maximum Count of Categories
+                    required: required
+                    default: 5
+                    priority: 0
+                search_interval:
+                    type: tel
+                    label: Search Interval
+                    required: required
+                    default: 0
+                    priority: 10
+                    comment: In seconds.
+                search_frequency:
+                    type: tel
+                    label: Search Frequency For Unregistered Customer
+                    priority: 11
+                    comment: Leave empty to avoid the limitation.
+                    default: ''
+        review:
+            label: Review
+            scope: merchant
+            children:
+                status:
+                    type: select
+                    label: Default Status
+                    required: required
+                    options:
+                        1: Approved
+                        0: Not Approved
+                    default: 1
+                    priority: 0
+                allow_guests:
+                    type: select
+                    label: Allow Guests to Write Reviews
+                    required: required
+                    options:
+                        1: Yes
+                        0: No
+                    priority: 20
+                    default: 1
+        sitemap:
+            label: Sitemap
+            scope: merchant
+            children:
+                filename:
+                    type: text
+                    label: Filename
+                    comment: 'Example: sitemap'
+                    default: sitemap
+                    priority: 0
+                path:
+                    type: text
+                    label: Path
+                    comment: 'Example: "sitemap/" or "/" for base path (path must be writeable)'
+                    default: '/'
+                    priority: 10
+                generate:
+                    type: link
+                    label: Generate
+                    link: catalog_sitemap/
+                    content: Generate Now
+                    priority: 20

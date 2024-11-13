@@ -1,0 +1,5 @@
+---
+i18n:
+    method: [GET]
+    route: /i18n/{controller}/
+    namespace: Redseanet\I18n\Controller

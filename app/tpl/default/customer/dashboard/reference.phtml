@@ -1,0 +1,21 @@
+<?php
+$customer = $this->getCustomer();
+?>
+<div class="card reference p-0 m-0 mt-4 p-md-4">
+    <div class="card-header p-0 m-0">
+        <h6 class="card-title"><?php echo $this->translate('Reference') ?></h6>
+    </div>
+    <div class="card-body p-0 m-0 mt-2">
+        <p>
+            <?php
+            echo $this->translate('You can earn reward points while your friends registered via your refered link.'),
+            $this->translate('Click %sHere%s to know more rules.', ['<a href="' . $this->getBaseUrl('help/customer/distribution.html') . '">', '</a>']);
+            ?>
+        </p>
+        <div class="input-box">
+            <label for="reference" class="col-form-label"><?php echo $this->translate('Exclusive Link') ?>： </label>
+            <div class="col-6"><input type="text" id="reference" class="form-control col-6 p-2" onfocus="javascript:this.select()" readonly="readonly" value="<?php echo $this->getBaseUrl('customer/account/create/?referer=' . $customer['increment_id']) ?>" /></div>
+            <button type="button" class="btn" onclick="javascript:document.getElementById('reference').focus();document.execCommand('Copy', 'false', null);"><?php echo $this->translate('Copy to Clipboard') ?></button>
+        </div>
+    </div>
+</div>

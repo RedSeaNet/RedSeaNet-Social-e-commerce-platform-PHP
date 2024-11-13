@@ -1,0 +1,248 @@
+---
+admin_promotion_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Promotion
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/promotion/',label: 'Promotion'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/promotion/edit/?using=0',label: 'Add New Promotion Activities'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/promotion/edit/?using=1',label: 'Add New Coupons'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Promotion\Grid\Rule
+admin_promotion_edit_1:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/promotion.js',async: 'async',defer: 'defer'}]
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/promotion/',label: 'Promotion'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/promotion/edit/?using=0',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Promotion\Edit\PromotionRule
+                        children:
+                            tabs:
+                                type: Redseanet\Admin\ViewModel\Tabs
+                                action:
+                                    -
+                                        method: setMainTabLabel
+                                        params: General
+                                    -
+                                        method: addTab
+                                        params:
+                                            - condition
+                                            - Entry into Force Conditions
+                                            - 10
+                                    -
+                                        method: addTab
+                                        params:
+                                            - action
+                                            - Action
+                                            - 20
+                                children:
+                                    condition:
+                                        type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                        template: admin/promotion/condition
+                                        children:
+                                            attribute_set:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/attribute_set
+                                            category:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/category
+                                            combination:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/combination
+                                            country:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/country
+                                            customer_id:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/customer_id
+                                            customer_level:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/customer_level
+                                            customer_group:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/customer_group
+                                            options_combination:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/options_combination
+                                            payment_method:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/payment_method
+                                            product_id:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/product_id
+                                            product_type:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/product_type
+                                            shipping_method:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/shipping_method
+                                    action:
+                                        type: Redseanet\Admin\ViewModel\Promotion\Edit\Action
+                                        template: admin/promotion/action
+                                        children:
+                                            attribute_set:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Action
+                                                template: admin/promotion/condition/attribute_set
+                                            category:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Action
+                                                template: admin/promotion/condition/category
+                                            combination:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Action
+                                                template: admin/promotion/condition/handler
+                                            product_id:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Action
+                                                template: admin/promotion/condition/product_id
+                                            product_type:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Action
+                                                template: admin/promotion/condition/product_type
+                                            pager:
+                                                type: Redseanet\Lib\ViewModel\Pager
+admin_promotion_edit_2:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/promotion.js',async: 'async',defer: 'defer'}]
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/promotion/',label: 'Promotion'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/promotion/edit/?using=1',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Promotion\Edit\Rule
+                        children:
+                            tabs:
+                                type: Redseanet\Admin\ViewModel\Tabs
+                                action:
+                                    -
+                                        method: setMainTabLabel
+                                        params: General
+                                    -
+                                        method: addTab
+                                        params:
+                                            - condition
+                                            - Entry into Force Conditions
+                                            - 10
+                                    -
+                                        method: addTab
+                                        params:
+                                            - action
+                                            - Action
+                                            - 20
+                                    -
+                                        method: addTab
+                                        params:
+                                            - coupon
+                                            - Coupon
+                                            - 30
+                                    -
+                                        method: addTab
+                                        params:
+                                            - coupon_statement
+                                            - Coupon Statement
+                                            - 31
+                                children:
+                                    condition:
+                                        type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                        template: admin/promotion/condition
+                                        children:
+                                            attribute_set:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/attribute_set
+                                            category:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/category
+                                            combination:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/combination
+                                            country:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/country
+                                            customer_id:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/customer_id
+                                            customer_level:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/customer_level
+                                            customer_group:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/customer_group
+                                            options_combination:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/options_combination
+                                            payment_method:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/payment_method
+                                            product_id:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/product_id
+                                            product_type:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/product_type
+                                            shipping_method:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Condition
+                                                template: admin/promotion/condition/shipping_method
+                                    action:
+                                        type: Redseanet\Admin\ViewModel\Promotion\Edit\Action
+                                        template: admin/promotion/action
+                                        children:
+                                            attribute_set:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Action
+                                                template: admin/promotion/condition/attribute_set
+                                            category:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Action
+                                                template: admin/promotion/condition/category
+                                            combination:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Action
+                                                template: admin/promotion/condition/handler
+                                            product_id:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Action
+                                                template: admin/promotion/condition/product_id
+                                            product_type:
+                                                type: Redseanet\Admin\ViewModel\Promotion\Edit\Action
+                                                template: admin/promotion/condition/product_type
+                                    coupon:
+                                        type: Redseanet\Admin\ViewModel\Promotion\Edit\Coupon
+                                        template: admin/promotion/coupon
+                                    coupon_statement:
+                                        type: Redseanet\Admin\ViewModel\Promotion\Edit\Statement
+                                        template: admin/promotion/statement
+                                        children:
+                                            pager:
+                                                type: Redseanet\Lib\ViewModel\Pager

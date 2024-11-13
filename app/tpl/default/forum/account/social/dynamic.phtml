@@ -1,0 +1,124 @@
+<?php
+$config = $this->getConfig();
+$current = $this->getSegment('customer')->get('hasLoggedIn') ? $this->getSegment('customer')->get('customer')['id'] : 0;
+$posts = $this->getDynamic();
+?>
+<div class="main-container attention-main">
+    <div class="mobile-post-top d-block d-sm-none pt-2 pb-2">
+        <div class="d-flex">
+            <div class="col-sm-2"><a href="javascript:void(0)" onclick="javascript:history.back(-1);"><span class="fa fa-arrow-left"></span></a></div>
+            <div class="col-sm-8 text-center font-14 align-items-center">              
+                <h2><?php echo $this->translate('Dynamic'); ?></h2>
+            </div>
+            <div class="col-sm-2 text-end"></div> 
+        </div>
+    </div>
+    <div class="container">
+        <div class="background-white col-lg-12 col-md-12  row">
+            <div class="text-center attention-plus d-sm-none d-none">
+                <a href="javascript:void(0)"><?php echo $this->translate('Dynamic'); ?></a>
+                <a href="<?php echo $this->getBaseUrl('forum/post/publish/') ?>">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+            <div class="attention-content w-100 pb-5">
+                <?php
+                if (count($posts)):
+                    foreach ($posts as $post):
+                        $thumbnail = $post->getThumbnail();
+                        $thumbnails = $post->getThumbnails();
+                        $customer = $post->getCustomer();
+                        $count = $post->getLikeCount();
+                        $collects = $post->getCollectCount();
+                        ?>
+                        <div class="attention-box col-12 d-flex justify-content-between">
+                            <ul class="d-flex">
+                                <li class="product-user">
+                                    <a href="<?php echo $this->getBaseUrl(); ?>">
+                                        <a href="<?php echo $this->getBaseUrl('forum/space/?customer_id=' . $customer['id']); ?>">
+                                            <img src="<?php echo $customer['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $customer['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="<?php echo $customer['username'] ?>" class="shadow" />
+                                        </a>
+                                    </a>
+                                    <div class="user-name">
+                                        <h5><?php echo $customer['username'] ?></h5>
+                                        <p class="attention-time font-12"><?php echo $this->getTime($post['created_at']) ?></p>
+                                    </div>
+                                </li>
+                                <li class="d-none content-img">
+                                    <a href="<?php echo $post->getUrl() ?>">
+                                        <img loading="lazy" src="<?php echo $thumbnail ? $this->getBaseUrl('pub/upload/forum/') . $thumbnail : $this->getPubUrl('frontend/images/placeholder.png'); ?>" alt="">
+                                        <span class="img-number">
+                                            1/<?php echo count($thumbnails) ?? 0 ?>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="Product-box">
+                                    <h6 class="Product-title"><a href="<?php echo $post->getUrl() ?>"><?php echo mb_substr($post['title'], 0, 60, 'utf-8') ?></a></h6>
+        <!--                                    <h6 class="Product-cont"><?php echo mb_substr($post['content'], 0, 50, 'utf-8') ?></h6>-->
+                                </li>
+                            </ul>
+                            <ul class="Product-btn">
+                                <?php
+                                if ($this->getSegment('customer')->get('hasLoggedIn')):
+                                    ?>
+                                    <li class="">
+                                        <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/like/') ?>" class="like" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post['id'] ?>">
+                                            <i class="fa fa-heart-o"></i>
+                                            <span><?php echo $this->translate('Like'); ?></span>
+                                            <span>·</span>
+                                            <span><?php echo $count; ?></span>
+                                        </a>
+                                    </li> 
+                                    <?php
+                                else:
+                                    ?>
+                                    <a href="<?php echo $this->getBaseUrl('customer/account/logion/') ?>" class="like">
+                                        <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                        <span><?php echo $count; ?></span>
+                                    </a>
+                                <?php
+                                endif;
+                                ?>
+                                <li class="">
+                                    <a href="<?php echo $post->getUrl() ?>">
+                                        <i class="fa fa-commenting-o"></i>
+                                        <span><?php echo $this->translate('Review'); ?></span>
+                                        <span>·</span>
+                                        <span><?php echo $post['reviews'] ?></span>
+                                    </a>
+                                </li>
+                                <?php
+                                if ($this->getSegment('customer')->get('hasLoggedIn')):
+                                    ?>
+                                    <li class="">
+                                        <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/collect/') ?>" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post['id'] ?>">
+                                            <i class="fa fa-star-o"></i>
+                                            <span><?php echo $this->translate('Favorites'); ?></span>
+                                            <span>·</span>
+                                            <span><?php echo $collects; ?></span>
+                                        </a>
+                                    </li>
+                                    <?php
+                                else:
+                                    ?>
+                                    <a href="<?php echo $this->getBaseUrl('customer/account/logion/') ?>" class="like">
+                                        <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                        <span><?php echo $collects; ?></span>
+                                    </a>
+                                <?php
+                                endif;
+                                ?>
+                            </ul>
+                        </div>
+                        <?php
+                    endforeach;
+                else :
+                    ?>
+                    <p class="text-center"><?php echo $this->translate('No movement for the time being.'); ?></p>
+                <?php
+                endif;
+                ?>
+            </div>
+        </div>
+    </div>
+</div>

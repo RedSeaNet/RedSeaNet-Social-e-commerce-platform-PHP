@@ -1,0 +1,57 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = preg_replace('/\W+/', '-', $key);
+$parent = $this->getVariable('parent');
+$values = $parent->$key;
+if (!is_array($values) && !$values instanceof \Traversable) {
+    $values = (array) $values;
+}
+$hidenKey = $key;
+$hidenKeySrc = $key . '-src';
+if (isset($item['multiple'])) {
+    $hidenKey = $hidenKey . '[]';
+    $hidenKeySrc = $hidenKeySrc . '[]';
+}
+if (count($values)):
+    foreach ($values as $value):
+        ?>
+        <div class="inline-box">
+            <button type="button" class="btn" data-toggle="modal" data-target="#modal-insert" data-param="<?php echo $parent->getImageOnly() ? 'file_type=image%25' : '' ?>" title="<?php echo $this->translate('Select Resource') ?>">
+                <?php if (strpos($value['file_type'], 'image') === 0): ?>
+                    <img src="<?php echo $this->getResourceUrl('image/' . $value['real_name']) ?>" alt="" />
+                <?php else: ?>
+                    <span><?php echo $value['real_name'] ?></span>
+                <?php endif ?>
+            </button>
+            <a href="javascript:void(0);" class="delete">
+                <span class="fa fa-trash-o" aria-hidden="true"></span>
+                <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+            </a>
+            <input type="hidden" name="<?php echo $hidenKey ?>" value="<?php echo $value['id'] ?>" class="imageid" />
+            <input type="hidden" name="<?php echo $hidenKeySrc ?>" value="<?php echo $this->getResourceUrl('image/' . $value['real_name']) ?>" class="imagesrc" />
+        </div>
+        <?php
+    endforeach;
+else:
+    ?>
+    <div class="inline-box">
+        <button type="button" class="btn" data-toggle="modal" data-target="#modal-insert" data-param="<?php echo $parent->getImageOnly() ? 'file_type=image%25' : '' ?>" title="<?php echo $this->translate('Select Resource') ?>">
+            <img src="<?php echo $this->getPubUrl('backend/images/placeholder.png') ?>" alt="" />
+        </button>
+        <a href="javascript:void(0);" class="delete">
+            <span class="fa fa-trash-o" aria-hidden="true"></span>
+            <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+        </a>
+        <input type="hidden" name="<?php echo $hidenKey ?>" value="" class="imageid" />
+        <input type="hidden" name="<?php echo $hidenKeySrc ?>" value="" class="imagesrc" />
+    </div>
+<?php
+endif;
+if (isset($item['multiple'])):
+    ?>
+    <a href="javascript:void(0);" class="add">
+        <span class="fa fa-plus-square" aria-hidden="true"></span>
+        <span class="sr-only"><?php echo $this->translate('Add') ?></span>
+    </a>
+<?php endif; ?>

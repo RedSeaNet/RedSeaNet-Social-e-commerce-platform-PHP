@@ -1,0 +1,14 @@
+<?php
+$source = $this->getOptions('\\Redseanet\\Catalog\\Source\\Product');
+?>
+<span class="param form-inline">
+    <select class="form-control" name="<?php echo $this->getVariable('name') ?>">
+        <?php foreach ($source as $id => $text): ?>
+            <option value="<?php echo $id ?>"><?php echo $text ?></option>
+        <?php endforeach ?>
+    </select>
+    <a href="javascript:void(0);" class="delete">
+        <span class="fa fa-times-circle" aria-hidden="true"></span>
+        <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+    </a>
+</span>

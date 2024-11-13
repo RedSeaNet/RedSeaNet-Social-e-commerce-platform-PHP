@@ -1,0 +1,68 @@
+---
+checkout:
+    children:
+        email:
+            label: Email
+            scope: merchant
+            priority: 20
+            children:
+                order_placed_template:
+                    type: select
+                    label: Order Placed Notification
+                    required: required
+                    priority: 0
+                    source: \Redseanet\Email\Source\Template
+                    default: order_place_template
+                order_changed_template:
+                    type: select
+                    label: Order Status Changed Notification
+                    required: required
+                    priority: 10
+                    source: \Redseanet\Email\Source\Template
+                    default: order_changed_template
+                invoice_template:
+                    type: select
+                    label: Invoice Saved Notification
+                    required: required
+                    priority: 20
+                    source: \Redseanet\Email\Source\Template
+                    default: order_changed_template
+                shipment_template:
+                    type: select
+                    label: Shipment Saved Notification
+                    required: required
+                    priority: 30
+                    source: \Redseanet\Email\Source\Template
+                    default: order_changed_template
+                rma_template:
+                    type: select
+                    label: RMA Notification
+                    required: required
+                    priority: 40
+                    source: \Redseanet\Email\Source\Template
+                    default: rma_template
+        message:
+            label: Short Message Service
+            scope: merchant
+            priority: 21
+            children:
+                order_placed_template:
+                    type: text
+                    label: Order Placed Notification
+                    priority: 0
+                order_changed_template:
+                    type: text
+                    label: Order Status Changed Notification
+                    priority: 10
+                invoice_template:
+                    type: text
+                    label: Invoice Saved Notification
+                    priority: 20
+                shipment_template:
+                    type: text
+                    label: Shipment Saved Notification
+                    priority: 30
+                rma_template:
+                    type: text
+                    label: RMA Notification
+                    priority: 40

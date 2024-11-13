@@ -1,0 +1,39 @@
+<?php
+$links = $this->getLinks();
+if (count($links)):
+    ?>
+    <ul class="links font-14 list-inline<?php echo $this->getClass() ?>">
+        <?php
+        foreach ($links as $link):
+            if (is_string($link)):
+                echo $this->getChild($link)->__toString();
+            elseif (isset($link['block'])):
+                echo $this->getChild($link['block'])->__toString();
+            elseif (isset($link['children'])):
+                ?>
+                <li class="dropdown">
+                    <a href="javascript:void(0);" title="<?php echo $this->translate($link['label']) ?>" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
+                        <?php echo $this->translate($link['label']) ?>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <?php foreach ($link['children'] as $child): ?>
+                            <li>
+                                <a href="<?php echo $this->isAdminPage() ? $this->getAdminUrl($child['link']) : $this->getBaseUrl($child['link']) ?>" title="<?php echo $this->translate($child['label']) ?>">
+                                    <?php echo $this->translate($child['label']) ?>
+                                </a>
+                            </li>
+                        <?php endforeach ?>
+                    </ul>
+                </li>
+            <?php else: ?>
+                <li>
+                    <a href="<?php echo $this->isAdminPage() ? $this->getAdminUrl($link['link']) : $this->getBaseUrl($link['link']) ?>" title="<?php echo $this->translate($link['label']) ?>">
+                        <?php echo $this->translate($link['label']) ?>
+                    </a>
+                </li>
+            <?php
+            endif;
+        endforeach;
+        ?>
+    </ul>
+<?php endif; ?>

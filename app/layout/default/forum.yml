@@ -1,0 +1,1286 @@
+---
+forum_account:
+    update: forum_frontend
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: forum-account userSpace-main account-main
+        children:
+            content:
+                type: Redseanet\Forum\ViewModel\Account
+                template: forum/account/account
+                children:
+                    nav:
+                        type: Redseanet\Forum\ViewModel\Account\Navigation
+                        action:
+                            -
+                                method: addGroup
+                                params: [{label: 'Article Management',priority: 0}]
+                            -
+                                method: addLink
+                                params: [{link: 'forum/post/publish/',label: 'Publish Articles',group: 'Article Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'forum/post/draft/',label: 'My Draft',group: 'Article Management'}] 
+                            -
+                                method: addGroup
+                                params: [{label: 'Social Management',priority: 10}]
+                            -
+                                method: addLink
+                                params: [{link: 'forum/social/reply/',label: 'Reply Management',group: 'Social Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'forum/social/liked/',label: 'I Liked It',group: 'Social Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'forum/social/favoritedList/',label: 'I Favorited It',group: 'Social Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'forum/social/following/',label: 'Following List',group: 'Social Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'forum/social/fans/',label: 'Fans List',group: 'Social Management'}] 
+                            -
+                                method: addLink
+                                params: [{link: 'forum/social/beLike/',label: 'Liked List',group: 'Social Management'}]
+                            -
+                                method: addLink
+                                params: [{link: 'forum/social/beCollected/',label: 'Be Collected List',group: 'Social Management'}] 
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum-account
+                            -
+                                method: setVariable
+                                params:
+                                    - inline
+                                    - 1
+forum_account_dashboard:
+    update: forum_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Forum 
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+            content:            
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                    main:
+                        type: Redseanet\Lib\ViewModel\Wrapper
+                        children:
+                            list:
+                                type: Redseanet\Forum\ViewModel\Post
+                                template: forum/category/list
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+forum_account_dashboard_ajax:
+    update: frontend
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                type: Redseanet\Forum\ViewModel\Post
+                template: forum/account/social/my_published 
+forum_user_space:
+    update: forum_frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Forum 
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+            content:            
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                    main:
+                        type: Redseanet\Lib\ViewModel\Wrapper
+                        children:
+                            space:
+                                type: Redseanet\Forum\ViewModel\Post
+                                template: forum/account/space
+forum_user_space_ajax:
+    update: frontend
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                type: Redseanet\Forum\ViewModel\Post
+                template: forum/account/space
+forum_post_publish:
+    update: forum_account
+    root:  
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Publish Articles
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum_publish.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: frontend/ckeditor/ckeditor.js
+                    -
+                        method: addScript
+                        params: frontend/ckeditor/adapters/jquery.js
+                    -
+                        method: addScript
+                        params: frontend/ckeditor.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery-ui/jquery-ui.min.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/jquery-ui/jquery-ui.min.css
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery-ui/jquery.ui.touch-punch.min.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: frontend/vendor/tags-input/jquery.tagsinput.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/tags-input/jquery.tagsinput.css
+                    -
+                        method: addScript
+                        params: frontend/vendor/select2/js/select2.full.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/select2/js/i18n/zh-CN.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/select2/js/i18n/zh-HK.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/select2/js/config.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/select2/css/select2.min.css
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Publish Articles           
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                    main:
+                        type: Redseanet\Forum\ViewModel\Post
+                        template: forum/account/publish
+                        children:
+                            poll:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/post/poll
+forum_post_draft:
+    update: forum_account
+    root:  
+        action:
+            -
+                method: addBodyClass
+                params: draft-main
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: My Draft
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: frontend/ckeditor/ckeditor.js
+                    -
+                        method: addScript
+                        params: frontend/ckeditor/adapters/jquery.js
+                    -
+                        method: addScript
+                        params: frontend/ckeditor.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - My Draft         
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                    main:
+                        type: Redseanet\Forum\ViewModel\Post
+                        template: forum/account/social/draft
+forum_post_reply:
+    update: forum_account
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: draft-main 
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Reply Management
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Reply Management         
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                    main:
+                        type: Redseanet\Forum\ViewModel\Account\Social\Reply
+                        template: forum/account/social/reply
+            extra:
+                children:
+                    review:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: forum/modal
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - key
+                                    - review
+                        children:
+                            form:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/review/form
+forum_post_liked:
+    update: forum_account
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: draft-main liked-main
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: I Liked It
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+            content: 
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - I Liked It           
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum  
+                    main:
+                        type: Redseanet\Forum\ViewModel\Account\Social\Liked
+                        template: forum/account/social/liked
+forum_post_following:
+    update: forum_account
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: draft-main liked-main watchlist-listBox
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Following List
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+            content:
+                action: 
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Following List 
+                children:
+                    main:
+                        type: Redseanet\Forum\ViewModel\Account\Social\Following
+                        template: forum/account/social/following
+forum_post_fans:
+    update: forum_account
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: draft-main liked-main
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Fans List
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+            content:
+                action: 
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Fans List          
+                children:
+                    main:
+                        type: Redseanet\Forum\ViewModel\Account\Social\Following
+                        template: forum/account/social/fans
+forum_post_belike:
+    update: forum_account
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: draft-main liked-main
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Liked List
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+            content:
+                action: 
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Liked List       
+                children:
+                    main:
+                        type: Redseanet\Forum\ViewModel\Account\Social\Liked
+                        template: forum/account/social/belike
+forum_post_becollected:
+    update: forum_account
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: draft-main liked-main
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Be Collected List
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+            content:
+                action: 
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Be Collected List           
+                children:
+                    main:
+                        type: Redseanet\Forum\ViewModel\Account\Social\BeCollected
+                        template: forum/account/social/becollected
+forum_post_favorited:
+    update: forum_account
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: draft-main liked-main
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: I Favorited It
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+            content:
+                action: 
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - I Favorited It          
+                children:
+                    main:
+                        type: Redseanet\Forum\ViewModel\Account\Social\Favorited
+                        template: forum/account/social/favorited
+forum_post_favorited_ajax:
+    update: frontend
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                type: Redseanet\Forum\ViewModel\Account\Social\Favorited
+                template: forum/account/social/favorited
+forum_post_dynamic:
+    update: forum_frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Dynamic
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                            -
+                                method: setVariable
+                                params:
+                                    - title
+                                    - Dynamic
+                    main:
+                        type: Redseanet\Forum\ViewModel\Post
+                        template: forum/account/social/dynamic
+            extra:
+                children:
+                    review:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: forum/modal
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - key
+                                    - review
+                        children:
+                            form:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/review/form
+forum_category:
+    update: forum_frontend
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: index-home
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Forum Home                    
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]                       
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                    main:
+                        type: Redseanet\Forum\ViewModel\Category
+                        template: forum/category/view
+                        children:
+                            list:
+                                type: Redseanet\Forum\ViewModel\Post
+                                template: forum/post/list
+#                            pager:
+#                                type: Redseanet\Lib\ViewModel\Pager
+                            form:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/post/form-simple
+forum_category_ajax:
+    update: frontend
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                type: Redseanet\Forum\ViewModel\Post
+                template: forum/post/list
+forum_search:
+    update: forum_frontend
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: index-home
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Forum Search
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+            content:
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                    main:
+                        type: Redseanet\Forum\ViewModel\Post
+                        template: forum/post/search
+forum_product:
+    update: forum_category_ajax
+    root:
+        children:
+            content:
+                template: forum/post/summary
+forum_post:
+    update: forum_frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addLink
+                        params: frontend/vendor/jquery-sina-emotion-4.1.0/jquery-sina-emotion.min.css
+                    -
+                        method: addLink
+                        params: frontend/vendor/video-js-8.5.0/video-js.min.css
+                    -
+                        method: addScript
+                        params: frontend/js/forum/jquery.showmore.min.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: frontend/js/forum/main.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery-sina-emotion-4.1.0/jquery-sina-emotion.min.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/video-js-8.5.0/video.min.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/videojs-themes/city/city_1.css
+                    -
+                        method: addScript
+                        params: frontend/vendor/videojs-quality-selector/js/silvermine-videojs-quality-selector.min.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/videojs-quality-selector/css/quality-selector.css
+            content:
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                    main:
+                        type: Redseanet\Forum\ViewModel\Post
+                        template: forum/post/view
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+                            form:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/review/form
+                            poll:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/post/pollview
+            extra:
+                children:
+                    review:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: forum/modal
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - key
+                                    - review
+                        children:
+                            form:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/review/form
+                    log:
+                        type: Redseanet\Forum\ViewModel\Visitor
+forum_post_edit:
+    update: forum_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum_publish.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: frontend/ckeditor/ckeditor.js
+                    -
+                        method: addScript
+                        params: frontend/ckeditor/adapters/jquery.js
+                    -
+                        method: addScript
+                        params: frontend/ckeditor.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery-ui/jquery-ui.min.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/jquery-ui/jquery-ui.min.css
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery-ui/jquery.ui.touch-punch.min.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: frontend/vendor/tags-input/jquery.tagsinput.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/tags-input/jquery.tagsinput.css
+                    -
+                        method: addScript
+                        params: frontend/vendor/select2/js/select2.full.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/select2/js/i18n/zh-CN.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/select2/js/i18n/zh-HK.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/select2/js/config.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/select2/css/select2.min.css
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Edit Thread
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                    main:
+                        type: Redseanet\Forum\ViewModel\Post
+                        template: forum/post/edit
+                        children:
+                            poll:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/post/poll
+                            recommend_link:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/post/recommend_link
+forum_post_list:
+    update: forum_frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: His Posts
+            content:
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                    main:
+                        type: Redseanet\Forum\ViewModel\Post
+                        template: forum/post/postlist
+                        children:                             
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+forum_poll_edit:
+    update: forum_post_edit
+    root:
+        children:
+            content:
+                children:
+                    main:
+                        children:
+                            form:
+                                children:
+                                    poll:
+                                        type: Redseanet\Lib\ViewModel\Template
+                                        template: forum/post/poll
+forum_review:
+    update: forum_frontend
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    new:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: forum/review/form-simple
+                    main:
+                        type: Redseanet\Forum\ViewModel\Review
+                        template: forum/review/list
+catalog_product:
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/jquery.fileupload/core.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                    product:
+                        children:
+                            forum:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/ajax
+            extra:
+                children:
+                    review:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: forum/modal
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - key
+                                    - review
+                        children:
+                            form:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/review/form
+forum_category_modal:
+    update: forum_frontend
+    root:
+        action:
+            -
+                method: addBodyClass
+                params: index-home
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Forum Home                    
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/forum.js',defer: 'defer',async: 'async'}]    
+                    -
+                        method: addLink
+                        params: frontend/vendor/video-js-8.5.0/video-js.css
+                    -
+                        method: addScript
+                        params: frontend/vendor/jquery-sina-emotion-4.1.0/jquery-sina-emotion.min.js
+                    -
+                        method: addScript
+                        params: frontend/vendor/video-js-8.5.0/video.min.js
+                    -
+                        method: addLink
+                        params: frontend/vendor/videojs-themes/city/city_1.css
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/webcomponents/entrypoint.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: forum
+                    main:
+                        type: Redseanet\Forum\ViewModel\Category
+                        template: forum/categorymodal/view
+                        children:
+                            list:
+                                type: Redseanet\Forum\ViewModel\Post
+                                template: forum/categorymodal/list
+                            form:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: forum/post/form-simple
+forum_category_modal_ajax:
+    update: frontend
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                type: Redseanet\Forum\ViewModel\Post
+                template: forum/categorymodal/list
+admin_forum_category_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/mouse.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/sortable.js
+                    -
+                        method: addScript
+                        params: backend/js/forum.js
+                    -
+                        method: setTitle
+                        params: Category Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/forum_category/',label: 'Category Management'}]
+#                            -
+#                                method: addAdditional
+#                                params: [{link:':ADMIN/catalog_category/edit/',label:'Add New Root Category'}]
+                    grid:
+                       type: Redseanet\Admin\ViewModel\Forum\Grid\Category
+                       template: admin/catalog/category/tree
+admin_forum_category_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Edit Category / Forum Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/forum_category/',label: 'Category Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Forum\Edit\Category
+admin_forum_tags_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Hashtags management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/forum_tags/',label: 'Hashtags management'}]
+                            -
+                                    method: addAdditional
+                                    params: [{link: ':ADMIN/forum_tags/edit/',label: 'Add hashtags'}]
+                    grid:
+                       type: Redseanet\Admin\ViewModel\Forum\Grid\Tags
+admin_forum_tags_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Edit Hashtags / Forum Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/forum_tags/',label: 'Hashtags management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Forum\Edit\Tags
+admin_forum_post_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Post Management
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/forum_post/',label: 'Post Management'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\Forum\Grid\Post
+admin_forum_post_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Edit Post / Forum Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/forum_post/',label: 'Post Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Forum\Edit\Post
+admin_forum_review_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Review Management
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/forum_review/',label: 'Review Management'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\Forum\Grid\Review
+admin_forum_review_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Edit Review / Forum Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/forum_review/',label: 'Review Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Forum\Edit\Review
+admin_forum_poll_voter:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Poll voter
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/forum_poll/',label: 'Poll management'}]
+                                -
+                                    method: addCrumb
+                                    params: [{label: 'Voter'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\Forum\Grid\PollVoter
+admin_forum_customerlike_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Subscription Management
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/forum_customerlike/',label: 'Subscription Management'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\Forum\Grid\CustomerLike
+admin_forum_poll_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Poll management
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/forum_poll/',label: 'Poll management'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\Forum\Grid\Poll
+admin_forum_post_like_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Post Like Management
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/forum_post/likeList/',label: 'Post Like Management'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\Forum\Grid\PostLike
+admin_forum_post_list_modal:
+    update: admin
+    root:
+        template: page/ajax
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    main:
+                        type: Redseanet\Admin\ViewModel\Grid
+                        template: admin/forum/postlist
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+admin_forum_post_list_quickedit:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Post Quick Edit
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/forum_post/',label: 'Post Quick Edit'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\Forum\Grid\PostQuick
+admin_forum_post_statistics:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Post Statistics
+            content:
+                    children:
+                        breadcrumb:
+                            action:
+                                -
+                                    method: addCrumb
+                                    params: [{link: ':ADMIN/forum_post/',label: 'Post Statistics'}]
+                        grid:
+                            type: Redseanet\Admin\ViewModel\Forum\Grid\Statistics

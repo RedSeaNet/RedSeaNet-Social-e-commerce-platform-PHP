@@ -1,0 +1,12 @@
+---
+customer.login.after.mq:
+    -
+        listener: [\Redseanet\Balance\Mq\Recalc, afterCustomerLogin]
+        priority: 10
+order.place.after.mq:
+    -
+        listener: [\Redseanet\Balance\Mq\Recalc, afterOrderPlace]
+        priority: 30
+    -
+        listener: [\Redseanet\Balance\Mq\Using, afterOrderPlace]
+        priority: 30

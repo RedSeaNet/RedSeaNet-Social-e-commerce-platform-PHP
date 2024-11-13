@@ -1,0 +1,261 @@
+---
+catalog_product:
+    root:
+        children:
+            content:
+                children:
+                    product:
+                        children:
+                            bulk_sale_simple:
+                                type: Redseanet\Bulk\ViewModel\Application
+                                template: bulk/list-simple
+                            bulk_sale:
+                                type: Redseanet\Bulk\ViewModel\Application
+                                template: bulk/list
+bulk_sale_apply:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Create a New Bulk
+                    -
+                        method: addScript
+                        params: frontend/js/locate.js
+                    -
+                        method: addScript
+                        params: frontend/js/bulk.js
+            content:
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: catalog
+                            -
+                                method: addHandledSegment
+                                params: customer
+                            -
+                                method: addHandledSegment
+                                params: checkout
+                    main:
+                        type: Redseanet\Bulk\ViewModel\Apply
+                        template: bulk/apply
+                        children:
+                            expiration:
+                                type: Redseanet\Bulk\ViewModel\Expiration
+                                template: bulk/expiration
+                            address:
+                                type: Redseanet\Checkout\ViewModel\Order\Address
+                                template: bulk/order/address
+                            payment:
+                                type: Redseanet\Checkout\ViewModel\Order\Payment
+                                template: checkout/order/payment
+                            shipping:
+                                type: Redseanet\Checkout\ViewModel\Order\Shipping
+                                template: bulk/order/shipping
+            extra:
+                children:
+                    modal:
+                        type: Redseanet\Customer\ViewModel\Address
+                        template: bulk/order/addressmodal
+bulk_sale_view_products:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Bulk Product List
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{label: 'Bulk Product'}]
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: catalog
+                            -
+                                method: addHandledSegment
+                                params: customer
+                            -
+                                method: addHandledSegment
+                                params: checkout
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: bulk/products
+bulk_sale_view:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Join the Bulk
+                    -
+                        method: addScript
+                        params: [{src: 'frontend/js/zoombox.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: catalog
+                            -
+                                method: addHandledSegment
+                                params: customer
+                            -
+                                method: addHandledSegment
+                                params: checkout
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: bulk/view
+                        children:
+                            expiration:
+                                type: Redseanet\Bulk\ViewModel\Expiration
+                                template: bulk/expiration
+                            share:
+                                type: Redseanet\Bulk\ViewModel\Share
+                                template: bulk/share
+            extra:
+                children:
+                    wechat_jsapi:
+                        template: bulk/wechat
+bulk_price_edit:
+    update: retailer_account
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Edit Bulk Price
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/mouse.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/sortable.js
+                    -
+                        method: addScript
+                        params: backend/js/product.js
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Edit Bulk Price
+                children:
+                    messages:
+                        action:
+                            -
+                                method: addHandledSegment
+                                params: catalog
+                            -
+                                method: addHandledSegment
+                                params: customer
+                            -
+                                method: addHandledSegment
+                                params: retailer
+                    main:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: bulk/price
+                        children:
+                            price:
+                                type: Redseanet\Admin\ViewModel\Bulk\BulkPrice
+                                template: admin/bulk/price
+checkout_order:
+    root:
+        children:
+            content:
+                children:
+                    bulk_expiration:
+                        type: Redseanet\Bulk\ViewModel\Expiration
+                        template: bulk/expiration
+retailer_account:
+    root:
+        children:
+            content:
+                children:
+                    nav:
+                        action:
+                            -
+                                method: addLink
+                                params: [{link: 'bulk/retailer/',label: 'Bulk Order Management',priority: 1.5,group: 'Transaction Management'}]
+retailer_sales_order_bulk:
+    update: retailer_sales_order_list
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Bulk Order Management
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Bulk Order Management
+                children:
+                    main:
+                        template: bulk/order
+                        action:
+                            -
+                                method: setVariable
+                                params:
+                                    - bulk_only
+                                    - true
+admin_bulk_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Bulk
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/bulk/',label: 'Bulk'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Bulk\Grid\Bulk
+admin_bulking_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Bulking
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/bulk/bulking',label: 'Bulking'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Bulk\Grid\Bulking

@@ -1,0 +1,38 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+$parent = $this->getVariable('parent');
+?>
+<div class="input-box <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label for="<?php echo $id ?>" class="control-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell">
+        <select name="<?php echo $key ?>" id="<?php echo $id ?>"<?php if (!empty($item['value'])): ?> data-default-value="<?php echo $item['value'] ?>"<?php
+        endif;
+        if (!isset($item['attrs']['class'])):
+            ?> class="form-control<?php if (isset($item['required'])): ?> required<?php endif ?> <?php
+                    if (isset($item['class'])) {
+                        echo $item['class'];
+                    }
+                    ?>"<?php endif ?> <?php
+                if (isset($item['attrs'])) {
+                    echo $parent->getAttrs($item['attrs']);
+                }
+                ?>>
+                    <?php if ((!isset($item['required']) || !$item['required']) && !isset($item['attrs']['multiple'])): ?>
+                <option value=""><?php echo $this->translate($item['empty_string'] ?? 'Please Select') ?></option>
+            <?php endif ?>
+            <option value="1"<?php if (isset($item['value']) && $item['value'] !== '' && $item['value'] == 1): ?> selected="selected"<?php endif ?>><?php echo $this->translate('Yes') ?></option>
+            <option value="0"<?php if (isset($item['value']) && $item['value'] !== '' && $item['value'] == 0): ?> selected="selected"<?php endif ?>><?php echo $this->translate('No') ?></option>
+        </select>
+        <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

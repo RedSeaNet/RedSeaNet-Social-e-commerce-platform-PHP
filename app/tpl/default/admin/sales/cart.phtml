@@ -1,0 +1,151 @@
+<?php
+$cart = $this->getCart();
+$currency = $cart->getCurrency();
+?>
+<div class="view clearfix">
+    <?php if ($customer = $this->getCustomer()): ?>
+        <div class="panel">
+            <div class="panel-heading">
+                <h4 class="panel-title"><?php echo $this->translate('Customer Infomation', [], 'sales') ?></h4>
+            </div>
+            <div class="panel-body">
+                ID: <?php echo $customer->getId() ?><br />
+                <?php echo $this->translate('Username'), ': ', $customer['username'] ?><br />
+                IP: <?php echo $cart->offsetGet('ip') ?>
+            </div>
+        </div>
+    <?php endif ?>
+    <?php if ($shippingMethod = $cart->offsetGet('shipping_method')): ?>
+        <div class="panel">
+            <div class="panel-heading">
+                <h4 class="panel-title"><?php echo $this->translate('Shipping Method', [], 'sales') ?></h4>
+            </div>
+            <div class="panel-body">
+                <?php echo $shippingMethod ?>
+            </div>
+        </div>
+    <?php endif ?>
+    <?php if ($billing = $cart->offsetGet('billing_address')): ?>
+        <div class="panel">
+            <div class="panel-heading">
+                <h4 class="panel-title"><?php echo $this->translate('Billing Address', [], 'sales') ?></h4>
+            </div>
+            <div class="panel-body">
+                <?php echo nl2br($billing) ?>
+            </div>
+        </div>
+    <?php endif ?>
+    <?php if ($shipping = $cart->offsetGet('shipping_address')): ?>
+        <div class="panel">
+            <div class="panel-heading">
+                <h4 class="panel-title"><?php echo $this->translate('Shipping Address', [], 'sales') ?></h4>
+            </div>
+            <div class="panel-body">
+                <?php echo nl2br($shipping) ?>
+            </div>
+        </div>
+    <?php endif ?>
+    <?php if ($paymentMethod = $cart->offsetGet('payment_method')): ?>
+        <div class="panel">
+            <div class="panel-heading">
+                <h4 class="panel-title"><?php echo $this->translate('Payment Method', [], 'sales') ?></h4>
+            </div>
+            <div class="panel-body">
+                <?php echo $paymentMethod ?>
+            </div>
+        </div>
+    <?php endif ?>
+    <div class="panel wide">
+        <div class="panel-heading">
+            <h4 class="panel-title"><?php echo $this->translate('Product(s)', [], 'sales') ?></h4>
+        </div>
+        <div class="panel-body grid table-responsive">
+            <table class="table table-hover table-striped table-no-border">
+                <thead class="sort-by">
+                    <tr>
+                        <th><?php echo $this->translate('Store', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('Warehouse', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('Product Name', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('SKU', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('Options', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('Price', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('Qty', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('Status', [], 'sales') ?></th>
+                        <th><?php echo $this->translate('Total', [], 'sales') ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($this->getCollection() as $item): ?>
+                        <tr<?php if (isset($item['id'])): ?> data-id="<?php echo $item['id'] ?>"<?php endif ?>>
+                            <td><?php echo $item['store'] ?></td>
+                            <td><?php echo $item['warehouse'] ?></td>
+                            <td><?php echo $item['product_name'] ?></td>
+                            <td><?php echo $item['sku'] ?></td>
+                            <td>
+                                <?php
+                                $options = json_decode($item['options'], true);
+                                if ($item['product_id'] && count($options)) {
+                                    foreach ($item['product']->getOptions() as $option) {
+                                        if (isset($options[$option->getId()])) {
+                                            echo $option['title'], ': ', (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                                    $option->getValue($options[$option->getId()]) : $options[$option->getId()]), '<br />';
+                                        }
+                                    }
+                                }
+                                ?>
+                            </td>
+                            <td><?php echo $currency->format($item['price']) ?></td>
+                            <td><?php echo $item['qty'] ?></td>
+                            <td><?php echo $item['status'] ?></td>
+                            <td><?php echo $currency->format($item['total']) ?></td>
+                        </tr>
+                    <?php endforeach ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="9" class="text-right">
+                            <p><?php echo $cart->getQty() . $this->translate('Item(s) Selected') ?></p>
+                            <p><?php echo $this->translate('Total Amount') ?>:<?php echo $cart->getCurrency()->format($cart['subtotal']) ?></p>
+                            <?php
+                            if ((float) $cart['discount']):
+                                foreach (json_decode($cart['discount_detail'], true) as $type => $discount):
+                                    ?>
+                                    <p class="mb-0 font-12">
+                                        <?php
+                                        $text = $this->translate('Discount(' . ucwords($type) . ')', [], 'sales');
+                                        echo $text[0] === 'D' ? $this->translate('Discount(%s)', [$type], 'sales') : $text
+                                        ?>  
+                                        <?php echo $cart->getCurrency()->convert($discount["total"], true) ?>
+                                    </p>
+                                    <?php
+                                    if ($discount["detail"] && is_array($discount["detail"]) && count($discount["detail"]) > 0) {
+                                        foreach ($discount["detail"] as $storeId => $promotionStoreData) {
+                                            if ($promotionStoreData && is_array($promotionStoreData) && count($promotionStoreData) > 0) {
+                                                foreach ($promotionStoreData as $promationKey => $promotionData) {
+                                                    $promotionType = '';
+                                                    if ($promotionData["use_coupon"] == 1) {
+                                                        $promotionType = '优惠券(' . $promotionData["storename"] . ")-";
+                                                    } else {
+                                                        $promotionType = '促销活动(' . $promotionData["storename"] . ")-";
+                                                    }
+                                                    echo '<p>' . $promotionType . $promotionData["name"] . ': -' . $promotionData['discount'] . '</p>';
+                                                }
+                                            }
+                                        }
+                                    }
+                                    ?>
+                                    <?php
+                                endforeach;
+                            endif;
+                            ?> 
+                            <p> <?php echo $this->translate('Shipping', [], 'checkout') ?> : 
+                                <?php echo $cart->getCurrency()->format($cart['shipping']) ?>
+                            </p>  
+                            <p><?php echo $this->translate('Total') ?>:<?php echo $cart->getCurrency()->format($cart['total']) ?></p>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

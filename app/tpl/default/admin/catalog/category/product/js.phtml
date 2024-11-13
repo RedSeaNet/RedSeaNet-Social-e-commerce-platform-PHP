@@ -1,0 +1,4 @@
+<script>
+    $('#tab-product.tab-pane').attr('data-load', '<?php echo $this->getAdminUrl('catalog_category/product/?cid='), $this->getQuery('id', 0) ?>')
+            .load('<?php echo $this->getAdminUrl('catalog_category/product/?cid='), $this->getQuery('id', 0) ?> ');
+</script>

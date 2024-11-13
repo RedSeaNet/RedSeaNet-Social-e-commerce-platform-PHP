@@ -1,0 +1,23 @@
+---
+system:
+    children:
+        -
+            link: 'config/log/'
+            operation: 'Admin\Config::log'
+            title: 'Log Configuration'
+            priority: 120
+log:
+    icon: tags
+    title: Log
+    priority: 90
+    children:
+        -
+            link: log_customer/
+            operation: 'Admin\Log\Customer::index'
+            title: Customer Login Log
+            priority: 0
+        -
+            link: log_visitor/
+            operation: 'Admin\Log\Visitor::index'
+            title: Visitor
+            priority: 1

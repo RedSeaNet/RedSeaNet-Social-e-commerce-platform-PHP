@@ -1,0 +1,53 @@
+---
+sales:
+    icon: money
+    title: Transaction Management
+    priority: 40
+    children:
+        -
+            link: 'sales_cart/'
+            operation: 'Admin\Sales\Cart::index'
+            title: Cart
+            priority: 10
+        -
+            link: 'sales_order/'
+            operation: 'Admin\Sales\Order::index'
+            title: Orders
+            priority: 20
+#        -
+#            link: 'sales_recharge_order/'
+#            operation: 'Admin\Sales\RechargeOrder::index'
+#            title: Recharge Orders
+#            priority: 30
+        -
+            link: 'sales_invoice/'
+            operation: 'Admin\Sales\Invoice::index'
+            title: Invoices
+            priority: 40
+        -
+            link: 'sales_shipment/'
+            operation: 'Admin\Sales\Shipment::index'
+            title: Shipments
+            priority: 50
+        -
+            link: 'sales_creditmemo/'
+            operation: 'Admin\Sales\Creditmemo::index'
+            title: Credit Memos
+            priority: 60
+        -
+            link: 'sales_refund/'
+            operation: 'Admin\Sales\Refund::index'
+            title: Return &amp; Refund
+            priority: 70
+        -
+            link: 'sales_status/'
+            operation: 'Admin\Sales\Status::index'
+            title: Order Statuses
+            priority: 80
+system:
+    children:
+        -
+            link: 'config/tracking/'
+            operation: 'Admin\Config::tracking'
+            title: 'Order Tracking'
+            priority: 100

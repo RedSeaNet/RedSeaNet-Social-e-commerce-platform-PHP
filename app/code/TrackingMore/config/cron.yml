@@ -1,0 +1,4 @@
+---
+-
+    time: '*/30 * * * *'
+    code: 'Redseanet\TrackingMore\Listeners\TrackingMore::request'

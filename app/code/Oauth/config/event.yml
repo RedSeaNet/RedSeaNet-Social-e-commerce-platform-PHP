@@ -1,0 +1,13 @@
+---
+customer.login.after:
+    -
+        listener: [\Redseanet\Oauth\Listeners\Client, bind]
+        priority: 10
+#Redseanet\Customer\Model\Customer.model.save.after:
+#    -
+#        listener: [\Redseanet\Oauth\Listeners\Client, bind]
+#        priority: 10
+customer.logout.after:
+    -
+        listener: [\Redseanet\Oauth\Listeners\Client, logout]
+        priority: 10

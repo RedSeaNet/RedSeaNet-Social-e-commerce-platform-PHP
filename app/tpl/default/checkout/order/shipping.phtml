@@ -1,0 +1,20 @@
+<?php
+$storeId = $this->getVariable('store_id');
+$isVirtual = $this->getVariable('isVirtual');
+$address = $this->getVariable('address');
+$items = $this->getVariable('items');
+$methods = $this->getShippingMethods($isVirtual,$address,$items);
+$current = $this->getCurrentMethod();
+$currency=$this->getCurrency();
+if ($methods):
+    ?>
+    <select name="shipping_method[<?php echo $storeId ?>]" id="shipping-method-<?php echo $storeId ?>" class="required">
+        <?php foreach ($methods as $code => $value): ?>
+            <option value="<?php echo $code ?>"<?php if (isset($current[$storeId]) && $current[$storeId] === $code): ?> selected="selected"<?php endif ?> data-fee="<?php echo $currency->convert($value["fee"]);?>">
+                <?php echo $this->translate($value["label"]) ?>
+            </option>
+        <?php endforeach ?>
+    </select>
+<?php else: ?>
+    <p><?php echo $this->translate('Sorry, no shipping methods are available for this order at this time.') ?></p>
+<?php endif; ?>

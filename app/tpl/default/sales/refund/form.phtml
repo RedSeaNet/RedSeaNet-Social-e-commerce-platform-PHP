@@ -1,0 +1,143 @@
+<?php
+$order = $this->getVariable('model');
+$currency = $this->getCurrency();
+?>
+<div class="form-rma">
+    <form action="<?php echo $this->getBaseUrl('/sales/refund/save/') ?>" method="post" class="form-inline" enctype="multipart/form-data">
+        <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+        <input type="hidden" name="order_id" value="<?php echo $order->getId() ?>" />
+        <div class="service">
+            <label for="service" class="col-form-label required"><?php echo $this->translate('Service') ?></label>
+            <select name="service" id="service" class="form-control required">
+                <?php foreach ($this->getServices() as $key => $service): ?>
+                    <option value="<?php echo $key ?>"><?php echo $this->translate($service) ?></option>
+                <?php endforeach ?>
+            </select>
+        </div>
+        <table class="table table-no-border">
+            <colgroup>
+                <col width="116" />
+                <col />
+                <col width="1" />
+                <col width="1" />
+                <col width="1" />
+                <col width="1" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="text-start text-nowrap" colspan="2">
+                        <?php echo $this->translate('Product Infomation') ?>
+                    </th>
+                    <th class="text-nowrap text-center">
+                        <?php echo $this->translate('Price', [], 'checkout') ?>
+                    </th>
+                    <th class="text-nowrap text-center">
+                        <?php echo $this->translate('Bought Qty') ?>
+                    </th>
+                    <th class="text-nowrap text-center">
+                        <?php echo $this->translate('Subtotal') ?>
+                    </th>
+                    <th class="text-nowrap text-center">
+                        <?php echo $this->translate('Refund Qty') ?>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($this->getItems() as $item):
+                    if ($item['qty']):
+                        $product = $item['product'];
+                        $options = json_decode($item['options'], true);
+                        $thumbnail = $product->getThumbnail($options);
+                        ?>
+                        <tr>
+                            <td>
+                                <img src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" width="100" height="100" alt="<?php echo $item['product_name'] ?>" />
+                            </td>
+                            <td>
+                                <h6 class="product-name"><?php echo $item['product_name'] ?></h6>
+                                <?php
+                                if ($item['product_id'] && count($options)):
+                                    ?>
+                                    <dl class="options">
+                                        <?php
+                                        foreach ($product->getOptions() as $option):
+                                            if (isset($options[$option->getId()])):
+                                                ?>
+                                                <dt><?php echo $option['title'] ?></dt>
+                                                <dd>
+                                                    <?php
+                                                    echo (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                                            $option->getValue($options[$option->getId()]) : $options[$option->getId()])
+                                                    ?>
+                                                </dd>
+                                                <?php
+                                            endif;
+                                        endforeach;
+                                        ?>
+                                    </dl>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php echo $currency->convert($item['base_price'], true) ?>
+                            </td>
+                            <td class="text-center">
+                                <?php echo (float) $item['qty'] ?>
+                            </td>
+                            <td>
+                                <?php echo $currency->convert($item['base_total'], true) ?>
+                            </td>
+                            <td>
+                                <div class="qty text-nowrap">
+                                    <label class="spin minus" for="qty-<?php echo $item['id'] ?>">-</label>
+                                    <input type="number" name="qty[<?php echo $item['id'] ?>]" id="qty-<?php echo $item['id'] ?>"
+                                           min="0"
+                                           max="<?php echo (float) $item['qty'] ?>"
+                                           class="form-control required" value="0" />
+                                    <label class="spin plus" for="qty-<?php echo $item['id'] ?>">+</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php
+                    endif;
+                endforeach;
+                ?>
+            </tbody>
+        </table>
+        <div class="fieldset">
+            <div class="input-box">
+                <label for="reason" class="col-form-label"><?php echo $this->translate('Reason') ?></label>
+                <div class="cell">
+                    <select name="reason" id="reason" class="form-control required">
+                        <?php foreach ($this->getReasons() as $key => $reason): ?>
+                            <option value="<?php echo $key ?>"><?php echo $this->translate($reason) ?></option>
+                        <?php endforeach ?>
+                        <option value="0"><?php echo $this->translate('Other') ?></option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-box">
+                <label for="comment" class="col-form-label"><?php echo $this->translate('Comment') ?></label>
+                <div class="cell">
+                    <textarea name="comment" class="form-control required" id="comment" style="width:85%" placeholder="<?php echo $this->translate('Please describe the reasons for refunding in detail.') ?>"></textarea>
+                </div>
+            </div>
+            <div class="input-box">
+                <label for="voucher" class="col-form-label"><?php echo $this->translate('Voucher') ?></label>
+                <div class="cell images">
+                    <input type="file" name="voucher[]" id="voucher" hidden="hidden" accept="image/jpeg,image/gif,image/png" />
+                    <label for="voucher" class="add-image"><span class="fa fa-camera"></span></label>
+                    <span>(<?php echo $this->translate('%d images allowed at most. The maximum size of each image is %s.', [5, '2MB']) ?>)</span>
+                </div>
+            </div>
+            <div class="buttons-set">
+                <div class="cell">&nbsp;</div>
+                <div class="cell">
+                    <button type="submit" class="btn btn-theme">
+                        <?php echo $this->translate('Submit') ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,51 @@
+<?php
+$collection = $this->getVariable("posts");
+$query = $this->getVariable("query");
+?>
+<table class="table table-hover table-striped table-no-border">
+    <colgroup>
+        <col width="1" />
+        <col width="1" />
+        <col />
+        <col width="1" />
+        <col width="1" />
+    </colgroup>
+    <thead class="sort-by">
+        <tr>
+            <th class="checkbox">&nbsp;</th>
+            <th>ID</th>
+            <th class="text-start"><?php echo $this->translate('Title') ?></th>
+            <th><?php echo $this->translate('Customer') ?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        foreach ($collection as $item):
+            ?>
+
+            <tr data-id="<?php echo $item['id'] ?>">
+                <td class="text-center checkbox">
+                    <input type="checkbox" id="postcheckboxlist<?php echo $item['id'] ?>" name="postcheckbox" value="<?php echo $item['id'] ?>" data-title="<?php echo $item['title'] ?>" />
+                </td>
+                <td><?php echo $item['id'] ?></td>
+                <td class="text-start"><label for="postcheckboxlist<?php echo $item['id'] ?>"><?php echo $item['title'] ?>        </label>
+                </td>
+                <td class="text-nowrap"><?php echo $item['username'] ?></td>
+            </tr>
+        <?php endforeach ?>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td class="checkbox">
+                &nbsp;
+            </td>
+            <td colspan="4" class="text-end">
+                <?php
+                if (is_object($collection)) {
+                    echo $this->getChild('pager')->setCollection($collection);
+                }
+                ?>
+            </td>
+        </tr>
+    </tfoot>
+</table>

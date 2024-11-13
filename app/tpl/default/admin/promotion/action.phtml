@@ -1,0 +1,141 @@
+<?php
+$actions = $this->getCollection();
+?>
+<div class="handler">
+    <div class="panel">
+        <div class="panel-heading">
+            <h3 class="panel-title"><?php echo $this->translate('Update prices using the following infomation') ?></h3>
+        </div>
+        <div class="panel-body">
+            <?php
+            foreach ($this->getVariable('elements') as $key => $item) {
+                echo $this->getInputBox($key, $item);
+            }
+            ?>
+        </div>
+    </div>
+    <?php
+    /*
+    <div class="panel">
+        <div class="panel-heading">
+            <h3 class="panel-title"><?php echo $this->translate('Apply the rule only to cart items matching the following conditions (leave blank for all items)') ?></h3>
+        </div>
+        <div class="panel-body tree" data-json='<?php echo json_encode($actions) ?>'>
+            <span class="title">
+                <input type="hidden" name="handler[identifier][0]" value="combination" />
+                <?php
+                echo $this->translate('If %s of these conditions are %s.', [
+                    '<span class="param form-inline"><select class="form-control" name="handler[operator][0]"><option value="and">' .
+                    $this->translate('All', [], 'promotion') .
+                    '</option><option value="or">' .
+                    $this->translate('Any', [], 'promotion') .
+                    '</option></select></span>', '<span class="param form-inline"><select class="form-control" name="handler[value][0]"><option value="1">' .
+                    $this->translate('Eligible', [], 'promotion') .
+                    '</option><option value="0">' .
+                    $this->translate('Not Eligible', [], 'promotion') .
+                    '</option></select></span>'], 'promotion')
+                ?>
+            </span>
+            <ul class="children" data-tmpl="#tmpl-handler">
+                <li class="last">
+                    <a href="javascript:void(0);" class="add">
+                        <span class="fa fa-plus-circle" aria-hidden="true"></span>
+                        <span class="sr-only"><?php echo $this->translate('Add') ?></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    */
+    ?>
+    <template id="tmpl-handler">
+        <li>
+            <select class="form-control">
+                <option value=""><?php echo $this->translate('Please Select') ?></option>
+                <option value="combination"><?php echo $this->translate('Combination', [], 'promotion') ?></option>
+                <optgroup label="<?php echo $this->translate('Product') ?>">
+                    <option value="product_id" data-type="select"><?php echo $this->translate('Product') ?></option>
+                    <option value="attribute_set" data-type="select"><?php echo $this->translate('Attribute Set') ?></option>
+                    <option value="category" data-type="select"><?php echo $this->translate('Category') ?></option>
+                    <option value="product_type" data-type="select"><?php echo $this->translate('Product Type') ?></option>
+                    <option value="price" data-type="numeric"><?php echo $this->translate('Price') ?></option>
+                    <option value="qty" data-type="numeric"><?php echo $this->translate('Quentity') ?></option>
+                    <option value="row_total" data-type="numeric"><?php echo $this->translate('Subtotal') ?></option>
+                </optgroup>
+            </select>
+        </li>
+    </template>
+    <template id="tmpl-handler-string">
+        <span class="title">
+            <input type="hidden" name="handler[pid][]" value="" />
+            <span class="param">
+                <input type="hidden" name="handler[identifier][]" value="{$identifier}" />
+                {$identifier_text}
+            </span>
+            <span class="param form-inline">
+                <select class="form-control" name="handler[operator][]">
+                    <option value="="><?php echo $this->translate('is', [], 'promotion') ?></option>
+                    <option value="<>"><?php echo $this->translate('is not', [], 'promotion') ?></option>
+                </select>
+            </span>
+            <span class="param form-inline">
+                <input type="text" class="form-control" name="handler[value][]" />
+                <a href="javascript:void(0);" class="delete">
+                    <span class="fa fa-times-circle" aria-hidden="true"></span>
+                    <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                </a>
+            </span>
+        </span>
+    </template>
+    <template id="tmpl-handler-numeric">
+        <span class="title">
+            <input type="hidden" name="handler[pid][]" value="" />
+            <span class="param">
+                <input type="hidden" name="handler[identifier][]" value="{$identifier}" />
+                {$identifier_text}
+            </span>
+            <span class="param form-inline">
+                <select class="form-control" name="handler[operator][]">
+                    <option value="="><?php echo $this->translate('is', [], 'promotion') ?></option>
+                    <option value="<>"><?php echo $this->translate('is not', [], 'promotion') ?></option>
+                    <option value=">"><?php echo $this->translate('great than', [], 'promotion') ?></option>
+                    <option value="<"><?php echo $this->translate('less than', [], 'promotion') ?></option>
+                    <option value=">="><?php echo $this->translate('equals or great than', [], 'promotion') ?></option>
+                    <option value="<="><?php echo $this->translate('equals or less than', [], 'promotion') ?></option>
+                    <option value="in"><?php echo $this->translate('is one of', [], 'promotion') ?></option>
+                    <option value="not in"><?php echo $this->translate('is not one of', [], 'promotion') ?></option>
+                </select>
+            </span>
+            <span class="param form-inline">
+                <input type="text" class="form-control" name="handler[value][]" />
+                <a href="javascript:void(0);" class="delete">
+                    <span class="fa fa-times-circle" aria-hidden="true"></span>
+                    <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                </a>
+            </span>
+        </span>
+    </template>
+    <template id="tmpl-handler-select">
+        <span class="title">
+            <input type="hidden" name="handler[pid][]" value="" />
+            <span class="param">
+                <input type="hidden" name="handler[identifier][]" value="{$identifier}" />
+                {$identifier_text}
+            </span>
+            <span class="param form-inline">
+                <select class="form-control" name="handler[operator][]">
+                    <option value="="><?php echo $this->translate('is', [], 'promotion') ?></option>
+                    <option value="<>"><?php echo $this->translate('is not', [], 'promotion') ?></option>
+                </select>
+            </span>
+            <span class="param form-inline">
+                {$value}
+            </span>
+        </span>
+    </template>
+    <?php foreach ($this->getChild() as $key => $child): ?>
+        <template id="tmpl-handler-value-<?php echo $key ?>">
+            <?php echo $child->setVariable('name', 'handler[value][]') ?>
+        </template>
+    <?php endforeach ?>
+</div>

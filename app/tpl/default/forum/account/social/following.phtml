@@ -1,0 +1,43 @@
+<?php
+$this->clearNewFollowCount();
+$config = $this->getConfig();
+$following = $this->getFollow();
+?>
+<div class="draft-cont  linked-cont">
+    <ul class="col-12  row">
+        <?php
+        if (count($following)):
+            foreach ($following as $follow):
+                ?>
+                <li class="col-md-6 col-sm-6 col-12">
+                    <div class="draft-list product-user watchlist-listBox">
+                        <div class="row">
+                            <div class="linked-userImg col-6">
+                                <a href="<?php echo $this->getBaseUrl('forum/space/?customer_id=' . $follow['like_customer_id']); ?>">
+                                    <img src="<?php echo $follow['avatar'] ? $this->getUploadedUrl('customer/avatar/') . $follow['avatar'] : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="Avatar">
+                                </a>
+                                <a href="<?php echo $this->getBaseUrl('forum/space/?customer_id=' . $follow['like_customer_id']); ?>" class="padding-0-10 "><?php echo $follow['username']; ?></a>
+                            </div>
+                            <div class="col-6 text-end pe-0">
+                                <span class="publish-time"><?php echo $this->getTime($follow['created_at']); ?></span>
+                                <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/social/followRemove/') ?>" class="close-btn" data-method="delete" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $follow->getId() ?>">
+                                    <i class="fa fa-close" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="col-12 padding-30 linked-link"><?php echo $follow['motto'] ?></p>
+                        <div class="text-end">
+                            <a href="<?php echo $this->getBaseUrl('forum/space/?customer_id=' . $follow['like_customer_id']); ?>" class="btn btn-secondary color-c6 publish-btn float-end"><?php echo $this->translate('View'); ?></a>
+                        </div>
+                    </div>
+                </li>
+                <?php
+            endforeach;
+        else:
+            ?>
+            <p class="empty text-center"><?php echo $this->translate('No post available right now.') ?></p>
+        <?php
+        endif;
+        ?>
+    </ul>
+</div>

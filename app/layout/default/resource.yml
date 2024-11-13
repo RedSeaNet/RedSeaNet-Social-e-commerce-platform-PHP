@@ -1,0 +1,86 @@
+---
+admin_resource:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/modal.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/tab.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/collapse.js
+                    -
+                        method: addLink
+                        params: backend/css/resource.css
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/mouse.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/draggable.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/droppable.js
+                    -
+                        method: addScript
+                        params: backend/vendor/jquery.fileupload/jquery.fileupload.js
+                    -
+                        method: addScript
+                        params: backend/js/resource.js
+                    -
+                        method: setTitle
+                        params: Resource Management / CMS
+            content:
+                children:
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Resource\Explorer
+                        template: admin/resource/explorer
+            extra:
+                children:
+                    modal:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/upload
+admin_resource_nav:
+    update: frontend
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    main:
+                        type: Redseanet\Admin\ViewModel\Resource\Explorer
+                        template: admin/resource/navigation
+admin_resource_list:
+    update: frontend
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                children:
+                    main:
+                        type: Redseanet\Admin\ViewModel\Resource\Explorer
+                        template: admin/resource/list
+                        children:
+                            pager:
+                                type: Redseanet\Lib\ViewModel\Pager
+                                action:
+                                    -
+                                        method: setVariable
+                                        params: 
+                                            - canJump
+                                            - 0                                        

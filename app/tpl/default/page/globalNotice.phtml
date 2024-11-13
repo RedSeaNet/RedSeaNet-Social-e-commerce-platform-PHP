@@ -1,0 +1,15 @@
+<div class="global-notice">
+    <noscript>
+    <?php echo $this->translate('JavaScript seems to be disabled in your browser.') ?><br />
+    <?php echo $this->translate('You must have JavaScript enabled in your browser to utilize the functionality of this website.') ?>
+    </noscript>
+    <div class="no-cookie">
+        <?php echo $this->translate('Cookie seems to be disabled in your browser.') ?><br />
+        <?php echo $this->translate('You must have Cookie enabled in your browser to utilize the functionality of this website.') ?>
+    </div>
+    <?php if ($notice = $this->getNotice()): ?>
+        <div class="notice">
+            <?php echo $this->translate($notice) ?>
+        </div>
+    <?php endif ?>
+</div>

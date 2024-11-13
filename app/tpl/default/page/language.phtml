@@ -1,0 +1,30 @@
+<?php
+$languages = $this->getLanguage();
+if (count($languages) > 1 || $this->showEdit()):
+    ?>
+    <<?php echo $this->getWrapper() ?> class="dropdown language">
+    <a href="javascript:void(0);" title="<?php echo $this->translate('Language') ?>" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="fa fa-language" aria-hidden="true"></span>
+        <span class="current"><?php echo $this->getCurrentLanguage() ?></span>
+    </a>
+    <ul class="dropdown-menu">
+        <?php foreach ($languages as $language): ?>
+            <li lang="<?php echo str_replace('_', '-', $language['code']) ?>">
+                <a href="<?php echo $this->getUrl($language) ?>/">
+                    <?php echo $language['name'] ?>
+                </a>
+            </li>
+            <?php
+        endforeach;
+        if ($this->showEdit() && $this->hasPermission('Admin\I18n\Language::list')):
+            ?>
+            <li class="edit">
+                <a href="<?php echo $this->getEditUrl() ?>">
+                    <span class="fa fa-cog" aria-hidden="true"></span>
+                    <span><?php echo $this->translate('Edit') ?></span>
+                </a>
+            </li>
+        <?php endif ?>
+    </ul>
+    </<?php echo $this->getWrapper() ?>>
+<?php endif; ?>

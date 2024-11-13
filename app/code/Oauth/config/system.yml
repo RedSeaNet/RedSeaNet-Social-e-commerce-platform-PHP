@@ -1,0 +1,208 @@
+---
+oauth:
+    label: OAuth Login
+    children:
+        wechat:
+            label: Wechat
+            priority: 0
+            scope: merchant
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 1
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Oauth\Model\Client\Wechat
+                icon:
+                    type: text
+                    label: Icon
+                    priority: 4
+                    attrs:
+                        data-base: '#wechat-enable'
+                    default: 'fa-wechat'
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 5
+                    attrs:
+                        data-base: '#wechat-enable'
+                    default: 'WeChat Login'
+                appid:
+                    label: App ID
+                    priority: 10
+                    type: text
+                    attrs:
+                        data-base: '#wechat-enable'
+                secret:
+                    label: App Secret
+                    priority: 11
+                    type: text
+                    attrs:
+                        data-base: '#wechat-enable'
+                mp_appid:
+                    label: MP App ID
+                    priority: 20
+                    type: text
+                    attrs:
+                        data-base: '#wechat-enable'
+                mp_secret:
+                    label: MP App Secret
+                    priority: 21
+                    type: text
+                    attrs:
+                        data-base: '#wechat-enable'
+                mini_appid:
+                    label: Mini-program App ID
+                    priority: 22
+                    type: text
+                    attrs:
+                        data-base: '#wechat-enable'
+                mini_secret:
+                    label: Mini-program App Secret
+                    priority: 23
+                    type: text
+                    attrs:
+                        data-base: '#wechat-enable'
+        qq:
+            label: QQ
+            priority: 10
+            scope: merchant
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 1
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Oauth\Model\Client\QQ
+                icon:
+                    type: text
+                    label: Icon
+                    priority: 4
+                    attrs:
+                        data-base: '#qq-enable'
+                    default: 'fa-qq'
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 5
+                    attrs:
+                        data-base: '#qq-enable'
+                    default: 'QQ Login'
+                appid:
+                    label: App ID
+                    priority: 10
+                    type: text
+                    attrs:
+                        data-base: '#qq-enable'
+                secret:
+                    label: App Secret
+                    priority: 11
+                    type: text
+                    attrs:
+                        data-base: '#qq-enable'
+        facebook:
+            label: Facebook
+            priority: 50
+            scope: merchant
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 1
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Oauth\Model\Client\Facebook
+                icon:
+                    type: text
+                    label: Icon
+                    priority: 4
+                    attrs:
+                        data-base: '#facebook-enable'
+                    default: 'fa-facebook-square'
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 5
+                    attrs:
+                        data-base: '#facebook-enable'
+                    default: 'Facebook Login'
+                appid:
+                    label: App ID
+                    priority: 10
+                    type: text
+                    attrs:
+                        data-base: '#facebook-enable'
+                secret:
+                    label: App Secret
+                    priority: 25
+                    type: text
+                    attrs:
+                        data-base: '#facebook-enable'
+        twitter:
+            label: Twitter
+            priority: 60
+            scope: merchant
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 1
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Oauth\Model\Client\Twitter
+                icon:
+                    type: text
+                    label: Icon
+                    priority: 2
+                    attrs:
+                        data-base: '#twitter-enable'
+                    default: 'fa-twitter'
+                label:
+                    type: text
+                    label: Label
+                    required: required
+                    priority: 3
+                    attrs:
+                        data-base: '#twitter-enable'
+                    default: 'Twitter Login'
+                appid:
+                    label: App ID
+                    priority: 4
+                    type: text
+                    attrs:
+                        data-base: '#twitter-enable'
+                secret:
+                    label: App Secret
+                    priority: 5
+                    type: text
+                    attrs:
+                        data-base: '#twitter-enable'

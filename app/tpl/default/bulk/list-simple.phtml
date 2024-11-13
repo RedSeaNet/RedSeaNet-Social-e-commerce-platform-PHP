@@ -1,0 +1,21 @@
+<?php
+$bulks = $this->getBulks ( true );
+$bulks->limit ( 3 );
+?>
+
+<div class="bulk-quick-view">
+    <h5 class="title"><?php echo $this->translate('Latest Bulk') ?></h5>
+    <a href="javascript:void(0);" onclick="javascript:$('.product-detail>.nav-tabs [href=\'#bulk-sale\']').click();" class="view-more"><?php echo $this->translate('View More') ?></a>
+    <ul class="list"><?php foreach ($bulks as $bulk): ?>
+            <li class="clearfix">
+			<div class="subject col-10">
+				<a
+					href="<?php echo $this->getBaseUrl('bulk/view/?bulk='), $bulk->getId() ?>">
+                        <?php echo $this->translate('Creator: %s', [mb_substr($bulk['customer_name'], 0, 1) . '****' . mb_substr($bulk['customer_name'], -1)])?>
+                    </a>
+			</div>
+			<div class="date col-2 text-end text-nowrap"><?php echo $bulk['count'], ' / ', $bulk['size'] ?></div>
+		</li>
+        <?php endforeach ?>
+        </ul>
+</div>

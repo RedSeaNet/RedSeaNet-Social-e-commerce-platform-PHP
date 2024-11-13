@@ -1,0 +1,12 @@
+<?php
+$category = $this->getCategory();
+$pages = $this->getPages();
+?>
+<ul class="pages-list">
+    <?php foreach ($pages as $page): ?>
+        <li>
+            <a href="<?php echo $this->getBaseUrl($page->getUrl($category) . '.html') ?>"><?php echo $page['title'] ?></a>
+            <span class="date"><?php echo date('Y-m-d', strtotime($page['created_at'])); ?></span>
+        </li>
+    <?php endforeach ?>
+</ul>

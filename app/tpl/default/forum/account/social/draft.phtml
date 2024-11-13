@@ -1,0 +1,51 @@
+<div class="draft-cont">
+    <ul class="col-12 row">
+        <li class="col-md-3 col-6">
+            <div class="draft-list draft-plus">
+                <a href="<?php echo $this->getBaseUrl('forum/post/publish/'); ?>">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                </a>
+            </div>
+        </li>
+        <?php
+        $posts = $this->getDrafts();
+        $config = $this->getConfig();
+        $current = $this->getSegment('customer')->get('hasLoggedIn') ? $this->getSegment('customer')->get('customer')['id'] : 0;
+        if (count($posts)):
+            foreach ($posts as $post):
+                if ($post['customer_id'] === $current):
+                    $thumbnail = $post->getThumbnail();
+                    ?>
+                    <li class="col-md-3 col-6">
+                        <div class="draft-list draft-listName">
+                            <div class="product-user">
+                                <img src="<?php echo $post->getCustomer()['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $post->getCustomer()['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="">
+                                <span class="product-userName"><?php echo $post->getCustomer()['username'] ?><span class="publish-time"><?php echo $this->getTime($post['created_at']) ?></span>
+                                </span>
+                                <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/remove/') ?>" class="close-btn" data-method="delete" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post->getId() ?>">
+                                    <i class="fa fa-close" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                            <div class="product-text">
+                                <a href="<?php echo $post->getUrl() ?>" class="product-image">
+                                    <img loading="lazy" src="<?php echo $thumbnail ? $this->getBaseUrl('pub/upload/forum/') . $thumbnail : $this->getPubUrl('frontend/images/placeholder.png'); ?>" alt="">
+                                </a>
+                                <h6 class="product-name padding-0-10">
+                                    <a href="<?php echo $post->getUrl() ?>"><?php echo $post['title'] ?></a>
+                                </h6>
+                            </div>
+                            <a href="<?php echo $this->getBaseUrl('forum/post/postEdit?id='.$post['id']); ?>" ><button type="button" class="btn btn-primary publish-btn"><?php echo $this->translate('Edit'); ?></button></a>
+                            <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/draftPublish/') ?>" data-method="delete" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post->getId() ?>" data-confirm="Are you sure to publish this post?"><button type="button" class="btn btn-primary color-c6 publish-btn"><?php echo $this->translate('Publish'); ?></button></a>
+                        </div>
+                    </li>
+                    <?php
+                endif;
+            endforeach;
+        else:
+            ?>
+            <p class="empty text-center"><?php echo $this->translate('No post available right now.') ?></p>
+        <?php
+        endif;
+        ?>
+    </ul>
+</div>

@@ -1,0 +1,98 @@
+<?php
+$data = $this->getSegment('customer')->get('form_data', []);
+?>
+<header class="header">
+    <div class="container">
+        <h3 class="logo">
+            <?php echo $this->getChild('logo') ?>
+            <strong><?php echo $this->translate('Welcome - Register') ?></strong>
+        </h3>
+    </div>
+</header>
+<div class="main-container">
+    <div class="col-main container">
+        <p class="login text-end d-none">
+            <?php echo $this->translate('Already Registered') ?>
+            <a href="<?php echo $this->getBaseUrl('customer/account/login/') ?>"><?php echo $this->translate('Login Now') ?></a>
+        </p>
+        <form action="<?php echo $this->getBaseUrl('customer/account/createpost/') ?>" method="post">
+            <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+            <input type="hidden" name="referer" value="<?php echo $this->getQuery('referer', $_COOKIE['referer'] ?? '') ?>" />
+            <div class="fieldset">
+                <p class="login text-start d-block d-sm-none">
+                    <?php echo $this->translate('Already Registered') ?>
+                    <a href="<?php echo $this->getBaseUrl('customer/account/login/') ?>"><?php echo $this->translate('Login Now') ?></a>
+                </p>
+                <?php echo $this->getChild('messages') ?>
+                <div class="table">
+                    <div class="input-box text-center">
+                        <input name="avatar" id="avatar" type="hidden" />
+                        <div class="avatar">
+                            <a data-target="div#chooseAvatarModal" data-bs-toggle="modal" class="avatar" data-img-input="input#avatar" data-img-preview="img#avatar-img-preview" >
+                                <img src="<?php
+                                echo $this->getPubUrl('frontend/images/avatar-placeholder.svg');
+                                ?>" alt="avatar" class="rounded-circle" width="100" height="100" id="avatar-img-preview" />
+                            </a>
+                        </div>     
+                    </div>
+
+                    <div class="input-box">
+                        <label for="reg:username" class="col-form-label required"><?php echo $this->translate('Username') ?></label>
+                        <div class="cell">
+                            <input type="text" name="username" id="reg:username" class="form-control required" spellcheck="false" maxlength="100" spellcheck="false" placeholder="<?php echo $this->translate('Username') ?>" data-msg-required="<?php echo $this->translate('Please enter Username') ?>" onkeyup="value = value.replace(/[^a-za-z0-9u4e00-u9fa5]/g, '')" />  
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="reg:password" class="col-form-label required"><?php echo $this->translate('Password') ?></label>
+                        <div class="cell">
+                            <input type="password" name="password" id="reg:password" class="form-control required" minlength="6" maxlength="100" placeholder="<?php echo $this->translate('Password') ?>" data-msg-required="<?php echo $this->translate('Please enter Password') ?>" />
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="reg:cpassword" class="col-form-label required"><?php echo $this->translate('Confirm Password') ?></label>
+                        <div class="cell">
+                            <input type="password" name="cpassword" id="reg:cpassword" class="form-control required" data-rule-equalto="#reg\:password" minlength="6" maxlength="100" placeholder="<?php echo $this->translate('Confirm Password') ?>" data-msg-equalto="<?php echo $this->translate('Confirm password do not equal to password') ?>" data-msg-required="<?php echo $this->translate('Please enter Password') ?>"  />
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="reg:email" class="col-form-label required"><?php echo $this->translate('Email') ?></label>
+                        <div class="cell">
+                            <input type="email" name="email" id="reg:email" class="form-control required email" value="<?php echo $data['email'] ?? '' ?>" placeholder="<?php echo $this->translate('Email') ?>" maxlength="120" data-msg-required="<?php echo $this->translate('Please enter Email') ?>"  />
+                        </div>
+                    </div>
+                    <?php if (in_array('register', $this->getConfig()['customer/captcha/form'])): ?>
+                        <div class="input-box">
+                            <label for="reg:captcha" class="col-form-label required"><?php echo $this->translate('Captcha') ?>: </label>
+                            <div class="cell">
+                                <input type="text" name="captcha" class="form-control required captcha" maxlength="5" autocomplete="off" spellcheck="false" id="reg:captcha" />
+                                <img src="<?php echo $this->getBaseUrl('customer/account/captcha/') ?>" alt="" class="captcha" height="26" width="70" />
+                            </div>
+                        </div>
+                    <?php endif ?>
+                </div>
+                <div class="additional">
+                    <div class="input-box">
+                        <input type="checkbox" id="reg:agreement" name="agreement" class="required" value="1" data-msg-required="<?php echo $this->translate('You must agree') . ' ' . $this->translate('Service Agreement'); ?>" />
+                        <label for="reg:agreement">
+                            <?php echo $this->translate('I have read and agreed to the') ?>
+                            <a href="<?php echo $this->getBaseUrl('agreement.html') ?>"><?php echo $this->translate('Service Agreement') ?></a>
+                        </label>
+                    </div>
+                    <div class="input-box">
+                        <input type="checkbox" id="reg:subscribe" name="subscribe" value="1">
+                        <label for="reg:subscribe">
+                            <?php echo $this->translate('Sign up for Newsletter') ?>
+                        </label>
+                    </div>
+                </div>
+                <div class="buttons-set">
+                    <button type="submit" class="btn btn-submit"><span><?php echo $this->translate('Sign up Now') ?></span></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<footer class="footer">
+    <?php echo $this->getChild('footer') ?>
+</footer>
+<?php echo $this->getChild('imagecropper'); ?>

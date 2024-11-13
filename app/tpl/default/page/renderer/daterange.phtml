@@ -1,0 +1,46 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+$parent = $this->getVariable('parent');
+$value = isset($item['value']) ? array_values($item['value'] && is_string($item['value']) ? json_decode($item['value'], true) : $item['value']) : [];
+$from = isset($value[0]) ? strtotime($value[0]) : 0;
+$to = isset($value[1]) ? strtotime($value[1]) : 0;
+?>
+<div class="input-box <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label for="<?php echo $id ?>-from" class="col-form-label <?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell range">
+        <input type="datetime" name="<?php echo strpos($key, '[') === false ? $key . '[gte]' : $key ?>" id="<?php echo $id ?>-from"<?php
+        if (!isset($item['attrs']['class'])):
+            ?> class="form-control date<?php if (isset($item['required'])): ?> required<?php endif ?> <?php
+                   if (isset($item['class'])) {
+                       echo $item['class'];
+                   }
+                   ?>"<?php endif ?> value="<?php echo $from ? date('Y-m-d', $from) : '' ?>" <?php
+               if (isset($item['attrs'])) {
+                   echo $parent->getAttrs($item['attrs']);
+               }
+               ?>/>
+        <span class="hyphen"></span>
+        <input type="datetime" name="<?php echo strpos($key, '[') === false ? $key . '[lte]' : $key ?>" id="<?php echo $id ?>-to"<?php
+        if (!isset($item['attrs']['class'])):
+            ?> class="form-control date<?php if (isset($item['required'])): ?> required<?php endif ?> <?php
+                   if (isset($item['class'])) {
+                       echo $item['class'];
+                   }
+                   ?>"<?php endif ?><?php if ($from): ?> data-min-date="<?php echo date('Y-m-d', $from) ?>"<?php endif ?> value="<?php echo $to ? date('Y-m-d', $to) : '' ?>" <?php
+               if (isset($item['attrs'])) {
+                   echo $parent->getAttrs($item['attrs']);
+               }
+               ?>/>
+               <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

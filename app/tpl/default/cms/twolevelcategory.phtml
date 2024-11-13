@@ -1,0 +1,36 @@
+<?php
+$category = $this->getVariable('category');
+$subCategories = $this->getVariable('subCategories');
+$languageId = $this->getVariable('languageId');
+?>
+<div class="container bg-white p-5 mt-4">
+    <?php 
+    if(count($category["pages"])>0){
+    ?>
+    <h4 class="p-1"><?php echo $category["name"][$languageId] ?></h4> 
+    <ul class="pages-list">
+        <?php foreach ($category["pages"] as $page): ?>
+            <li class="pt-4 pb-2 border-bottom">
+                <a href="<?php echo $this->getBaseUrl($page->getUrl($category) . '.html') ?>"><?php echo $page['title'] ?></a>
+            </li>
+        <?php endforeach ?>
+    </ul>
+    <?php
+    }
+    if (count($subCategories) > 0) {
+        foreach ($subCategories as $subCategory) {
+            ?>
+            <h4 class="p-1"><?php echo $subCategory["name"][$languageId] ?></h4> 
+            <ul class="pages-list">
+                <?php foreach ($subCategory["pages"] as $page): ?>
+                    <li class="pt-4 pb-2 border-bottom">
+                        <a href="<?php echo $this->getBaseUrl($page->getUrl($subCategory) . '.html') ?>"><?php echo $page['title'] ?></a>
+                    </li>
+                <?php endforeach ?>
+            </ul>
+
+            <?php
+        }
+    }
+    ?>
+</div>

@@ -1,0 +1,75 @@
+---
+Redseanet\Catalog\Model\Product\Review.model.save.after:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Gather, afterReview]
+        priority: 10
+#Redseanet\Customer\Model\Customer.model.save.after:
+#    -
+#        listener: [\Redseanet\RewardPoints\Listeners\Gather, afterRegister]
+#        priority: 20
+order.place.after:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Gather, afterOrderPlace]
+        priority: 20
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Using, afterOrderPlace]
+        priority: 20
+Redseanet\Sales\Model\Order.model.save.after:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Gather, afterOrderComplete]
+        priority: 20
+Redseanet\Email\Model\Subscriber.model.save.after:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Gather, afterSubscribe]
+        priority: 20
+Redseanet\Log\Model\SocialMedia.model.save.after:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Gather, afterShare]
+        priority: 20
+rewardpoints.apply:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Using, apply]
+        priority: 10
+rewardpoints.cancel:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Using, cancel]
+        priority: 10
+promotion.calc:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Using, calc]
+        priority: 1000
+Redseanet\Sales\Model\CreditMemo.model.save.after:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Gather, afterRefund]
+        priority: 20
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Using, afterRefund]
+        priority: 20
+#frontend.customer.save.before:
+#    -
+#        listener: [\Redseanet\RewardPoints\Listeners\Gather, beforeSaveCustomer]
+#        priority: 10
+backend.customer.save.before:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Gather, beforeSaveCustomer]
+        priority: 10
+backend.customer.save.after:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Gather, afterSaveBackendCustomer]
+        priority: 10
+#customer.login.after:
+#    -
+#        listener: [\Redseanet\RewardPoints\Listeners\Recalc, afterCustomerLogin]
+#        priority: 10
+cart.item.remove.after:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Using, cancel]
+        priority: 10
+order.cancel.after:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Using, afterOrderCancel]
+        priority: 0
+customer.rewardpoints.calc:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Recalc, afterCustomerLogin]
+        priority: 10

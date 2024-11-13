@@ -1,0 +1,41 @@
+<div class="modal fade" id="modal-send-email" tabindex="-1" role="dialog" aria-labelledby="modal-send-email-label">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="<?php echo $this->getAdminUrl('email_queue/schedule/') ?>" method="post" data-ajax="true">
+                <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+                <input type="hidden" name="template_id" id="sendmail-template_id" value="" />
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="modal-send-email-label"><?php echo $this->translate('Send Email') ?></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-box">
+                        <label for="sendmail-rcpt" class="control-label"><?php echo $this->translate('Rcpt To') ?></label>
+                        <select name="rcpt" id="sendmail-rcpt" class="form-control required">
+                            <option value="0"><?php echo $this->translate('Newsletter Subscribers') ?></option>
+                            <option value="1"><?php echo $this->translate('Customize') ?></option>
+                        </select>
+                    </div>
+                    <div class="input-box">
+                        <label for="sendmail-emails" class="control-label"><?php echo $this->translate('Email') ?></label>
+                        <input type="text" name="emails" id="sendmail-emails" class="form-control" data-base="#sendmail-rcpt" />
+                        <div class="comment">
+                            <?php echo $this->translate('Separated by semicolon(;)') ?>
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="sendmail-time" class="control-label"><?php echo $this->translate('Scheduled time') ?></label>
+                        <input type="datetime" name="datetime" id="sendmail-time" class="form-control" value="<?php echo date('Y-m-d H:i:s') ?>" />
+                        <div class="comment">
+                            <?php echo $this->translate('Timezone'),': ',$this->getConfig()['global/locale/timezone'] ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary"><?php echo $this->translate('Schedule') ?></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo $this->translate('Cancel') ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

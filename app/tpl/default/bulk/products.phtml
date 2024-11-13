@@ -1,0 +1,51 @@
+<?php
+$products = $this->getVariable('products');
+$currency = $this->getContainer()->get('currency');
+?>
+<div class="container">
+    <?php if (count($products)) { ?>
+        <ul class="products-grid ">
+            <?php
+            foreach ($products as $product) {
+                $thumbnail = $product->getThumbnail();
+                $prices = json_decode($product['bulk_price'], true);
+                if (count($prices) > 0) {
+                    ?>
+                    <li class="item col-lg-3 col-md-3">
+                        <a href="<?php echo $product->getUrl() ?>" title="<?php echo $product['name'] ?>" class="product-image">
+                            <?php if (strpos($thumbnail, '//') === false): ?>
+                                <img loading="lazy" src="<?php echo $this->getResourceUrl('image/' . $thumbnail) ?>" alt="<?php echo $product['name'] ?>" />
+                                 <?php else: ?>
+                                <img src="<?php echo $thumbnail ?>" alt="<?php echo $product['name'] ?>" />
+                            <?php endif ?>
+                        </a>
+                        <h6 class="product-name text-center">
+                            <a href="<?php echo $product->getUrl() ?>" title="<?php echo $product['name'] ?>">
+                                <?php echo $product['name'] ?>
+                            </a>
+                        </h6>
+                        <div class="price-box">
+                            <?php
+                            krsort($prices);
+                            foreach ($prices as $qty => $price):
+                                ?>
+                            <p class="mb-0">
+                                    <?php echo $this->translate('Price per pcs for %d people bulk', [$qty]) ?>:
+                                    <span class="price sys-blue"><?php echo $currency->convert($price, true) ?></span>
+                                </p>
+                            <?php endforeach ?>
+                        </div>
+
+                    </li>
+                    <?php
+                }
+            }
+            ?>
+        </ul>
+        <?php } else{ ?>
+        <div class="text-center">
+            <p><img src="<?php echo $this->getPubUrl('frontend/images/empty-search.png'); ?>" /></p>
+            <p class="no-product"><?php echo $this->translate('There are no products matching the selection.') ?></p>
+        </div>
+    <?php } ?>
+</div>

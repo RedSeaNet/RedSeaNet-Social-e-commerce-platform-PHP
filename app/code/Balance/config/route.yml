@@ -1,0 +1,5 @@
+---
+balance:
+    method: [GET,POST,DELETE]
+    route: /balance/{controller}/[{action}[/]]
+    namespace: Redseanet\Balance\Controller

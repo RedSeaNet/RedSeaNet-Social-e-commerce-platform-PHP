@@ -1,0 +1,66 @@
+<?php
+$config = $this->getConfig();
+$current = $this->getSegment('customer')->get('hasLoggedIn') ? $this->getSegment('customer')->get('customer')['id'] : 0;
+$reviews = $this->getMyReviews();
+$references = $this->getMyReferences();
+?>
+<div class="draft-cont message-listBox">
+    <ul class="col-12 row">
+        <?php
+        if (!empty($reviews)):
+            foreach ($reviews as $review):
+                if (empty($review['reference'])):
+                    $customer = $review->getCustomer();
+                    ?>
+                    <li class="col-md-6 col-sm-6 col-12">
+                        <div class="draft-list">
+                            <div class="product-user">
+                                <a href="<?php echo $this->getBaseUrl('forum/space/?customer_id=' . $customer['id']); ?>">
+                                    <img src="<?php echo $customer['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $customer['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="Avatar">
+                                </a>
+                                <span class="product-userName"><?php echo $customer['username']; ?><span class="publish-time"><?php echo $this->getTime($review['created_at']); ?></span>
+                                </span>
+                                <span class="draft-title sina-emotion-content"><?php echo $review['content']; ?></span>
+
+                            </div>
+                            <div class="product-text text-start">
+                                <?php
+                                if (count($references)):
+                                    foreach ($references as $reference):
+                                        if ($reference['status'] != 0 && $reference['reference'] === $review['id'] && $reference['customer_id'] === $current):
+                                            //var_dump($reference['customer_id']);
+                                            ?>
+                                            <span class="col-12"><?php echo $customer['username']; ?>&nbsp;<?php echo $this->translate('Reply to My Reply'); ?>：</span>
+                                            <span class="col-12 sina-emotion-content"><?php echo mb_substr($reference['content'], 0, 20, 'utf-8'); ?></span>
+                                            <span class="col-12"><?php echo $this->translate('From Post'); ?>：<?php echo $reference['title']; ?></span>
+                                            <?php
+                                        endif;
+                                    endforeach;
+                                else:
+                                    ?>
+                                    <span class="col-12">
+                                        <span><?php echo $customer['username']; ?></span>&nbsp;<?php echo $this->translate('Reply to My Post'); ?>:&nbsp;   
+                                    </span>
+                                    <span class="col-12"><?php echo $review['title']; ?></span>
+                                <?php
+                                endif;
+                                ?>
+                            </div>
+                            <div class="btn-submit text-end">
+                                <a href="#modal-review" data-bs-toggle="modal" data-post="<?php echo $review['post_id'] ?>" class="reply btn btn-secondary color-c6 publish-btn" data-ref-user="<?php echo $customer['username'] ?>" data-ref-content="<?php echo htmlspecialchars(mb_substr(preg_replace('/<[^<]+>/', '', $review['content']), 0, 50), 51) . '...' ?>" data-ref-id="<?php echo $review->getId() ?>">
+                                    <?php echo $this->translate('Reply') ?>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                    <?php
+                endif;
+            endforeach;
+        else:
+            ?>
+            <p class="empty text-center"><?php echo $this->translate('No post available right now.') ?></p>
+        <?php
+        endif;
+        ?>
+    </ul>
+</div>

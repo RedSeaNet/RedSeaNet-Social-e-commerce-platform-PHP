@@ -1,0 +1,99 @@
+<?php
+$category = $this->getVariable('category', false);
+?>
+<div class="container index-main">
+    <?php
+    if ($category && ($children = $category->getChildrenCategories())):
+        ?>
+        <div class="page-title clearfix d-none">
+            <div class="title">
+                <h2><?php echo $this->getVariable('category')->getName() ?></h2>
+
+            </div>
+
+        </div>
+        <nav class="forom-nav">
+            <ul class="nav">
+                <?php foreach ($children as $child): ?>
+                    <li class="col-6 col-sm-4 col-md-3">
+                        <a href="<?php echo $child->getUrl() ?>"><?php echo $child->getName() ?></a>
+                    </li>
+                <?php endforeach ?>
+            </ul>
+        </nav>
+        <?php
+        if (!count($category->getPosts())):
+            ?>
+            <p class="text-center"><?php echo $this->translate('There is no post in the current classification.'); ?></p>
+            <?php
+        endif;
+    endif;
+    echo '<ul class="posts-list products-grid masonry clearfix background-white" id="masonry" data-url="' . $this->getBaseUrl() . 'forum/category/modal/?is_json=true">';
+    echo $this->getChild('list');
+    echo '</ul>';
+    ?>
+    <!-- status elements -->
+    <div class="page-load-status">
+        <div class="infinite-scroll-request loader-ellips text-center">
+            <img src="<?php echo $this->getPubUrl('frontend/images/loding.gif') ?>" />
+        </div>
+    </div>
+    <div class="new-post background-white">
+        <?php
+        if (!$this->getSegment('customer')->get('hasLoggedIn')):
+            echo '<p class="required-login text-center">', $this->translate('You have to post threads after %sLogin/Register%s', ['<a class="login" href="' . $this->getBaseUrl('customer/account/login/?success_url=') . str_replace(['=', '+', '/'], ['', '-', '_'], urlencode($this->getRequest()->getUri())) . '">', '</a>']), '</p>';
+        endif;
+        ?>
+    </div>
+    <input type="hidden" name="forum_article_pager" id="forum_article_pager" value="2" />
+    <?php
+    if ($category) {
+        ?>
+        <input type="hidden" name="forum_category_id" id="forum_category_id" value="<?php echo $category->getId(); ?>" />
+    <?php } ?>
+    <input type="hidden" name="forum_customer_id" id="forum_customer_id" value="" />
+    <div class="page-load-status">
+        <div class="loader-ellips infinite-scroll-request">
+            <span class="loader-ellips__dot"></span>
+            <span class="loader-ellips__dot"></span>
+            <span class="loader-ellips__dot"></span>
+            <span class="loader-ellips__dot"></span>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+
+// Web Component related code.
+    function fetchPostData(url) {
+        fetch(url).then(response => response.json())
+                .then(data => {
+                    const modalEle = window.document.createElement("post-modal");
+                    modalEle.data = data;
+                    modalEle.successUrl = new URL(url).pathname;
+                    window.document.body.appendChild(modalEle);
+                    // temprorary fix for gg translation widget
+                    // Add observer event to unblock modal from translation bar
+                    (new MutationObserver(function (mutationList, observer) {
+                        if (!modalEle.shadowRoot || !(wrapper = modalEle.shadowRoot.querySelector('.wrapper'))) {
+                            return;
+                        }
+                        wrapper.style.zIndex = '99999999';
+                        observer.disconnect();
+                    })).observe(modalEle.shadowRoot, {childList: true});
+                }).catch(e => {
+            console.error(e);
+        });
+    }
+
+    function initModalEvent() {
+        window.addEventListener("click", function (e) {
+            let url = e.target.getAttribute("data-href") || e.target?.parentElement?.getAttribute("data-href") || e.target?.parentElement?.parentElement?.getAttribute("data-href")
+                    if (url) {
+                fetchPostData(`${url}&version=v2`);
+            }
+        })
+    }
+    initModalEvent();
+
+</script>

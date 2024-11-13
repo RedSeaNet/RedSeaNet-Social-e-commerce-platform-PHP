@@ -1,0 +1,35 @@
+<a href="javascript:void(0);" id="nav-toggle">
+    <span class="fa"></span>
+</a>
+<?php
+if (!$this->isMobile()) {
+    ?>
+    <h1 class="logo">
+        <!--[if (gte IE 9)|(!IE)]><!-->
+        <img src="<?php echo $this->getPubUrl('backend/images/logo.svg') ?>" height="33" alt="" />
+        <!--<![endif]-->
+        <!--[if lt IE 9]>
+        <img src="<?php echo $this->getPubUrl('backend/images/logo.png') ?>" height="33" alt="" />
+        <![endif]-->
+        <strong class="sr-only"></strong>
+    </h1>
+    <?php
+}
+?>
+<div class="top-menu">
+    <div class="messages dropdown">
+        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+            <span class="badge"></span>
+            <span class="fa fa-bell" aria-hidden="true"></span>
+            <span class="sr-only"><?php echo $this->translate('Message') ?></span>
+        </a>
+        <div class="dropdown-menu">
+            <?php echo $this->messages ?>
+        </div>
+    </div>
+    <?php echo $this->language ?>
+    <a href="<?php echo $this->getAdminUrl(':ADMIN/user/logout/') ?>">
+        <span><?php echo $this->translate('Logout') ?></span>
+        <span class="fa fa-sign-out" aria-hidden="true"></span>
+    </a>
+</div>

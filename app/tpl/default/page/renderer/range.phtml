@@ -1,0 +1,31 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+$parent = $this->getVariable('parent');
+?>
+<div class="form-group <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label for="<?php echo $id ?>" class="col-form-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell">
+        <input type="range" name="<?php echo $key ?>" id="<?php echo $id ?>"<?php
+        if (!isset($item['attrs']['class'])):
+            ?> class="form-control digits<?php if (isset($item['required'])): ?> required<?php endif ?> <?php
+                   if (isset($item['class'])) {
+                       echo $item['class'];
+                   }
+                   ?>"<?php endif ?> value="<?php echo $item['value'] ?? '' ?>" <?php
+               if (isset($item['attrs'])) {
+                   echo $parent->getAttrs($item['attrs']);
+               }
+               ?>/>
+               <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

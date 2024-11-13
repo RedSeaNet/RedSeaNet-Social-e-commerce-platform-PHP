@@ -1,0 +1,30 @@
+---
+product.price.calc:
+    -
+        listener: [\Redseanet\Catalog\Listeners\Price\Regular, calc]
+        priority: 0
+    -
+        listener: [\Redseanet\Catalog\Listeners\Price\Special, calc]
+        priority: 10
+    -
+        listener: [\Redseanet\Catalog\Listeners\Price\Tier, calc]
+        priority: 20
+    -
+        listener: [\Redseanet\Catalog\Listeners\Price\Group, calc]
+        priority: 30
+cart.add.before:
+    -
+        listener: [\Redseanet\Catalog\Listeners\Inventory, check]
+        priority: 10
+order.place.after:
+    -
+        listener: [\Redseanet\Catalog\Listeners\Inventory, decrease]
+        priority: 0
+order.refund.after:
+    -
+        listener: [\Redseanet\Catalog\Listeners\Inventory, increase]
+        priority: 0
+order.cancel.after:
+    -
+        listener: [\Redseanet\Catalog\Listeners\Inventory, increase]
+        priority: 0

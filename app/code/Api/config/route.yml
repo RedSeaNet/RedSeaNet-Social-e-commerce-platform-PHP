@@ -1,0 +1,5 @@
+---
+api:
+    method: [GET,POST,PUT,DELETE]
+    route: /api/{controller}/[{action}[/]]
+    namespace: Redseanet\Api\Controller

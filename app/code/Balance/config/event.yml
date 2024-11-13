@@ -1,0 +1,51 @@
+---
+order.place.after:
+    -
+        listener: [\Redseanet\Balance\Listeners\Recalc, afterOrderPlace]
+        priority: 30
+    -
+        listener: [\Redseanet\Balance\Listeners\Using, afterOrderPlace]
+        priority: 30
+Redseanet\Sales\Model\Order.model.save.after:
+    -
+        listener: [\Redseanet\Balance\Listeners\Recalc, afterOrderComplete]
+        priority: 30
+#    -
+#        listener: [\Redseanet\Balance\Listeners\Recalc, afterOrderCancel]
+#        priority: 30
+promotion.calc:
+    -
+        listener: [\Redseanet\Balance\Listeners\Using, calc]
+        priority: 1010
+Redseanet\Sales\Model\CreditMemo.model.save.after:
+    -
+        listener: [\Redseanet\Balance\Listeners\Using, afterRefund]
+        priority: 20
+rewardpoints.apply: 
+    -
+        listener: [\Redseanet\Balance\Listeners\Using, cleanBalance]
+        priority: 5
+promotion.apply:
+    -
+        listener: [\Redseanet\Balance\Listeners\Using, cleanBalance]
+        priority: 5   
+balances.apply:
+    -
+        listener: [\Redseanet\Balance\Listeners\Using, apply]
+        priority: 10
+balances.cancel:
+    -
+        listener: [\Redseanet\Balance\Listeners\Using, cancel]
+        priority: 10
+#customer.login.after:
+#    -
+#        listener: [\Redseanet\Balance\Listeners\Recalc, afterCustomerLogin]
+#        priority: 10
+order.cancel.after:
+    -
+        listener: [\Redseanet\Balance\Listeners\Using, afterOrderCancel]
+        priority: 0
+Redseanet\Customer\Model\Balance\Draw.model.save.after:
+    -
+        listener: [\Redseanet\Balance\Listeners\Email, afterStatusChanged]
+        priority: 0

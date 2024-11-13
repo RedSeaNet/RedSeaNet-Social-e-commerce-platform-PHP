@@ -1,0 +1,61 @@
+<?php
+$item = $this->getVariable('item');
+$product = $item['product'];
+$options = json_decode($item['options'], true);
+$thumbnail = $product->getThumbnail($options);
+?>
+<div class="product-list row">
+    <div class="col-md-8 col-10">
+        <div class="img-name">
+            <div class="td-img d-inline-block">
+                <?php
+                if (strpos($thumbnail, '//') === false):
+                    ?>
+                    <img src="<?php echo $this->getResourceUrl('image/' . $thumbnail) ?>" />
+                    <?php
+                else:
+                    ?>
+                    <img src="<?php echo $thumbnail ?>" width="80" />
+                <?php
+                endif;
+                ?>
+            </div>   
+            <div class="td-name d-inline-block">
+                <strong><?php echo $item['product_name'] ?></strong>
+                <?php
+                if ($item['product_id'] && count($options)):
+                    ?>
+                    <dl class="options">
+                        <?php
+                        foreach ($item['product']->getOptions() as $option):
+                            if (isset($options[$option->getId()])):
+                                ?>
+                                <dt><?php echo $option['title'] ?></dt>
+                                <dd>
+                                    <?php
+                                    echo (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                            $option->getValue($options[$option->getId()]) : $options[$option->getId()])
+                                    ?>
+                                </dd>
+                                <?php
+                            endif;
+                        endforeach;
+                        ?>
+                    </dl>
+                <?php endif; ?>
+            </div>  
+
+        </div>
+
+    </div>
+
+    <div class="td-price text-center col-md-1 col-2">
+        <?php echo $this->getCurrency()->format($item['price']) ?>
+    </div>
+    <div class="td-stock div-qty text-center col-md-1 d-none d-md-block">
+        <?php echo (float) $item['qty'] ?>
+    </div>
+    <div class="td-subtotal text-center col-md-2 d-none d-md-block">
+        <span class="checkout-num"><?php echo $this->getCurrency()->format($item['total']) ?></span>
+    </div>
+</div>

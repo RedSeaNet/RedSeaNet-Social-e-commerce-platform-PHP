@@ -1,0 +1,17 @@
+<?php
+$elements = $this->getVariable('elements');
+?>
+<div class="product-edit">
+    <form action="<?php echo $this->getSaveUrl() ?>" method="get">
+        <div class="page-content table tab-pane active in" id="main-tab">
+            <?php
+            foreach ($elements as $key => $item) {
+                echo $this->getInputBox($key, $item);
+            }
+            ?>
+        </div>
+        <div class="buttons-set">
+            <button type="submit" class="btn btn-primary"><span><?php echo $this->translate('Next', [], 'eav') ?></span></button>
+        </div>
+    </form>
+</div>

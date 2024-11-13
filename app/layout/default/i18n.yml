@@ -1,0 +1,640 @@
+---
+admin_i18n_store_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Store Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'System Configuration'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'I18N'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_currency/',label: 'Currency Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_currency/sync/',label: 'Synchronize'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_merchant/edit/',label: 'Add New Merchant'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_store/edit/',label: 'Add New Store'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_language/edit/',label: 'Add New Language'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_translation/',label: 'Translation'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_country/',label: 'Country'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_region/',label: 'Region'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_city/',label: 'City'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_county/',label: 'County'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\I18n\Grid\Store
+admin_i18n_language_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Language Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_merchant/edit/',label: 'Add New Merchant'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_store/edit/',label: 'Add New Store'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_language/edit/',label: 'Add New Language'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_translation/',label: 'Translation'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_country/',label: 'Country'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_region/',label: 'Region'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_city/',label: 'City'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_county/',label: 'County'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\I18n\Grid\Language
+admin_i18n_language_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\I18n\Edit\Language
+admin_i18n_store_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\I18n\Edit\Store
+admin_i18n_merchant_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Merchant Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_merchant/',label: 'Merchant Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_currency/sync/',label: 'Synchronize'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_merchant/edit/',label: 'Add New Merchant'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_store/edit/',label: 'Add New Store'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_language/edit/',label: 'Add New Language'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_translation/',label: 'Translation'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_country/',label: 'Country'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_region/',label: 'Region'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_city/',label: 'City'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_county/',label: 'County'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\I18n\Grid\Merchant
+admin_i18n_merchant_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_merchant/edit/',label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\I18n\Edit\Merchant
+admin_i18n_currency_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Currency Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'System Configuration'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'I18N'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_currency/',label: 'Currency Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_currency/sync/',label: 'Synchronize'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_merchant/edit/',label: 'Add New Merchant'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_store/edit/',label: 'Add New Store'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_language/edit/',label: 'Add New Language'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_translation/',label: 'Translation'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_country/',label: 'Country'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_region/',label: 'Region'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_city/',label: 'City'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_county/',label: 'County'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\I18n\Grid\Currency
+admin_i18n_currency_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'System Configuration'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'I18N'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_currency/',label: 'Currency Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\I18n\Edit\Currency
+admin_i18n_translation_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Translation Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_translation/',label: 'Translation'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_merchant/edit/',label: 'Add New Merchant'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_store/edit/',label: 'Add New Store'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_language/edit/',label: 'Add New Language'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_translation/',label: 'Translation'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_country/',label: 'Country'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_region/',label: 'Region'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_city/',label: 'City'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_county/',label: 'County'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_translation/edit/',label: 'Add New Translation'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\I18n\Grid\Translation
+                        template: admin/i18n/translation
+admin_i18n_translation_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_translation/',label: 'Translation'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\I18n\Edit\Translation
+admin_i18n_country_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Country Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'System Configuration'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Country Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_merchant/edit/',label: 'Add New Merchant'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_store/edit/',label: 'Add New Store'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_language/edit/',label: 'Add New Language'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_translation/',label: 'Translation'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_country/',label: 'Country'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_region/',label: 'Region'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_city/',label: 'City'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_county/',label: 'County'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_country/edit',label: 'Add New Country'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\I18n\Grid\Country
+admin_i18n_country_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'System Configuration'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_country/',label: 'Country Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\I18n\Edit\Country
+admin_i18n_region_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Region Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'System Configuration'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Region Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_merchant/edit/',label: 'Add New Merchant'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_store/edit/',label: 'Add New Store'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_language/edit/',label: 'Add New Language'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_translation/',label: 'Translation'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_country/',label: 'Country'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_region/',label: 'Region'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_city/',label: 'City'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_county/',label: 'County'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_region/edit',label: 'Add New Region'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\I18n\Grid\Region
+admin_i18n_region_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: backend/vendor/select2/js/select2.full.min.js
+                    -
+                        method: addLink
+                        params: backend/vendor/select2/css/select2.min.css
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'System Configuration'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_region/',label: 'Region Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\I18n\Edit\Region
+admin_i18n_city_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: City Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'System Configuration'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'City Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_merchant/edit/',label: 'Add New Merchant'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_store/edit/',label: 'Add New Store'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_language/edit/',label: 'Add New Language'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_translation/',label: 'Translation'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_country/',label: 'Country'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_region/',label: 'Region'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_city/',label: 'City'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_county/',label: 'County'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_city/edit',label: 'Add New City'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\I18n\Grid\City
+admin_i18n_city_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: backend/js/locate.js
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'System Configuration'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_city/',label: 'City Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\I18n\Edit\City
+                        template: admin/i18n/cityedit
+admin_i18n_county_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: County Management
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'System Configuration'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'County Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_merchant/edit/',label: 'Add New Merchant'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_store/edit/',label: 'Add New Store'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_language/edit/',label: 'Add New Language'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_translation/',label: 'Translation'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_country/',label: 'Country'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_region/',label: 'Region'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_city/',label: 'City'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_county/',label: 'County'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/i18n_county/edit',label: 'Add New County'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\I18n\Grid\County
+admin_i18n_county_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: backend/js/locate.js
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/config/i18n/',label: 'System Configuration'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_language/list/',label: 'Language Management'}]
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/i18n_county/',label: 'County Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\I18n\Edit\County
+                        template: admin/i18n/countyedit

@@ -1,0 +1,58 @@
+---
+rpcport:
+    getCategory:
+        params: 
+            id: string
+            token: string
+            languageId: int
+            data: array
+        respone: json array 
+        documentation: get product category message
+    deleteCategory: 
+        params: 
+            id: string
+            token: string
+            cid: int
+        respone: json array 
+        documentation: delete product category
+    putCategory: 
+        params: 
+            id: string
+            token: string
+            data: array
+        respone: json array 
+        documentation: add product category
+    getProductById:
+        params: 
+            id: string
+            token: string
+            pid: string
+            languageId: int
+        respone: json array 
+        documentation: get product by is message
+    getProductByKeyword:
+        params: 
+            id: string
+            token: string
+            conditionData: array,[p,limit,page,store_id]
+            languageId: int, allow null 
+        respone: json array 
+        documentation: get product by Keyword is message
+    getProductByCategoryIds:
+        params: 
+            id: string
+            token: string
+            conditionData: array,[categories array[1,2,3],limit,page]
+            languageId: int, allow null 
+        respone: json array 
+        documentation: get product by Keyword is message
+rest:
+    product: Redseanet\Catalog\Model\Api\Rest\Product
+    category: Redseanet\Catalog\Model\Api\Rest\Category
+rpc:
+    getCategory: \Redseanet\Catalog\Model\Api\Rpc\Category
+    deleteCategory: \Redseanet\Catalog\Model\Api\Rpc\Category
+    putCategory: \Redseanet\Catalog\Model\Api\Rpc\Category
+    getProductById: \Redseanet\Catalog\Model\Api\Rpc\Product
+    getProductByKeyword: \Redseanet\Catalog\Model\Api\Rpc\Product
+    getProductByCategoryIds: \Redseanet\Catalog\Model\Api\Rpc\Product

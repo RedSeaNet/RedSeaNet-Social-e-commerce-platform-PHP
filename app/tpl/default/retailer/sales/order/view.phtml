@@ -1,0 +1,176 @@
+<?php
+$order = $this->getVariable('order');
+$currency = $order->getCurrency();
+$customer = $order->getCustomer();
+$address = $order->getShippingAddress();
+?>
+<div class="alert alert-warning">
+    <div class="content">
+        <span class="badge text-bg-danger"><?php echo $this->translate('Order Status') ?>:</span>
+        <span><?php echo $this->translate($order->getStatus()['name']) ?></span>
+    </div>
+</div>
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation"><a href="#order" role="tab" data-bs-toggle="tab" class="active show"><?php echo $this->translate('Order Infomation') ?></a></li>
+    <li role="presentation"><a href="#address" role="tab" data-bs-toggle="tab"><?php echo $this->translate('Shipping Information') ?></a></li>
+</ul>
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane fade active show" id="order">
+        <div class="head">
+            <?php echo $this->translate('Order ID') ?>: <?php echo $order['increment_id'] ?><br />
+            <?php echo $this->translate('Placed at') ?>: <?php echo $order['created_at'] ?><br />
+            <?php echo $this->translate('Email') ?>: <a href="mailto:<?php echo $customer['email'] ?>"><?php echo $customer['email'] ?></a>
+            <?php if ($order['customer_note']): ?><br />
+                <?php echo $this->translate('Message'), ': ', $order['customer_note'] ?>
+            <?php endif ?>
+            <?php
+            if ($bulk = $order->getAdditional('bulk')):
+                $bulk = (new \Redseanet\Bulk\Model\Bulk)->load($bulk);
+                ?><br />
+                <?php echo $this->translate('Bulk Sale'), ': ', $this->translate($bulk['status'] ? ($bulk->canShip() ? 'Complete' : 'Processing') : 'Closed') ?>
+            <?php endif ?>
+        </div>
+
+        <div class="d-flex fw-bold pt-2 pb-2 mb-2 border-bottom">
+            <div class="col-md-6 col-10"> 
+                <?php echo $this->translate('Product') ?>
+            </div>
+            <div class="col-md-2 d-none d-md-block"> 
+                <?php echo $this->translate('SKU', [], 'sales') ?>
+            </div>
+            <div class="col-1 d-none d-md-block"> 
+                <?php echo $this->translate('Price', [], 'sales') ?>
+            </div>
+            <div class="col-1 d-none d-md-block"> 
+                <?php echo $this->translate('Qty', [], 'sales') ?>
+            </div>
+            <div class="col-md-2 col-2"> 
+                <?php echo $this->translate('Total', [], 'sales') ?>
+            </div>
+        </div>
+        <?php
+        foreach ($order->getItems() as $item):
+            $product = $item['product'];
+            $options = json_decode($item['options'], true);
+            $thumbnail = $product->getThumbnail($options);
+            ?>
+            <div class="d-flex pt-md-5 pb-md-5 p-3 p-3"<?php if (isset($item['id'])): ?> data-id="<?php echo $item['id'] ?>"<?php endif ?>>
+                <div class="col-md-6 col-10 d-flex"> 
+                    <div>
+                        <a href="<?php echo $product->getUrl() ?>">
+                            <img class="shadow rounded-2" src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" width="60" alt="<?php echo $item['product_name'] ?>" />
+                        </a>
+                    </div>
+                    <div class="text-break ps-2">
+                        <a href="<?php echo $product->getUrl() ?>" class="text-break">
+                            <?php echo $item['product_name'] ?>
+                        </a>
+                        <?php
+                        if ($item['product_id'] && count($options)):
+                            ?>
+                            <dl class="options font-12">
+                                <?php
+                                foreach ($product->getOptions() as $option):
+                                    if (isset($options[$option->getId()])):
+                                        ?>
+                                        <dt><?php echo $option['title'] ?></dt>
+                                        <dd><?php echo in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ? $option->getValue($options[$option->getId()]) : $options[$option->getId()] ?></dd>
+                                        <?php
+                                    endif;
+                                endforeach;
+                                ?>
+                            </dl>
+                        <?php endif ?>
+                        <p class="mb-0 pb-0 d-block d-md-none sys-gray font-12"><?php echo $this->translate('SKU', [], 'sales') . ': ' . $item['sku'] ?></p>
+                        <p class="mb-0 pb-0 d-block d-md-none sys-gray font-12"><?php echo $currency->format($item['price']) ?></p>
+                        <p class="mb-0 pb-0 d-block d-md-none sys-gray font-12"><?php echo 'X ' . $item['qty'] ?></p>
+                    </div>
+                </div>
+                <div class="col-2 d-none d-md-block"> 
+                    <?php echo $item['sku'] ?>
+                </div>
+                <div class="col-1 d-none d-md-block"> 
+                    <?php echo $currency->format($item['price']) ?>
+                </div>
+                <div class="col-1 d-none d-md-block"> 
+                    <?php echo (float) $item['qty'] ?>
+                </div>
+                <div class="col-md-2 col-2"> 
+                    <?php echo $currency->format($item['total']) ?>
+                </div>
+            </div>
+        <?php endforeach ?>
+
+        <div class="text-end border-top pt-md-4 pt-2">
+            <?php
+            $discount = (!empty($order->offsetGet('discount_detail')) ? json_decode($order->offsetGet('discount_detail'), true) : []);
+            ?>
+            <?php if ($order->canCancel()): ?>
+                <a class="btn btn-primary" data-info='{"id":<?php echo $order->getId() ?>,"discount":<?php echo $discount && isset($discount['Administrator']) ? $discount['Administrator'] : 0 ?>}' data-bs-toggle="modal" href="#modal-edit-discount">
+                    <span><?php echo $this->translate('Edit') ?></span>
+                </a>
+            <?php endif ?>
+            <div class="totals">
+                <p class="mb-0"><?php echo $this->translate('Subtotal', [], 'sales') ?>: <?php echo $currency->format($order->offsetGet('subtotal')) ?></p>
+                <p class="mb-0"><?php echo $this->translate('Shipping &amp; Handling', [], 'sales') ?>: <?php echo $currency->format($order->offsetGet('shipping')) ?></p>
+                <p class="mb-0"><?php echo $this->translate('Tax', [], 'sales') ?>: <?php echo $currency->format($order->offsetGet('tax')) ?></p>
+                <?php
+                if ((float) $order->offsetGet('discount')):
+                    $discount = json_decode($order->offsetGet('discount_detail'), true);
+                    foreach ($discount as $type => $price):
+                        ?>
+                        <p class="mb-0">
+                            <?php
+                            echo $this->translate('Discount') . '(' . $this->translate(ucfirst($type)) . ')';
+                            ?>: 
+                            <?php echo (!empty($price["total"]) ? $currency->convert($price["total"], true) : 0) ?>
+                        </p>
+                        <?php
+                    endforeach;
+                endif;
+                ?>
+                <p><?php echo $this->translate('Grand Total', [], 'sales') ?>: <span class="sys-red fw-bold"><?php echo $currency->format($order->offsetGet('total')) ?></span></p>
+                <p class="mb-0"><?php echo $this->translate('Total Paid', [], 'sales') ?>: <?php echo $currency->format($order->offsetGet('total_paid')) ?></p>
+                <p><?php echo $this->translate('Total Refunded', [], 'sales') ?>: <?php echo $currency->format($order->offsetGet('total_refunded')) ?></p>
+            </div>
+        </div>
+
+    </div>
+    <div role="tabpanel" class="tab-pane fade" id="address">
+        <h4 class="title pb-2"><?php echo $this->translate('Shipping Information') ?></h4>
+        <dl class="clearfix">
+            <?php
+            if (isset($address)) {
+                ?>
+                <dt><?php echo $this->translate('Shipping Address') ?></dt>
+                <dd>
+                    <?php
+                    echo nl2br($order['shipping_address']);
+                    ?>
+                    <a class="btn btn-primary" data-info='<?php echo json_encode(['is_billing' => 0, 'order_id' => $order->getId()] + (isset($address) ? $address->toArray() : [])) ?>' data-bs-toggle="modal" href="#modal-edit-address">
+                        <span><?php echo $this->translate('Edit') ?></span>
+                    </a>
+                </dd>
+                <?php
+            }
+            ?>
+            <?php if ($order['billing_address_id'] != $order['shipping_address_id']): ?>
+                <dt><?php echo $this->translate('Billing Address') ?></dt>
+                <dd>
+                    <?php
+                    echo nl2br($order['billing_address'])
+                    ?>
+                    <a class="btn btn-primary" data-info='<?php echo json_encode(['is_billing' => 1, 'order_id' => $order->getId()] + ($address ? $address->toArray() : [])) ?>' data-bs-toggle="modal" href="#modal-edit-address">
+                        <span><?php echo $this->translate('Edit') ?></span>
+                    </a>
+                </dd>
+            <?php endif ?>
+            <?php if ($method = $order->getShippingMethod()): ?>
+                <dt><?php echo $this->translate('Shipping Method') ?></dt>
+                <dd><?php echo $this->translate($order->getShippingMethod()->getLabel(), [], 'shipping') ?></dd>
+            <?php endif ?>
+            <dt><?php echo $this->translate('Payment Method') ?></dt>
+            <dd><?php echo $this->translate($order->getPaymentMethod()->getLabel(), [], 'payment') ?>(<?php echo $this->translate('The order was placed using %s', [$order['currency']]) ?>)</dd>
+        </dl>
+    </div>
+</div>

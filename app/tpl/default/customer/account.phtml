@@ -1,0 +1,20 @@
+<div class="main-container" style="background-color: #fafafa">
+    <div class="container p-0">
+        <div class="row">   
+            <div class="col-left col-lg-3 col-md-3 col-sm-12 col-12 d-md-block d-none">
+                <?php echo $this->getChild('nav') ?>
+            </div>
+            <main class="col-main col-lg-9 col-md-9 col-sm-12 col-12">
+                <div class="customer-account-cotent">
+                <?php if ($title = $this->getVariable('title')): ?>
+                    <h4 class="page-title"><span><?php echo $this->translate($title) ?></span></h4>
+                <?php endif ?>
+                <?php echo $this->getChild('messages') ?>
+                <div class="page-content">
+                    <?php echo $this->getChild('main') ?>
+                </div>
+               </div>     
+            </main>
+        </div> 
+    </div>
+</div>

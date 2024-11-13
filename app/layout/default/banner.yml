@@ -1,0 +1,89 @@
+---
+admin_banner_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Banner Management / Banner
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/banner/',label: 'Banner Management'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/banner/edit/',label: 'Add New Banner'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Banner\Grid\Banner
+admin_banner_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/modal.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/collapse.js
+                    -
+                        method: addLink
+                        params: backend/css/resource.css
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/mouse.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/draggable.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/droppable.js
+                    -
+                        method: addScript
+                        params: backend/vendor/jquery.fileupload/jquery.fileupload.js
+                    -
+                        method: addScript
+                        params: backend/js/resource.js
+                    -
+                        method: addLink
+                        params: backend/css/jquery-ui.min.css
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/banner/',label: 'Banner Management'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Banner\Edit\Banner
+                        children:
+                            upload:
+                                type: Redseanet\Lib\ViewModel\Template
+                                template: resource/widget
+            extra:
+                children:
+                    insert:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/insert
+                        children:
+                            list:
+                                type: Redseanet\Admin\ViewModel\Resource\Explorer
+                                template: admin/resource/explorer
+                    upload:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/upload

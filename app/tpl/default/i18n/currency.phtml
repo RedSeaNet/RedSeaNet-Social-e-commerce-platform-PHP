@@ -1,0 +1,22 @@
+<?php
+$currencies = $this->getCurrency();
+if (count($currencies) > 1):
+    ?>
+    <<?php echo $this->getWrapper() ?> class="dropdown currency">
+    <a href="javascript:void(0);" title="<?php echo $this->translate('Currency') ?>" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="fa fa-language" aria-hidden="true"></span>
+        <span class="current"><?php echo $this->getCurrentCurrency() ?></span>
+    </a>
+    <ul class="dropdown-menu">
+        <?php foreach ($currencies as $currency): ?>
+            <li>
+                <a href="<?php echo $this->getUrl($currency) ?>" class="currency-<?php echo strtolower($currency) ?>">
+                    <?php echo $currency ?>
+                </a>
+            </li>
+            <?php
+        endforeach;
+        ?>
+    </ul>
+    </<?php echo $this->getWrapper() ?>>
+<?php endif; ?>

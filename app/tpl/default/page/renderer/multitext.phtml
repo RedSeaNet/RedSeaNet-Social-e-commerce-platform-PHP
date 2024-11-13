@@ -1,0 +1,39 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$parent = $this->getVariable('parent');
+?>
+<div class="form-group <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label class="col-form-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell">
+        <?php foreach ($item['options'] as $id => $name): ?>
+            <div class="form-group <?php echo $this->getVariable('boxClass') ?>">
+                <label for="<?php echo $key ?>-<?php echo $id ?>" class="col-form-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+                    <?php echo $name ?>
+                </label>
+                <div class="cell">
+                    <input type="text" name="<?php echo $key ?>[<?php echo $id ?>]" id="<?php echo $key ?>-<?php echo $id ?>"<?php
+                    if (!isset($item['attrs']['class'])):
+                        ?> class="form-control<?php if (isset($item['required'])): ?> required<?php endif ?> <?php
+                               if (isset($item['class'])) {
+                                   echo $item['class'];
+                               }
+                               ?>"<?php endif ?><?php if (isset($item['base'])): ?> data-base="{'<?php echo $item['base'] ?>':'<?php echo $id ?>'}"<?php endif ?> value="<?php echo $item['value'][$id] ?? '' ?>" <?php
+                           if (isset($item['attrs'])) {
+                               echo $parent->getAttrs($item['attrs']);
+                           }
+                           ?>/>
+                </div>
+            </div>
+        <?php endforeach ?>
+        <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

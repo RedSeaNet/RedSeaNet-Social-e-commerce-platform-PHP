@@ -1,0 +1,29 @@
+<?php
+$products = $this->getProducts();
+?>
+<?php if (count($products)): ?>
+    <ul class="products-grid pe-1 ms-0 ps-0">
+        <?php
+        foreach ($products as $product):
+            $thumbnail = $product->getThumbnail(null,'300x');
+            ?>
+            <li class="item col-lg-3 col-md-4 col-6 ps-1 wow fadeInUp">
+                <div class="itemc">
+                    <a href="<?php echo $product->getUrl($this->getCategory()) ?>" title="<?php echo $product['name'] ?>" class="product-image">
+                            <img loading="lazy" src="<?php echo $thumbnail ?>" alt="<?php echo $product['name'] ?>" />
+                    </a>
+                    <h6 class="product-name">
+                        <a href="<?php echo $product->getUrl($this->getCategory()) ?>" title="<?php echo $product['name'] ?>">
+                            <?php echo $product['name'] ?>
+                        </a>
+                    </h6>
+                    <div class="price-box">
+                        <?php echo $this->getPriceBox($product) ?>
+                    </div>
+                </div>
+            </li>
+        <?php endforeach ?>
+    </ul>
+<?php else: ?>
+    <p class="no-product"><?php echo $this->translate('There are no products matching the selection.') ?></p>
+            <?php endif ?>

@@ -1,0 +1,15 @@
+---
+rpcport:
+    getRewardPointsList:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            condition: array
+            languageId: int
+            page: int
+            limit: int
+        respone: json array 
+        documentation: get reward points list
+rpc:
+    getRewardPointsList: \Redseanet\RewardPoints\Model\Api\Rpc\RewardPoints

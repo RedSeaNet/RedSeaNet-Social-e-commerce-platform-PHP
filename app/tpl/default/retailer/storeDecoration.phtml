@@ -1,0 +1,554 @@
+<?php
+$page_types = $this->getVariable("page_types");
+$templateView = $this->getTemplateView();
+$store_id = $templateView["store_id"];
+$retailer = $this->getRetailerByStoreId($store_id);
+$menuView = $this->template_menu();
+$logo_topView = $this->template_logo_top(!empty($templateView['stable_params']['logo_top']) ? $templateView['stable_params']['logo_top'] : '', $store_id, $retailer);
+$logo_top_params = urlencode(json_encode(!empty($templateView['stable_params']['logo_top']) ? $templateView['stable_params']['logo_top'] : ''));
+$logo_top_outerHeight = !empty($templateView['stable_params']['logo_top']['heightSet']) ? $templateView['stable_params']['logo_top']['heightSet'] + 4 : 200;
+if (!empty($templateView)) {
+    $customizeTemplates = $this->getCustomizeInfo($templateView['id'], 1);
+} else {
+    $customizeTemplates = [];
+}
+$categoriesTree = $this->getStoreCategoriesTree($store_id);
+?>
+<style>
+    .lyrow {
+        margin-bottom: 10px;
+    }
+    .col-md-41{padding:0px}
+    .col-md-61{padding:0px}
+    .navbar-brand{margin-left:11px;color:#FFFFFF;font-size:20px}
+    .navbar-inverse .navbar-brand{color:#FFFFFF;}
+    .header .nav.container{width:1150px;margin:0px auto}
+</style>
+<script type="text/javascript">
+    var path = '';
+    var page_type = 0;
+    var site_path = '<?php echo $this->getBaseUrl(); ?>';
+    var template_id = <?php echo empty($templateView) ? 0 : $templateView['id'] ?>;
+    var template_name = '<?php echo empty($templateView) ? '' : $templateView['template_name'] ?>';
+    var current_template_id = template_id;
+    var store_id = <?php echo empty($templateView) ? 0 : $templateView['store_id'] ?>;
+</script>
+<div class="decoration_logo_top stable_top" style="height:<?php echo $logo_top_outerHeight; ?>px;background-image:url(<?php echo $logo_topView; ?>);position:relative;" >
+    <a href="javascript:void(0)" class="stable" data-tag='logo_top' data-name='店铺头部Banner' data-param='<?php echo $logo_top_params; ?>' style="position:absolute;top:5px;right:28px;"><i class="glyphicon glyphicon-edit"></i></a>
+</div>
+<div class="retailer-store">
+    <div class="navbar-inverse fixed-top navbar-htmleditor">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="javascript:void(0)">装 修 店 铺  <span class="store_template_name"><?php echo empty($templateView) || $templateView['store_id'] == 0 ? '- 新建模板' : ' - ' . $templateView['template_name'] ?></span>
+                &nbsp;&nbsp; | </a> 
+            <a class="navbar-brand" href="javascript:void(0)">
+                <span class="decoration_position"> 当前装修页面  &nbsp; 
+                    <select class="page_type_select" id='page_type_select' >
+                        <?php foreach ($page_types as $key => $value) { ?>
+                            <option value="0" page_type='<?php echo $value; ?>' ><?php echo $key; ?></option>
+                        <?php } ?>
+                        <option value="-1" >自定义页面</option>
+                        <?php foreach ($customizeTemplates as $key => $value) { ?>
+                            <option value="<?php echo $value['id']; ?>" page_type=1 >&nbsp; |- <?php echo $value['template_name']; ?></option>	
+                        <?php } ?>
+
+                    </select>
+                </span> 
+                &nbsp; <button class="btn btn-success btn-sm" id='customize_button' >自定义页面设置</button>		
+            </a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav" id="menu-htmleditor">
+                <li>
+                    <div class="btn-group" data-bs-toggle="buttons-radio">
+                        <button type="button" id="edit" class="active btn btn-primary"><i class="glyphicon glyphicon-edit "></i> 编辑</button>
+                        <button type="button" class="btn btn-primary" id="sourcepreview" data-view-url="<?php echo $this->getBaseUrl($retailer->getStoreUrl()); ?>"><i class="glyphicon-eye-open glyphicon"></i> 预览</button>
+                        <button type="button" id="save" class="btn btn-warning float-end"><i class="fa fa-save"></i>&nbsp;保存</button>
+                        <button type="button" id="returns" class="btn btn-danger float-end" onclick="window.location = '<?php echo $this->getBaseUrl('/retailer/store/decorationList') ?>'" ><i class="fa fa-arrow-right"></i>&nbsp;返回</button>
+                    </div> &nbsp;
+                    <div class="btn-group" data-bs-toggle="buttons-radio" id='add' style='display: none;'>
+                        <button type="button" class="active btn btn-secondary" id="pc"><i class="fa fa-laptop"></i> Desktop</button>
+                        <button type="button" class="btn btn-secondary" id="tablet"><i class="fa fa-tablet"></i> Tablet</button>
+                        <button type="button" class="btn btn-secondary" id="mobile"><i class="fa fa-mobile"></i> Mobile</button> </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <header class="header">
+        <nav class="nav-main store_menu">
+            <ul class="nav nav-pills container">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" href="javascript:void(0);">全部商品分类</a>
+                    <ul class="dropdown-menu">
+                        <?php
+                        foreach ($categoriesTree as $value => $label) {
+                            echo '<li><a href="'.$this->getBaseUrl('retailer/store/viewSearch?catalog='.$label['id']).'">' . str_repeat('&nbsp;&nbsp;', $label['level']) . '|-- ' . $this->translate($label['name']) . '</a></li>';
+                        }
+                        ?>
+                    </ul>
+                </li>
+                <?php echo $menuView; ?>
+                <li class="dropdown">
+                    <a href="javascript:void(0)" class="stable" data-tag='menu' data-name='店铺头部Menu' data-param=''><i class="glyphicon glyphicon-edit"></i></a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="edit container" style="margin:0 auto;">
+        <div class="row">
+            <div class="">
+                <div class="sidebar-nav">
+                    <ul class="nav nav-list ">
+                        <li class="nav-header"> <i class="fa fa fa-th"> </i>&nbsp; 表格元素 </li>
+                        <li class="rows" id="estRows">
+                            <div class="lyrow layer_table" id=table0 info='单行1列表格' >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon-remove glyphicon"></i></a>
+                                <a class="drag btn btn-secondary btn-xs "  ><i class="glyphicon glyphicon-move"></i></a>
+                                <div class="drag hideRanges"></div>
+                                <div class="preview"><img src=<?php echo $this->getBaseUrl('/pub/theme/default/frontend/dragResource/images/table0.png') ?> height="30" /></div>
+                                <div class="view">
+                                    <div class="row clearfix">
+                                        <div class="col-md-12 column"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="lyrow layer_table " id=table1 info='单行2列表格 列比例 1:1' >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon-remove glyphicon"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a>
+                                <div class="drag hideRanges"></div>
+                                <div class="preview"><img src=<?php echo $this->getBaseUrl('/pub/theme/default/frontend/dragResource/images/table1.png') ?> height="30" /></div>
+                                <div class="view">
+                                    <div class="row clearfix">
+                                        <div class="col-md-6 column"></div>
+                                        <div class="col-md-6 column"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="lyrow layer_table " id=table2 info='单行2列表格 列比例 2:1'  >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon-remove glyphicon"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a>
+                                <div class="drag hideRanges"></div>
+                                <div class="preview"><img src=<?php echo $this->getBaseUrl('/pub/theme/default/frontend/dragResource/images/table2.png') ?> height="30" /></div>
+                                <div class="view">
+                                    <div class="row clearfix">
+                                        <div class="col-md-8 column"></div>
+                                        <div class="col-md-4 column"></div>
+                                    </div> <br> </div>
+                            </div>
+
+                            <div class="lyrow layer_table" id=table3 info='单行2列表格 列比例 1:2'  >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon-remove glyphicon"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a>
+                                <div class="drag hideRanges"></div>
+                                <div class="preview"><img src=<?php echo $this->getBaseUrl('/pub/theme/default/frontend/dragResource/images/table3.png') ?> height="30" /></div>
+                                <div class="view">
+                                    <div class="row clearfix">
+                                        <div class="col-md-4 column"></div>
+                                        <div class="col-md-8 column"></div>
+                                    </div> <br> </div>
+                            </div>
+
+                            <div class="lyrow layer_table " id=table4 info='单行2列表格 列比例 1:3'  >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon-remove glyphicon"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a>
+                                <div class="drag hideRanges"></div>
+                                <div class="preview"><img src=<?php echo $this->getBaseUrl('/pub/theme/default/frontend/dragResource/images/table4.png') ?> height="30" /></div>
+                                <div class="view">
+                                    <div class="row clearfix">
+                                        <div class="col-md-3 column"></div>
+                                        <div class="col-md-9 column"></div>
+                                    </div> <br> </div>
+                            </div>
+
+
+                            <div class="lyrow layer_table" id=table7 info='单行2列表格 列比例 1:4'  >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon-remove glyphicon"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a>
+                                <div class="drag hideRanges"></div>
+                                <div class="preview"><img src=<?php echo $this->getBaseUrl('/pub/theme/default/frontend/dragResource/images/table8.png') ?> height="30" /></div>
+                                <div class="view">
+                                    <div class="row clearfix">
+                                        <div class="col-md-2-1 column"></div>
+                                        <div class="col-md-10-1 column"></div>
+                                    </div> <br> </div>
+                            </div>
+
+                            <div class="lyrow layer_table " id=table5 info='单行2列表格 列比例 3:1'  >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon-remove glyphicon"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a>
+                                <div class="drag hideRanges"></div>
+                                <div class="preview"><img src=<?php echo $this->getBaseUrl('/pub/theme/default/frontend/dragResource/images/table5.png') ?> height="30" /></div>
+                                <div class="view">
+                                    <div class="row clearfix">
+                                        <div class="col-md-9 column"></div>
+                                        <div class="col-md-3 column"></div>
+                                    </div> <br> </div>
+                            </div>
+
+                            <div class="lyrow layer_table" id=table6 info='单行3列表格 列比例 1:1:1'  >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon-remove glyphicon"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a>
+                                <div class="drag hideRanges"></div>
+                                <div class="preview"><img src=<?php echo $this->getBaseUrl('/pub/theme/default/frontend/dragResource/images/table6.png') ?>  height="30" /></div>
+                                <div class="view">
+                                    <div class="row clearfix">
+                                        <div class="col-md-4 column"></div>
+                                        <div class="col-md-4 column"></div>
+                                        <div class="col-md-4 column"></div>
+                                    </div> <br> </div>
+                            </div>
+
+                            <div class="lyrow layer_table" id=table7 info='单行4列表格 列比例 1:1:1:1'  >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon-remove glyphicon"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a>
+                                <div class="drag hideRanges"></div>
+                                <div class="preview"><img src=<?php echo $this->getBaseUrl('/pub/theme/default/frontend/dragResource/images/table7.png') ?>  height="30" /></div>
+                                <div class="view">
+                                    <div class="row clearfix">
+                                        <div class="col-md-3 column"></div>
+                                        <div class="col-md-3 column"></div>
+                                        <div class="col-md-3 column"></div>
+                                        <div class="col-md-3 column"></div>
+                                    </div> <br> </div>
+                            </div>
+
+                        </li>
+                    </ul> <br>
+
+                    <ul class="nav nav-list">
+                        <li class="nav-header"><i class="fa fa-html5"></i>&nbsp; 功能模块 </li>
+                        <li class="boxes" id="elmBase">
+                            <div class="box box-element" data-type="paragraph" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a> <span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">自由编辑</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div>
+                            <div class="box box-element" data-type="long_search" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a> <span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">长搜索条</div>
+                                </div>
+                                <div class="view"></div>
+                            </div>
+
+                            <div class="box box-element" data-type="short_search" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a><span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">短搜索条</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div>
+
+                            <div class="box box-element" data-type="product_class" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a><span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">商品分类</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div>
+
+                            <div class="box box-element" data-type="sales_amount" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a><span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">销 售 量</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div>
+
+                            <div class="box box-element" data-type="hot_product" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a><span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">热卖商品</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div> 
+
+                            <div class="box box-element" data-type="store_recommend" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a><span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">店长推荐</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div>
+
+                            <div class="box box-element" data-type="product_recommend" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondary btn-xs"><i class="glyphicon glyphicon-move"></i></a> <span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">商品推荐</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div>
+
+                            <div class="box box-element" data-type="pic_carousel" show-type=1 >
+                                <a href="#close" class="remove btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i></a>
+                                <a class="drag btn btn-secondaryt btn-xs"><i class="glyphicon glyphicon-move"></i></a> <span class="configuration"> <a class="btn btn-xs btn-warning settings"  href="javascript:void(0)" ><i class="fa fa-gear"></i></a> </span>
+                                <div class="preview"> <i class="fa"> + </i>
+                                    <div class="element-desc">图片轮播</div>
+                                </div>
+                                <div class="view">
+
+                                </div>
+                            </div>                 
+
+
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="download-layout">
+                <div class="container"></div>
+            </div>
+            <div class="htmlpage"> 
+                <?php echo empty($templateView) ? '' : $templateView['code_model']; ?>              
+            </div>
+        </div>
+    </div>
+</div>
+<div id='save_html' style="display:none"></div>
+<script id="paragraph" type="text/html">
+    <div class="content function-tag" data-tag='paragraph' data-name='自由编辑' data-param='' > 
+
+    </div>
+</script>
+<script id="long_search" type="text/html">
+    <div class="search content function-tag" data-tag='long_search' data-name='本店搜索' data-param='' >
+
+    </div> 
+</script>
+
+<script id="short_search" type="text/html">
+    <div class="local-search content function-tag" data-tag='short_search' data-name='本店搜索' data-param='' >
+
+    </div>
+</script>
+
+<script id="product_class" type="text/html">
+    <div class="category">
+        <div class="title"><h4>商品分类</h4></div>
+        <div class="content function-tag" data-tag='product_class' data-name='商品分类' data-param='' >
+
+        </div>
+    </div>
+</script>
+
+<script id="sales_amount" type="text/html">
+    <div class="statics">
+        <div class="title"><h4>销售量</h4></div>
+        <div class="content function-tag" data-tag='sales_amount' data-name='销售量' data-param='' >
+
+        </div>
+    </div>
+</script>
+
+<script id="hot_product" type="text/html">
+    <div class="hot-product">
+        <div class="title"><h4>热卖商品</h4></div>
+        <div class="content function-tag" data-tag='hot_product' data-name='热卖商品' data-param=''   >
+
+        </div>
+    </div>
+</script> 
+
+<script id="store_recommend" type="text/html">
+    <div class="retailer-prompt">
+        <div class="title"><h4>店长推荐</h4><span class="more">更多&gt;</span></div>
+        <div class="content function-tag" data-tag='store_recommend' data-name='店长推荐' data-param='' >
+
+        </div>
+    </div>
+</script>
+
+<script id="product_recommend" type="text/html">
+    <div class="products">
+        <div class="title"><h4>商品推荐</h4></div>
+        <div class="content function-tag" data-tag='product_recommend' data-name='商品推荐' data-param='' >
+
+        </div>
+    </div>
+</script>
+
+<script id="pic_carousel" type="text/html">
+    <div class="pic_carousel" >
+        <div class="title"><h4>图片轮播</h4></div>
+        <div class="content function-tag component" data-tag='pic_carousel' data-name='图片轮播' data-param='' >	
+        </div>
+    </div>
+</script>
+
+
+<script>
+    $(function () {
+        $('.sidebar-nav .layer_table').each(function () {
+            $(this).mouseover(function () {
+                var id = $(this).attr('id');
+                var info = $(this).attr('info');
+                layer.tips(info, '#' + id);
+            });
+
+        });
+    });
+    if (template_id == 0) {
+        saveData();
+    }
+    function saveData() {
+        var htmls = $.trim($(".htmlpage").html());
+        if (htmls == "") {
+//  	   layer.msg('亲, 请装修您的店铺吧, 加个表格试试先', {shade: [0.3,'#fff'],time: 2000});
+//  		return;
+        }
+        if (!$("#edit").hasClass("active"))
+        {
+            htmls = $(".htmlpage").html();
+        }
+        $("#save_html").html(htmls);
+        var code_model = changeTag();
+        $("#download-layout .container .column").css("padding", "7px");
+        var src_model = style_html($("#download-layout .container").html());
+        $("#save_html").html(src_model);
+        src_model = changeTag();
+        var stable_params = {};
+        $(".stable").each(function () {
+            var tempParams = $(this).attr('data-param');
+            if ($.trim(tempParams) != "")
+            {
+                tempParams = JSON.parse(decodeURIComponent(tempParams));
+                console.log(tempParams);
+                var tempTag = $(this).attr('data-tag');
+                stable_params[tempTag] = tempParams;
+            } else {
+                tempParams = "";
+                var tempTag = $(this).attr('data-tag');
+                stable_params[tempTag] = tempParams;
+            }
+        });
+        stable_params = encodeURIComponent(JSON.stringify(stable_params));
+        var titles = template_id == 0 || store_id == 0 ? '请先输入模版名称' : '确认当前模板名称';
+        layer.prompt({
+            title: titles,
+            value: template_name,
+            formType: 0 //prompt风格，支持0-2
+        }, function (pass) {
+            saveDataFinal(code_model, src_model, pass, stable_params);
+        });
+
+    }
+
+    function saveDataFinal(code_model, src_model, template_names, stable_params) {
+        $.ajax({
+            url: '<?php echo $this->getBaseUrl('/retailer/store/addTemplate') ?>',
+            type: "post",
+            dataType: 'json',
+            data: {code_model: code_model, src_model: src_model, template_name: template_names, template_id: template_id, store_id: store_id, stable_params: stable_params},
+            beforeSend: function () {
+                layer.msg(' 保存中 ...', {icon: 16, shade: [0.3, '#fff'], time: -1});
+            },
+            success: function (data) {
+                layer.closeAll();
+                var messages = "";
+                var temp_template_id = template_id;
+                if (template_id == 0 || store_id == 0)
+                {
+                    template_id = data.id;
+                    template_name = template_names;
+                    store_id = data.store_id;
+                    messages = '您已经保存了新的店铺模版,接下来您要';
+                } else {
+                    messages = '您已经修改了当前的店铺模版,接下来您要';
+                }
+                $(".store_template_name").html(' - ' + template_name);
+                if (temp_template_id != 0)
+                {
+                    layer.confirm(messages, {
+                        btn: ['继续店铺装修', '查看当前装修的店铺']
+                    }, function () {
+                        layer.closeAll();
+                    }, function () {
+                        layer.closeAll();
+                        window.open('<?php echo $this->getBaseUrl('/retailer/store/view') ?>?id=' + data.id);
+                    });
+                }
+            },
+            error: function (msg) {
+
+            }
+
+        });
+    }
+
+    function call_ajax_data(dataID, dataType) {
+        layer.closeAll();
+        var dataParam = $("#" + dataID).find(".view").find(".content.function-tag[data-id='" + dataID + "']").attr("data-param");
+        $.ajax({
+            url: site_path + 'retailer/store/getTemplateData',
+            type: "post",
+            dataType: 'json',
+            data: {dataID: dataID, dataTag: dataType, dataParam: dataParam},
+            beforeSend: function () {
+                layer.load(1, {shade: [0.1, '#fff']});
+            },
+            success: function (data) {
+                var obj = $("#" + dataID).find(".view").find(".content.function-tag[data-id='" + dataID + "']");
+                obj.html(data.view);
+                if (obj.hasClass('component'))
+                {
+                    var func = dataType + "_init";
+                    var f = eval(func);
+                    f(obj);
+                } else if ($("#" + dataID).hasClass('stable'))
+                {
+                    var func = dataType + "_init";
+                    var f = eval(func);
+                    f(dataID, data.view);
+                } else
+                {
+
+                    var func = dataType + "_init";
+
+                    try {
+                        if (typeof (eval(func)) == "function") {
+                            //console.log(111);
+                            var f = eval(func);
+                            f(obj, dataID);
+                        }
+                    } catch (e) {
+
+                    }
+                }
+
+
+                layer.closeAll();
+            },
+            error: function (msg) {
+
+            }
+
+        });
+    }
+</script>

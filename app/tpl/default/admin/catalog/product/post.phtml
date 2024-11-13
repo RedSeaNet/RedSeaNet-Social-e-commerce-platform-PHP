@@ -1,0 +1,38 @@
+<?php
+$model = $this->getVariable('model');
+$relatePosts = $this->getVariable('relatePosts');
+?>
+<div class="edit">
+    <h2 class="page-title"><?php echo $model["name"] ?></h2>
+    <div class="page-content table tab-pane fade active in">
+        <div class="input-box ">
+            <label class="col-form-label">
+                <a href="#" class="btn btn-submit" style="background-color: red" data-toggle="modal" data-target="div#postListModal" data-href="<?php echo $this->getAdminUrl('forum_post/getPostList') ?>"><?php echo $this->translate('To choose posts') ?></a>        
+            </label>
+        </div> 
+        <div class="input-box ">
+            <form action="<?php echo $this->getAdminUrl('catalog_forum/save') ?>" method="post" enctype="multipart/form-data">
+
+                <input type="hidden" name="id" value="<?php echo $model['id']; ?>">
+                <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey(); ?>">
+                <div style="border: 1px solid #F8F8F8;padding: 2rem;margin-top: 1rem;" id="relatedposts">
+                    <?php
+                    if (count($relatePosts) > 0) {
+                        foreach ($relatePosts as $post) {
+                            echo '<div id="choosenpostiddiv' . $post['post_id'] . '">(' . $post['post_id'] . ')<input class="choosenpostsdeletea" type="hidden" name="choosenposts[]" data-id="' . $post['post_id'] . '" value="' . $post['post_id'] . '" />' . $post['title'] . '&nbsp;&nbsp;&nbsp;&nbsp;<a data-id="' . $post['post_id'] . '" class="choosenpostsdeletea" style="color:red" href="#"><span class="fa fa-trash" aria-hidden="true"></span></a></div>';
+                        }
+                    }
+                    ?>
+                </div>
+                <div class="buttons-set">
+                    <p>&nbsp;</p>
+                    <button type="submit" class="btn btn-submit"><span><?php echo $this->translate('Save') ?></span></button>
+
+                </div>
+            </form>
+        </div> 
+    </div>
+
+</div>
+
+

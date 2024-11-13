@@ -1,0 +1,14 @@
+---
+rpcport:
+    getProductsVisitHistoryList:
+        params: 
+            id: string
+            token: string
+            userId: int
+            languageId: int
+            page: int
+            limit: int
+        respone: json array 
+        documentation: get product visit history list
+rpc:
+    getProductsVisitHistoryList: \Redseanet\Log\Model\Api\Rpc\Visitor

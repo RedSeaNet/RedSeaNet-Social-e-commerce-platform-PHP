@@ -1,0 +1,9 @@
+---
+promotion.calc:
+    -
+        listener: [\Redseanet\Promotion\Listeners\Regular, calc]
+        priority: 10
+order.place.after:
+    -
+        listener: [\Redseanet\Promotion\Listeners\Coupon, log]
+        priority: 10

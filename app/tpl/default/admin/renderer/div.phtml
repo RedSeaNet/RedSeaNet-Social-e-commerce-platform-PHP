@@ -1,0 +1,18 @@
+<?php
+$item = $this->getVariable('item');
+$parent = $this->getVariable('parent');
+?>
+<div class="input-box <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label class="control-label">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell">
+        <div <?php
+        if (isset($item['attrs'])) {
+            echo $parent->getAttrs($item['attrs']);
+        }
+        ?>><?php echo $item['content'] ?></div>
+    </div>
+</div>

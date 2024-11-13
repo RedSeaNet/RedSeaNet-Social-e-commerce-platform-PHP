@@ -1,0 +1,28 @@
+---
+rpcport:
+    prepareWorkermanChat:
+        params: 
+            id: string
+            token: string
+            customerId: string
+        respone: json array 
+        documentation: prepare online chat
+    getSessionsWorkermanChat:
+        params: 
+            id: string
+            token: string
+            customerId: string
+        respone: json array 
+        documentation: get online chat sessions
+    startWorkermanChat:
+        params: 
+            id: string
+            token: string
+            from: string
+            to: string
+        respone: json array 
+        documentation: start chat
+rpc:
+    prepareWorkermanChat: \Redseanet\LiveChat\Model\Api\Rpc\WorkermanChat
+    getSessionsWorkermanChat: \Redseanet\LiveChat\Model\Api\Rpc\WorkermanChat
+    startWorkermanChat: \Redseanet\LiveChat\Model\Api\Rpc\WorkermanChat

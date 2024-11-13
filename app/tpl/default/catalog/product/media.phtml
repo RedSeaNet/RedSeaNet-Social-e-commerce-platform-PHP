@@ -1,0 +1,108 @@
+<?php
+$product = $this->getVariable('product');
+$images = $product->offsetGet('images');
+$default = (int) $product->offsetGet('default_image');
+$video = $product->getVideo();
+?>
+<div id="product-media" class="carousel slide clearfix" data-bs-ride="carousel" data-bs-interval="false">
+    <?php if (count($images)): ?>
+        <div class="carousel-inner" role="listbox">
+            <?php if (!empty($video["src"])) { ?>
+                <div class="carousel-item active" data-bs-interval="20000">
+                    <video id="product_video" class="video-js vjs-big-play-centered vjs-fill" controls preload="auto" style="width:100%;height:100%;" type="video/mp4" webkit-playsinline="true"
+                           playsinline="true"
+                           x-webkit-airplay="allow"
+                           x5-video-player-type="h5"
+                           x5-video-orientation="landscape">
+                        <source src="<?php echo $video['src']; ?>" type="video/mp4">
+                    </video>
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            var player = videojs('product_video', {
+                                muted: true,
+                                controls: true,
+                                loop: true,
+                                autoplay: true,
+                                currentTimeDisplay: true,
+                                timeDivider: true,
+                                durationDisplay: true,
+                                remainingTimeDisplay: false
+                            });
+                            player.on('touchstart', function (e) {
+                                if (e.target.nodeName === 'VIDEO') {
+                                    if (player.paused()) {
+                                        player.play();
+                                    } else {
+                                        player.pause();
+                                    }
+                                }
+                            });
+                        });
+                    </script>
+                </div>
+            <?php } ?>
+            <?php
+            $default = (int) $product->offsetGet('default_image');
+            foreach ($images as $image):
+                ?>
+                <div class="carousel-item<?php if ((!$default || (int) $image['id'] === $default) && empty($video["src"])): ?> active<?php
+                    $default = true;
+                endif;
+                ?>" data-bs-interval="5000">
+                    <img class="bttrlazyloading magnifying" data-bttrlazyloading-md-src="<?php
+                    echo $this->getResourceUrl('image/' . $image['real_name'])
+                    ?>" data-bttrlazyloading-sm-src="<?php
+                         echo $this->getResourceUrl('image/' . $image['real_name']);
+                         ?>" data-bttrlazyloading-xs-src="<?php
+                         echo $this->getResourceUrl('image/' . $image['real_name'])
+                         ?>" src="<?php
+                         echo $this->getResourceUrl('image/resized/450x/' . $image['real_name']);
+                         ?>" alt="<?php echo $product->offsetGet('name') ?>" width="100%" />
+                </div>
+            <?php endforeach ?>
+        </div>
+        <div class="d-flex align-items-center mt-1">
+            <div class="col-1">
+                <button class="carousel-control-prev" type="button" data-bs-target="#product-media" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+            </div>
+            <ul class="carousel-indicators col-10">
+                <?php
+                $i = 0;
+                if (!empty($video["src"])) {
+                    ?>
+                    <li data-bs-target="#product-media" data-bs-slide-to="<?php echo $i++ ?>" class="active p-1">
+                        <span class="fa fa-play-circle-o font-24" aria-hidden="true"></span>
+                    </li>
+                <?php } ?>
+                <?php
+                $default = (int) $product->offsetGet('default_image');
+                foreach ($images as $image):
+                    ?>
+                    <li data-bs-target="#product-media" data-bs-slide-to="<?php echo $i++ ?>"<?php if ((!$default || (int) $image['id'] === $default) && empty($video["src"])): ?> class="active"<?php
+                        $default = true;
+                    endif;
+                    ?>>
+                        <img src="<?php echo $this->getResourceUrl('image/' . $image['real_name']) ?>" width="30" alt="<?php echo $image['label'] ?>" data-label="<?php echo $image['label'] ?>" data-group="<?php echo $image['group'] ?>" />
+                    </li>
+                <?php endforeach ?>
+            </ul>
+            <div class="col-1">
+                <button class="carousel-control-next" type="button" data-bs-target="#product-media" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+
+    <?php else: ?>
+        <div class="carousel-inner" role="listbox">
+            <div class="item active">
+                <img src="<?php echo $this->getPubUrl('frontend/images/placeholder.png') ?>" 
+                     alt="<?php echo $product->offsetGet('name') ?>" width="100%" />
+            </div>
+        </div>
+    <?php endif ?>
+</div>

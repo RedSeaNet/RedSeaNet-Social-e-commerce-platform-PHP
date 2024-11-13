@@ -1,0 +1,129 @@
+---
+admin_email_template_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Email Template
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/modal.js',defer: 'defer',async: 'async'}]
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/email_template/',label: 'Email Template'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/email_template/edit/',label: 'Add New Template'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Email\Grid
+            extra:
+                children:
+                    send:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: admin/email/send
+admin_email_template_edit:
+    update: edit
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: addScript
+                        params: [{src: 'backend/js/modal.js',defer: 'defer',async: 'async'}]
+                    -
+                        method: addScript
+                        params: backend/js/collapse.js
+                    -
+                        method: addLink
+                        params: backend/css/resource.css
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/core.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/widget.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/mouse.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/draggable.js
+                    -
+                        method: addScript
+                        params: backend/js/jquery.ui/droppable.js
+                    -
+                        method: addScript
+                        params: backend/vendor/jquery.fileupload/jquery.fileupload.js
+                    -
+                        method: addScript
+                        params: backend/js/resource.js
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/email_template/',label: 'Email Template'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Email\Edit
+            extra:
+                children:
+                    send:
+                        type: Redseanet\Lib\ViewModel\Template
+                        template: admin/email/send
+                    insert:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/insert
+                        children:
+                            list:
+                                type: Redseanet\Admin\ViewModel\Resource\Explorer
+                                template: admin/resource/explorer
+                    upload:
+                        type: Redseanet\Admin\ViewModel\Resource\Modal
+                        template: admin/resource/upload
+admin_email_subscriber_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Subscriber / Newsletter
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/email_subscriber/',label: 'Newsletter Subscriber'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Email\Subscriber
+admin_email_queue_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Email Queue
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/email_queue/',label: 'Email Queue'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Email\Queue

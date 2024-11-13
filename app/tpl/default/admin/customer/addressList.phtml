@@ -1,0 +1,28 @@
+<button type="button" class="btn" data-info='{}' data-toggle="modal" data-target="#modal-edit-address">
+    <span><?php echo $this->translate('New Address') ?></span>
+</button>
+<?php
+$collection = $this->getCollection();
+if ($collection && count($collection)):
+    foreach ($collection as $address):
+        ?>
+        <div class="address-book<?php if ($address['is_default']): ?> active<?php endif ?>" data-id="<?php echo $address->getId() ?>">
+            <div class="buttons-set clearfix">
+                <span><?php echo $this->translate('Default Address') ?></span>
+                <a href="<?php echo $this->getAdminUrl('customer_address/delete/') ?>" data-method="delete" data-params="id=<?php echo $address['id'] ?>&csrf=<?php echo $this->getCsrfKey() ?>" class="btn" title="<?php echo $this->translate('Delete') ?>">
+                    <span class="fa fa-fw fa-remove" aria-hidden="true"></span>
+                    <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                </a>
+                <button type="button" class="btn" data-info='<?php echo json_encode($address->toArray()) ?>' data-toggle="modal" data-target="#modal-edit-address" title="<?php echo $this->translate('Edit') ?>">
+                    <span class="fa fa-fw fa-file-text-o" aria-hidden="true"></span>
+                    <span class="sr-only"><?php echo $this->translate('Edit') ?></span>
+                </button>
+            </div>
+            <div class="content">
+                <?php echo nl2br($address->display(false)) ?>
+            </div>
+        </div>
+        <?php
+    endforeach;
+endif;
+?>

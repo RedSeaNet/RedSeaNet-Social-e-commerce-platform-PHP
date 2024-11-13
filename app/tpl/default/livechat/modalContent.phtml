@@ -1,0 +1,25 @@
+<?php
+$data = $this->getVariable('data');
+?>
+<div class="modal-header">
+    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title clearfix">
+        <img src="<?php echo empty($data['avatar']) ? $this->getPubUrl('frontend/images/avatar-holderplace.jpg') : $this->getUploadedUrl('customer/avatar/' . $data['customer']['avatar']); ?>" class="avatar rounded" alt="" />
+        <span class="name"><?php echo $data['customer']['name'] ?></span>
+        <p class="order"><?php echo $this->translate('The customer has spent %s on %s orders in your store.', [$data['orders']['total'], $data['orders']['count']]) ?></p>
+    </h4>
+</div>
+<div class="modal-body">
+    <h5 class="title"><?php echo $this->translate('Recently Viewed') ?></h5>
+    <ul class="products-list">
+        <?php foreach ($data['products'] as $product): ?>
+            <li>
+                <a href="<?php echo $product['url'] ?>" class="product-image">
+                    <img src="<?php echo strpos($product['thumbnail'], '//') === false ? $this->getResourceUrl('image/') . $product['thumbnail'] : $product['thumbnail'] ?>" />
+                </a>
+                <h6 class="product-name"><?php echo $product['name'] ?></h6>
+                <p class="date"><?php echo $product['viewed_at'] ?></p>
+            </li>
+        <?php endforeach ?>
+    </ul>
+</div>

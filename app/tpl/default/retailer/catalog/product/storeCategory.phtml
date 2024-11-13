@@ -1,0 +1,30 @@
+<?php
+$category = new Redseanet\Retailer\ViewModel\Category;
+$categories = $category->getCategories();
+?>
+<ul class="categories-list">
+    <?php
+    if (count($categories)):
+        foreach ($categories[0] as $category):
+            ?>
+            <li class="clearfix" data-id="<?php echo $category->getId() ?>">
+                <input type="checkbox" name="store_category[]" id="store_category-<?php echo $category['id'] ?>" value="<?php echo $category->getId() ?>" <?php echo (in_array($category['id'], $this->getActiveIds()) ? 'checked="checked"' : '') ?> />
+                <label for="store_category-<?php echo $category['id'] ?>" class="col-form-label"><?php echo $category->getName() ?></label>
+                <?php if (!empty($categories[$category->getId()])): ?>
+                    <ul class="children">
+                        <?php foreach ($categories[$category->getId()] as $child): ?>
+                            <li class="child clearfix" data-id="<?php echo $child->getId() ?>">
+                                <input type="checkbox" name="store_category[]" id="store_category-<?php echo $child['id'] ?>" value="<?php echo $child->getId() ?>" <?php echo (in_array($child['id'], $this->getActiveIds()) ? 'checked="checked"' : '') ?> />
+                                <label for="store_category-<?php echo $child['id'] ?>" class="col-form-label"><?php echo $child->getName() ?></label>
+                            </li>
+                        <?php endforeach ?>
+                    </ul>
+                <?php endif ?>
+            </li>
+            <?php
+        endforeach;
+    else:
+        ?>
+        <li class="text-center"><?php echo $this->translate('There is no category available.') ?></li>
+        <?php endif ?>
+</ul>

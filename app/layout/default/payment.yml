@@ -1,0 +1,15 @@
+---
+payment_wechat:
+    update: frontend
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: WeChat Pay
+            content:
+                children:
+                    main:
+                        type: Redseanet\Payment\ViewModel\WeChat
+                        template: payment/wechat

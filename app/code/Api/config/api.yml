@@ -1,0 +1,38 @@
+---
+wsdl:
+    message:
+        endSession:
+            sessionId: string
+        endSessionResponse:
+            endSessionResult: boolean
+        login:
+            username: string
+            password: string
+        loginResponse:
+            loginResult: string
+        flushCache:
+            key: string
+            prefix: string
+    port:
+        -
+            name: endSession
+            input: tns:endSession
+            output: tns:endSessionResponse
+            documentation: End web service session
+        -
+            name: login
+            input: tns:login
+            output: tns:loginResponse     
+            documentation: Login user and retrive session id
+        -
+            name: flushCache
+            input: tns:flushCache
+            documentation: Flush cache remotely
+soap:
+    login: \Redseanet\Api\Model\Api\General
+    endSession: \Redseanet\Api\Model\Api\General
+    flushCache: \Redseanet\Api\Model\Api\General
+rpc:
+    getToken: \Redseanet\Api\Model\Api\Rpc\General
+    apiValidateToken: \Redseanet\Api\Model\Api\Rpc\General
+    

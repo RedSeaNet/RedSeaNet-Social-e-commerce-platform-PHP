@@ -1,0 +1,75 @@
+<?php
+$category = $this->getCategories();
+$posts = $this->getPosts();
+?>
+<div class="container index-main  background-white">
+    <ul class="posts-list products-grid masonry clearfix" id="masonry">
+        <?php
+        $config = $this->getConfig();
+        $new = strtotime('-' . $config['forum/post/new_days'] . 'days');
+        $current = $this->getSegment('customer')->get('hasLoggedIn') ? $this->getSegment('customer')->get('customer')['id'] : 0;
+        if (!empty($posts)):
+            foreach ($posts as $post):
+                $thumbnail = $post->getThumbnail();
+                $links = $post->getLinks();
+                $linksa = '';
+                if (count($links) > 0) {
+                    for ($l = 0; $l < count($links); $l++) {
+                        $linksa .= '&nbsp;<a href="' . $post->checkLink($links[$l]["link"]) . '" class="sys-blue sys-underline">' . $links[$l]["name"] . '</a>';
+                    }
+                }
+                $customer = $post->getCustomer();
+                ?><li class="item col-6 col-sm-4 col-md-3<?php if ($post['poll_id']): ?> poll<?php
+                endif;
+                if (strtotime($post['created_at']) >= $new):
+                    ?> new<?php
+                    endif;
+                    if (strtotime($post['is_hot']) >= $new):
+                        ?> hot<?php endif ?>">
+                    <div class="item-list">
+                        <a href="<?php echo $post->getUrl() ?>" class="product-image">
+                            <img src="<?php echo $thumbnail ? $this->getBaseUrl('pub/upload/forum/') . $thumbnail : $this->getPubUrl('frontend/images/placeholder.png'); ?>" alt="<?php echo $post['title'] ?>" loading="lazy">
+                        </a>
+                        <div class="product-text">
+                            <h6 class="product-name"><a href="<?php echo $post->getUrl() ?>"><?php echo $post['title'] ?></a> <?php echo $linksa; ?></h6>
+                            <div class="product-user">
+                                <a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $customer['id']) ?>"><img class="rounded-circle" src="<?php echo!empty($customer['avatar']) ? $this->getUploadedUrl('customer/avatar/' . $customer['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="<?php echo $customer['username'] ?>" /></a>
+                                <span class="product-userName"><a href="<?php echo $this->getBaseUrl("forum/space/?customer_id=" . $customer['id']) ?>"><?php echo $customer['username'] ?></a></span>
+                                <?php
+                                if ($this->getSegment('customer')->get('hasLoggedIn')):
+                                    ?>
+                                    <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/like/') ?>" class="like product-heart" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post->getId() ?>">
+                                        <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                        <span><?php echo $post['like']; ?></span>
+                                    </a>
+                                    <?php
+                                else:
+                                    ?>
+                                    <a href="<?php echo $this->getBaseUrl('customer/account/logion/') ?>" class="like product-heart">
+                                        <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                        <span><?php echo $post['like']; ?></span>
+                                    </a>
+                                <?php
+                                endif;
+                                ?>
+                            </div>
+                            <div><?php
+                                if (!empty($post['tags'])) {
+                                    foreach (explode(",", $post['tags']) as $tag) {
+                                        echo "<span style='background-color:#f5f4f4;display:inline-block;margin:5px; padding:5px;border-radius:5px;'><a href='".$this->getBaseUrl('forum/post/search?q='.$tag)."'>" . $tag . "</a></span>";
+                                    }
+                                }
+                                ?></div>
+                        </div>
+                    </div>
+                </li>
+                <?php
+            endforeach;
+        else:
+            ?>
+            <p class="empty text-center"><?php echo $this->translate('No post available right now.'); ?></p>
+        <?php
+        endif;
+        ?>
+    </ul>
+</div>

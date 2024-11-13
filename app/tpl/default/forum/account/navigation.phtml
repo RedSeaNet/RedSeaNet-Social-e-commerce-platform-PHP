@@ -1,0 +1,30 @@
+<?php
+$current = $this->getUri()->withQuery('')->withFragment('')->__toString();
+?>
+<div class="navbar navbar-expand-md leftnav">
+    
+    <nav class="collapse navbar-collapse" id="navbar-customer-account">    		
+        <dl class="nav-item">
+            <dt class="nav-link">
+                <a href="<?php echo $this->getBaseUrl('forum/account/') ?>">
+                    <span><?php echo $this->translate('Forum Account') ?></span>
+                </a>   
+            </dt>
+            <?php foreach ($this->getGroups() as $group): ?>
+                <dt class="nav-link">
+                    <span><?php echo $this->translate($group['label']) ?></span>
+                </dt>
+                <?php foreach ($this->getLinks() as $link): ?>
+                    <?php if ($link['group'] == $group['label']): ?>
+                        <dd<?php if (!empty($link['class'])): ?> class="<?php echo $link['class'] ?>"<?php endif ?>>
+                            <a href="<?php echo $this->getBaseUrl($link['link']) ?>"<?php if (strpos($current, $link['link']) !== false): ?> class="active"<?php endif ?>>
+                                <span><?php echo $this->translate($link['label']) ?></span>
+                                <span class="float-end fa fa-angle-right d-block d-sm-none"></span>
+                            </a>
+                        </dd>
+                    <?php endif; ?>
+                <?php endforeach; ?>                
+            <?php endforeach; ?>              
+        </dl>
+    </nav>
+</div>

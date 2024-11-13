@@ -1,0 +1,23 @@
+<div class="container">
+    <div class="checkout-flow d-none clearfix">
+        <div class="item col-sm-4 active"><?php echo $this->translate('Shopping Cart', [], 'checkout'); ?></div>
+        <div class="item col-sm-4 active"><?php echo $this->translate('Order Confirmation', [], 'checkout'); ?></div>
+        <div class="item col-sm-4 active"><?php echo $this->translate('Complate', [], 'checkout'); ?></div>
+    </div>
+    <div class="text-center">
+        <div class="trading-success">
+            <p><image src="<?php echo $this->getPubUrl('frontend/images/shopping-successful.png');?>" style="width:90%"/></p>
+            <h3 class="title"><span class="fa fa-check"></span><?php echo $this->translate('Your order has been received.') ?></h3>
+            <h6 class="sub-title"><?php echo $this->translate('We are appreciated that you can choose our products.') ?></h6>
+            <ul class="list-inline">
+                <li><a href="<?php echo $this->getBaseUrl(); ?>"><?php echo $this->translate('Continue Shopping'); ?></a></li>
+                <?php if ($this->hasLoggedIn()): ?>
+                    <li><a href="<?php echo $this->getBaseUrl('sales/order/list/'); ?>"><?php echo $this->translate('View Order'); ?></a></li>
+                <?php else:?>
+                    <li><?php echo $this->translate('Your Order ID'); ?>:</li>
+                    <li><?php echo $this->translate('Click here to view order details'); ?>:<a href="<?php $this->getBaseUrl('sales/inquire/'); ?>"><?php echo $this->translate('Order Inquire'); ?></a></li>
+                <?php endif;?>
+            </ul>
+        </div>
+    </div>
+</div>

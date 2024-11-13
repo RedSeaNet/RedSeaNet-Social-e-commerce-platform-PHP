@@ -1,0 +1,19 @@
+<?php
+if ($this->canUse()):
+    ?>
+    <section class="section rewardpoints" data-change-after="review" data-url="<?php echo $this->getBaseUrl('rewardpoints/index/load/') ?>">
+        <h5 class="title"><?php echo $this->translate('Points'); ?></h5>
+        <div>
+            <p>
+                <?php
+                $points = $this->getAvailablePoints();
+                echo $this->translate('You have %d points left. You can use %d for current transaction.', [$this->getCurrentPoints(), $points]);
+                ?>
+            </p>
+            <?php if ($points): ?>
+                <a href="<?php echo $this->getBaseUrl('rewardpoints/index/apply/') ?>" class="btn<?php if ($this->hasApplied()): ?> clicked<?php endif ?> btn-primary" data-method="get" data-load='shipping'><?php echo $this->translate('Apply') ?></a>
+                <a href="<?php echo $this->getBaseUrl('rewardpoints/index/cancel/') ?>" class="btn" data-method="get" data-load='shipping'><?php echo $this->translate('Cancel') ?></a>
+            <?php endif ?>
+        </div>
+    </section>
+<?php endif; ?>

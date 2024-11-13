@@ -1,0 +1,32 @@
+---
+checkout:
+    label: Checkout
+    children:
+        general:
+            label: General
+            scope: merchant
+            children:
+                allow_guest:
+                    type: select
+                    label: Allow Guest Checkout
+                    required: required
+                    priority: 0
+                    source: \Redseanet\Lib\Source\Yesno
+                    default: 1
+                terms:
+                    type: select
+                    label: Enable Terms and Conditions
+                    required: required
+                    priority: 0
+                    source: \Redseanet\Lib\Source\Yesno
+                    default: 0
+        sales:
+            label: Sales
+            scope: merchant
+            children:
+                min_amount:
+                    type: price
+                    label: Minimum Amount
+                    priority: 0
+                    default: 0
+                    comment: Subtotal after discount.

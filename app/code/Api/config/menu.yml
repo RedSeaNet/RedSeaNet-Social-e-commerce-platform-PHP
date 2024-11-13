@@ -1,0 +1,38 @@
+---
+permissions:
+    children:
+        -
+            link: api_soap_user/
+            operation: 'Admin\Api\Soap\User::index'
+            title: SOAP - User
+            priority: 60
+        -
+            link: api_soap_role/
+            operation: 'Admin\Api\Soap\Role::index'
+            title: SOAP - Role
+            priority: 61
+        -
+            link: api_rest_role/
+            operation: 'Admin\Api\Rest\Role::index'
+            title: REST - Role
+            priority: 70
+        -
+            link: api_rest_attribute/
+            operation: 'Admin\Api\Rest\Attribute::index'
+            title: REST - Attributes
+            priority: 71
+        -
+            link: api_rpc_user/
+            operation: 'Admin\Api\Rpc\User::index'
+            title: RPC - User
+            priority: 80
+        -
+            link: api_rpc_role/
+            operation: 'Admin\Api\Rpc\Role::index'
+            title: RPC - Role
+            priority: 81
+        -
+            link: api_rsakey/
+            operation: 'Admin\Api\Rsakey::index'
+            title: Test - RSAKEY
+            priority: 90

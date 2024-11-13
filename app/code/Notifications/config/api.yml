@@ -1,0 +1,17 @@
+---
+rpcport:
+    getNotificationsList:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            condition: array
+            lastId: int
+            languageId: int
+            data: array
+        respone: json array 
+        documentation: get notifications list
+rest:
+    getNotificationsList: Redseanet\Notifications\Model\Api\Rest\Notifications
+rpc:
+    getNotificationsList: \Redseanet\Notifications\Model\Api\Rpc\Notifications

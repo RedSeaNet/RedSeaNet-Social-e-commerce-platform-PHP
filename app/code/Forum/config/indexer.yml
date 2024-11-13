@@ -1,0 +1,4 @@
+---
+forum_search:
+    title: Forum Search
+    provider: \Redseanet\Forum\Indexer\Search

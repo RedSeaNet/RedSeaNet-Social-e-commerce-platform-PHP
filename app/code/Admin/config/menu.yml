@@ -1,0 +1,63 @@
+---
+dashboard:
+    icon: line-chart
+    link: dashboard/
+    operation: 'Admin\Dashboard::index'
+    title: Dashboard
+    priority: 0
+cache:
+    icon: database
+    link: cache/
+    title: Cache and Indexer
+    priority: 150
+    children:
+        -
+            link: cache/
+            title: Cache Management
+            operation: 'Admin\Cache::index'
+            priority: 0
+        -
+            link: indexer/
+            title: Indexer Management
+            operation: 'Admin\Indexer::index'
+            priority: 10
+permissions:
+    icon: universal-access
+    title: Permissions
+    priority: 200
+    children:
+        -
+            link: user/
+            operation: 'Admin\User::index'
+            title: My Account
+            priority: 0
+        -
+            link: user/list/
+            operation: 'Admin\User::list'
+            title: User Management
+            priority: 10
+        -
+            link: role/
+            operation: 'Admin\Role::index'
+            title: Role Management
+            priority: 30
+        -
+            link: operation/
+            operation: 'Admin\Operation::index'
+            title: Operation Management
+            priority: 50
+system:
+    icon: cogs
+    title: System Configuration
+    priority: 900
+    children:
+        -
+            link: config/global/
+            operation: 'Admin\Config::global'
+            title: Global Configuration
+            priority: 0
+        -
+            link: config/theme/
+            operation: 'Admin\Config::theme'
+            title: Theme Configuration
+            priority: 10

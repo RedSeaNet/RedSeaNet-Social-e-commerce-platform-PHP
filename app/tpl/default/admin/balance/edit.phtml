@@ -1,0 +1,21 @@
+<?php
+$customer = $this->getCustomer();
+if ($customer):
+    ?>
+    <div class="input-box">
+        <label class="control-label" aria-required="true"><?php echo $this->translate('Account Balance') ?></label>
+        <div class="cell"><?php echo $this->getCurrency()->convert($customer->getBalance(), TRUE); ?></div>
+    </div>
+    <div class="input-box">
+        <label for="adjust_balance" class="control-label" aria-required="true"><?php echo $this->translate('Adjustment') ?></label>
+        <div class="cell">
+            <input type="number" name="adjust_balance" id="adjust_balance" class="form-control number" value="0" />
+        </div>
+    </div>
+    <div class="input-box">
+        <div class="cell"></div>
+        <div class="cell">
+            <?php echo $this->getChild('balancedetail')->setVariable('customer', $this->getCustomer()) ?>
+        </div>
+    </div>
+<?php endif; ?>

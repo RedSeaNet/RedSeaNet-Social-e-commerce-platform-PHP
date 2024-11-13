@@ -1,0 +1,21 @@
+<?php
+$bulk = $this->getBulk();
+$url = rawurlencode($this->getBaseUrl('bulk/view/?bulk=') . $bulk->getId());
+$title = rawurlencode($bulk['subject'] ?? $this->getConfig()['theme/global/default_title']);
+$description = rawurlencode(preg_replace('/<[^>]+>/', '', $bulk['description'] ?? $this->getConfig()['theme/global/default_description']));
+preg_match_all('/<img[^>]+>/', $bulk['description'], $imgs);
+$pic = isset($imgs[0][0]) ? preg_replace('/<img[^>]+src=([\'\"])([^\1]+)\1[^>]*>/', '$2', $imgs[0][0]) : '';
+?>
+<div class="bulk-share">
+    <span class="col-form-label"><?php echo $this->translate('Share to:') ?></span>
+    <ul class="list-inline">
+        <li class="dropdown">
+            <a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false"><span class="fa fa-wechat fa-fw"></span></a>
+            <div class="dropdown-menu">
+                <img src="<?php echo $this->getQRCode() ?>" alt="" />
+            </div>
+        </li>
+        <li><a href="https://service.weibo.com/share/share.php?title=<?php echo $description ?>&url=<?php echo $url ?>&source=bookmark&pic=<?php echo $pic ?>&ralateUid=" rel="nofollow"><span class="fa fa-weibo fa-fw"></span></a></li>
+        <li><a href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=<?php echo $url ?>&title=<?php echo $title ?>&pics=<?php echo $pic ?>&summary=<?php echo $description ?>" rel="nofollow"><span class="fa fa-qq fa-fw"></span></a></li>
+    </ul>
+</div>

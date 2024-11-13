@@ -1,0 +1,6 @@
+---
+retailer_sales_products: 
+    - Are you sure you want pull these products off shelves?
+    - Are you sure you want recover these products?
+retailer_stock_products: 
+    - Are you sure you want put these products on shelves?

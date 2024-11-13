@@ -1,0 +1,8 @@
+---
+system:
+    children:
+        -
+            link: 'config/i18n/'
+            operation: 'Admin\Config::i18n'
+            title: 'I18N'
+            priority: 22

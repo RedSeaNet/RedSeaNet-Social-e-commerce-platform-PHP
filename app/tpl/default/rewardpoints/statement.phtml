@@ -1,0 +1,71 @@
+<?php
+$collection = $this->getStatement();
+$flag = $this->isAdminPage() && $this->hasPermission('Admin\\Sales\\Order::view');
+?>
+<div class="statement">
+    <?php if (!$this->isAdminPage()): ?>
+        <?php if ($days = $this->getConfig()['rewardpoints/general/activating']): ?>
+            <p>(<?php echo $this->translate('The distributed points will be available in %d days and will be disabled while the order refunded.', [$days]) ?>)</p>
+        <?php endif ?>
+        <div class="total d-flex">
+            <div class="col-4">
+                <?php echo $this->translate('Available Reward Points') ?>: 
+                <span class="count">
+                    <?php echo $this->getAvailablePoints(); ?>
+                </span>
+            </div>
+            <div class="col-4">
+                <?php echo $this->translate('Unavailable Reward Points') ?>: 
+                <span class="count">
+                    <?php echo $this->getUnavailablePoints(); ?>
+                </span>
+            </div>
+            <div class="col-4 text-end">
+                <a href="<?php echo $this->getBaseUrl('help/customer/rewardpoint.html'); ?>" style="color: #007ec6;text-decoration: underline"><?php echo $this->translate('RewardPoint Info'); ?></a>
+            </div>
+        </div>
+    <?php endif ?>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="text-center"><?php echo $this->translate('Points') ?></th>
+                <th class="text-center"><?php echo $this->translate('Comment') ?></th>
+                <th class="text-center"><?php echo $this->translate('Order ID') ?></th>
+                <th class="text-center"><?php echo $this->translate('Status') ?></th>
+                <th class="text-center"><?php echo $this->translate('Date') ?></th>
+            </tr>
+        </thead>
+        <?php if (count($collection)): ?>
+            <tbody>
+                <?php foreach ($collection as $point): ?>
+                    <tr class="text-center">
+                        <td><?php echo (int) $point['count'] ?></td>
+                        <td><?php echo $this->translate($point['comment']) ?></td>
+                        <td>
+                            <?php if ($flag && $point['order_id']): ?>
+                                <a href="<?php echo $this->getAdminUrl('sales_order/view/?id='), $point['order_id'] ?>"><?php echo $point['increment_id'] ?></a>
+                            <?php else: ?>
+                                <?php echo $point['increment_id'] ?>
+                            <?php endif; ?>
+                        </td>
+                        <td><?php echo $this->translate($point['status'] == 0 ? 'Unavailable' : ($point['status'] == -1 ? 'Refunded' : 'Available')) ?></td>
+                        <td><?php echo $point['created_at'] ?></td>
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <?php echo $this->getChild('pager')->setCollection($collection); ?>
+                    </td>
+                </tr>
+            </tfoot>
+        <?php else: ?>
+            <tfoot>
+                <tr>
+                    <td colspan="5" class="text-center"><?php echo $this->translate('No data to display') ?></td>
+                </tr>
+            </tfoot>
+        <?php endif; ?>
+    </table>
+</div>

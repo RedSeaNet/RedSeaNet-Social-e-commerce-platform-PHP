@@ -1,0 +1,8 @@
+---
+order.place.after.mq:
+    -
+        listener: [\Redseanet\Sales\Mq\Email, afterOrderPlaced]
+        priority: 10
+#    -
+#        listener: [\Redseanet\Sales\Listeners\SMS, afterOrderPlaced]
+#        priority: 20

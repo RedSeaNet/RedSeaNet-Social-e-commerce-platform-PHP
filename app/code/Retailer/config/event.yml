@@ -1,0 +1,21 @@
+---
+cart.add.before:
+    -
+        listener: [\Redseanet\Retailer\Listeners\Farm, check]
+        priority: 5
+customer.login.after:
+    -
+        listener: [\Redseanet\Retailer\Listeners\Farm, beforeCombine]
+        priority: 9
+Redseanet\Customer\Model\Customer.model.remove.before:
+    -
+        listener: [\Redseanet\Retailer\Listeners\Customer, beforeRemove]
+        priority: 10
+Redseanet\Catalog\Model\Product.model.save.after:
+    -
+        listener: [\Redseanet\Retailer\Listeners\Category, afterSave]
+        priority: 10
+Redseanet\Catalog\Model\Product.model.load.after:
+    -
+        listener: [\Redseanet\Retailer\Listeners\Category, afterLoad]
+        priority: 10

@@ -1,0 +1,171 @@
+<?php
+$cart = $this->getCart();
+?>
+<div class="container">
+    <div id="cart-container" class="clearfix bg-white">
+        <?php
+        if (count($this->getItems())):
+            ?>
+            <div class="checkout-flow">
+                <div class="item col-4 active"><?php echo $this->translate('Shopping Cart', [], 'checkout') ?></div>
+                <div class="item col-4"><?php echo $this->translate('Order Confirmation', [], 'checkout') ?></div>
+                <div class="item col-4"><?php echo $this->translate('Complate', [], 'checkout') ?></div>
+            </div>
+            <form action="<?php echo $this->getBaseUrl('checkout/cart/update/') ?>" method="post">
+                <div id="cart" class="row">
+                    <div class="row th p-2">
+                        <div class="col-md-7 col-12 d-flex">
+                            <div class="selectall col-2">
+                                <input type="checkbox" id="head-selectall" />
+                                <label for="head-selectall">
+                                    <?php echo $this->translate('Select All') ?>
+                                </label>
+                            </div>
+
+                            <div class="text-start product-name col-10">
+                                <?php echo $this->translate('Product Infomation') ?>
+                            </div>
+                        </div>
+                        <div class="col-md-1 col-1 text-center d-none d-md-block">
+                            <?php echo $this->translate('Price', [], 'checkout') ?>
+                        </div>
+                        <div class="col-md-2 col-2 text-center d-none d-md-block">
+                            <?php echo $this->translate('Qty') ?>
+                        </div>
+                        <div class="col-md-1 col-1 text-center d-none d-md-block">
+                            <?php echo $this->translate('Subtotal') ?>
+                        </div>
+                        <div class="col-md-1 col-1 text-center d-none d-md-block">
+                            <?php echo $this->translate('Action') ?>
+                        </div>
+                    </div>
+                    <?php
+                    $stores = [];
+                    foreach ($this->getItems() as $item) {
+                        if (!isset($stores[$item['store_id']])):
+                            ?>
+                            <div class="store p-2 d-flex">
+                                <div class="">
+                                    <input type="checkbox" class="selectall" value="<?php echo $item['store']['id'] ?>" />&nbsp;
+                                </div>
+                                <div class="">
+                                    <?php echo $item['store']['name'] ?>
+                                </div>
+                            </div>
+                            <?php
+                            $stores[$item['store_id']] = 1;
+                        else:
+                            $stores[$item['store_id']]++;
+                        endif;
+                        echo $this->getRow($item);
+                    }
+                    ?>
+                    <div class="tfoot row">
+                        <div class="selectall col-md-3 col-3">
+                            <input type="checkbox" id="foot-selectall" />
+                            <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+                            <label class="" for="foot-selectall">
+                                <?php echo $this->translate('Select All') ?>
+                            </label>
+                            <a href="<?php echo $this->getBaseUrl('checkout/cart/remove/') ?>" class="d-none" data-method="delete" data-serialize="#cart">
+                                <?php echo $this->translate('Delete Selected Item(s)') ?>
+                            </a>
+                            <a href="<?php echo $this->getBaseUrl('checkout/cart/movetowishlist/') ?>" class="d-none" data-method="post" data-serialize="#cart">
+                                <?php echo $this->translate('Move to Wishlist') ?>
+                            </a>
+                        </div>
+                        <div class="totals text-end col-md-9 col-9">
+                            <p>
+                                <?php echo $this->getChild('total') ?>
+                                <?php echo $this->getChild('method') ?>
+                            </p>
+                            <?php
+                            if ((float) $cart['discount']):
+                                foreach (json_decode($cart['discount_detail'], true) as $type => $discount):
+                                    ?>
+                                    <p class="mb-0 font-12">
+                                        <?php
+                                        $text = $this->translate('Discount(' . ucwords($type) . ')', [], 'sales');
+                                        echo $text[0] === 'D' ? $this->translate('Discount(%s)', [$type], 'sales') : $text
+                                        ?>  
+                                        <?php echo $this->getCurrency()->convert($discount["total"], true) ?>
+                                    </p>
+                                    <?php
+                                    if ($discount["detail"] && is_array($discount["detail"]) && count($discount["detail"]) > 0) {
+                                        foreach ($discount["detail"] as $storeId => $promotionStoreData) {
+                                            if ($promotionStoreData && is_array($promotionStoreData) && count($promotionStoreData) > 0) {
+                                                foreach ($promotionStoreData as $promationKey => $promotionData) {
+                                                    $promotionType = '';
+                                                    if ($promotionData["use_coupon"] == 1) {
+                                                        $promotionType = '优惠券(' . $promotionData["storename"] . ")-";
+                                                    } else {
+                                                        $promotionType = '促销活动(' . $promotionData["storename"] . ")-";
+                                                    }
+                                                    echo '<p class="mb-0 font-12">' . $promotionType . $promotionData["name"] . ': -' . $promotionData['discount'] . '</p>';
+                                                }
+                                            }
+                                        }
+                                    }
+                                    ?>
+                                    <?php
+                                endforeach;
+                            endif;
+                            ?>  
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </form>
+        <?php else: ?>
+            <div class="empty_cart">
+                <p><img src="<?php echo $this->getPubUrl('frontend/images/empty-cart.png'); ?>" width="100%" /></p>
+                <p><?php echo $this->translate('You have no items in your shopping cart.<br />Click <a href="%s">here</a> to continue shopping.', [$this->getBaseUrl()]) ?></p>
+            </div>
+        <?php endif; ?>
+        <?php
+        $countC = count($this->getChild('crosssell')->getProducts());
+        $countL = count($this->getChild('viewed_product')->getProducts());
+        $countW = count($this->getChild('wishlist')->getProducts());
+        ?>
+        <?php if ($countC + $countL + $countW): ?>
+            <div class="additional">
+                <ul class="nav nav-tabs" role="tablist">
+                    <?php if ($countC): ?>
+                        <li role="presentation">
+                            <a href="#crosssell" aria-controls="crosssell" role="tab" data-bs-toggle="tab" class="active">
+                                <?php echo $this->translate('You May Like') ?>
+                            </a>
+                        </li>
+                    <?php endif ?>
+                    <?php if ($countW): ?>
+                        <li role="presentation" class="<?php echo $countC ? '' : 'active' ?>">
+                            <a href="#wishlist" aria-controls="wishlist" role="tab" data-bs-toggle="tab">
+                                <?php echo $this->translate('My Wishlist') ?>
+                            </a>
+                        </li>
+                    <?php endif ?>
+                    <?php if ($countL): ?>
+                        <li role="presentation" class="<?php echo $countC + $countW ? '' : 'active'; ?>">
+                            <a href="#viewed" aria-controls="viewed" role="tab" data-bs-toggle="tab">
+                                <?php echo $this->translate('Recently Viewed') ?>
+                            </a>
+                        </li>
+                    <?php endif ?>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="crosssell">
+                        <?php echo $this->getChild('crosssell')->setLimit(4)->setVariable('class', 'col-6 col-md-3 p-4')->setVariable('width', ['sm' => '159', 'md' => '206']) ?>
+                    </div>
+                    <div role="tabpanel" class="tab-pane<?php echo $countC ? '' : ' active' ?>" id="wishlist">
+                        <?php echo $this->getChild('wishlist')->setVariable('class', 'col-6 col-md-3 p-4')->setVariable('width', ['sm' => '159', 'md' => '206']) ?>
+                    </div>
+                    <div role="tabpanel" class="tab-pane<?php echo $countC + $countW ? '' : ' active'; ?>" id="viewed">
+                        <?php echo $this->getChild('viewed_product')->setVariable('class', 'col-6 col-md-3 p-4')->setVariable('width', ['sm' => '159', 'md' => '206']) ?>
+                    </div>
+                </div>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

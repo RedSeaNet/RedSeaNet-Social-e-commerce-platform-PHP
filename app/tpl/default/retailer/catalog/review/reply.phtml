@@ -1,0 +1,29 @@
+<div id="modal-reply" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="<?php echo $this->getBaseUrl('retailer/transaction/reply/') ?>" method="post">
+                <input type="hidden" name="id" />
+                <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+                <div class="modal-header">
+                    <h6 class="modal-title"><?php echo $this->translate('Reply a Review') ?></h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li>
+                            <label class="col-form-label"><?php echo $this->translate('Content') ?></label>
+                            <textarea readonly="readonly" disabled="disabled" name="content" class="form-control"></textarea>
+                        </li>
+                        <li>
+                            <label class="col-form-label"><?php echo $this->translate('Reply') ?></label>
+                            <textarea name="reply" class="form-control"></textarea>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary"><?php echo $this->translate('Submit') ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

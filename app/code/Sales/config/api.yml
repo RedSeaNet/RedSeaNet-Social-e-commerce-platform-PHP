@@ -1,0 +1,468 @@
+---
+attributes:
+    order:
+        id: ID
+        status_id: Status ID
+        increment_id: Human-Friendly ID
+        customer_id: Customer ID
+        billing_address: Billing Address
+        shipping_address: Shipping Address
+        warehouse_id: Warehouse ID
+        store_id: Store ID
+        language_id: Language ID
+        is_virtual: Is Virtual
+        free_shipping: Free Shipping
+        coupon: Coupon
+        base_currency: Base Currency
+        currency: Currency
+        shipping_method: Shipping Method
+        payment_method: Payment Method
+        base_subtotal: Base Subtotal
+        subtotal: Subtotal
+        base_shipping: Base Shipping Fee
+        shipping: Shipping Fee
+        base_discount: Base Discount
+        discount: Discount
+        discount_detail: Discount Detail
+        base_tax: Base Tax
+        tax: Tax
+        base_total: Base Total
+        total: Grand Total
+        base_total_paid: Base Total Paid
+        total_paid: Total Paid
+        base_total_refunded: Base Total Refunded
+        total_refunded: Total Refunded
+        customer_note: Customer Note
+        created_at: Placed at
+    order_items:
+        product_id: Product ID
+        product_name: Product Name
+        options: Options
+        qty: Qty
+        weight: Weight
+        sku: SKU
+        is_virtual: Is Virtual
+        free_shipping: Free Shipping
+        base_price: Base Price
+        price: Price
+        base_shipping: Base Shipping Fee
+        shipping: Shipping Fee
+        base_discount: Base Discount
+        discount: Discount
+        base_tax: Base Tax
+        tax: Tax
+        base_total: Base Total
+        total: Grand Total
+    invoice:
+        id: ID
+        increment_id: Human-Friendly ID
+        store_id: Store ID
+        coupon: Coupon
+        base_currency: Base Currency
+        currency: Currency
+        base_subtotal: Base Subtotal
+        subtotal: Subtotal
+        base_shipping: Base Shipping Fee
+        shipping: Shipping Fee
+        base_discount: Base Discount
+        discount: Discount
+        base_tax: Base Tax
+        tax: Tax
+        base_total: Base Total
+        total: Grand Total
+        comment: Comment
+        created_at: Created at
+    invoice_items:
+        product_id: Product ID
+        product_name: Product Name
+        options: Options
+        qty: Qty
+        sku: SKU
+        base_price: Base Price
+        price: Price
+        base_shipping: Base Shipping Fee
+        shipping: Shipping Fee
+        base_discount: Base Discount
+        discount: Discount
+        base_tax: Base Tax
+        tax: Tax
+        base_total: Base Total
+        total: Grand Total
+    creditmemo:
+        id: ID
+        increment_id: Human-Friendly ID
+        warehouse_id: Warehouse ID
+        store_id: Store ID
+        base_currency: Base Currency
+        currency: Currency
+        base_subtotal: Base Subtotal
+        subtotal: Subtotal
+        base_shipping: Base Shipping Fee
+        shipping: Shipping Fee
+        base_discount: Base Discount
+        discount: Discount
+        base_tax: Base Tax
+        tax: Tax
+        base_total: Base Total
+        total: Grand Total
+        comment: Comment
+        status: Status
+        created_at: Created at
+    creditmemo_items:
+        product_id: Product ID
+        product_name: Product Name
+        options: Options
+        qty: Qty
+        sku: SKU
+        base_price: Base Price
+        price: Price
+        base_shipping: Base Shipping Fee
+        shipping: Shipping Fee
+        base_discount: Base Discount
+        discount: Discount
+        base_tax: Base Tax
+        tax: Tax
+        base_total: Base Total
+        total: Grand Total
+    shipment:
+        id: ID
+        increment_id: Human-Friendly ID
+        customer_id: Customer ID
+        warehouse_id: Warehouse ID
+        shipping_method: Shipping Method
+        store_id: Store ID
+        billing_address: Billing Address
+        shipping_address: Shipping Address
+        comment: Comment
+        status: Status
+        created_at: Placed at
+    shipment_items:
+        product_id: Product ID
+        product_name: Product Name
+        options: Options
+        qty: Qty
+        sku: SKU
+        weight: Weight
+    shipment_track:
+        shipment_id: Shipment ID
+        order_id: Order ID
+        carrier: Carrier
+        carrier_code: Carrier Code
+        tracking_number: Track Number
+        description: Description
+        created_at: Time
+    cart:
+        id: ID
+        customer_id: Customer ID
+        billing_address: Billing Address
+        shipping_address: Shipping Address
+        is_virtual: Is Virtual
+        free_shipping: Free Shipping
+        coupon: Coupon
+        base_currency: Base Currency
+        currency: Currency
+        shipping_method: Shipping Method
+        payment_method: Payment Method
+        base_subtotal: Base Subtotal
+        subtotal: Subtotal
+        base_shipping: Base Shipping Fee
+        shipping: Shipping Fee
+        base_discount: Base Discount
+        discount: Discount
+        discount_detail: Discount Detail
+        base_tax: Base Tax
+        tax: Tax
+        base_total: Base Total
+        total: Grand Total
+        customer_note: Customer Note
+    cart_item:
+        product_id: Product ID
+        product_name: Product Name
+        warehouse_id: Warehouse ID
+        store_id: Store ID
+        options: Options
+        qty: Qty
+        weight: Weight
+        sku: SKU
+        is_virtual: Is Virtual
+        free_shipping: Free Shipping
+        base_price: Base Price
+        price: Price
+        base_shipping: Base Shipping Fee
+        shipping: Shipping Fee
+        base_discount: Base Discount
+        discount: Discount
+        base_tax: Base Tax
+        tax: Tax
+        base_total: Base Total
+        total: Grand Total
+        status: Status
+wsdl:
+    message:
+        cartInfo:
+            sessionId: string
+            customerId: int
+            withItems: bool
+        cartInfoResponse:
+            cart: \Redseanet\Sales\Model\Api\Soap\Cart
+        cartAddItem:
+            sessionId: string
+            customerId: int
+            productId: int
+            qty: float
+            warehouseId: int
+            options: string
+            sku: string
+        cartAddItemResponse:
+            result: bool
+        cartChangeItemQty:
+            sessionId: string
+            customerId: int
+            itemId: int
+            qty: float
+        cartChangeItemQtyResponse:
+            result: bool
+        cartRemoveItem:
+            sessionId: string
+            customerId: int
+            itemId: array
+            whetherFavorite: boolean
+            language: int
+        cartRemoveItemResponse:
+            result: json array string
+    port:
+        -
+            name: cartInfo
+            input: tns:cartInfo
+            output: tns:cartInfoResponse
+            documentation: Get cart infomation
+        -
+            name: cartAddItem
+            input: tns:cartAddItem
+            output: tns:cartAddItemResponse
+            documentation: Add item to shopping cart
+        -
+            name: cartChangeItemQty
+            input: tns:cartChangeItemQty
+            output: tns:cartChangeItemQtyResponse
+            documentation: Change shopping item quentity
+        -
+            name: cartRemoveItem
+            input: tns:cartRemoveItem
+            output: tns:cartRemoveItemResponse
+            documentation: Remove item from shopping cart
+        -
+            name: cartChangeItemStatus
+            input: tns:cartChangeItemStatus
+            output: tns:cartChangeItemStatusResponse
+            documentation: Update item from shopping cart
+rpcport:
+    addItemToCart:
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            data: array
+        respone: json array stirng 
+        documentation: add item to cart
+    cartChangeItemQty: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            itemId: int
+            qty: int
+        respone: json array stirng
+        documentation: get shop cart 
+    cartInfo: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            data: array
+        respone: json array stirng 
+        documentation: customer information update
+    cartRemoveItem:
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            itemId: array
+            whetherFavorite: boolean
+            language: int
+        respone: json array stirng 
+        documentation: customer information update
+    cartChangeItemStatus:
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            ids: array
+            whetherFavorite: boolean
+            actionType: int
+            language: int
+            currency: string
+        respone: json array stirng 
+        documentation: cart information update
+    getMerchant:
+        params: 
+            id: string
+            token: string
+            merchantId: int
+        respone: json array stirng 
+        documentation: get merchant information
+    getStore:
+        params: 
+            id: string
+            token: string
+            storeIds: array
+        respone: json array stirng 
+        documentation: get store information
+    getShippingMethod:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            storeId: int
+            shipping_address_id: int
+            languageId: int
+            currencyCode: string
+        respone: json array stirng 
+        documentation: get shipping method
+    getPaymentMethod:
+        params: 
+            id: string
+            token: string
+            customerId: int
+        respone: json array stirng 
+        documentation: get payment method
+    placeOrder:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            data: array
+        respone: json array stirng 
+        documentation: get payment method
+    getOrder:
+        params: 
+            id: string
+            token: string
+            data: array
+        respone: json array string 
+        documentation: get order list
+    getOrderById:
+        params: 
+            id: string
+            token: string
+            orderId: int
+        respone: json array stirng 
+        documentation: get order detail by id
+    getCoupons:
+        params: 
+            id: string
+            token: string
+        respone: json array string 
+        documentation: get coupon list
+    cartInfoToConfirmOrder:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            chosenItems: array
+            language: int
+        respone: json array string 
+        documentation: get cart info and confirm order info
+    getShippingMethodByItems:
+        params: 
+            id: string
+            token: string
+            items: array
+            shipping_address_id: int
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: get shipping method by items
+    getPaymentMethodByCondition:
+        params: 
+            id: string
+            token: string
+            condition: array
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: get payment method by condition
+    chargeBalanceOrder:
+        params: 
+            id: string
+            token: string
+            data: array
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: balance charge
+    selectPayment:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            data: array
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: select payment
+    selectShipping:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            data: array
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: select shipping method
+    selectShippingOrder:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            data: array
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: select shipping method
+soap:
+    cartInfo: \Redseanet\Sales\Model\Api\Soap\Cart
+    cartAddItem: \Redseanet\Sales\Model\Api\Soap\Cart
+    cartChangeItemQty: \Redseanet\Sales\Model\Api\Soap\Cart
+    cartRemoveItem: \Redseanet\Sales\Model\Api\Soap\Cart
+    cartChangeItemStatus: \Redseanet\Sales\Model\Api\Rpc\Cart
+rest:
+    order: \Redseanet\Sales\Model\Api\Rest\Order
+    invoice: \Redseanet\Sales\Model\Api\Rest\Invoice
+    cart: \Redseanet\Sales\Model\Api\Rest\Cart
+    cart_item: \Redseanet\Sales\Model\Api\Rest\Cart
+    creditmemo: \Redseanet\Sales\Model\Api\Rest\CreditMemo
+    shipment: \Redseanet\Sales\Model\Api\Rest\Shipment
+    shipment_track: \Redseanet\Sales\Model\Api\Rest\Shipment
+rpc: 
+    addItemToCart: \Redseanet\Sales\Model\Api\Rpc\Cart
+    cartChangeItemQty: \Redseanet\Sales\Model\Api\Rpc\Cart
+    cartInfo: \Redseanet\Sales\Model\Api\Rpc\Cart
+    cartRemoveItem: \Redseanet\Sales\Model\Api\Rpc\Cart
+    cartChangeItemStatus: \Redseanet\Sales\Model\Api\Rpc\Cart
+    selectPayment: \Redseanet\Sales\Model\Api\Rpc\Cart
+    selectShipping: \Redseanet\Sales\Model\Api\Rpc\Cart
+    getMerchant: \Redseanet\Sales\Model\Api\Rpc\Order
+    getStore: \Redseanet\Sales\Model\Api\Rpc\Order
+    getShippingMethod: \Redseanet\Sales\Model\Api\Rpc\Order
+    getPaymentMethod: \Redseanet\Sales\Model\Api\Rpc\Order
+    placeOrder: \Redseanet\Sales\Model\Api\Rpc\Order
+    getOrder: \Redseanet\Sales\Model\Api\Rpc\Order
+    getOrderById: \Redseanet\Sales\Model\Api\Rpc\Order
+    getCoupons: \Redseanet\Sales\Model\Api\Rpc\Order
+    cartInfoToConfirmOrder: \Redseanet\Sales\Model\Api\Rpc\Order
+    getShippingMethodByItems: \Redseanet\Sales\Model\Api\Rpc\Order
+    getPaymentMethodByCondition: \Redseanet\Sales\Model\Api\Rpc\Order
+    chargeBalanceOrder: \Redseanet\Sales\Model\Api\Rpc\Order
+    selectShippingOrder: \Redseanet\Sales\Model\Api\Rpc\Order

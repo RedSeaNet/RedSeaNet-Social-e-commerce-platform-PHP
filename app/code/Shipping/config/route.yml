@@ -1,0 +1,5 @@
+---
+shipping:
+    method: [GET,POST,DELETE]
+    route: /shipping/{controller}/[{action}[/]]
+    namespace: Redseanet\Shipping\Controller

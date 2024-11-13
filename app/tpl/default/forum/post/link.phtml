@@ -1,0 +1,63 @@
+<?php
+$query = $this->getQuery();
+$ids = [];
+$active = $this->getActiveIds();
+$productCategories = $this->getRootCategory();
+?>
+<div class="grid">
+    <div class="filters">
+        <input type="hidden" name="linktype" value="<?php echo $this->getType() ?>" />
+        <div class="input-box">
+            <label class="col-form-label"><?php echo $this->translate('Product Category') ?></label>
+            <div class="cell">
+                <select name="product_category" id="product-category" class="form-control" data-base="#is-relate">
+                    <option value="<?php echo $productCategories['id'] ?>"><?php echo $productCategories['name'] ?></option>
+                    <?php
+                    $children = $productCategories->getChildrenCategories();
+                    foreach ($children as $child):
+                        $products = $child->getProducts();
+                        ?>
+                        <option value="<?php echo $child['id'] ?>"><?php echo $child['name'] ?></option>
+                        <?php
+                    endforeach;
+                    ?>
+                </select>
+                <span class="fa fa-search"></span>
+                <input type="text" name="search[like]" id="search" class="form-control" data-base="#is-relate" />
+                <a type="button" class="btn btn-search"><?php echo $this->translate('Search') ?></a>
+            </div>
+            <table class="table table-hover table-striped table-no-border">
+                <thead class="sort-by">
+                    <tr>
+                        <th class="checkbox"><input type="checkbox" class="selectall" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($products):
+                        foreach ($products as $product):
+                            $ids[] = $product['id'];
+                            ?>
+                            <tr<?php if (isset($product['id'])): ?> data-id="<?php echo $product['id'] ?>"<?php endif ?>>
+                                <td class="form-check">
+                                    <input type="checkbox" name="forum_product_relation[<?php echo $this->getType() ?>][]" id="forum_product_relation[<?php echo $this->getType() ?>][<?php echo $product['id'] ?>]" value="<?php echo $product['id'] ?>"<?php if (in_array($product['id'], $active)): ?> checked="checked"<?php endif ?> />
+                                    <label for="forum_product_relation[<?php echo $this->getType() ?>][<?php echo $product['id'] ?>]"><?php echo $product['name']; ?></label>
+                                </td>
+                            </tr>
+                            <?php
+                        endforeach;
+                    endif;
+                    ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="form-check">
+                            <input type="checkbox" class="selectall" />
+                            <input type="hidden" name="ids[<?php echo $this->getType() ?>]" value="<?php echo implode(',', $ids) ?>" />
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

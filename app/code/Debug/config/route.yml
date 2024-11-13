@@ -1,0 +1,5 @@
+---
+debug:
+    method: [GET,POST]
+    route: /debug/[{controller}/[{action}[/]]]
+    namespace: Redseanet\Debug\Controller

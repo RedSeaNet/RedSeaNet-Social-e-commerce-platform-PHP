@@ -1,0 +1,15 @@
+---
+cms:
+    children:
+        -
+            link: 'resource_resource/'
+            operation: 'Admin\Resource\Resource::index'
+            title: Resource Management
+            priority: 30
+system:
+    children:
+        -
+            link: config/resource/
+            operation: 'Admin\Config::resource'
+            title: Resource Configuration
+            priority: 40

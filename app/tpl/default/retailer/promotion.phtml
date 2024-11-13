@@ -1,0 +1,119 @@
+<div class="col-9 col-sm-9 col-md-10 wishlist mg-bottom-40">
+    <h3><?php echo $this->translate('Promotion Management'); ?></h3>
+    
+    <div id="scarch_order">
+        <form method="get">
+            <div class="Promotion">
+            <div class="evaluation_left">
+            	<span>促销名称:</span>
+                <input type="text" value="" name="order_sn">
+            </div>
+            <div class="evaluation_left">
+            	   <span>促销时间:</span>
+                <input type="text" value="" id="add_time_from" name="add_time_from"> &ndash; <input type="text" value="" name="add_time_to" id="add_time_to">
+                <input type="submit" value="搜索">
+            </div>
+                
+             
+            </div>
+        </form>
+    </div>
+    <br />
+    <div>
+        <button data-bs-toggle="modal" data-target="#modal-promotion">新建促销</button>
+    </div>
+    <br />
+    
+    <div class="row">
+        <table class="table table-bordered">
+            <tr>
+                <th>促销名称</th>
+                <th>促销时间</th>
+                <th>促销状态</th>
+                <th>操作</th>
+            </tr>
+            <tr>
+                <td>打折</td>
+                <td>2016-05-17 -- 2015-08-25</td>
+                <td>已结束</td>
+                <td><a href="<?php echo $this->getBaseUrl('retailer/marketing/viewpromotion')?>">查看</a>&nbsp;&nbsp;<a href="javascript:void(0);" data-bs-toggle="modal" data-target="#modal-promotion">编辑</a></td>
+            </tr>
+            <tr>
+                <td>满减</td>
+                <td>2016-05-25 -- 2015-08-31</td>
+                <td>进行中</td>
+                <td><a href="<?php echo $this->getBaseUrl('retailer/marketing/viewpromotion')?>">查看</a>&nbsp;&nbsp;<a href="javascript:void(0);" data-bs-toggle="modal" data-target="#modal-promotion">编辑</a></td>
+            </tr>
+            <tr>
+                <th colspan="7">
+                    <div class="text-end">
+                        <a>共 2 个项目</a>
+                        <a href="#">上一页</a>
+                        <a href="#">1</a>
+                        <span>1 / 1</span>
+                        <a href="#">下一页</a>
+                    </div>
+                </th>
+            </tr>
+        </table>
+    </div>
+    
+    <div id="modal-promotion" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="promotionModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="promotionModalLabel">新建促销</h4>
+                </div>
+                <div class="modal-body">
+                    <div >
+                        <p>促销对象</p>
+                        <p>
+                            <input type="radio" name="customer_scale" value="0" /><label>全网用户</label>&nbsp;&nbsp;
+                            <input type="radio" name="customer_scale" value="1" /><label>店铺VIP用户</label>
+                            </p>
+                    </div>
+                    <div>
+                        <p>选择促销方式</p>
+                        <p>
+                            <select>
+                                <option value="1">限时打折</option>
+                                <option value="2">限时满减</option>
+                            </select>
+                        </p>
+                    </div>
+                    <div>
+                        <p>促销时间</p>
+                        <p>
+                                <input type="text" name="start_time">&nbsp;至&nbsp;<input type="text" name="end_time">
+                        </p>
+                    </div>
+                    <div>
+                        <p>促销商品</p>
+                        <p>
+                            <input type="radio" name="products_scale" value="0" /><label>全部商品</label>&nbsp;&nbsp;
+                            <input type="radio" name="products_scale" value="1" /><label>部分商品</label>
+                        </p>
+                    </div>
+                    <div>
+                        <p>促销设置</p>
+                        <p>
+                        每件商品<input type="text" name="discunt" value="" />折
+                        </p>
+                    </div>
+                    <div>
+                        <p>促销备注</p>
+                        <p>
+                            <textarea name="comment"></textarea>
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>

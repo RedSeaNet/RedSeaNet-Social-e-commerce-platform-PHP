@@ -1,0 +1,80 @@
+<?php
+$customer = $this->getCustomer();
+?>
+<form action="<?php echo $this->getBaseUrl('customer/account/save/') ?>" method="post" class="form-inline" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+    <div class="fieldset">
+        <div class="input-box">
+            <label class="col-form-label required" for="avatar"><?php echo $this->translate('Avatar') ?></label>
+            <div class="cell">
+                <label for="avatar" class="avatar">
+                    <img src="<?php
+                    if ($customer->offsetGet('avatar')) {
+                        echo $this->getUploadedUrl('customer/avatar/' . $customer->offsetGet('avatar'));
+                    } else {
+                        echo $this->getPubUrl('frontend/images/avatar-holderplace.jpg');
+                    }
+                    ?>" alt="<?php echo $this->translate('Username') ?>" class="rounded-circle" />
+                    <span class="update"><?php echo $this->translate('Update Image') ?></span>
+                </label>
+                <input type="file" name="avatar" hidden id="avatar" accept="image/jpeg,image/gif,image/png" class="form-control" />
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="col-form-label"><?php echo $this->translate('Username') ?></label>
+            <div class="cell">
+                <input type="text" disabled="disabled" class="form-control" value="<?php echo $customer->offsetGet('username') ?>" >
+            </div>
+        </div>
+        <?php
+        foreach ($this->getAttribute() as $attr) {
+            if (!in_array($attr['code'], ['referer'])) {
+                echo $this->getInputBox($attr);
+            }
+        }
+        ?>
+        <div class="input-box">
+            <label class="col-form-label required" for="crpassword"><?php echo $this->translate('The current password') ?></label>
+            <div class="cell">
+                <input type="password" name="crpassword" id="crpassword" class="form-control required" minlength="6"/>
+            </div>
+        </div>
+        <div class="input-box">
+            <div class="cell">&nbsp;</div>
+            <div class="cell d-flex">  
+                <label for="edit-password">
+                    <input type="checkbox" name="edit_password" id="edit-password" value="1" />
+                    <?php echo $this->translate('Edit Password') ?>
+                </label>
+            </div>
+        </div>   
+        <div class="input-box">
+            <label class="col-form-label" for="password"><?php echo $this->translate('New Password') ?></label>
+            <div class="cell">
+                <input type="password" name="password" id="password" class="form-control" data-base="#edit-password" minlength="6" />
+            </div>
+        </div>
+        <div class="input-box">
+            <label class="col-form-label" for="cpassword"><?php echo $this->translate('Confirm Password') ?></label>
+            <div class="cell">
+                <input type="password" name="cpassword" id="cpassword" class="form-control" data-base="#edit-password" data-rule-equalTo="#password" minlength="6" />
+            </div>
+        </div>
+        <div class="input-box">
+            <div class="cell">&nbsp;</div>
+            <div class="cell d-flex">
+                <label for="subscribe">
+                    <input type="checkbox" name="subscribe" id="subscribe" value="1"<?php if ($this->hasSubscribed()): ?> checked="checked"<?php endif ?> />
+                    <?php echo $this->translate('Subscribe for Promotions') ?></label>
+            </div>
+        </div>
+        <div class="buttons-set">
+            <div class="cell">&nbsp;</div>
+            <div class="cell">
+                <button type="submit" class="btn btn-theme">
+                    <span><?php echo $this->translate('Submit') ?></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

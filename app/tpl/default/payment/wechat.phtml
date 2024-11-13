@@ -1,0 +1,49 @@
+<?php
+list($type, $result, $orderId, $total) = $this->getSegment('payment')->get('wechatpay');
+?>
+<div class="container">
+    <h5 class="title"><?php echo $this->translate('You are using Wechat direct payment') ?></h5>
+    <div class="clearfix info">
+        <div class="col-12 col-sm-6">
+            <?php
+            echo $this->translate('The order has been placed successfully. Please complete the payment in time.'),
+            $this->translate('Order ID'), ': ', $orderId
+            ?>
+        </div>
+        <div class="col-12 col-sm-6 text-end"><?php echo $this->translate('Grand total to pay') ?>: <span class="price"><?php echo $this->getCurrency()->format($total) ?></span></div>
+    </div>
+    <div class="card details">
+        <div class="card-header">
+            <h4 class="card-title"><?php echo $this->translate('WeChat Pay') ?></h4>
+        </div>
+        <div class="card-body text-center">
+            <?php if ($type === 'NATIVE'): ?>
+                <?php if (substr($result, 0, 7) === 'weixin:'): ?>
+                    <img src="<?php echo $this->getQRCode($result, 200, 200) ?>" width="200" height="200" />
+                    <p class="comment"><?php echo $this->translate('Open the WeChat APP. Scan the QRCode to pay.') ?></p>
+                <?php else: ?>
+                    <p><?php echo $this->translate('An error detected while connecting with WeChat server.') ?></p>
+                <?php endif ?>
+            <?php endif; ?>
+            <a href="<?php echo $this->getBaseUrl('payment/wechat/check/') ?>" class="btn btn-danger"><?php echo $this->translate('I have completed the payment.') ?></a>
+        </div>
+    </div>
+</div>
+<script>
+    (function () {
+        var t = 5000;
+        var f = function () {
+            window.setTimeout(function () {
+                $.get('<?php echo $this->getBaseUrl('payment/wechat/check/') ?>').then(function (r) {
+                    if (r === 'true') {
+                        location.href = GLOBAL.BASE_URL + 'checkout/success/';
+                    } else {
+                        t = parseInt(1.5 * t);
+                        f();
+                    }
+                });
+            }, t);
+        };
+        f();
+    })();
+</script>

@@ -1,0 +1,26 @@
+---
+rpcport:
+    sendEmailForText:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            to: sring email address
+            subject: string
+            content: string
+            languageId: int
+        respone: json array 
+        documentation: send email for text
+    sendEmailUserTemplate:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            to: sring email address
+            params: array
+            languageId: int
+        respone: json array 
+        documentation: send email for template
+rpc:
+    sendEmailForText: \Redseanet\Email\Model\Api\Rpc\Email
+    sendEmailUserTemplate: \Redseanet\Email\Model\Api\Rpc\Email

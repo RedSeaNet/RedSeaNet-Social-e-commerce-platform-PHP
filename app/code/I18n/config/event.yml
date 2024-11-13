@@ -1,0 +1,5 @@
+---
+system.config.i18n/currency/enabled.save.after:
+    -
+        listener: [\Redseanet\I18n\Listeners\Currency, afterSave]
+        priority: 0

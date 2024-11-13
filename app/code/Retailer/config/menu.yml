@@ -1,0 +1,31 @@
+---
+retailer:
+    icon: university
+    title: Retailer Management
+    priority: 70
+    children:
+        -
+            link: 'retailer_apply/'
+            operation: 'Admin\Retailer\Apply::index'
+            title: 'Retailer Application'
+            priority: 0
+        -
+            link: 'retailer_index/'
+            operation: 'Admin\Retailer\Index::index'
+            title: 'Retailer'
+            priority: 10
+        -
+            link: 'retailer_manager/'
+            operation: 'Admin\Retailer\Manager::index'
+            title: 'Retailer Manager'
+            priority: 20
+        -
+            link: 'i18n_store/'
+            operation: 'Admin\I18n\store::index'
+            title: 'Store Management'
+            priority: 30
+        -
+            link: 'i18n_merchant/'
+            operation: 'Admin\I18n\Merchant::index'
+            title: 'Merchant Management'
+            priority: 40

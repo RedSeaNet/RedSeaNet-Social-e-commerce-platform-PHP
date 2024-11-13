@@ -1,0 +1,29 @@
+---
+catalog:
+    children:
+        bulk_sale:
+            label: Bulk Sale
+            scope: [merchant,store]
+            priority: 20
+            children:
+                default_expiration:
+                    type: tel
+                    label: Default Expiration
+                    required: required
+                    default: 5
+                    priority: 0
+                    comment: In days
+                time_for_payment:
+                    type: tel
+                    label: Time for Payment
+                    required: required
+                    default: 5
+                    priority: 5
+                    comment: In minutes
+                limitation:
+                    type: bool
+                    label: Bulk Size Limitation
+                    comment: 'The bulk will be closed if Yes is specified.'
+                    required: required
+                    default: 1
+                    priority: 10

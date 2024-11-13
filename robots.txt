@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /customer/
+Disallow: /checkout/
+Sitemap: http://store.redseanet.com/sitemap.xml

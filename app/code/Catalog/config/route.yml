@@ -1,0 +1,8 @@
+---
+catalog:
+    route: Redseanet\Catalog\Route\Router
+    priority: 40
+catalog_regex:
+    method: [GET,POST]
+    route: /catalog/{controller}/[{action}[/]]
+    namespace: Redseanet\Catalog\Controller

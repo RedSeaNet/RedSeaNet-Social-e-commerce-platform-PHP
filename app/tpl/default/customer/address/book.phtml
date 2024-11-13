@@ -1,0 +1,42 @@
+<?php
+$addresses = $this->getAddress();
+$attributes = $this->getAddressAttribute();
+?>
+<button type="button" class="btn btn-theme btn-add mt-2 mt-md-4 mb-2 mb-md-4" data-info="{}" data-bs-toggle="modal" data-bs-target="div#modal-address">
+    <span class="fa fa-plus fa-button" aria-hidden="true"></span>
+    <span><?php echo $this->translate('Add New Address') ?></span>
+</button>
+<div class="row address-list text-center">
+    <div class="row d-flex col-12 align-items-center pt-2 pb-2 garybackgroup">
+        <div class="text-center col-4 col-md-3"><?php echo $this->translate('Receiver') ?></div>
+        <div class="text-center col-4 col-md-3"><?php echo $this->translate('Telephone/Cell phone') ?></div>
+        <div class="text-center col-4 col-md-3"><?php echo $this->translate('Address') ?></div>
+        <div class="text-center col-3 d-none d-md-block"><?php echo $this->translate('Zip code') ?></div>
+    </div>
+    <?php foreach ($addresses as $address): ?>
+        <div class="add-address d-flex col-12 align-items-center flex-wrap pt-2 pb-2 ">
+            <div class="text-center col-4 col-md-3"><?php echo $address['name'] ?></div>
+            <div class="text-center col-4 col-md-3"><?php echo $address['tel'] ?></div>
+            <div class="text-center col-4 col-md-3"><?php echo $address['address'] ?></div>
+            <div class="text-center col-md-3 d-none d-md-block"><?php echo $address['postcode'] ?></div>
+            <div class="modify_book text-end col-12 pe-2">
+                <a href="#modal-address" data-info='<?php echo json_encode($address) ?>' data-bs-toggle="modal" class="btn btn-primary">
+                    <?php echo $this->translate('Modify') ?>
+                </a>
+                <a href="<?php echo $this->getBaseUrl('customer/account/deleteAddress/') ?>" data-method="delete" data-params="id=<?php echo $address->getId() ?>&csrf=<?php echo $this->getCsrfKey() ?>" class="btn btn-danger">
+                    <?php echo $this->translate('Delete') ?>
+                </a>
+                <?php if (!$address->offsetGet('is_default')): ?>
+                    <a href="<?php echo $this->getBaseUrl('customer/account/defaultAddress/?id='), $address->getId() ?>"><?php echo $this->translate('Set as Default') ?></a>
+                <?php else: ?>
+                    <span class="btn-Address"><?php echo $this->translate('Default Address') ?></span>
+                <?php endif ?>
+            </div>
+        </div>
+    <?php endforeach ?>
+    <?php if (count($addresses) && $pager = trim($this->getChild('pager')->setCollection($addresses))): ?>
+        <div class="row col-12 align-items-center pt-2 pb-2 ">
+            <?php echo $pager ?>
+        </div>
+    <?php endif ?>
+</div>

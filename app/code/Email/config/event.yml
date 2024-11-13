@@ -1,0 +1,16 @@
+---
+frontend.customer.save.after:
+    -
+        listener: [\Redseanet\Email\Listeners\Subscribe, subscribe]
+        priority: 20
+    -
+        listener: [\Redseanet\Email\Listeners\Password, notify]
+        priority: 10
+backend.customer.save.after:
+    -
+        listener: [\Redseanet\Email\Listeners\Password, notify]
+        priority: 10
+subscribe:
+    -
+        listener: [\Redseanet\Email\Listeners\Subscribe, subscribe]
+        priority: 20

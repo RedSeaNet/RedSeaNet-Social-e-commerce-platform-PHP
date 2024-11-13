@@ -1,0 +1,51 @@
+<?php
+$elements = $this->getVariable('elements');
+$store=$this->getStore();
+$scope = $store ? 'store' : $this->getQuery('scope', 'merchant');
+$scopeId = $store ? $store->getId() : $this->getQuery('scope_id');
+
+?>
+<div class="edit">
+    <form action="<?php echo $this->getSaveUrl() ?>" method="post" enctype="multipart/form-data">
+        <?php echo $this->getStore() ? '' : $this->getChild('scope'), $this->getChild('tabs') ?>
+        <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+        <input type="hidden" name="key" value="<?php echo $this->getKey() ?>" />
+        <input type="hidden" name="scope" value="<?php echo substr($scope, 0, 1), $scopeId ?>" />
+        <?php
+        $count = 0;
+        foreach ($elements as $key => $item):
+            if (!isset($item['type'])):
+                ?>
+                <div class="table tab-pane fade<?php
+                if ($count++ === 0) {
+                    echo' active in';
+                }
+                ?>" id="tab-<?php echo $key ?>">
+                         <?php
+                         foreach ($item as $k => $v) {
+                             if (!isset($v['scope']) || in_array($scope, (array) $v['scope'])) {
+                                 echo $this->getInputBox($key . '/' . $k, $v);
+                             }
+                         }
+                         ?>
+                </div>
+                <?php
+            else:
+                if ($count++ === 0) {
+                    echo '<div class="table tab-pane fade active in" id="main-tab">';
+                }
+                if (!isset($item['scope']) || in_array($scope, (array) $item['scope'])) {
+                    echo $this->getInputBox($key, $item);
+                }
+                if ($count >= count($elements)) {
+                    echo '</div>';
+                }
+            endif;
+        endforeach;
+        ?>
+        <div class="buttons-set">
+            <button type="submit" class="btn btn-submit"><span><?php echo $this->translate('Save') ?></span></button>
+            <button type="reset" class="btn btn-reset"><span><?php echo $this->translate('Reset') ?></span></button>
+        </div>
+    </form>
+</div>

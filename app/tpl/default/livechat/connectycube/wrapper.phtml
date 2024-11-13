@@ -1,0 +1,447 @@
+<?php
+//$sessions = $this->getSessions();
+$sessions = $this->getVariable('sessions', false);
+$last_message_date_sent = array_column($sessions, 'last_message_date_sent');
+$tipped = array_column($sessions, 'tipped');
+array_multisort($tipped, SORT_DESC, $last_message_date_sent, SORT_DESC, $sessions);
+//print_r($sessions);exit();
+$groups = $this->getGroups();
+$current = $this->getVariable('current', false);
+$goupsIds = [];
+$config = $this->getConfig();
+$fromUserData = $this->getVariable('fromUserData', false);
+$important_sessions = [];
+$general_sessions = [];
+?>
+<div id="livechat" class="container clearfix">
+    <form id="chat-form">
+        <img width="30" src="<?php echo empty($avatar = $this->getSegment('customer')->get('customer')['avatar']) ? $this->getPubUrl('frontend/images/avatar-holderplace.jpg') : $this->getUploadedUrl('customer/avatar/' . $avatar) ?>" id="avatar-0" class="avatar-img rounded-circle" alt="" />
+        <div class="livechat-topbar">
+            <div style="display:flex; justify-content:space-between;align-items: center;z-index: 10;">
+                <div class="page-back-btn" style="padding-left:2px;">
+                    <a href="<?php echo $this->getBaseUrl(); ?>"><span class="fa fa-arrow-left"></span></a>
+                </div>
+                <div  class="d-block d-sm-none">
+                    <button type="button" class="navbar-toggler navbar-toggle d-block d-sm-none" data-bs-toggle="collapse" data-target="#livechat-nav"><span class="fa fa-list-ul"></span></button>
+                </div>
+            </div>  
+        </div>
+        <div class="livechat-left col-12 col-md-3">
+            <div class="navbar navbar-expand-md">
+                <div class="navbar-collapse collapse" id="livechat-nav">
+                    <div class="categorycontainer">
+                        <span class="category show" data-class="important" id="category-important">
+                            <?php echo $this->translate('Tipped') ?>
+                        </span>
+                        <span class="category" data-class="general" id="category-general">
+                            <?php echo $this->translate('General') ?>
+                        </span>
+                    </div>
+                    <ul class="flex-column nav nav-tabs" role="tablist">
+
+                        <?php
+                        foreach ($sessions as $session):
+                            if (!$current) {
+                                $current = $session['id'];
+                            }
+                            ?>
+                            <li role="presentation" class="nav-item" data-tipped="<?php echo $session['tipped'] ?>" data-last-message-date="<?php echo (isset($session['last_message_date_sent']) && $session['last_message_date_sent'] != '' ? $session['last_message_date_sent'] : 0) ?>" data-href="<?php echo $session['id'] ?>" data-server-id="<?php echo $session['chat_server_id']; ?>" data-username="<?php echo $session['name']; ?>">
+                                <a href="#chat-<?php echo $session['id'] ?>" aria-controls="<?php echo $session['id'] ?>" id="<?php echo $session['id'] ?>-tab" role="tab" data-bs-toggle="tab" data-badge="0" class="nav-link<?php if ($current == $session['id']): ?> active<?php endif ?>" data-class="<?php echo ($session['tipped'] > 0 ? "important" : "general"); ?>">
+                                    <?php echo $session['name'] ?>
+                                </a>
+                                <!--<a href="<?php echo $this->getBaseUrl('livechat/index/close/') ?>" data-method="post" data-params="id=<?php echo $session['id'] ?>" class="close" title="<?php echo $this->translate('Close') ?>"><span class="fa fa-times"></span></a>-->
+                            </li>
+                        <?php endforeach ?>
+                        <?php
+                        foreach ($groups as $group) {
+                            $goupsIds[] = $group['id'];
+                            ?>
+                            <li role="presentation"<?php if ($current == $group['id']): ?> class="active"<?php endif ?>>
+                                <a href="#<?php echo $group['id'] ?>" role="tab" data-bs-toggle="tab" data-badge="0">
+                                    <?php echo $group['name'] ?>
+                                </a>
+                                <!--<a href="<?php echo $this->getBaseUrl('livechat/index/close/') ?>" data-method="post" data-params="id=<?php echo $group['id'] ?>" class="close" title="<?php echo $this->translate('Close') ?>"><span class="fa fa-times"></span></a>-->
+                            </li>
+                        <?php } ?>    
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <?php if ($this->getSegment('customer')->get('hasLoggedIn')): ?>
+            <input type="hidden" name="sender" value="<?php echo $this->getSegment('customer')->get('customer')['id'] ?>" />
+            <input type="hidden" name="group_list" value="<?php echo implode(',', $goupsIds) ?>" />
+        <?php endif ?>
+
+        <div class="tab-content col-12 col-sm-9">      
+            <?php foreach ($sessions as $session): ?>
+                <div role="tabpanel" aria-labelledby="<?php echo $session['id']; ?>-tab" class="tab-pane fade <?php if ($current == $session['id']): ?> show active <?php endif ?>" id="chat-<?php echo $session['id'] ?>">
+                    <?php echo $this->getChild('chat')->setVariable('session', $session)->setVariable('fromUserData', $fromUserData) ?>
+
+                </div>
+            <?php endforeach ?>
+
+
+            <?php foreach ($groups as $goup): ?>
+                <div role="tabpanel" class="tab-pane fade card<?php if ($current == $goup['id']): ?> show active in<?php endif ?>" id="<?php echo $goup['id'] ?>">
+                    <?php echo $this->getChild('chat')->setVariable('session', $goup)->setVariable('fromUserData', $fromUserData) ?>
+                </div>
+            <?php endforeach ?>
+        </div>
+
+
+        <input type="hidden" name="connectycube_appId" id="connectycube_appId" value="<?php echo $config['livechat/connectycube_appId']; ?>" />
+        <input type="hidden" name="connectycube_authKey" id="connectycube_authKey" value="<?php echo $config['livechat/connectycube_authKey']; ?>" />
+        <input type="hidden" name="connectycube_authSecret" id="connectycube_authSecret" value="<?php echo $config['livechat/connectycube_authSecret']; ?>" />
+        <input type="hidden" name="connectycube_userPassword" id="connectycube_userPassword" value="<?php echo $config['livechat/connectycube_userPassword']; ?>" />
+        <input type="hidden" name="connectycube_userId" id="connectycube_userId" value="<?php echo $fromUserData['id']; ?>" />
+    </form>
+</div>
+
+<script src="<?php echo $this->getBaseUrl('pub/theme/default/frontend/js/app.js'); ?>" ></script>
+<script src="<?php echo $this->getBaseUrl('pub/theme/default/frontend/vendor/bootstrap/js/bootstrap.bundle.min.js'); ?>" ></script>
+<script src="<?php echo $this->getBaseUrl('pub/theme/default/frontend/vendor/moment-2.29.1/moment.min.js'); ?>" ></script>
+<script src="<?php echo $this->getBaseUrl('pub/theme/default/frontend/vendor/jquery-confirm/jquery-confirm.min.js'); ?>" ></script>
+
+<script src="https://cdn.jsdelivr.net/npm/connectycube@3.14.0/dist/connectycube.min.js"></script>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(document).click(function (event) {
+            var clickover = $(event.target);
+            var _opened = $("div.navbar-collapse").hasClass("navbar-collapse collapse show");
+            if (_opened === true && !clickover.hasClass("navbar-toggle") && !clickover.hasClass("category")) {
+                $("button.navbar-toggle").click();
+            }
+        });
+
+        var activeTabC = $('#livechat .nav li a.active[data-bs-toggle=tab]').data('class');
+        if (activeTabC === $('#livechat .categorycontainer #category-important').data('class')) {
+            $('#livechat .nav li a[data-class=general]').parent().hide();
+            $('#livechat .categorycontainer a#category-general').removeClass('show');
+            $('#livechat .categorycontainer a#category-important').addClass('show');
+        }
+        if (activeTabC === $('#livechat .categorycontainer #category-general').data('class')) {
+            $('#livechat .nav li a[data-class=important]').parent().hide();
+            $('#livechat .categorycontainer a#category-general').addClass('show');
+            $('#livechat .categorycontainer a#category-important').removeClass('show');
+        }
+        var objDiv = document.getElementById("chat-history-" + $('#livechat .nav li a.active[data-bs-toggle=tab]').attr('aria-controls'));
+        objDiv.scrollTop = objDiv.scrollHeight;
+
+    });
+    var sender = $('#livechat #chat-form [name=sender]').val();
+    const CONFIG = {
+        debug: {mode: 0},
+        chat: {
+            streamManagement: {
+                enable: true
+            }
+        }
+    };
+    var CREDENTIALS = {
+        appId: $('input#connectycube_appId').val(),
+        authKey: $('input#connectycube_authKey').val(),
+        authSecret: $('input#connectycube_authSecret').val()
+    };
+    var userCredentials = {
+        userId: $('input#connectycube_userId').val(),
+        password: $('input#connectycube_userPassword').val()
+    };
+
+    var sort_li = function (a, b) {
+        return ($(b).data('last-message-date')) > ($(a).data('last-message-date')) ? 1 : -1;
+    };
+    var badge = function () {
+        var s = 0;
+        $('#livechat .nav [data-badge]').each(function () {
+            s += parseInt($(this).attr('data-badge'));
+        });
+        $('#livechat+.btn-livechat [data-badge]').attr('data-badge');
+    };
+
+    var reconnect = function (_this) {
+        console.log('reconnect---');
+    };
+    var disconnect = function (_this) {
+        console.log('disconnect---');
+    };
+
+    var sendCallback = function (userId, message) {
+        if (userId != $("input#connectycube_userId").val()) {
+            var data = {};
+            var sessionTarget = $('#livechat ul.nav li[data-server-id=' + message.dialog_id + ']');
+            data.sender = sessionTarget.data('username');
+            data.type = 'text';
+            data.msg = message.body;
+            data.session = sessionTarget.data('href');
+            var c = data.sender == sender ? 'self' : 'others';
+            var t = data.type;
+            var m = data.msg;
+            if (t === 'image') {
+                m = '<img src="' + m + '" />';
+            } else if (t === 'audio') {
+                m = '<audio controls="controls" src="' + m + '" />';
+            } else if (t === 'video') {
+                m = '<video controls="controls" src="' + m + '" />';
+            }
+            if (t === 'text' || t === 'image' || t === 'audio' || t === 'link' || t === 'video') {
+                var l = document.createElement('li');
+                l.className = c;
+                if (m.indexOf("[sysmsg]") != -1) {
+                    m = m.replace('[sysmsg]', '<i class="fa fa-info-circle" aria-hidden="true"></i>');
+                    l.className = c + ' sys-red';
+                    $("a#" + data.session + "-tab").removeClass('category-general').addClass('category-important');
+                }
+                $(l).append($('#avatar-' + (c === 'self' ? 0 : data.session)).clone().removeAttr('id')).append('<span class="msg">' + m.replace(/(?:\n)+/g, '<br />') + '</span><p class="time">' + moment().hours() + ':' + moment().minutes() + '</p>');
+                $('#livechat #chat-' + data.session + ' .chat-list').append(l);
+                $('#livechat #chat-' + data.session + ' .chat-history').scrollTop($('#livechat #' + data.session + ' .chat-list').height());
+            }
+            $('#livechat').trigger('notify', t === 'text' ? m : '', data.session);
+            $('#livechat .nav li a:not(.active)[href="#chat-' + data.session + '"][data-badge]').attr('data-badge', function () {
+                return parseInt($(this).attr('data-badge')) + 1;
+            });
+            $('#livechat .nav [data-href=' + data.session + ']').data('last-message-date', moment().unix());
+            var objDiv = document.getElementById("chat-history-" + data.session);
+            objDiv.scrollTop = objDiv.scrollHeight;
+            badge();
+            $('#livechat .nav li[data-href=' + data.session + ']').data('last-message-date', moment().unix());
+            $("#livechat .nav li").sort(sort_li).appendTo('#livechat .nav');
+        }
+        return false;
+    };
+
+    ConnectyCube.init(CREDENTIALS, CONFIG);
+    var channels = [];
+    $('#livechat .nav li').each(function (index, element) {
+        channels.push($(element).data('href'));
+    });
+    ConnectyCube.chat.connect(this.userCredentials).then(() => {
+    }).catch((error) => {
+        console.log('connect status:');
+        console.log(error);
+    });
+    const isConnected = ConnectyCube.chat.isConnected;
+    ConnectyCube.chat.onSentMessageCallback = function (messageLost, messageSent) {
+        if (messageSent.id && messageSent.id != '') {
+            $('#livechat ul.chat-list li i[data-msg-id=' + messageSent.id + ']').removeClass('fa-clock-o').addClass('fa-check-circle-o');
+        }
+    };
+    ConnectyCube.chat.onMessageListener = sendCallback;
+    ConnectyCube.chat.onDisconnectedListener = disconnect;
+    ConnectyCube.chat.onReconnectListener = reconnect;
+    var log = function (data) {
+        var c = data.sender == sender ? 'self' : 'others';
+        var t = data.type;
+        var m = data.msg;
+        if (t === 'image') {
+            m = '<img src="' + m + '" />';
+        } else if (t === 'audio') {
+            m = '<audio controls="controls" src="' + m + '" />';
+        } else if (t === 'video') {
+            m = '<video controls="controls" src="' + m + '" />';
+        }
+        if (t === 'text' || t === 'image' || t === 'audio' || t === 'link' || t === 'video') {
+            var l = document.createElement('li');
+            l.className = c;
+            if (m.indexOf("[sysmsg]") != -1) {
+                m = m.replace('[sysmsg]', '<i class="fa fa-info-circle" aria-hidden="true"></i>');
+                l.className = c + ' sys-red';
+            }
+            $(l).append($('#avatar-' + (c === 'self' ? 0 : data.session)).clone().removeAttr('id')).append('<span class="msg">' + m.replace(/(?:\n)+/g, '<br />') + '</span><p class="time">' + moment().hours() + ':' + moment().minutes() + ' <i class="fa fa-clock-o" aria-hidden="true" data-msg-id="' + data.msg_id + '"></i></p>');
+            var mainContainer = $('#livechat #chat-' + data.session + ' .chat-list')
+            mainContainer.append(l);
+            var objDiv = document.getElementById("chat-history-" + data.session);
+            objDiv.scrollTop = objDiv.scrollHeight;
+            $('#livechat .nav li[data-href=' + data.session + ']').data('last-message-date', moment().unix());
+            $("#livechat .nav li").sort(sort_li).appendTo('#livechat .nav');
+        }
+        return false;
+    };
+
+    var insert = function (t, s) {
+        if (document.selection) {
+            t.focus();
+            var e = document.selection.createRange();
+            e.text = s;
+        } else if (t.selectionStart || t.selectionStart == '0') {
+            var v = $(t).val();
+            $(t).val(v.substring(0, t.selectionStart) + s + v.substring(t.selectionEnd, v.length));
+            t.focus();
+        } else {
+            $(t).val($(t).val() + s);
+            t.focus();
+        }
+    }
+    var send = function (session, chat_server_id, recipient_id) {
+        var msg = {};
+        var o = $('#livechat #chat-' + session + ' [name=msg]');
+        if ($(o).val() != '') {
+            msg.msg = $(o).val().replace(/[<>'"&]/g, function (c) {
+                return {'<': '&lt;', '>': '&gt;', "'": '&apos;', '"': '&quot;', '&': '&amp;'}[c];
+            }).replace(/&amp;#x/g, '&#x');
+            if (msg.msg === '') {
+                return;
+            }
+            msg.sender = sender;
+            msg.session = session;
+            msg.recipient_id = recipient_id;
+            msg.chat_server_id = chat_server_id;
+            if (/^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(msg.msg)) {
+                msg.type = 'link';
+                msg.msg = '<a href="' + msg.msg + '" target="_blank">' + msg.msg +
+                        '</a><iframe src="' +
+                        GLOBAL.BASE_URL + 'livechat/index/preview/?url=' +
+                        btoa(msg.msg).replace(/[\=\+\/]/g, function (c) {
+                    return {'=': '', '+': '-', '/': '_'}[c];
+                }) + '"></iframe>';
+            } else {
+                msg.type = 'text';
+            }
+            $(o).val('');
+            const opponentId = msg.recipient_id;
+            const message = {
+                type: 'chat',
+                body: msg.msg,
+                extension: {
+                    save_to_history: 1,
+                    dialog_id: msg.chat_server_id
+                },
+                recipient_id: msg.recipient_id,
+                markable: 1
+            };
+            if (ConnectyCube.chat.isConnected) {
+                message.id = ConnectyCube.chat.send(opponentId, message);
+                msg.msg_id = message.id;
+            } else {
+                ConnectyCube.chat.connect(userCredentials).then(() => {
+                    message.id = ConnectyCube.chat.send(opponentId, message);
+                    msg.msg_id = message.id;
+                }).catch((error) => {
+                    console.log('connect error:');
+                    console.log(error);
+                });
+            }
+            log(msg);
+        } else {
+            alert($(o).data('required-msg'));
+            return false;
+        }
+    };
+
+    $('div#livechat').on('click touchend', 'button.btnSendMsg', function () {
+        var session = $(this).val();
+        var chat_server_id = $(this).data('server-id');
+        var recipient_id = $(this).data('recipient-id');
+        send(session, chat_server_id, recipient_id);
+        return false;
+    }).on('keypress', '[name=msg]', function (e) {
+        if (e.keyCode === 13) {
+            var session = $(this).siblings('button[type=button]').val();
+            var recipient_id = $(this).siblings('button[type=button]').data('recipient-id');
+            var chat_server_id = $(this).siblings('button[type=button]').data('server-id');
+            send(session, chat_server_id, recipient_id);
+            return false;
+        } else if (e.keyCode === 10) {
+            var session = $(this).siblings('button[type=button]').val();
+            var recipient_id = $(this).siblings('button[type=button]').data('recipient-id');
+            var chat_server_id = $(this).siblings('button[type=button]').data('server-id');
+            send(session, chat_server_id, recipient_id);
+            return false;
+        }
+
+    }).on('click', '.toolbar .emoji li', function () {
+        insert($(this).parents('.toolbar').first().siblings('.input-box').find('[name=msg]'), $(this).text());
+    }).on('load', '.chat-history img,.chat-history iframe', function () {
+        if ($(this).is(':visible')) {
+            var o = $(this).parents('.chat-history').first();
+            $(o).scrollTop($(o).scrollTop() + $(this).height());
+        }
+    }).on('click', '#livechat-nav a', function () {
+        $('div#livechat-nav').collapse('hide');
+    });
+
+    $('div#tipsModal .tips-amount-select-card').click(function () {
+        $(this).siblings().removeClass("selected");
+        $(this).addClass("selected");
+        $('div#tipsModal input#tips-amount-cutom-input').val($(this).data('fee'));
+    });
+    $('div#tipsModal button#to-tips').click(function () {
+        var user_id = $('div#tipsModal input#tips-user-id').val();
+        var csrf = $(this).data('csrf');
+        var fee = $('div#tipsModal input#tips-amount-cutom-input').val();
+        var session = $('div#tipsModal input#tips-user-id').data('session');
+        var serverId = $('div#tipsModal input#tips-user-id').data('server-id');
+        var recipientId = $('div#tipsModal input#tips-user-id').data('recipient-id');
+        if (fee == '' || fee < 0.1) {
+            alert($('div#tipsModal input#tips-amount-cutom-input').data('msg-required'));
+            $('div#tipsModal input#tips-amount-cutom-input').focus();
+            return false;
+        }
+        $(this).parents('.modal').modal('hide');
+        $.post("/forum/account/tipsCustomer/", {id: user_id, csrf: csrf, fee: fee}, "json").done(function (data) {
+            var html = '';
+            if (data.message) {
+                if (data.message.length > 0) {
+                    for (let m = 0; m < data.message.length; m++) {
+                        html = html + data.message[m].message
+                    }
+                }
+            }
+            if (data.error == 0) {
+                $('div.toast .toast-body').html(html);
+                $('div.toast').toast({animation: true, autohide: true, delay: 6000}).toast('show');
+                $('#livechat #chat-' + session + ' [name=msg]').val('[sysmsg]' + html);
+                send(session, serverId, recipientId);
+            } else {
+                $.alert({
+                    title: (data.title ? data.title : "Note"),
+                    content: html,
+                });
+            }
+        });
+
+    });
+
+    $('div#tipsModal').on('show.bs.modal', function (e) {
+        $('div#tipsModal input#tips-user-id').val($(e.relatedTarget).data('id'));
+        $('div#tipsModal input#tips-user-id').data('session', $(e.relatedTarget).data('session'));
+        $('div#tipsModal input#tips-user-id').data('server-id', $(e.relatedTarget).data('server-id'));
+        $('div#tipsModal input#tips-user-id').data('recipient-id', $(e.relatedTarget).data('recipient-id'));
+    }).on('hide.bs.modal', function (e) {
+        $('div#tipsModal .tips-amount-select-card').removeClass('selected')
+        $('div#tipsModal input#tips-amount-cutom-input').val('');
+        $('div#tipsModal input#tips-user-id').val('');
+    });
+    $('div#livechat .categorycontainer span#category-general').click(function () {
+        $('#livechat .nav li a[data-class=important]').parent().hide();
+        $('#livechat .nav li a[data-class=general]').parent().show();
+        $('#livechat .categorycontainer span#category-general').addClass('show');
+        $('#livechat .categorycontainer span#category-important').removeClass('show');
+        $("div#livechat-nav").collapse('show');
+    });
+    $('div#livechat .categorycontainer span#category-important').click(function () {
+        $('#livechat .nav li a[data-class=general]').parent().hide();
+        $('#livechat .nav li a[data-class=important]').parent().show();
+        $('#livechat .categorycontainer span#category-general').removeClass('show');
+        $('#livechat .categorycontainer span#category-important').addClass('show');
+        $("div#livechat-nav").collapse('show');
+    });
+    $(document).click(function (event) {
+        var clickover = $(event.target);
+        var _opened = $("div.navbar-collapse").hasClass("navbar-collapse collapse show");
+        if (_opened === true && !clickover.hasClass("navbar-toggle") && !clickover.hasClass("category")) {
+            $("button.navbar-toggle").click();
+        }
+    });
+    $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var objDiv = document.getElementById("chat-history-" + $(this).attr('aria-controls'));
+        objDiv.scrollTop = objDiv.scrollHeight;
+        $(this).attr('data-badge', 0);
+        badge();
+        if ($('.btn-nav').is(':visible')) {
+            $('#livechat-nav').collapse('hide');
+        }
+    });
+
+</script>

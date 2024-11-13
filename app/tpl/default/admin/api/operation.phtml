@@ -1,0 +1,41 @@
+<?php
+$operations = $this->getOperations();
+$permission = $this->getPermission();
+if(!count($permission)>0){
+  $permission=[];
+}
+?>
+<dl id="resource-list">
+    <?php foreach ($operations as $group => $operation): ?>
+        <dt>
+            <input type="checkbox" class="selectall" id="group-<?php echo $group ?>" />
+            <label for="group-<?php echo $group ?>"><?php echo $this->translate($group) ?></label>
+        </dt>
+        <dd>
+            <ul>
+                <?php foreach ($operation as $name => $label): ?>
+                    <li>
+                        <input type="checkbox" name="resource[]"<?php if (in_array($name, $permission)): ?> checked="checked"<?php endif ?> value="<?php echo $name ?>" id="resource-<?php echo $name ?>" />
+                        <label for="resource-<?php echo $name ?>"><?php echo $this->translate($label, [], 'api') ?></label>
+                    </li>
+                <?php endforeach ?>
+            </ul>
+        </dd>
+    <?php endforeach ?>
+</dl>
+<script>
+    (function () {
+        "use strict";
+        var check = function () {
+            $(this).prev('dt').find('.selectall').prop('checked', $('[type=checkbox]:not(:checked)', this).length ? false : true);
+        };
+        $('#resource-list [type=checkbox]').click(function () {
+            if ($(this).is('.selectall')) {
+                $(this).parent('dt').next('dd').find('[type=checkbox]').prop('checked', this.checked);
+            } else {
+                check.call($(this).parents('dd').first());
+            }
+        });
+        $('#resource-list dd').each(check);
+    })();
+</script>

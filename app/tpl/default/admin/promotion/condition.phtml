@@ -1,0 +1,192 @@
+<?php
+$conditions = $this->getCollection();
+?>
+<div class="condition tree" data-json='<?php echo json_encode($conditions) ?>'>
+    <div class="panel">
+        <div class="panel-heading">
+            <?php
+            foreach ($this->getVariable('elements') as $key => $item) {
+                echo $this->getInputBox($key, $item);
+            }
+            ?>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-heading">
+            <h3 class="panel-title"><?php echo $this->translate('If no conditions are set, the coupon does not take effect on any commodity.'); ?></h3>
+        </div>
+        <div class="panel-body">
+            <span class="title">
+                <input type="hidden" name="condition[identifier][0]" value="combination" />
+                <?php
+                echo $this->translate('If %s of these conditions are %s.', [
+                    '<span class="param form-inline"><select class="form-control" name="condition[operator][0]"><option value="and">' .
+                    $this->translate('All', [], 'promotion') .
+                    '</option><option value="or"' . (isset($conditions[0][0]['operator']) && $conditions[0][0]['operator'] === 'or' ? ' selected="selected"' : '') . '>' .
+                    $this->translate('Any', [], 'promotion') .
+                    '</option></select></span>', '<span class="param form-inline"><select class="form-control" name="condition[value][0]"><option value="1">' .
+                    $this->translate('Eligible', [], 'promotion') .
+                    '</option><option value="0"' . (isset($conditions[0][0]['value']) && $conditions[0][0]['value'] == '0' ? ' selected="selected"' : '') . '>' .
+                    $this->translate('Not Eligible', [], 'promotion') .
+                    '</option></select></span>'], 'promotion')
+                ?>
+            </span>
+            <ul class="children" data-tmpl="#tmpl-condition-parent">
+                <li class="last">
+                    <a href="javascript:void(0);" class="add btn btn-add">
+                        <span class="fa fa-plus-circle" aria-hidden="true"></span>
+                        <span><?php echo $this->translate('Add Condition') ?></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-heading">
+            <h3 class="panel-title"><?php echo $this->translate('Apply the rule only to cart items matching the following conditions (leave blank for all items)') ?></h3>
+        </div>
+        <div class="panel-body tree" data-json='<?php echo json_encode($conditions) ?>'>
+            <span class="title">
+                <input type="hidden" name="handler[identifier][0]" value="combination" />
+                <?php
+                echo $this->translate('If %s of these conditions are %s.', [
+                    '<span class="param form-inline"><select class="form-control" name="handler[operator][0]"><option value="and">' .
+                    $this->translate('All', [], 'promotion') .
+                    '</option><option value="or">' .
+                    $this->translate('Any', [], 'promotion') .
+                    '</option></select></span>', '<span class="param form-inline"><select class="form-control" name="handler[value][0]"><option value="1">' .
+                    $this->translate('Eligible', [], 'promotion') .
+                    '</option><option value="0">' .
+                    $this->translate('Not Eligible', [], 'promotion') .
+                    '</option></select></span>'], 'promotion')
+                ?>
+            </span>
+            <ul class="children" data-tmpl="#tmpl-handler">
+                <li class="last">
+                    <a href="javascript:void(0);" class="add btn btn-add">
+                        <span class="fa fa-plus-circle" aria-hidden="true"></span>
+                        <span><?php echo $this->translate('Add') ?></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <template id="tmpl-condition-children">
+        <li>
+            <select class="form-control">
+                <option value=""><?php echo $this->translate('Please Select') ?></option>
+                <option value="combination"><?php echo $this->translate('Combination', [], 'promotion') ?></option>
+                <optgroup label="<?php echo $this->translate('Product') ?>">
+                    <option value="product_id" data-type="select"><?php echo $this->translate('Product') ?></option>
+                    <option value="attribute_set" data-type="select"><?php echo $this->translate('Attribute Set') ?></option>
+                    <option value="category" data-type="select"><?php echo $this->translate('Category') ?></option>
+                    <option value="product_type" data-type="select"><?php echo $this->translate('Product Type') ?></option>
+                    <option value="price" data-type="numeric"><?php echo $this->translate('Price') ?></option>
+                    <option value="qty" data-type="numeric"><?php echo $this->translate('Quentity') ?></option>
+                    <option value="row_total" data-type="numeric"><?php echo $this->translate('Subtotal') ?></option>
+                </optgroup>
+            </select>
+        </li>
+    </template>
+    <template id="tmpl-condition-parent">
+        <li>
+            <select class="form-control">
+                <option value=""><?php echo $this->translate('Please Select') ?></option>
+                <option value="combination"><?php echo $this->translate('Combination', [], 'promotion') ?></option>
+                <option value="options_combination"><?php echo $this->translate('Product Options Combination', [], 'promotion') ?></option>
+                <optgroup label="<?php echo $this->translate('Customer') ?>">
+                    <option value="customer_id" data-type="select"><?php echo $this->translate('Customer') ?></option>
+                    <option value="customer_group" data-type="select"><?php echo $this->translate('Customer Group') ?></option>
+                    <option value="level" data-type="string"><?php echo $this->translate('Customer Level') ?></option>
+                </optgroup>
+                <optgroup label="<?php echo $this->translate('Shopping Cart') ?>">
+                    <option value="subtotal" data-type="numeric"><?php echo $this->translate('Subtotal') ?></option>
+                    <option value="grand_total" data-type="numeric"><?php echo $this->translate('Grand Total') ?></option>
+                    <option value="total_qty" data-type="numeric"><?php echo $this->translate('Total Qty') ?></option>
+                    <option value="total_weight" data-type="numeric"><?php echo $this->translate('Total Weight') ?></option>
+                    <option value="payment_method" data-type="select"><?php echo $this->translate('Payment Method') ?></option>
+                    <option value="shipping_method" data-type="select"><?php echo $this->translate('Shipping Method') ?></option>
+                    <option value="postcode" data-type="string"><?php echo $this->translate('Postcode') ?></option>
+                    <option value="county" data-type="string"><?php echo $this->translate('County') ?></option>
+                    <option value="city" data-type="string"><?php echo $this->translate('City') ?></option>
+                    <option value="region" data-type="string"><?php echo $this->translate('Region') ?></option>
+                    <option value="country" data-type="select"><?php echo $this->translate('Country') ?></option>
+                </optgroup>
+            </select>
+        </li>
+    </template>
+    <template id="tmpl-condition-string">
+        <span class="title">
+            <input type="hidden" name="condition[pid][]" value="" />
+            <span class="param">
+                <input type="hidden" name="condition[identifier][]" value="{$identifier}" />
+                {$identifier_text}
+            </span>
+            <span class="param form-inline">
+                <select class="form-control" name="condition[operator][]">
+                    <option value="="><?php echo $this->translate('is', [], 'promotion') ?></option>
+                    <option value="<>"><?php echo $this->translate('is not', [], 'promotion') ?></option>
+                </select>
+            </span>
+            <span class="param form-inline">
+                <input type="text" class="form-control" name="condition[value][]" />
+                <a href="javascript:void(0);" class="delete">
+                    <span class="fa fa-times-circle" aria-hidden="true"></span>
+                    <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                </a>
+            </span>
+        </span>
+    </template>
+    <template id="tmpl-condition-numeric">
+        <span class="title">
+            <input type="hidden" name="condition[pid][]" value="" />
+            <span class="param">
+                <input type="hidden" name="condition[identifier][]" value="{$identifier}" />
+                {$identifier_text}
+            </span>
+            <span class="param form-inline">
+                <select class="form-control" name="condition[operator][]">
+                    <option value="="><?php echo $this->translate('is', [], 'promotion') ?></option>
+                    <option value="<>"><?php echo $this->translate('is not', [], 'promotion') ?></option>
+                    <option value=">"><?php echo $this->translate('great than', [], 'promotion') ?></option>
+                    <option value="<"><?php echo $this->translate('less than', [], 'promotion') ?></option>
+                    <option value=">="><?php echo $this->translate('equals or great than', [], 'promotion') ?></option>
+                    <option value="<="><?php echo $this->translate('equals or less than', [], 'promotion') ?></option>
+                    <option value="in"><?php echo $this->translate('is one of', [], 'promotion') ?></option>
+                    <option value="not in"><?php echo $this->translate('is not one of', [], 'promotion') ?></option>
+                </select>
+            </span>
+            <span class="param form-inline">
+                <input type="text" class="form-control" name="condition[value][]" />
+                <a href="javascript:void(0);" class="delete">
+                    <span class="fa fa-times-circle" aria-hidden="true"></span>
+                    <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                </a>
+            </span>
+        </span>
+    </template>
+    <template id="tmpl-condition-select">
+        <span class="title">
+            <input type="hidden" name="condition[pid][]" value="" />
+            <span class="param">
+                <input type="hidden" name="condition[identifier][]" value="{$identifier}" />
+                {$identifier_text}
+            </span>
+            <span class="param form-inline">
+                <select class="form-control" name="condition[operator][]">
+                    <option value="="><?php echo $this->translate('is', [], 'promotion') ?></option>
+                    <option value="<>"><?php echo $this->translate('is not', [], 'promotion') ?></option>
+                </select>
+            </span>
+            <span class="param form-inline">
+                {$value}
+            </span>
+        </span>
+    </template>
+    <?php foreach ($this->getChild() as $key => $child): ?>
+        <template id="tmpl-condition-value-<?php echo $key ?>">
+            <?php echo $child->setVariable('name', 'condition[value][]') ?>
+        </template>
+    <?php endforeach ?>
+</div>
+

@@ -1,0 +1,182 @@
+<?php
+$customer = (new Redseanet\Customer\ViewModel\Account)->getCustomer();
+$avatar = $customer['avatar'];
+$like_user_count = $this->getLikeUserCount();
+$new_like_user_count = $this->getNewFollowCount();
+$fans_count = $this->getFansCount();
+$new_fans_count = $this->getNewFansCount();
+$be_like_count = $this->getBeLikeCount();
+$new_be_like_count = $this->getNewBeLikeCount();
+$be_favorite_count = $this->getBeFavoriteCount();
+$new_be_favorite_count = $this->getNewBeFavoriteCount();
+$count = $this->getCount();
+?>
+<div class="container">
+    <div class="background-white">
+        <div class="userSpace-head">
+            <div class="userSpace-headBg">
+                <div class="userSpace-head_content">
+                    <a href="<?php echo $this->getBaseUrl('customer/account/edit/') ?>">
+                        <span><img alt="<?php echo $customer->offsetGet('username') ?>" class="rounded-circle user-titleImg shadow" src="<?php echo $avatar ? $this->getUploadedUrl('customer/avatar/' . $avatar) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" /></span>
+                    </a>
+                    <h5 class="user-name"><?php echo $customer->offsetGet('username') ?>&nbsp;&nbsp;<a href="<?php echo $this->getBaseUrl('customer/account/logout/') ?>" class="visible-xs-inline-block"><?php echo $this->translate('Logout'); ?></a></h5>
+                    <h6><?php echo $customer->offsetGet('motto') ?? ''; ?></h6>
+                    <h5 class="edit padding-0-10 d-block d-sm-none"> 
+                        <a href="<?php echo $this->getBaseUrl('customer/account/edit/') ?>">
+                            <?php echo $this->translate('Edit Account Infomation'); ?>
+                        </a>
+                    </h5>
+                </div>
+                <div class="userSpace-link col-12 row">
+                    <ul class="col-12 col-md-6 col-sm-6">
+                        <li class="col-3">
+                            <a href="<?php echo $this->getBaseUrl('forum/social/following/'); ?>" class="a-block">
+                                <p class="h6 check-redColor">
+                                    <?php echo $like_user_count; ?>
+                                </p>
+                                <p class="h6">
+                                    <?php echo $this->translate('Following'); ?>
+                                </p>
+                                <?php
+                                if (!empty($new_like_user_count)) {
+                                    ?>
+                                    <a href="#" class="notice"><?php echo $new_like_user_count; ?></a>
+                                    <?php
+                                }
+                                ?>
+                            </a>
+                        </li>
+                        <li class="col-3">
+                            <a href="<?php echo $this->getBaseUrl('forum/social/fans/'); ?>">
+                                <p class="h6 check-redColor">
+                                    <?php echo $fans_count; ?>
+                                </p>
+                                <p class="h6">
+                                    <?php echo $this->translate('Fans'); ?>
+                                </p>
+                                <?php
+                                if (!empty($new_fans_count)) {
+                                    ?>
+                                    <a href="#" class="notice"><?php echo $new_fans_count; ?></a>
+                                    <?php
+                                }
+                                ?>
+                            </a>
+                        </li>
+                        <li class="col-3">
+                            <a href="<?php echo $this->getBaseUrl('forum/social/beLike/'); ?>">
+                                <p class="h6 check-redColor"><?php echo $be_like_count; ?></p>
+                                <p class="h6"><?php echo $this->translate('Be Like'); ?></p>
+                                <?php
+                                if (!empty($new_be_like_count)) {
+                                    ?>
+                                    <a href="#" class="notice"><?php echo $new_be_like_count; ?></a>
+                                    <?php
+                                }
+                                ?>
+                            </a>
+                        </li>
+                        <li class="col-3">
+                            <a href="<?php echo $this->getBaseUrl('forum/social/beCollected/'); ?>">
+                                <p class="h6 check-redColor">
+                                    <?php echo $be_favorite_count; ?>
+                                </p>
+                                <p class="h6">
+                                    <?php echo $this->translate('Be Collected'); ?>
+                                </p>
+                                <?php
+                                if (!empty($new_be_favorite_count)) {
+                                    ?>
+                                    <a href="#" class="prompt-txt notice"><?php echo $new_be_favorite_count; ?></a>
+                                    <?php
+                                }
+                                ?>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="col-12 col-md-6 col-sm-6">
+                        <li class="col-3">
+                            <a href="<?php echo $this->getBaseUrl('checkout/cart/') ?>" class="a-block" target="_blank">
+                                <i class="fa fa-shopping-cart"></i>
+                                <p class="h6"><?php echo $this->translate('Cart'); ?></p>
+                            </a>
+                        </li>
+                        <li class="col-3">
+                            <a href="<?php echo $this->getBaseUrl('sales/order/list/'); ?>" class="a-block" target="_blank">
+                                <i class="fa fa-book" aria-hidden="true"></i>
+                                <p class="h6"><?php echo $this->translate('Order'); ?></p>
+                            </a>
+                        </li>
+                        <li class="col-3">
+                            <a href="<?php echo $this->getBaseUrl('customer/wishlist/'); ?>" class="a-block" target="_blank">
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <p class="h6"><?php echo $this->translate('Wishlist'); ?></p>
+                            </a>
+                        </li>
+                        <li class="col-3">
+                            <a href="<?php echo $this->getBaseUrl('customer/account/address/') ?>" class="a-block" target="_blank">
+                                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                <p class="h6"><?php echo $this->translate('Address Book'); ?></p>
+                            </a>
+                        </li>
+                    </ul>                    
+                </div>               
+                <div class="login-account col-12 col-md-12 col-sm-12 d-none d-sm-block">
+                    <?php
+                    if ($this->getSegment('customer')->get('hasLoggedIn')):
+                        ?>
+                        <a href="<?php echo $this->getBaseUrl('customer/account/logout/') ?>" class="padding-10">
+                            <span class="font-12"><?php echo $this->translate('Account Logout'); ?></span>
+                            <i class="fa fa-angle-down" aria-hidden="true"></i>
+                        </a>
+                        <?php
+                    endif;
+                    ?>
+                    <a href="<?php echo $this->getBaseUrl('customer/account/edit/') ?>" class="padding-10">
+                        <span class="font-12"><?php echo $this->translate('Edit Account Infomation'); ?></span>
+                        <i class="fa fa-angle-down" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <!--                <div class="settings col-12 d-block d-sm-none padding-10">
+                                    
+                                    <a href="javascript:void(0)" class="float-end">
+                                        <span class="fa fa-commenting-o fa-2x"></span>
+                <?php
+                if ($count):
+                    ?>
+                                                    <span class="prompt-txt notice"><?php echo $count; ?></span>
+                    <?php
+                endif;
+                ?>
+                                    </a>
+                                </div>-->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-left col-3 col-md-2">
+                <?php echo $this->getChild('nav') ?>
+            </div>
+            <main class="col-main col-sm-9 col-md-10 col-12">
+                <?php if ($title = $this->getVariable('title')): ?>
+                    <h6 class="page-title">
+                        <span><?php echo $this->translate($title) ?></span>
+                    </h6>
+                    <h2 class="page-title d-block d-sm-none">
+                        <div class="d-flex justify-content-between">
+                            <a href="javascript:void(0)" onclick="javascript:history.back(-1)" class="d-block d-sm-none"><span class="fa fa-arrow-left"></span></a>
+                            <span><?php echo $this->translate($title) ?></span>
+                            <a type="button" class="navbar-toggler navbar-toggle collapsed" data-bs-toggle="collapse" data-target="#navbar-customer-account">
+                                <span class="fa fa-cog fa-2x"></span>
+                            </a>   
+                        </div>
+                    </h2>
+                <?php endif ?>
+                <?php echo $this->getChild('messages') ?>
+                <div class="main-container">
+                    <?php echo $this->getChild('main') ?>
+                </div>
+            </main>
+        </div> 
+    </div>
+</div>

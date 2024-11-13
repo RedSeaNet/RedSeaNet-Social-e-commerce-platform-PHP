@@ -1,0 +1,89 @@
+<?php
+$collection = $this->getStatement();
+?>
+<div class="statement">
+    <table class="table">
+        <thead>
+            <tr>
+                <td>
+                    <span><?php echo $this->translate('Available Balance'); ?>:</span>
+                    <span class="count">
+                        <?php echo $this->getCurrency()->convert($amount = $this->getAmount(), true); ?>
+                    </span>
+                    <?php if ($this->getConfig()['balance/general/product_for_recharge']): ?>
+                        <a href="<?php echo $this->getBaseUrl('balance/statement/recharge/'); ?>" type="submit" class="btn btn-theme"><?php echo $this->translate('Recharge'); ?></a>
+                    <?php endif ?>
+                    <a<?php if ($amount): ?> href="<?php echo $this->getBaseUrl('balance/statement/draw/'); ?>"<?php else: ?> href="javascript:void(0);" disabled="disabled"<?php endif ?> type="submit" class="btn btn-theme"><?php echo $this->translate('Draw'); ?></a>
+                </td>
+                <td class="text-end">
+                    <a href="<?php echo $this->getBaseUrl('help/customer/balance.html'); ?>" style="color: #007ec6;text-decoration: underline"><?php echo $this->translate('Balance Info'); ?></a>
+                </td>
+            </tr>
+        </thead>
+    </table>
+    <p>&nbsp;</p>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="text-center"><?php echo $this->translate('Balance') ?></th>
+                <th class="text-center"><?php echo $this->translate('Comment') ?></th>
+                <th class="text-center"><?php echo $this->translate('Status') ?></th>
+                <th class="text-center"><?php echo $this->translate('Date') ?></th>
+                <th class="text-center"><?php echo $this->translate('Operating'); ?></th>
+            </tr>
+        </thead>
+        <?php if (count($collection)): ?>
+            <tbody>
+                <?php
+                foreach ($collection as $balance):
+                    $order = $balance->getOrder();
+                    $flag = $order && $order->canCancel();
+                    ?>
+                    <?php if ($balance['comment'] === 'Balance Refund' && $balance['status'] == 0): ?>
+                        <tr class="text-center">
+                            <td><?php echo $this->getCurrency()->convert(abs($balance['amount']), TRUE) ?></td>
+                            <td><?php echo $this->translate($balance['comment']) ?></td>
+                            <td><?php echo $this->translate('Refunded') ?></td>
+                            <td><?php echo $balance['created_at'] ?></td>
+                            <td><span><?php echo $this->translate('Successful Trade'); ?></span></td>
+                        </tr>
+                    <?php endif ?>
+                    <tr class="text-center">
+                        <td><?php echo $this->getCurrency()->convert($balance['amount'], TRUE) ?></td>
+                        <td><?php echo $this->translate($balance['comment']) ?></td>
+                        <td><?php echo $this->translate($balance['comment'] === 'Draw' && ($status = $this->getDrawStatus($balance)) ? $status : ($flag ? 'Pending Payment' : ($balance['status'] == 1 ? 'Successful Trade' : 'Unavailable'))) ?></td>
+                        <td><?php echo $balance['created_at'] ?></td>
+                        <td>
+                            <?php if ($flag): ?>
+                                <span><?php echo $this->translate('Pending Payment'); ?></span>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                <a href="<?php echo $this->getBaseUrl('balance/statement/cancel/'); ?>" data-method="delete" data-params="id=<?php echo $balance->getId() ?>&csrf=<?php echo $this->getCsrfKey() ?>">
+                                    <?php echo $this->translate('Cancel Recharge'); ?>
+                                </a>
+                            <?php elseif ($balance['comment'] === 'Draw' && $status === 'Processing'): ?>
+                                <span><?php echo $this->translate('Processing'); ?></span>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                <a href="<?php echo $this->getBaseUrl('balance/statement/cancelDraw/'); ?>" data-method="post" data-params="id=<?php echo $balance['additional'] ?>&csrf=<?php echo $this->getCsrfKey() ?>">
+                                    <?php echo $this->translate('Cancel Draw'); ?>
+                                </a>
+                            <?php else: ?>
+                                <span><?php echo $this->translate(($balance['status'] == 1 ? 'Successful Trade' : 'Unavailable')); ?></span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <?php echo $this->getChild('pager')->setCollection($collection); ?>
+                    </td>
+                </tr>
+            </tfoot>
+        <?php else: ?>
+            <tfoot>
+                <tr>
+                    <td colspan="5" class="text-center"><?php echo $this->translate('No data to display') ?></td>
+                </tr>
+            </tfoot>
+        <?php endif; ?>
+    </table>
+</div>

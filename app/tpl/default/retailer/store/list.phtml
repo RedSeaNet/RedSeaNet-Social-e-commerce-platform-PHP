@@ -1,0 +1,31 @@
+<?php
+$retailers = $this->getRetailers();
+?>
+<div class="container">
+    <div class="row pt-4">
+        <?php
+        if (count($retailers) > 0) {
+            for ($r = 0; $r < count($retailers); $r++) {
+                ?>
+                <div class="col-6 col-md-3 p-5 ms-md-5 me-md-5 ms-3 me-3 text-center align-items-center">
+                    <p>
+                        <a href="<?php echo $this->getBaseUrl('store/' . $retailers[$r]['uri_key'] . '.html') ?>">
+                            <img src="<?php if (!empty($retailers[$r]["profile"])): 
+                                echo $this->getUploadedUrl('store/'.$retailers[$r]['store_id'] .'/'.$retailers[$r]["profile"]);
+                            else:
+                                echo $this->getPubUrl('frontend/images/placeholder.png');
+                            endif;
+                            ?>" alt="<?php echo $retailers[$r]["name"]; ?>" class="w-100 rounded-circle shadow" />
+                        </a>
+                    </p>
+                    <p><a href="<?php echo $this->getBaseUrl('store/' . $retailers[$r]['uri_key'] . '.html') ?>"><?php echo $retailers[$r]["name"]; ?></a></p>
+                </div>
+                <?php
+            }
+            echo $this->getChild('pager')->setCollection($retailers);
+            ?>
+            <?php
+        }
+        ?>
+    </div>
+</div>

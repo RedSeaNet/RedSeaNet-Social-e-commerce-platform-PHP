@@ -1,0 +1,17 @@
+<h4><?php echo $this->translate('Select your coin'); ?></h4>
+<?php
+
+$rateWithAccepted = $this->getRatesWithAccepted();
+$coinList=[];
+foreach($rateWithAccepted["result"] as $key=>$value){
+    if($value["accepted"]==1&&$value["status"]=='online'){
+         $coinList[$key]=["image"=>$value["image"],"name"=>$value["name"],"code"=>$key];
+    }
+}
+//$coinList = $this->getCoinType();
+foreach ($coinList as $paykey => $payvalue) {
+    echo '<label style="padding: 6px; margin: 6px;"><input id="coinpaymenttype" rel="cointype" name="payment_data[cointype]" data-msg-required="'.$this->translate('Please choose your coin type').'!" class="required" type="radio" value="' . $paykey . '" /> <img src="' . $payvalue["image"] . '" width="28px" height="28px" title="'.$payvalue["name"].'" /> ' . $paykey . ' </label>    ';
+}
+?>
+<p class="sys-red font-12"><i class="fa fa-warning" aria-hidden="true"></i><?php echo $this->translate('Please be sure to transfer the exact amount plus any transaction fee at your end. Any incorrect amount will result delays in processing your payment and refund');?>.</p>
+           

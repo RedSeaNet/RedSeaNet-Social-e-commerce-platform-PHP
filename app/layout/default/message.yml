@@ -1,0 +1,75 @@
+---
+notifications:
+    update: customer_account
+    root:
+    
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Notifications
+                    -
+                        method: addScript
+                        params: frontend/vendor/infinite-scroll/infinite-scroll.pkgd.min.js
+                    -
+                        method: addScript
+                        params: frontend/js/notifications.js
+            content:
+                action:
+                    -
+                        method: setVariable
+                        params:
+                            - title
+                            - Notifications 
+                children:
+                    main:
+                        type: Redseanet\Notifications\ViewModel\Notifications
+                        template: notifications/list
+notifications_list:
+    update: frontend
+    root:
+        template: page/ajax
+        unset: [head]
+        children:
+            content:
+                unset: [breadcrumb,messages]
+                type: Redseanet\Notifications\ViewModel\Notifications
+                template: notifications/li
+admin_message_template_list:
+    update: grid
+    root:
+        children:
+            head:
+                action:
+                    -
+                        method: setTitle
+                        params: Message Template
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/message_template/',label: 'Message Template'}]
+                            -
+                                method: addAdditional
+                                params: [{link: ':ADMIN/message_template/edit/',label: 'Add New Template'}]
+                    grid:
+                        type: Redseanet\Admin\ViewModel\Message\Grid
+admin_message_template_edit:
+    update: edit
+    root:
+        children:
+            content:
+                children:
+                    breadcrumb:
+                        action:
+                            -
+                                method: addCrumb
+                                params: [{link: ':ADMIN/message_template/',label: 'Message Template'}]
+                            -
+                                method: addCrumb
+                                params: [{label: 'Edit'}]
+                    edit:
+                        type: Redseanet\Admin\ViewModel\Message\Edit

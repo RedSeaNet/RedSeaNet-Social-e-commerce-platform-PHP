@@ -1,0 +1,43 @@
+<?php
+$bargain = $this->getVariable('model');
+$images = $bargain->getImages()->load(true);
+?>
+<div id="bargain-media" class="carousel slide" data-bs-ride="carousel">
+    <?php if (count($images)): ?>
+        <div class="carousel-inner" role="listbox">
+            <?php
+            $i = 0;
+            foreach ($images as $image):
+                ?>
+                <div class="carousel-item<?php if ($i == 0): ?> active<?php
+                endif;
+                ?>" data-bs-interval="10000">
+                    <img style="max-width:100%;" src="<?php echo $this->getResourceUrl('image/' . $image['real_name']); ?>" alt="<?php echo $image['real_name'] ?>">
+                </div>
+                <?php
+                $i++;
+            endforeach
+            ?>
+        </div>
+        <ul class="carousel-indicators">
+            <?php
+            $i = 0;
+            foreach ($images as $image):
+                ?>
+                <li data-bs-target="#bargain-media" data-bs-slide-to="<?php echo $i ?>"<?php if ($i == 0): ?> class="active"<?php endif; ?>>
+                    <img src="<?php echo $this->getResourceUrl('image/' . $image['real_name']) ?>" width="42" alt="" />
+                </li>
+                <?php
+                $i++;
+            endforeach;
+            ?>
+        </ul>
+    <?php else: ?>
+        <div class="carousel-inner" role="listbox">
+            <div class="item active">
+                <img src="<?php echo $this->getPubUrl('frontend/images/placeholder.png') ?>" 
+                     alt="<?php echo $image['real_name'] ?>" />
+            </div>
+        </div>
+    <?php endif ?>
+</div>

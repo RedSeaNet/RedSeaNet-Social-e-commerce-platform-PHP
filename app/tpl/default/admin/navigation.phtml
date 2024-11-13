@@ -1,0 +1,42 @@
+<?php
+$current = $this->getUri()->withQuery('')->withFragment('')->__toString();
+?>
+<nav class="nav-container">
+    <ul class="nav" role="menu">
+        <?php
+        foreach ($this->getMenuItems() as $item):
+            if (isset($item['operation']) && !$this->hasPermission($item['operation'])) {
+                continue;
+            }
+            $hasChildren = isset($item['children']);
+            $html = '';
+            if ($hasChildren) {
+                usort($item['children'], [$this, 'sortItems']);
+                foreach ($item['children'] as $child) {
+                    if (!isset($child['operation']) || $this->hasPermission($child['operation'])) {
+                        $html .= '<li role="presentation" class="item" tabindex="' . ($child['priority'] ?? 0) . '"><a href="' . $this->getUrl($child['link']) . '" role="menuitem" ' . (strpos($current, $this->getUrl($child['link'])) !== false ? ' class="active"' : '') . '>' . $this->translate($child['title']) . '</a></li>';
+                    }
+                }
+                if ($html === '') {
+                    continue;
+                }
+            }
+            ?>
+            <li role="presentation" class="item<?php if ($hasChildren): ?> dropdown<?php endif ?>" tabindex="<?php echo $item['priority'] ?? 0 ?>">
+                <a href="<?php if (!empty($item['children']) || !isset($item['link'])): ?>javascript:void(0);<?php
+                else:
+                    echo $this->getUrl($item['link']), strpos($current, $item['link']) !== false ? '" class="active' : '';
+                endif;
+                ?>"<?php if ($hasChildren): ?> class="dropdown-toggle" data-toggle="dropdown"<?php endif ?> title="<?php echo $this->translate($item['title']) ?>" role="menuitem">
+                    <span class="fa fa-<?php echo $item['icon'] ?>" aria-hidden="true"></span>
+                    <span class="title"><?php echo $this->translate($item['title']) ?></span>
+                </a>
+                <?php if ($hasChildren): ?>
+                    <ul class="dropdown-menu" role="menu">
+                        <?php echo $html ?>
+                    </ul>
+                <?php endif ?>
+            </li>
+        <?php endforeach ?>
+    </ul>
+</nav>

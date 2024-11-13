@@ -1,0 +1,5 @@
+---
+auth.dispatch.after:
+    -
+        listener: [\Redseanet\Admin\Listeners\LogEvent, log]
+        priority: 0

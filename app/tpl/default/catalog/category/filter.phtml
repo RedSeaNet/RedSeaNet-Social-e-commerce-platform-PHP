@@ -1,0 +1,44 @@
+<?php
+$filters = $this->getFilters();
+$current = $this->getCurrentFilters();
+if(is_array($filters)&&count($filters)>0){
+?>
+<div class="filters pt-3">
+    <?php
+    foreach ($filters as $key => $filter):
+        if (count($filter['values']) <= 1) {
+            continue;
+        }
+        ?>
+        <div class="d-flex justify-content-between align-items-center col-12 pb-2">
+            <div class="values">
+                <ul class="d-flex mb-0 ps-0 align-items-center">
+                    <li class="fw-bold">
+                     <?php echo $filter['label'] ?>: 
+                    </li>
+                    <li class="">
+                    <a href="<?php echo $this->getInitFilterUrl($key) ?>" class="init" rel="nofollow">
+                    <?php echo $this->translate('All') ?>
+                    </a>   
+                    </li>
+                    <?php foreach ($filter['values'] as $value => $values): ?>
+                        <li <?php if (isset($current[$key]) && $current[$key] == $value): ?> class="active"<?php endif ?>>
+                            <a href="<?php echo $this->getFilterUrl($key, $value) ?>" rel="nofollow">
+                                <span><?php echo $values['label'] ?></span>
+                                <?php if ($this->showCount()): ?>
+                                    <span class="count"><?php echo $values['count'] ?></span>
+                                <?php endif ?>
+                            </a>
+                        </li>
+                    <?php endforeach ?>                    
+                </ul>
+            </div>
+            <div class="cell more pe-1">
+                <a href="javascript:void(0);">
+                    <?php echo $this->translate('More') ?>
+                </a>
+            </div>
+        </div>
+    <?php endforeach ?>
+                                </div>
+<?php } ?>

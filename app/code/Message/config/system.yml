@@ -1,0 +1,51 @@
+---
+message:
+    label: Short Message Service
+    children:
+        general:
+            label: General
+            priority: 0
+            scope: merchant
+            children:
+                enable:
+                    type: select
+                    label: Enable
+                    required: required
+                    priority: 0
+                    options:
+                        - Disabled
+                        - Enabled
+                    default: 0
+                service:
+                    type: select
+                    label: Service
+                    priority: 10
+                    required: required
+                    attrs:
+                        data-base: '#general-enable'
+                    source: \Redseanet\Message\Source\Client
+        aliyun:
+            label: Aliyun
+            priority: 10
+            scope: merchant
+            children:
+                model:
+                    type: hidden
+                    scope: merchant
+                    default: Redseanet\Message\Model\Client\Aliyun
+                appid:
+                    label: App ID
+                    priority: 10
+                    type: text
+                secret:
+                    label: App Secret
+                    priority: 11
+                    type: text
+                signature:
+                    label: Signature Name
+                    priority: 20
+                    type: text
+                gateway:
+                    type: hidden
+                    scope: merchant
+                    default: https://dysmsapi.aliyuncs.com/

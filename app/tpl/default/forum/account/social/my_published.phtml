@@ -1,0 +1,65 @@
+<?php
+$config = $this->getConfig();
+$new = strtotime('-' . $config['forum/post/new_days'] . 'days');
+$current = $this->getSegment('customer')->get('hasLoggedIn') ? $this->getSegment('customer')->get('customer')['id'] : 0;
+$posts = $this->getPosts();
+if (count($posts)):
+    foreach ($posts as $post):
+        $thumbnail = $post->getThumbnail();
+        $count = $post->getLikeCount();
+        if ($current == $post['customer_id']):
+            ?><li class="item col-6 col-sm-4 col-md-4<?php if ($post['poll_id']): ?> poll<?php
+            endif;
+            if (strtotime($post['created_at']) >= $new):
+                ?> new<?php
+                endif;
+                if (strtotime($post['is_hot']) >= $new):
+                    ?> hot<?php endif ?>">
+                <div class="item-list">
+                    <div class="dropdown text-end">
+                        <a id="dLabel" data-target="#" href="#" class="ellipsis-btn" data-bs-toggle="dropdown" aria-expanded="false" role="button" aria-haspopup="true">
+                            <span class="fa fa-ellipsis-h" aria-hidden="true"></span>
+                        </a>
+                        <dl class="dropdown-menu">
+                            <dt><a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/postEdit/?id='), $post['id'] ?>"><?php echo $this->translate('Edit') ?></a></dt>
+                            <dt><a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/remove/?id='), $post['id'] ?>" class="remove" data-method="delete" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post->getId() ?>"><?php echo $this->translate('Delete') ?></a></dt>
+                        </dl>
+                    </div>
+                    <a href="<?php echo $post->getUrl() ?>" class="product-image">
+                        <img src="<?php echo $thumbnail ? $this->getUploadedUrl('forum/' . $thumbnail) : $this->getPubUrl('frontend/images/placeholder.png'); ?>" />
+                    </a>
+                    <div class="product-text">
+                        <h6 class="product-name"><a href="<?php echo $post->getUrl() ?>"><?php echo $post['title'] ?></a></h6>
+                        <div class="product-user">
+                            <img class="rounded-circle" src="<?php echo $post->getCustomer()['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $post->getCustomer()['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" alt="">
+                            <span class="product-userName">
+                                <?php echo $post->getCustomer()['username'] ?>
+                                <span class="publish-time"><?php echo $this->getTime($post['created_at']); ?></span>
+                            </span>
+                            <?php if ($current): ?>
+                                <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/like/') ?>" class="like product-heart" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post->getId() ?>" class="product-heart">
+                                    <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                    <span><?php echo $count; ?></span>
+                                </a>
+                                <?php
+                            else:
+                                ?>
+                                <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/like/') ?>" class="like" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $post->getId() ?>" class="product-heart">
+                                    <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                    <span><?php echo $count; ?></span>
+                                </a>
+                            <?php
+                            endif;
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <?php
+        endif;
+    endforeach;
+    ?>
+    <?php
+endif
+?>
+                       

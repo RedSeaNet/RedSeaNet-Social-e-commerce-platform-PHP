@@ -1,0 +1,12 @@
+<?php if ($this->getSegment('customer')->get('hasLoggedIn')): ?>
+    <div class="modal fade" id="modal-<?php echo $this->getVariable('key') ?>" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <?php echo $this->getChild('form') ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>

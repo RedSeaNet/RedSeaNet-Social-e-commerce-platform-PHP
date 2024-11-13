@@ -1,0 +1,8 @@
+---
+admin_dashboard:
+    - Print chart
+    - No data to display
+    - Download PNG image
+    - Download JPEG image
+    - Download PDF document
+    - Download SVG vector image

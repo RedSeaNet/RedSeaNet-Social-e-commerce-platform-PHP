@@ -1,0 +1,87 @@
+<?php
+$session = $this->getVariable('session');
+$fromUserData = $this->getVariable('fromUserData', false);
+$sender = $this->getSegment('customer')->get('customer');
+?>
+<div class="card-header clearfix">
+    <div class="avatar">
+        <a href="<?php echo $session['link'] ?>"<?php if ($session['link'][0] === '#'): ?> data-bs-toggle="modal" data-id="<?php echo $session['id'] ?>"<?php endif ?>>
+            <img src="<?php echo $session['avatar'] ?>" class="avatar-img rounded-circle" id="avatar-<?php echo $session['id'] ?>" alt="" />
+        </a>
+    </div>
+    <div class="info">
+        <h6 class="name"><?php echo $session['name'] ?></h6>
+        <?php if ($session['ratings']): ?>
+            <div class="rating">
+                <span class="fa fa-star" style="width:<?php printf('%.8f', $session['ratings'] * 20) ?>%"></span>
+                <span class="fa fa-star-o"></span>
+            </div>
+        <?php endif ?>
+    </div>
+</div>
+<div class="card-body chat-history" id="chat-history-<?php echo $session['id'] ?>">
+    <ul class="chat-list">
+        <?php
+        if (isset($session['messages']) && count($session['messages']) > 0) {
+            for ($m = 0; $m < count($session['messages']); $m++) {
+                $messageData = $session['messages'][(count($session['messages']) - $m) - 1];
+                $class = "self";
+                $avatar = $this->getPubUrl('frontend/images/avatar-holderplace.jpg');
+                if ($fromUserData["id"] == $messageData["sender_id"]) {
+                    $class = "self";
+                    if ($sender["avatar"] != "") {
+                        $avatar = $this->getUploadedUrl('customer/avatar/' . $sender["avatar"]);
+                    }
+                } else {
+                    $class = "others";
+                    if ($session['avatar'] != "") {
+                        $avatar = $session['avatar'];
+                    }
+                }
+                if (strpos($messageData["message"], '[sysmsg]') !== false) {
+                    $messageData["message"] = str_replace('[sysmsg]', '<i class="fa fa-info-circle" aria-hidden="true"></i>', $messageData["message"]);
+                    $class = $class . ' sys-red';
+                }
+                ?>
+                <li class="<?php echo $class; ?>"><img width="30" src="<?php echo $avatar; ?>" class="avatar-img rounded-circle" alt="<?php echo $session['name'] ?>"><span class="msg"><?php echo $messageData["message"]; ?></span><p class="time"><?php echo date("Y-m-d H:m", $messageData["date_sent"]); ?> <?php echo ($fromUserData["id"] == $messageData["sender_id"] ? ' <i class="fa fa-check-circle-o" aria-hidden="true"></i>' : ""); ?></p></li>
+                <?php
+            }
+        }
+        ?>
+    </ul>
+</div>
+<div class="card-footer">
+    <div class="dropup toolbar">
+        <div class="emoji">
+            <a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false"><span class="fa fa-meh-o"></span></a>
+            <ul class="dropdown-menu">
+                <?php
+                foreach ([
+            '&#x1F600', '&#x1F601', '&#x1F602', '&#x1F603', '&#x1F604',
+            '&#x1F605', '&#x1F606', '&#x1F609', '&#x1F60A', '&#x1F60B',
+            '&#x1F60E', '&#x1F60D', '&#x1F618', '&#x1F617', '&#x1F619',
+            '&#x1F61A', '&#x1F610', '&#x1F611', '&#x1F636', '&#x1F60F',
+            '&#x1F623', '&#x1F625', '&#x1F62E', '&#x1F62F', '&#x1F62A',
+            '&#x1F62B', '&#x1F60C', '&#x1F61B', '&#x1F61C', '&#x1F61D',
+            '&#x1F612', '&#x1F613', '&#x1F614', '&#x1F615', '&#x1F632',
+            '&#x1F616', '&#x1F61E', '&#x1F61F', '&#x1F622',
+            '&#x1F62D', '&#x1F626', '&#x1F627', '&#x1F628', '&#x1F629',
+            '&#x1F630', '&#x1F631', '&#x1F633', '&#x1F635', '&#x1F621',
+            '&#x1F620', '&#x1F637', '&#x1F607', '&#x1F608'
+                ] as $code):
+                    ?>
+                    <li><?php echo $code ?>;</li>
+                <?php endforeach ?>
+            </ul>
+        </div>
+        <a href="javascript:void(0);" data-bs-toggle="modal" data-target="div#tipsModal" data-id="<?php echo $session['to'] ?>" data-session="<?php echo $session['id'] ?>" data-server-id="<?php echo $session['chat_server_id']; ?>" data-recipient-id="<?php echo $session['chat_recipient_id']; ?>"><span class="fa fa-usd"></span></a><span class="font-12 note"><?php echo $this->translate('Note: Messages with tips appear at the top of the inbox'); ?></span>
+    </div>
+    <div class="input-box">
+        <textarea name="msg" class="form-control required" rows="2" x-webkit-speech data-required-msg="<?php echo $this->translate('Please enter message') ?>!"></textarea>
+        <button type="button" name="session" value="<?php echo $session['id'] ?>" data-server-id="<?php echo $session['chat_server_id']; ?>" data-recipient-id="<?php echo $session['chat_recipient_id']; ?>" class="btn btn-send btnSendMsg">
+            <?php echo $this->translate('Send') ?>
+        </button>
+    </div>
+</div>
+
+

@@ -1,0 +1,17 @@
+<div class="input-box">
+    <label class="control-label" aria-required="true"><?php echo $this->translate('Reward Points') ?></label>
+    <div class="cell"><?php echo $this->getCurrentPoints() ?></div>
+</div>
+<div class="input-box">
+    <label for="adjust-rewardpoints" class="control-label" aria-required="true"><?php echo $this->translate('Adjustment') ?></label>
+    <div class="cell">
+        <input type="number" name="adjust_rewardpoints" id="adjust-rewardpoints" class="form-control number" value="0" />
+    </div>
+</div>
+<div class="input-box">
+    <div class="cell"></div>
+    <div class="cell">
+        <?php echo $this->getChild('statement')->setVariable('customer', $this->getCustomer()) ?>
+    </div>
+</div>
+ 

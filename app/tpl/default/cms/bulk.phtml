@@ -1,0 +1,50 @@
+<?php
+$products = $this->getBulkProducts();
+$currency = $this->getContainer()->get('currency');
+?>
+<?php if (count($products)): ?>
+    <ul class="products-list row pe-1 ms-0 ps-0">
+        <?php
+        foreach ($products as $product) {
+            $thumbnail = $product->getThumbnail(null,'300x');
+            $prices = json_decode($product['bulk_price'], true);
+            if (count($prices) > 0) {
+                ?>
+                <li class="item col-lg-3 col-md-4 col-6 ps-1">
+                    <div class="itemc">
+                        <a href="<?php echo $product->getUrl() ?>" title="<?php echo $product['name'] ?>" class="product-image col-4">
+                            <img loading="lazy" src="<?php echo $thumbnail ?>" alt="<?php echo $product['name'] ?>" />
+                        </a>
+                        <h6 class="product-name">
+                            <a href="<?php echo $product->getUrl() ?>" title="<?php echo $product['name'] ?>">
+                                <?php echo $product['name'] ?>
+                            </a>
+                        </h6>
+                        <div class="price-box text-center">
+                            <?php
+                            krsort($prices);
+                            foreach ($prices as $qty => $price) {
+                                ?>
+                                <span class="regular-price font-20">
+                                    <span class="badge text-bg-danger"><?php echo $this->translate('Price') ?></span>
+                                    <span class="price" data-price="<?php echo $price ?>"><?php echo $currency->convert($price, true) ?></span>
+                                </span>
+                                <?php
+                                break;
+                            }
+                            ?>  
+                            <span class="old-price">
+                                <span class="badge text-bg-secondary"><?php echo $this->translate('MSRP') ?></span>
+                                <span class="price" data-price="<?php echo $product['price'] ?>"><?php echo $currency->convert($product['price'], true) ?></span>
+                            </span>
+                        </div>
+                    </div>
+                </li>
+                <?php
+            }
+        }
+        ?>
+    </ul>
+<?php else: ?>
+    <p class="no-product"><?php echo $this->translate('There are no products matching the selection.') ?></p>
+                                            <?php endif ?>

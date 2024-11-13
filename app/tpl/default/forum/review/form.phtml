@@ -1,0 +1,62 @@
+<?php
+$config = $this->getConfig();
+$reviews = new Redseanet\Forum\Model\Collection\Post\Review;
+$reviews->load('post_id', $this->getVariable('post_id', ''));
+$count = 0;
+foreach ($reviews as $review) {
+    if ($review['post_id'] == $this->getVariable('post_id', '')):
+        $count++;
+    endif;
+}
+?>
+<form action="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/save/') ?>" class="form-review" id="form-review" method="post" data-upload="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/post/upload/') ?>">
+    <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+    <input type="hidden" name="post_id" value="<?php echo $this->getVariable('post_id', '') ?>" />
+    <input type="hidden" name="reference" value="" />
+    <div class="fieldset">
+        <h5 class="float-start"><?php echo $this->translate('Article Review'); ?></h5>
+        <a href="" class="float-end font-12"><?php echo $this->translate('View All,%d Reivews', [$count]); ?>&GT;</a>
+        <blockquote></blockquote>
+        <?php if ($config['forum/review/subject'] > -1): ?>
+            <div class="input-box">
+                <label for="review:subject" class="col-form-label<?php if ($config['forum/review/subject']): ?> required<?php endif ?>"><?php echo $this->translate('Subject') ?></label>
+                <div class="cell">
+                    <input type="text" name="subject" id="review:subject" class="form-control<?php if ($config['forum/review/subject']): ?> required<?php endif ?>" maxlength="128" />
+                </div>
+            </div>
+        <?php endif ?>
+        <div class="input-box">
+            <!--<label for="review:content" class="col-form-label required"><?php echo $this->translate('Content') ?></label>-->
+            <div class="cell cont-box">
+                <textarea name="content" id="review:content" class="form-control required text" placeholder="<?php echo $this->translate('Release your Comments') ?>……"></textarea>
+            </div>
+        </div>
+        <?php if ($config['forum/review/anonymous']): ?>
+            <div class="input-box">
+                <div class="cell"></div>
+                <div class="cell">
+                    <input type="checkbox" id="review:anonymous" name="anonymous" value="1" />
+                    <label for="review:anonymous"><?php echo $this->translate('Review Anonymously') ?></label>
+                </div>
+            </div>
+        <?php endif ?>
+        <div class="tools-box">
+            <div class="operator-box-btn"><span class="face-icon fa fa-smile-o fa-lg"></span><?php /*<span class="img-icon fa fa-image"></span> */ ?></div>
+        </div>
+        <?php if ($config['forum/review/captcha']): ?>
+            <div class="input-box float-start col-10 captcha">
+                <div class="mask"></div>
+                <div class="inner">
+                    <label for="review:captcha" class="col-form-label"><?php echo $this->translate('Captcha') ?></label>
+                    <div class="cell">
+                        <img src="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/review/captcha/') ?>" alt="" class="captcha" height="26" width="70" />
+                        <input type="text" name="captcha" class="form-control required captcha" maxlength="5" id="review:captcha" autocomplete="off" spellcheck="false" placeholder="<?php echo $this->translate('Captcha') ?>" />
+                    </div>
+                </div>
+            </div>
+        <?php endif ?>
+        <div class="buttons-set float-end col-2">
+            <button type="submit" class="btn btn-theme"><?php echo $this->translate('Review') ?></button>
+        </div>
+    </div>
+</form>

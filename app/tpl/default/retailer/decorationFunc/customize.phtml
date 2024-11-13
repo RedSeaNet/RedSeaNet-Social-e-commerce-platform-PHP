@@ -1,0 +1,185 @@
+<?php
+$data_tag = $this->getVariable("data_tag");
+$template_id = $this->getVariable("template_id");
+$Infos = $this->getCustomizeInfo($template_id,1);
+$Info = json_encode($Infos);
+
+ ?>
+
+
+<ul class="nav nav-tabs" id="myTab" style="margin:11px 18px" > 
+      <li><a href="#uploadPic">基本设置</a></li> 
+ </ul> 
+       
+ <div class="tab-content"> 
+<div class="tab-pane" id="uploadPic" >
+<div style="margin:26px">
+
+
+ <div class="rows">
+  自定义页面名称: &nbsp;<input type="text" id='title'  placeholder="" > &nbsp;
+ &nbsp;<button onclick="doAdd()" class="btn btn-danger btn-sm">增 加</button> 
+ </div>
+
+
+<hr width="99%" style="border-color:#e8c7b6" > 
+<div class="rows">
+	<ul class="infoList">
+
+	
+	</ul> 	
+</div>
+</div>
+</div>
+
+ </div> 
+  <input type="hidden" id='focusBtn' >	     
+
+<script> 
+      $(function () { 
+      $('#myTab a:first').tab('show');
+        $('#myTab a').click(function (e) {          
+          e.preventDefault();//阻止a链接的跳转行为 
+          $(this).tab('show');//显示当前选中的链接及关联的content
+ 
+        }) 
+      }) 
+</script>
+    
+<script>
+
+	var Info = {info1:JSON.parse(<?php echo $Info ?>)};
+	$(document).ready(function(){		
+		
+		$('.infoList').html(template('li_menu',Info));
+	    
+	});	
+	
+	function changeParentPageSelect(jsons){
+		var obj = $("#page_type_select option[value=-1]",parent.document);
+		var htmls = "";
+		$.each(jsons,function(i,o){
+		
+			htmls += "<option value="+o.id+" page_type=1 >&nbsp; |- "+o.template_name+"</option>";
+		});
+		
+		obj.nextAll().remove();
+		obj.after(htmls);
+	}
+	
+	
+	function doAdd() {  
+     var title = $('#title').val();
+     if($.trim(title)=="")
+     {
+     	layer.msg('请输入名称', {shade: [0.3,'#fff'],time: 1200});
+		return;
+     }
+     $.ajax({  
+          url: '<?php echo $this->getBaseUrl('retailer/store/customizeTemplateAdd') ?>' ,  
+          type: 'POST',  
+          data: {template_name:title,parent_id:'<?php echo $template_id ?>',page_type:1},  
+          beforeSend:function(){
+            layer.load(1, {shade: [0.1,'#fff'] });	
+          },  
+          success: function (json) {  
+        	if(json.status==0){
+        		Info = {};
+        		Info.info1 = JSON.parse(json.Info);
+        		$('.infoList').html(template('li_menu',Info));	
+        	}
+ 
+        	layer.closeAll();
+        	changeParentPageSelect(Info.info1);
+          },  
+          error: function (json) {  
+           
+          }  
+     });  
+}
+
+	function modify(obj){
+		$li = $(obj).closest("li");
+		$li.find('div.adjust').find('span').hide();
+		$li.find('div.adjust').find('input').show();
+		$li.find('button.mod').hide();
+		$li.find('button.save').show();
+		
+	}
+	
+	function save(obj,id){
+		$li = $(obj).closest("li");
+		var template_name = $li.find('div.adjust').find("input[name='template_name']").val();
+		$.ajax({  
+          url: '<?php echo $this->getBaseUrl('retailer/store/customizeTemplateSave') ?>' ,  
+          type: 'POST',  
+          data: {id:id,template_name:template_name,parent_id:'<?php echo $template_id ?>',page_type:1},
+          beforeSend:function(){
+            layer.load(1, {shade: [0.1,'#fff'] });	
+          },  
+          success: function (json) {  
+        	if(json.status==0){
+        		$li.find('div.adjust').find("span[name='template_name']").html(template_name);
+				$li.find('div.adjust').find('span').show();
+				$li.find('div.adjust').find('input').hide();
+				$li.find('button.mod').show();
+				$(obj).hide();
+				
+				Info.info1 = JSON.parse(json.Info);
+				changeParentPageSelect(Info.info1);
+					
+        	}
+        	layer.closeAll();
+          },  
+          error: function (json) {  
+           
+          }  
+    });
+				
+	}
+	
+	function deleteInfo(id){
+	$.ajax({  
+          url: '<?php echo $this->getBaseUrl('retailer/store/customizeTemplateDelete') ?>' ,  
+          type: 'POST',  
+          data: {id:id,parent_id:'<?php echo $template_id ?>',page_type:1},
+          beforeSend:function(){
+            layer.load(1, {shade: [0.1,'#fff'] });	
+          },  
+          success: function (json) {  
+        	if(json.status==0){
+ 
+        		Info.info1 = JSON.parse(json.Info);
+        		$('.infoList').html(template('li_menu',Info));	
+        		changeParentPageSelect(Info.info1);
+        	}
+        	layer.closeAll();
+          },  
+          error: function (json) {  
+           
+          }  
+    });
+		
+	} 
+
+
+</script>
+
+<script id="li_menu" type="text/html" >
+	<li>
+
+	<div class='title' style="text-align: center;" >页面名称</div>
+	<div class="url" style="text-align: center;"  >链 接</div>
+	<div style="text-align: center;width:80px"  >操 作</div>
+	<div style="clear:both"></div>			
+	</li>
+	
+	{{each info1 as value i}}
+	<li>
+	<div class='title adjust' ><input type="text" name='template_name' value="{{value.template_name}}" style="display:none" ><span name='template_name'>{{value.template_name}}</span></div>
+	<div class="url"  ><span name='url'>{{value.url}}</span></div>
+	<div class='adjust' ><button class="btn btn-success btn-xs mod" onclick="modify(this)" >修 改</button> <button class="btn btn-primary btn-xs save" onclick="save(this,{{value.id}})" style="display:none" >保 存</button>  <button class="btn btn-warning btn-xs" onclick='deleteInfo({{value.id}})' >删 除</button></div>
+	<div style="clear:both"></div>			
+	</li>
+	 {{/each}}
+</script>

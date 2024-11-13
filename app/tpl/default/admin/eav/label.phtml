@@ -1,0 +1,78 @@
+<?php
+$model = $this->getVariable('model');
+$label = $model->getLabel();
+$options = $model->getOptions();
+?>
+<div class="input-box">
+    <label class="control-label required">
+        <?php echo $this->translate('Label') ?>
+    </label>
+    <div class="cell">
+        <?php foreach ($this->getLanguages() as $id => $name): ?>
+            <div class="input-box">
+                <label for="label-<?php echo $id ?>" class="control-label">
+                    <?php echo $name ?>
+                </label>
+                <div class="cell">
+                    <input type="text" name="label[<?php echo $id ?>]" id="label-<?php echo $id ?>"
+                           class="form-control required" value="<?php echo $label[$id] ?? '' ?>"/>
+                </div>
+            </div>
+        <?php endforeach ?>
+    </div>
+</div>
+<div class="input-box">
+    <label class="control-label">
+        <?php echo $this->translate('Options') ?>
+    </label>
+    <div class="cell" id="attribute-options" data-base="{'#input':['select','radio','checkbox','multiselect']}">
+        <?php
+        foreach ($options as $key => $option):
+            if (count($options) > 1 && ($key === 'order' || $key === 'code')) {
+                continue;
+            }
+            $j = 0;
+            ?>
+            <div class="template">
+                <?php
+                foreach ($this->getLanguages() as $id => $name):
+                    ?>
+                    <div class="input-box">
+                        <label class="control-label required">
+                            <?php echo $name ?>
+                        </label>
+                        <div class="cell">
+                            <input type="text" name="option[<?php echo $id ?>][<?php if (is_numeric($key)) echo '-', $key ?>]" class="form-control required" value="<?php echo $option[$id] ?? '' ?>" />
+                        </div>
+                        <?php if ($j++ === 0): ?>
+                            <a href="javascript:void(0);" class="delete" tabindex="-1">
+                                <span class="fa fa-remove" aria-hidden="true"></span>
+                                <span class="sr-only"><?php echo $this->translate('Delete') ?></span>
+                            </a>
+                        <?php endif ?>
+                    </div>
+                <?php endforeach ?>
+                <div class="input-box">
+                    <label class="control-label required">
+                        <?php echo $this->translate('Code') ?>
+                    </label>
+                    <div class="cell">
+                        <input type="text" name="option-code[<?php if (is_numeric($key)) echo '-', $key ?>]" class="form-control required" value="<?php echo $options['code'][$key] ?? '' ?>" maxlength="45" oninput="value=value.replace(/[^\w_]/g,'');" />
+                    </div>
+                </div>
+                <div class="input-box">
+                    <label class="control-label">
+                        <?php echo $this->translate('Sort Order') ?>
+                    </label>
+                    <div class="cell">
+                        <input type="text" name="option-order[<?php if (is_numeric($key)) echo '-', $key ?>]" class="form-control digits" value="<?php echo $options['order'][$key] ?? '' ?>"/>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach ?>
+        <a href="javascript:void(0);" class="add" data-id="1">
+            <span class="fa fa-plus-square" aria-hidden="true"></span>
+            <span class="sr-only"><?php echo $this->translate('Add') ?></span>
+        </a>
+    </div>
+</div>

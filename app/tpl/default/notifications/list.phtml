@@ -1,0 +1,124 @@
+<?php
+$noticemessages = $this->getNotifications(["core_notifications.type" => 1, "core_notifications.status" => 0]);
+$mymessages = $this->getNotifications(["core_notifications.type" => 0, "core_notifications.status" => 0]);
+$systemTab = true;
+if (!(count($noticemessages) > 0)) {
+    $systemTab = false;
+}
+$noticemessagesRead = $this->getNotifications(["core_notifications.type" => 1, "core_notifications.status" => 1]);
+$mymessagesRead = $this->getNotifications(["core_notifications.type" => 0, "core_notifications.status" => 1]);
+$unreadIds = [];
+?>
+<ul id="messagecenter" class="nav nav-tabs text-center" role="tablist">
+    <li class="col-6"><a href="div#noticemessage" role="tab" data-bs-toggle="tab" class="w-100 p-2 <?php echo ($systemTab ? 'active' : ''); ?>" style="display: block">系统通知</a></li>
+    <li class="col-6"><a href="div#mymessage" role="tab" data-bs-toggle="tab" class="w-100 p-2 <?php echo (!$systemTab ? 'active' : ''); ?>" style="display: block">我的通知</a></li>
+</ul>
+<div id="messagecentercontent" class="tab-content">
+    <div class="tab-pane <?php echo ($systemTab ? 'active' : ''); ?> p-2" id="noticemessage">
+        <ul class="ps-0" id="systemnotificatons" data-url="<?php echo $this->getBaseUrl('notifications/index/list/?is_json=true&type=1') ?>">
+            <?php
+            if (count($noticemessages) > 0) {
+                for ($m = 0; $m < count($noticemessages); $m++) {
+                    ?>
+                    <li class="p-4 m-2 item" style="background-color: #F8F8F8; border-radius: 0.5rem;">
+                        <div style="border-bottom: 1px dotted #eee;" class="d-flex justify-content-between"><h6 class="title"><?php echo $noticemessages[$m]["title"]; ?></h6>
+                            <div><?php echo $this->getTime($noticemessages[$m]["created_at"]); ?>&nbsp;&nbsp;<span class="badge badge-danger">New</span></div></div>
+                        <div class="pt-2 content"><?php echo $noticemessages[$m]["content"]; ?></div>
+                    </li>
+                    <?php
+                    $unreadIds[] = $noticemessages[$m]["id"];
+                }
+            }
+            if (count($noticemessagesRead) > 0) {
+                for ($m = 0; $m < count($noticemessagesRead); $m++) {
+                    ?>
+                    <li class="p-4 m-2 item" style="background-color: #F8F8F8; border-radius: 0.5rem;">
+                        <div style="border-bottom: 1px dotted #eee;" class="d-flex justify-content-between"><h6 class="title"><?php echo $noticemessagesRead[$m]["title"]; ?></h6>
+                            <div><?php echo $this->getTime($noticemessagesRead[$m]["created_at"]); ?></div></div>
+                        <div class="pt-2 content"><?php echo $noticemessagesRead[$m]["content"]; ?></div>
+                    </li>
+                    <?php
+                }
+            }
+            if (count($noticemessages) == 0 && count($noticemessagesRead) == 0) {
+                ?>
+                <li><?php echo $this->translate('There are no notifications'); ?>.</li>
+                <?php
+            }
+            ?>
+        </ul>
+        <!-- status elements -->
+        <div class="systemnotificatons-scroller-status">
+            <div class="infinite-scroll-request loader-ellips text-center">
+                <img src="<?php echo $this->getPubUrl('frontend/images/loding.gif')?>" />
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane p-2 <?php echo (!$systemTab ? 'active' : ''); ?>" id="mymessage">
+        <ul class="ps-0"  id="mynotificatons" data-url="<?php echo $this->getBaseUrl('notifications/index/list/?is_json=true&type=0') ?>">
+            <?php
+            if (count($mymessages) > 0) {
+                for ($m = 0; $m < count($mymessages); $m++) {
+                    ?>
+                    <li class="p-4 m-2 item" style="background-color: #F8F8F8; border-radius: 0.5rem;">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <img src="<?php echo $mymessages[$m]['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $mymessages[$m]['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" class="rounded-circle" width="40" /> 
+                                </div>
+                                <div class="">
+                                    <h6 class="title">&nbsp;<?php echo $mymessages[$m]["title"]; ?></h6>
+                                    <p class="pb-0 font-12">&nbsp;<?php echo $this->getTime($mymessages[$m]["created_at"]); ?></p>
+                                </div>
+                            </div>
+                            <div>&nbsp;<span class="badge  text-bg-danger">New</span></div>
+                        </div>
+                    </li>
+                    <?php
+                    $unreadIds[] = $mymessages[$m]["id"];
+                }
+            }
+            if (count($mymessagesRead) > 0) {
+                for ($m = 0; $m < count($mymessagesRead); $m++) {
+                    ?>
+                    <li class="p-4 m-2 item" style="background-color: #F8F8F8; border-radius: 0.5rem;">
+                        <div class="">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <img src="<?php echo $mymessagesRead[$m]['avatar'] ? $this->getUploadedUrl('customer/avatar/' . $mymessagesRead[$m]['avatar']) : $this->getPubUrl('frontend/images/avatar-holderplace.jpg') ?>" class="rounded-circle" width="40" /> 
+                                </div>
+                                <div class="">
+                                    <h6 class="title">&nbsp;<?php echo $mymessagesRead[$m]["title"]; ?></h6>
+                                    <p class="pb-0 font-12">&nbsp;<?php echo $this->getTime($mymessagesRead[$m]["created_at"]); ?></p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+                    <?php
+                }
+            }
+            if (count($mymessages) == 0 && count($mymessagesRead) == 0) {
+                ?>
+                <li><?php echo $this->translate('There are no notifications'); ?>.</li>
+                <?php
+            }
+            ?>
+        </ul>
+        <!-- status elements -->
+        <div class="mynotificatons-scroller-status">
+            <div class="infinite-scroll-request loader-ellips text-center">
+                <img src="<?php echo $this->getPubUrl('frontend/images/loding.gif')?>" />
+            </div>
+        </div>
+    </div>
+</div>
+<?php
+if (count($unreadIds) > 0) {
+    foreach ($unreadIds as $id) {
+        if (!empty($id)) {
+            $this->updateReadStatus($id);
+        }
+    }
+}
+?>

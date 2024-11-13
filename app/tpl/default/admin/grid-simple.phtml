@@ -1,0 +1,165 @@
+<?php
+$attributes = $this->getVariable('attributes');
+$count = count($attributes);
+$query = $this->getQuery();
+?>
+<div class="grid">
+    <table class="table table-hover table-striped table-no-border">
+        <colgroup>
+            <?php if ($this->getMessAction()): ?>
+                <col width="1" />
+            <?php endif ?>
+            <?php
+            foreach ($attributes as $attr => $name):
+                if (isset($name['label'])):
+                    ?>
+                    <col <?php if (isset($name['width'])): ?> width="<?php echo $name['width'] ?>"<?php endif ?>/>
+                    <?php
+                endif;
+            endforeach;
+            ?>
+            <?php if ($this->getAction()): ?>
+                <col width="1" />
+            <?php endif ?>
+        </colgroup>
+        <thead class="sort-by">
+            <tr>
+                <?php if ($this->getMessAction()): ?>
+                    <th class="checkbox"><input type="checkbox" class="selectall" /></th>
+                <?php endif ?>
+                <?php
+                foreach ($attributes as $attr => $name):
+                    if (isset($name['label'])):
+                        ?>
+                        <th>
+                            <?php if (!isset($name['use4sort']) || $name['use4sort']): ?>
+                                <a href="<?php echo $this->getOrderByUrl($name['sortby'] ?? $attr) ?>"
+                                <?php if (isset($query['asc']) && $query['asc'] === $attr): ?>
+                                       class="asc"
+                                   <?php elseif (isset($query['desc']) && $query['desc'] === $attr): ?>
+                                       class="desc"
+                                   <?php endif ?>>
+                                   <?php endif ?>
+                                   <?php echo $this->translate($name['label'], [], $this->getTranslateDomain()) ?>
+                                   <?php
+                                   if (!isset($name['use4sort']) || $name['use4sort']) {
+                                       if (isset($query['asc']) && $query['asc'] === $attr) {
+                                           echo '<i class="fa fa-sort-up"></i>';
+                                       } else if (isset($query['desc']) && $query['desc'] === $attr) {
+                                           echo '<i class="fa fa-sort-down"></i>';
+                                       } else {
+                                           echo '<i class="fa fa-sort"></i>';
+                                       }
+                                   }
+                                   ?>
+                                   <?php if (!isset($name['use4sort']) || $name['use4sort']): ?>
+                                </a>
+                            <?php endif ?>
+                        </th>
+                        <?php
+                    endif;
+                endforeach;
+                ?>
+                <?php if ($this->getAction()): ?>
+                    <th class="action"><?php echo $this->translate('Action') ?></th>
+                <?php endif ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($this->getVariable('collection') as $item): ?>
+                <tr<?php if (!$this->getMessAction() && is_callable([$this, 'getRowLink'])): ?> data-href="<?php echo $this->getRowLink($item) ?>"<?php
+                endif;
+                if (isset($item['id'])):
+                    ?> data-id="<?php echo $item['id'] ?>"<?php endif ?>>
+                                                                                                    <?php if ($this->getMessAction()): ?>
+                        <td class="text-center checkbox"><input type="checkbox" name="id[]" value="<?php echo $item['id'] ?>" /></td>
+                    <?php endif ?>
+                    <?php
+                    foreach ($attributes as $attr => $name):
+                        if (isset($name['label'])):
+                            ?>
+                            <td<?php if (isset($name['class'])): ?> class="<?php echo $name['class'] ?>"<?php endif ?>>
+                                <?php
+                                if (isset($item[$attr])) {
+                                    $value = isset($name['handler']) && is_callable($name['handler']) ? $name['handler']($item[$attr], $item) : $item[$attr];
+                                    if (isset($name['editable']) && $name['editable']) {
+                                        echo $this->getInputBox($attr, $name + ['value' => $value]);
+                                    } else if (isset($name['type']) && $name['type'] === 'image') {
+                                        echo '<img src="' . $this->getResourceUrl('' . $value) . '" alt="" />';
+                                    } else if (isset($name['type']) && $name['type'] === 'icon') {
+                                        echo '<i class="fa fa-' . $value . '" ></i>';
+                                    } else if (isset($name['type']) && $name['type'] === 'price' && isset($name['currency'])) {
+                                        echo $name['currency']->format($value);
+                                    } else if (isset($name['type']) && $name['type'] === 'selecttree') {
+
+                                        if (isset($value) && $value != '') {
+                                            $tmpA = [];
+                                            foreach ($name['options'] as $tmpc) {
+                                                if ((int) $value == $tmpc['id']) {
+                                                    $tmpA[] = $tmpc['name'];
+                                                }
+                                            }
+                                            echo implode(',', $tmpA);
+                                        } else {
+                                            echo '';
+                                        }
+                                    } else {
+                                        echo is_array($value) ? implode(',', $value) : (isset($name['options'][$value]) ? $this->translate($name['options'][$value], [], $this->getTranslateDomain()) : $value);
+                                    }
+                                }
+                                ?>
+                            </td>
+                            <?php
+                        endif;
+                    endforeach;
+                    ?>
+                    <?php if ($this->getAction()): ?>
+                        <td class="text-center action">
+                            <?php
+                            foreach ($this->getAction() as $action) {
+                                if (is_callable([$this, $action])) {
+                                    echo $this->$action($item);
+                                }
+                            }
+                            ?>
+                        </td>
+                    <?php endif ?>
+                </tr>
+            <?php endforeach ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <?php if ($this->getMessAction()) { ?>
+                    <td class="checkbox">
+                        <input type="checkbox" class="selectall" />
+                        <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+                    </td>
+                    <td colspan="<?php printf('%d', $count /= 2) ?>" class="text-start mess-action">
+                        <?php
+                        foreach ($this->getMessAction() as $action) {
+                            if (is_callable([$this, $action])) {
+                                echo $this->$action();
+                            }
+                        }
+                        ?>
+                    </td>
+                    <td colspan="<?php echo $count ?>" class="text-end">
+                        <?php
+                        if (is_object($this->getVariable('collection'))) {
+                            echo $this->getChild('pager')->setCollection($this->getVariable('collection'));
+                        }
+                        ?>
+                    </td>
+                <?php } else { ?>
+                    <td colspan="<?php echo $count ?>" class="text-end">
+                        <?php
+                        if (is_object($this->getVariable('collection'))) {
+                            echo $this->getChild('pager')->setCollection($this->getVariable('collection'));
+                        }
+                        ?>
+                    </td>
+                <?php } ?>
+            </tr>
+        </tfoot>
+    </table>
+</div>

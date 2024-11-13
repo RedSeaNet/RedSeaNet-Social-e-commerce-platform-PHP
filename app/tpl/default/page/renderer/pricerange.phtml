@@ -1,0 +1,50 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+$parent = $this->getVariable('parent');
+$value = isset($item['value']) ? ($item['value'] && is_string($item['value']) ? json_decode($item['value']) : $item['value']) : [];
+?>
+<div class="form-group <?php echo $this->getVariable('boxClass') ?>">
+    <?php if (isset($item['label'])): ?>
+        <label for="<?php echo $id ?>" class="col-form-label<?php if (isset($item['required'])): ?> required<?php endif ?>">
+            <?php echo $this->translate($item['label']) ?>
+        </label>
+    <?php endif ?>
+    <div class="cell range">
+        <div class="input-group">
+            <span class="input-group-addon"><?php echo $this->getConfig()['i18n/currency/base'] ?></span>
+            <input type="number" name="<?php echo $key ?>" id="<?php echo $id ?>"<?php
+            if (!isset($item['attrs']['class'])):
+                ?> class="form-control number<?php if (isset($item['required'])): ?> required<?php endif ?> <?php
+                       if (isset($item['class'])) {
+                           echo $item['class'];
+                       }
+                       ?>"<?php endif ?> value="<?php echo $value[0] ?? '' ?>" <?php
+                   if (isset($item['attrs'])) {
+                       echo $parent->getAttrs($item['attrs']);
+                   }
+                   ?>/>
+        </div>
+        <span class="hyphen"></span>
+        <div class="input-group">
+            <span class="input-group-addon"><?php echo $this->getConfig()['i18n/currency/base'] ?></span>
+            <input type="number" name="<?php echo $key ?>" id="<?php echo $id ?>"<?php
+            if (!isset($item['attrs']['class'])):
+                ?> class="form-control number<?php if (isset($item['required'])): ?> required<?php endif ?> <?php
+                       if (isset($item['class'])) {
+                           echo $item['class'];
+                       }
+                       ?>"<?php endif ?><?php if(isset($value[0])): ?> min="<?php echo $value[0] ?>"<?php endif ?> value="<?php echo $value[1] ?? '' ?>" <?php
+                   if (isset($item['attrs'])) {
+                       echo $parent->getAttrs($item['attrs']);
+                   }
+                   ?>/>
+        </div>
+        <?php if (isset($item['comment'])): ?>
+            <div class="comment">
+                <?php echo nl2br($this->translate($item['comment'])) ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

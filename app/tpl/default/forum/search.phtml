@@ -1,0 +1,8 @@
+<form action="<?php echo $this->getBaseUrl('forum/post/search'); ?>" method="get">
+    <div class="input-group search-box">
+        <div class="input-group-addon"><span class="fa fa-search"></span></div>
+        <input class="form-control required" id="search-query" name="q" placeholder="<?php echo $this->translate('Enter the keywords for searching'); ?>" type="search" value="<?php echo $this->getQuery('q') ?>" />
+        <div class="input-group-addon input-addon-style "><button class="btn btn-submit" type="submit"><?php echo $this->translate('Search') ?></button></div>
+    
+    </div>
+</form>

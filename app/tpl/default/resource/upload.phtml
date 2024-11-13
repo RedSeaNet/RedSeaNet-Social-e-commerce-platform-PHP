@@ -1,0 +1,63 @@
+<?php
+$stores = $this->getStore();
+?>
+<div class="modal fade" id="modal-upload" tabindex="-1" data-keyboard="false" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="upload-form" class="form-inline" action="<?php echo $this->getSubmitUrl() ?>" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csrf" value="<?php echo $this->getCsrfKey() ?>" />
+                <div class="modal-header">
+                    <button type="button" class="btn close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="resource-modal-label"><?php echo $this->translate('Upload Resource') ?></h4>
+                </div>
+                <div class="modal-body">
+                    <nav class="nav">
+                        <?php echo $this->getChildrenCategories() ?>
+                    </nav>
+                    <div class="content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th colspan="4" class="text-center folder-name"></th>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $this->translate('Filename') ?></th>
+                                    <th><?php echo $this->translate('File Size') ?></th>
+                                    <th><?php echo $this->translate('Status') ?></th>
+                                    <th><?php echo $this->translate('Action') ?></th>
+                                </tr>
+                            </thead>
+                            <tbody id="upload-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="category_id" value="0" />
+                    <?php if (is_array($stores)): ?>
+                        <div class="input-box">
+                            <label class="col-form-label" for="store_id"><?php echo $this->translate('Store') ?></label>
+                            <select class="form-control" id="store_id" name="store_id">
+                                <?php foreach ($stores as $group => $store): ?>
+                                    <optgroup label="<?php echo $group ?>">
+                                        <?php foreach ($store as $id => $name): ?>
+                                            <option value="<?php echo $id ?>"><?php echo $name ?></option>
+                                        <?php endforeach ?>
+                                    </optgroup>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                    <?php else: ?>
+                        <input type="hidden" name="store_id" value="<?php echo $stores ?>" />
+                    <?php endif ?>
+                    <div class="input-box">
+                        <label class="col-form-label btn btn-theme" for="upload-element"><?php echo $this->translate('Select Resource') ?></label>
+                        <input id="upload-element" hidden="hidden" type="file" name="files[]" class="form-control" multiple="multiple" />
+                    </div>
+                    <button type="submit" class="btn btn-theme"><?php echo $this->translate('Upload') ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

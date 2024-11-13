@@ -1,0 +1,52 @@
+<?php
+$data_tag = $this->getVariable("data_tag");
+$part_id = $this->getVariable("part_id");
+?>
+<div>
+    <script id="editor" type="text/plain" style="width:1000px;height:450px;"></script>
+</div>	
+<input type="hidden" id='focusBtn' />	
+<script>
+    var data_tag = '<?php echo $data_tag; ?>';
+    var part_id = '<?php echo $part_id; ?>';
+    var obj = $('#' + part_id, parent.document).find('.view').find('.content.function-tag');
+    var data_param = $.trim(obj.attr('data-param')) == "" ? {} : JSON.parse(decodeURIComponent(obj.attr('data-param')));
+    var ue = UE.getEditor('editor');
+    var tempHtml = obj.html();
+    setTimeout(function () {
+        UE.getEditor('editor').setContent(tempHtml);
+    }, 800);
+    $(document).ready(function () {
+        for (key in data_param) {
+            $("#" + key).val(data_param[key]);
+        }
+    });
+    $('#focusBtn').click(function () {
+        data_param = {};
+        $('.params').each(function () {
+            var tempID = $(this).attr('id');
+            var tempVal = $(this).val();
+            data_param[tempID] = tempVal;
+        });
+        data_param = encodeURIComponent(JSON.stringify(data_param));
+        obj.attr('data-param', data_param);
+        obj.html(ue.getContent());
+        window.parent.layer.closeAll();
+    });
+    UE.registerUI('dialog', function (editor, uiName) {
+        var btn = new UE.ui.Button({
+            name: 'dialogbutton' + uiName,
+            title: 'Image',
+            cssRules: 'background-position: -380px 0px;',
+            onclick: function () {
+                $('#modal-insert').modal('show', this);
+                $(this).off('resource.selected').one('resource.selected', function (e, a) {
+                    editor.execCommand('inserthtml', "<img src='" + $('img', a).attr('src').replace(/resized\/\d+x\d*\//, '') + "'>");
+                });
+            }
+        });
+        return btn;
+    }, [74]);
+</script>
+
+

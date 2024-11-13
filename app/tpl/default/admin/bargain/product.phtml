@@ -1,0 +1,48 @@
+<div class="modal fade" id="productListModal" role="dialog" aria-labelledby="productListModalLabel" aria-hidden="true" data-url="<?php echo $this->getAdminUrl('catalog_product/productJson/?id=') ?>">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="grid products-list">
+                    <div class="filters" id="productfilters">
+                        <div class="input-box">
+                            <label class="control-label" for="filtersproductid">ID</label>
+                            <div class="cell">
+                                <input type="tel" name="productid" id="filtersproductid" class="form-control" value="<?php echo $query['id'] ?? '' ?>" />
+                            </div>
+                        </div>
+                        <div class="input-box">
+                            <label class="control-label" for="filtersproductname"><?php echo $this->translate('Name') ?></label>
+                            <div class="cell">
+                                <input type="text" name="productname" id="filtersproductname" class="form-control" value="<?php echo $query['name'] ?? '' ?>" />
+                            </div>
+                        </div>
+                        <div class="input-box">
+                            <label class="control-label" for="filtersproductsku"><?php echo $this->translate('SKU') ?></label>
+                            <div class="cell">
+                                <input type="text" name="productsku" id="filtersproductsku" class="form-control" value="<?php echo $query['sku'] ?? '' ?>" />
+                            </div>
+                        </div>
+                        <div class="input-box">
+                            <label class="control-label" for="filtersproductlimit"><?php echo $this->translate('Item(s) per page') ?></label>
+                            <div class="cell">
+                                <input type="tel" name="productlimit" id="filtersproductlimit" class="form-control" value="<?php echo $query['limit'] ?? 20 ?>" />
+                            </div>
+                        </div>
+                        <div class="buttons-set">
+                            <a type="button" id="filterssearchbutton" class="btn" data-url="<?php echo $this->getAdminUrl('baragin/productList/') ?>"><?php echo $this->translate('Search') ?></a>
+
+                        </div>
+                    </div>
+                    <div id="bargainproductlist" data-url="<?php echo $this->getAdminUrl('bargain/productList/') ?>">
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-confirm" data-dismiss="modal"><?php echo $this->translate('Confirm') ?></button>
+            </div>
+        </div>
+    </div>
+</div>

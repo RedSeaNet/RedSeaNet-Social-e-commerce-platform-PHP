@@ -1,0 +1,59 @@
+<?php
+$products = $this->getProducts();
+?>
+<?php if (count($products)): ?>
+    <dl class="products-grid">
+        <?php
+        $current = '';
+        foreach ($products as $item):
+            $product = $item->getProduct();
+            $date = date('Y-m-d', strtotime($item['created_at']));
+            $thumbnail = $product->getThumbnail();
+            if ($current !== $date):
+                if ($current !== ''):
+                    ?>
+                </ul>
+                </dd>
+            <?php endif ?>
+            <dt>
+                <span class="fa fa-circle-o" aria-hidden="true"></span>
+                <span class="viewed_title"><?php echo $date ?></span>
+            </dt>
+            <dd class="browsinghistory">
+                <ul class="clearfix row">
+                    <?php
+                    $current = $date;
+                endif;
+                ?>
+                <li class="item col-6 col-sm-4 col-md-3">
+                    <a href="<?php echo $product->getUrl() ?>" title="<?php echo $item['name'] ?>" class="product-image">
+                        <?php if (strpos($thumbnail, '//') !== false): ?>
+                            <img src="<?php echo $thumbnail ?>" alt="<?php echo $item['name'] ?>" />
+                        <?php elseif ($thumbnail): ?>
+                            <img loading="lazy" src="<?php
+                            echo $this->getResourceUrl('image/'), $thumbnail
+                            ?>" alt="<?php echo $product->offsetGet('name') ?>" />
+                             <?php else: ?>
+                            <img src="<?php echo $this->getPubUrl('images/placeholder.png') ?>" alt="<?php echo $product['name'] ?>" />
+                        <?php endif ?>
+                    </a>
+                    <h6 class="product-name">
+                        <a href="<?php echo $product->getUrl() ?>">
+                            <?php echo $product['name'] ?>
+                        </a>
+                    </h6>
+                    <div class="price-box">
+                        <?php echo $this->getChild('price')->setVariable('product', $product) ?>
+                    </div>
+                </li>
+                <?php
+            endforeach;
+            ?>
+        </ul>
+    </dd>
+    </dl>
+    <?php
+else :
+    echo '<p class="pt-4">' . $this->translate('you have no browsing history!') . '<p>';
+endif;
+?>

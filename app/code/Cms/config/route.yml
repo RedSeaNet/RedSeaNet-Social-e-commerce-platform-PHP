@@ -1,0 +1,7 @@
+---
+default:
+    controller: Redseanet\Cms\Controller\PageController
+cms_page:
+    route: Redseanet\Cms\Route\Page
+    priority: 50
+

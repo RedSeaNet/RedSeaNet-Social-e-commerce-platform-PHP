@@ -1,0 +1,22 @@
+---
+rewardpoints:
+    icon: money
+    title: Reward Points Management
+    priority: 20
+    children:
+        -
+            link: rewardpoints/
+            operation: 'Admin\RewardPoints::index'
+            title: Reward Points List
+            priority: 10
+        -
+            link: rewardpoints/statisticsWithCustomer/
+            operation: 'Admin\RewardPoints::statisticsWithCustomer'
+            title: Reward Points Statistics With Customer
+            priority: 20
+        -
+            link: config/rewardpoints/
+            operation: 'Admin\Config::rewardpoints'
+            title: Reward Points
+            priority: 30
+       

@@ -1,0 +1,9 @@
+<?php
+
+$promotions = $this->getProductPromotion();
+if (count($promotions) > 0) {
+    foreach ($promotions as $promotion) {
+        echo '<p>' . $this->translate('Sale') . ': ' . $promotion->offsetGet('name') . '</p>';
+    }
+}
+?>

@@ -1,0 +1,7 @@
+---
+catalog_search:
+    title: Catalog Search
+    provider: \Redseanet\Catalog\Indexer\Search
+catalog_url:
+    title: Catalog Url
+    provider: \Redseanet\Catalog\Indexer\Url

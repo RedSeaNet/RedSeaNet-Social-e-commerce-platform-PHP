@@ -1,0 +1,9 @@
+---
+Redseanet\Sales\Model\Order.model.save.after:
+    -
+        listener: [\Redseanet\Bulk\Listeners\Member, afterOrderPlaced]
+        priority: 40
+dispatch.before:
+    -
+        listener: [\Redseanet\Bulk\Listeners\Cancel, cancel]
+        priority: 0

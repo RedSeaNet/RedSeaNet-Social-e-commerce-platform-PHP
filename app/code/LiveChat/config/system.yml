@@ -1,0 +1,107 @@
+---
+livechat:
+    label: Live Chat Configuration
+    children:
+        enable:
+            label: Enable
+            required: required
+            type: select
+            priority: 0
+            default: 0
+            scope: merchant
+            options:
+                - No
+                - Yes
+        service:
+            label: Service
+            required: required
+            type: select
+            priority: 1
+            scope: merchant
+            options:
+                local: local
+                pubnub: pubnub
+                connectycube: connectycube
+            default: local
+        pubnub_publishKey:
+            type: text
+            label: PubNub Publish Key
+            priority: 10
+            scope: merchant
+            attrs:
+                data-base: "'#service':'pubnub'"
+        pubnub_subscribeKey:
+            type: text
+            label: PubNub Subscribe key
+            priority: 20
+            scope: merchant
+            attrs:
+                data-base: "'#service':'pubnub'"
+        pubnub_secretKey:
+            type: text
+            label: PubNub Secret Key
+            priority: 30
+            scope: merchant
+            attrs:
+                data-base: "'#service':'pubnub'"
+        connectycube_appId:
+            type: text
+            label: ConnectyCube Application Id
+            priority: 40
+            scope: merchant
+            attrs:
+                data-base: "'#service':'connectycube'"
+        connectycube_authKey:
+            type: text
+            label: ConnectyCube Auth Key
+            priority: 50
+            scope: merchant
+            attrs:
+                data-base: "'#service':'connectycube'"
+        connectycube_authSecret:
+            type: text
+            label: ConnectyCube Auth Secret
+            priority: 60
+            scope: merchant
+            attrs:
+                data-base: "'#service':'connectycube'"
+        connectycube_userPassword:
+            type: text
+            label: ConnectyCube User Password
+            priority: 70
+            scope: merchant
+            default: Testing123456
+            attrs:
+                data-base: "'#service':'connectycube'"
+        path:
+            label: Path
+            type: text
+            required: required
+            default: '/'
+            priority: 80
+            scope: merchant
+        port:
+            label: Port
+            type: tel
+            priority: 90
+            scope: merchant
+        expiration:
+            label: Expiration of Uploaded Files in Days
+            type: tel
+            default: 7
+            scope: merchant
+            priority: 100
+        online_start:
+            label: Online Start Time
+            required: required
+            type: time
+            priority: 110
+            default: 00:00
+            scope: merchant
+        online_end:
+            label: Online End Time
+            required: required
+            type: time
+            priority: 120
+            default: 23:59
+            scope: merchant

@@ -1,0 +1,102 @@
+<?php
+$applications = $this->getApplication();
+$currency = $this->getCurrency();
+?>
+<div class="table-responsive">
+    <table class="table table-no-border refund-list">
+        <?php if (count($applications)): ?>
+            <colgroup>
+                <col width="116" />
+                <col />
+                <col width="1" />
+                <col width="1" />
+                <col width="1" />
+                <col width="1" />
+            </colgroup>
+            <thead>
+                <tr class="text-nowrap">
+                    <th class="text-start" colspan="2"><?php echo $this->translate('Details of the refund') ?></th>
+                    <th class="text-center col-lg-1 col-md-1"><?php echo $this->translate('Price') ?></th>
+                    <th class="text-center col-lg-1 col-md-1"><?php echo $this->translate('Refund Qty') ?></th>
+                    <th class="text-center col-lg-1 col-md-1"><?php echo $this->translate('Last Modified') ?></th>
+                    <th class="text-center col-lg-2 col-md-2"><?php echo $this->translate('Action') ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($applications as $application):
+                    $order = $application->getOrder();
+                    $flag = true;
+                    ?>
+                    <tr class="store">
+                        <th colspan="2">
+                            <?php echo $order->getStore()['name'] ?>
+                        </th>
+                        <th colspan="4" class="text-nowrap text-end">
+                            <span class="badge text-bg-danger"><?php echo $this->translate('Order ID') ?>:</span>
+                            <span><?php echo $order['increment_id'] ?></span>
+                        </th>
+                    </tr>
+                    <?php
+                    $items = $application->getItems();
+                    foreach ($items as $item):
+                        $product = $item['product'];
+                        $options = json_decode($item['options'], true);
+                        $thumbnail = $product->getThumbnail($options);
+                        ?>
+                        <tr class="list">
+                            <td>
+                                <a href="<?php echo $product->getUrl(); ?>"><img src="<?php echo strpos($thumbnail, '//') === false ? $this->getResourceUrl('image/' . $thumbnail) : $thumbnail ?>" alt="<?php echo $product['name'] ?>" width="100" height="100" /></a>
+                            </td>
+                            <td>
+                                <a href="<?php echo $product->getUrl(); ?>"><h6 class="product-name"><?php echo $product['name'] ?></h6></a>
+                                <?php
+                                if ($item['product_id'] && count($options)):
+                                    ?>
+                                    <dl class="options">
+                                        <?php
+                                        foreach ($product->getOptions() as $option):
+                                            if (isset($options[$option->getId()])):
+                                                ?>
+                                                <dt><?php echo $option['title'] ?></dt>
+                                                <dd>
+                                                    <?php
+                                                    echo (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect']) ?
+                                                            $option->getValue($options[$option->getId()]) : $options[$option->getId()])
+                                                    ?>
+                                                </dd>
+                                                <?php
+                                            endif;
+                                        endforeach;
+                                        ?>
+                                    </dl>
+                                <?php endif ?>
+                            </td>
+                            <td class="text-center"><?php echo $currency->convert($item['base_price'], true) ?></td>
+                            <td class="text-center"><?php echo (float) $item['refunded_qty'] ?></td>
+                            <?php if ($flag): ?>
+                                <td class="text-center text-nowrap date" rowspan="<?php echo count($items) ?>">
+                                    <span><?php echo $this->translate($this->getStatus($application['service'], $application['status'])) ?></span>
+                                    <span><?php echo date('Y-m-d<\b\r />H:i:s', strtotime($application['updated_at'])) ?></span>
+                                </td>
+                                <td class="text-center action text-nowrap" rowspan="<?php echo count($items) ?>">
+                                    <a href="<?php echo $this->getBaseUrl($this->getViewUrl()), '?id=', $application->getId() ?>"><?php echo $this->translate('Refund Details') ?></a>
+                                    <a href="<?php echo $this->getBaseUrl($this->getOrderUrl()), '?id=', $order->getId() ?>"><?php echo $this->translate('Order Details') ?></a>
+                                </td>
+                                <?php
+                                $flag = false;
+                            endif;
+                            ?>
+                        </tr>
+                        <?php
+                    endforeach;
+                endforeach;
+            else:
+                ?>
+                <tr>
+                    <td colspan="6" class="text-center"><?php echo $this->translate('You have placed no refund application.') ?></td>
+                </tr>
+            <?php endif ?>
+        </tbody>
+    </table>
+</div>

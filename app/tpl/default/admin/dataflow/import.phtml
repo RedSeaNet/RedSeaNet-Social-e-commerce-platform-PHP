@@ -1,0 +1,11 @@
+<div class="edit">
+    <h2 class="page-title"><?php echo $this->translate($this->getVariable('title')) ?></h2>
+    <div class="progress tab-pane active">
+        <div class="alert alert-info"><span class="fa fa-info-circle"></span> <?php echo $this->translate('The file has been received. Click start button to import.') ?></div>
+        <div class="alert alert-warning"><span class="fa fa-info-circle"></span> <?php echo $this->translate('We suggest you backing your database up before importing.') ?></div>
+        <div class="alert alert-warning"><span class="fa fa-info-circle"></span> <?php echo $this->translate('The website will be unavailable temporarily while importing.') ?></div>
+    </div>
+    <div class="buttons-set">
+        <button type="button" class="btn btn-theme" id="btn-start-import" data-import="<?php echo $this->getAdminUrl($this->getVariable('import_url')) ?>"><?php echo $this->translate('Start') ?></button>
+    </div>
+</div>

@@ -1,0 +1,48 @@
+<?php
+$poll = $this->getVariable('poll', []);
+$options = is_object($poll) ? $poll->getOptions()->load(true, true)->toArray() : [];
+?>
+<div class="input-box">
+    <label class="col-form-label" for="poll:title"><?php echo $this->translate('Title') ?></label>
+    <div class="cell">
+        <input id="poll:title" name="poll[title]" class="form-control" value="<?php echo $poll['title'] ?? "" ?>" />
+    </div>
+</div>
+<div class="input-box">
+    <label class="col-form-label"><?php echo $this->translate('Options') ?></label>
+    <ol class="options-list">
+        <li>
+            <input type="text" name="poll[description][]" class="form-control" value="<?php echo empty($options[0]) ? '' : array_shift($options)['description'] ?>" />
+        </li>
+        <li>
+            <input type="text" name="poll[description][]" class="form-control" value="<?php echo empty($options[0]) ? '' : array_shift($options)['description'] ?>" />
+            <a href="javascript:void(0);" class="add"><span class="fa fa-plus"></span></a>
+        </li>
+        <?php foreach ($options as $option): ?>
+            <li>
+                <input type="text" name="poll[description][]" class="form-control" value="<?php echo $option['description'] ?>" />
+                <a href="javascript:void(0);" class="add"><span class="fa fa-plus"></span></a>
+                <a href="javascript:void(0);" class="remove"><span class="fa fa-times"></span></a>
+            </li>
+        <?php endforeach ?>
+    </ol>
+    <template>
+        <li>
+            <input type="text" name="poll[description][]" class="form-control" />
+            <a href="javascript:void(0);" class="add"><span class="fa fa-plus"></span></a>
+            <a href="javascript:void(0);" class="remove"><span class="fa fa-times"></span></a>
+        </li>
+    </template>
+</div>
+<div class="input-box">
+    <label class="col-form-label" for="poll:max-choices"><?php echo $this->translate('Maximum Choices') ?></label>
+    <div class="cell">
+        <input type="tel" id="poll:max-choices" name="poll[max_choices]" class="form-control" value="<?php echo $poll['max_choices'] ?? 1 ?>" min="1" />
+    </div>
+</div>
+<div class="input-box" style="position: relative;">
+    <label class="col-form-label" for="poll:expired"><?php echo $this->translate('Expired at') ?></label>
+    <div class="cell">
+        <input type="date" id="poll:expired" name="poll[expired_at]" data-bs-toggle="datepicker" data-min-date="<?php echo date('Y-m-d', strtotime('+1day')) ?>" value="<?php echo $poll['expired_at'] ?? date('Y-m-d', strtotime('+' . $this->getConfig()['forum/post/expiration'] . 'day')) ?>" class="form-control required" />
+    </div>
+</div>

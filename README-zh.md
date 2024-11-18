@@ -5,8 +5,8 @@
 
 <div align="center">
 
-[官网](https://www.redseanet.com/) |
-[在线体验](http://www.store.redseanet/) |
+[官网](https://redseanet.com/) |
+[在线体验](http://store.redseanet/) |
 [帮助文档](https://redseanet.com/technology-sharing/ecomphp.html)
 
 </div>
@@ -15,13 +15,13 @@
 
 ### 更新说明
 
-点击查看   <a href="https://redseanet.com/technology-sharing/ecomphp/ecomphp_change_summary.html" target="_blank">更新记录</a>
+点击查看 <a href="https://redseanet.com/technology-sharing/ecomphp/ecomphp_change_summary.html" target="_blank">更新记录</a>
 
 ---
 
 ### 本地安装
 
-点击查看   <a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP/blob/master/readme/install.md" target="_blank">本地安装</a>
+点击查看 <a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP/blob/master/readme/install.md" target="_blank">本地安装</a>
 
 ---
 
@@ -51,8 +51,8 @@
 
 管理后台： https://store.redseanet.com/admin
 
-账号：     
-用户名： demo 
+账号：  
+用户名： demo
 密码： redseanet.com
 
 PC/WAP 端：http://store.redseanet/ （电脑/手机打开）
@@ -157,7 +157,6 @@ Elasticsearch（可选）
 
 欢迎<a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP" target="_blank">提交代码</a>
 
-
 ---
 
 ## 如何参与贡献
@@ -172,7 +171,7 @@ Fork 库出来, 编辑和 [提交一个 PR](https://github.com/RedSeaNet/RedSeaN
 
 邮箱： [info@redseanet.com](info@redseanet.com)
 
-微信： 
+微信：
 
 ![红海微信](readme/images/redseanet-weichat.jpg)
 

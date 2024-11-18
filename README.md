@@ -5,8 +5,8 @@
 
 <div align="center">
 
-[Official Website](https://www.redseanet.com/) |
-[Demo](http://www.store.redseanet/) |
+[Official Website](https://redseanet.com/) |
+[Demo](http://store.redseanet/) |
 [Help Document](https://redseanet.com/technology-sharing/ecomphp.html)
 
 </div>
@@ -15,13 +15,13 @@
 
 ### Change Log
 
-Click and See  <a href="https://redseanet.com/technology-sharing/ecomphp/ecomphp_change_summary.html" target="_blank">Change Log</a>
+Click and See <a href="https://redseanet.com/technology-sharing/ecomphp/ecomphp_change_summary.html" target="_blank">Change Log</a>
 
 ---
 
 ### Install Local
 
-Click and See   <a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP/blob/master/readme/install.md" target="_blank">Install Local</a>
+Click and See <a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP/blob/master/readme/install.md" target="_blank">Install Local</a>
 
 ---
 
@@ -52,7 +52,7 @@ RedSeaNet Social e-commerce platform(PHP) similar to the XIAOHONGSHU(https://www
 Administrator Panel： https://store.redseanet.com/admin
 
 Account
-Username： demo 
+Username： demo
 Password: redseanet.com
 
 PC/WAP：http://store.redseanet/ （PC/WAP）
@@ -124,7 +124,7 @@ Recomment Products
 
 ---
 
-### UI 
+### UI
 
 ![ui mobile](readme/images/ui-mobile.jpg)
 
@@ -155,7 +155,6 @@ Welcome <a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platfo
 
 Welcome <a href="https://github.com/RedSeaNet/RedSeaNet-Social-e-commerce-platform-PHP" target="_blank">Contribution</a>
 
-
 ---
 
 ## How to contribute
@@ -170,11 +169,11 @@ Please be very clear on your commit messages and pull request, empty pull reques
 
 Email： [info@redseanet.com](info@redseanet.com)
 
-Wechat： 
+Wechat：
 
 ![RedSeaNet Wechat](readme/images/redseanet-weichat.jpg)
 
-(≧∀≦)ゞOur team can support the platform's custom development services(≧∀≦)ゞ。
+(≧∀≦)ゞ Our team can support the platform's custom development services(≧∀≦)ゞ。
 
 ---
 

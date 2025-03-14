@@ -199,7 +199,7 @@ Apache License 2.0 is a open source license that allows people to freely use, mo
 
 The copyright information of third-party source code and binary files contained in this project is marked separately.
 
-All rights reserved Copyright © 2019-2024 RedSeaNet INC. (https://www.redseanet.com)
+All rights reserved Copyright © 2019-2025 RedSeaNet INC. (https://www.redseanet.com)
 
 All rights reserved.
 

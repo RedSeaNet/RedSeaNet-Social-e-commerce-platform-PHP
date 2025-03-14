@@ -37,7 +37,7 @@ class Review extends AbstractModel
     public function getDislikeCount()
     {
         if ($this->getId()) {
-            $tableGateway = $this->getTableGateway('forum_post_review_dislike');
+            $tableGateway = $this->getTableGateway('forum_dislike');
             $select = $tableGateway->getSql()->select();
             $select->columns(['count' => new Expression('count(1)')])
                     ->group('review_id')
@@ -50,7 +50,7 @@ class Review extends AbstractModel
 
     public function liked($id)
     {
-        return (bool) count($this->getTableGateway('forum_like')->select(['review_id' => $this->getId(), 'customer_id' => $id])->toArray());
+        return (bool) count($this->getTableGateway('forum_dislike')->select(['review_id' => $this->getId(), 'customer_id' => $id])->toArray());
     }
 
     public function like($id)
@@ -70,15 +70,15 @@ class Review extends AbstractModel
 
     public function disliked($id)
     {
-        return (bool) count($this->getTableGateway('forum_post_review_dislike')->select(['review_id' => $this->getId(), 'customer_id' => $id])->toArray());
+        return (bool) count($this->getTableGateway('forum_dislike')->select(['review_id' => $this->getId(), 'customer_id' => $id])->toArray());
     }
 
     public function dislike($id)
     {
         if ($this->disliked($id)) {
-            $this->getTableGateway('forum_post_review_dislike')->delete(['review_id' => $this->getId(), 'customer_id' => $id]);
+            $this->getTableGateway('forum_dislike')->delete(['review_id' => $this->getId(), 'customer_id' => $id]);
         } else {
-            $this->getTableGateway('forum_post_review_dislike')->insert(['review_id' => $this->getId(), 'customer_id' => $id]);
+            $this->getTableGateway('forum_dislike')->insert(['review_id' => $this->getId(), 'customer_id' => $id]);
         }
         $this->setData('dislike', $this->getDislikeCount())->save();
         return $this->storage['dislike'];

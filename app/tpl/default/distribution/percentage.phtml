@@ -1,0 +1,102 @@
+<?php
+$item = $this->getVariable('item');
+$key = $this->getVariable('key');
+$id = trim(preg_replace('/\W+/', '-', $key), '-');
+$parent = $this->getVariable('parent');
+$value = explode(',', $item['value']);
+$class = $this->getVariable('boxClass');
+foreach ($value as $k => $p):
+    ?>
+    <div class="input-box distribution <?php echo $class ?>">
+        <label for="<?php echo $id, '-', $k ?>" class="col-form-label required">
+            <?php echo $this->translate('Level %s', [$k + 1]) ?>
+        </label>
+        <div class="cell">
+            <div class="input-group">
+                <input type="tel" name="<?php echo $key ?>[<?php echo $k ?>]" id="<?php echo $id, '-', $k ?>"<?php
+                if (!isset($item['attrs']['class'])):
+                    ?> class="form-control number required <?php
+                           if (isset($item['class'])) {
+                               echo $item['class'];
+                           }
+                           ?>"<?php endif ?> value="<?php echo $p ?>" min="0" <?php
+                       if (isset($item['attrs'])) {
+                           echo $parent->getAttrs($item['attrs']);
+                       }
+                       ?>/>
+                <span class="input-group-addon">%</span>
+            </div>
+        </div>
+    </div>
+    <?php
+endforeach;
+if ($this->showTemplate()):
+    ?>
+    <template id="tmpl-distribution">
+        <div class="input-box distribution <?php echo $class ?>">
+            <label for="<?php echo $id ?>-{id}" class="col-form-label required">
+                <?php echo $this->translate('Level %s', ['{id}']) ?>
+            </label>
+            <div class="cell">
+                <div class="input-group">
+                    <input type="tel" name="{tab}<?php echo substr($key, strpos($key, '/')) ?>[{id}]" id="<?php echo $id ?>-{id}"<?php
+                    if (!isset($item['attrs']['class'])):
+                        ?> class="form-control number required <?php
+                               if (isset($item['class'])) {
+                                   echo $item['class'];
+                               }
+                               ?>"<?php endif ?> value="" min="0" <?php
+                           if (isset($item['attrs'])) {
+                               echo $parent->getAttrs($item['attrs']);
+                           }
+                           ?>/>
+                    <span class="input-group-addon">%</span>
+                </div>
+            </div>
+        </div>
+    </template>
+<?php endif ?>
+<div class="input-box" id="<?php echo $tab = substr($key, 0, strpos($key, '/')) ?>-distribution-placeholder">
+    <label class="col-form-label required">
+        <?php echo $this->translate('Surplus') ?>
+    </label>
+    <div class="cell">
+        <div class="input-group">
+            <input type="tel" id="<?php echo $tab ?>-surplus"<?php
+            if (!isset($item['attrs']['class'])):
+                ?> class="form-control number <?php
+                       if (isset($item['class'])) {
+                           echo $item['class'];
+                       }
+                       ?>"<?php endif ?> min="0" readonly="readonly" />
+            <span class="input-group-addon">%</span>
+        </div>
+    </div>
+</div>
+<script>
+    (function () {
+        "use strict";
+        $('#<?php echo $tab ?>-level').change(function () {
+            var v = $(this).val();
+            var t = $(this).parents('.input-box').first().siblings('.input-box.distribution');
+            var n = t.length;
+            for (var i = n; i < v; i++) {
+                $('#<?php echo $tab ?>-distribution-placeholder').before($('#tmpl-distribution').html().replace(/{id}/g, i + 1).replace(/{tab}/g, '<?php echo $tab ?>'));
+            }
+            for (i = v; i < n; i++) {
+                $(t[i]).remove();
+            }
+        });
+        function calcSurplus() {
+            var s = 100;
+            $('#tab-<?php echo $tab ?> .distribution input').each(function () {
+                s -= $(this).val();
+            });
+            $('#<?php echo $tab ?>-surplus').val(s);
+        }
+        calcSurplus();
+        $('#tab-<?php echo $tab ?>').on('change', '.distribution input', function () {
+            calcSurplus();
+        });
+    })();
+</script>

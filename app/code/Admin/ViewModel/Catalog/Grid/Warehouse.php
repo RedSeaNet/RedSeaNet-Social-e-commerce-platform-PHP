@@ -42,7 +42,7 @@ class Warehouse extends PGrid
                 'type' => 'text'
             ],
             'country' => [
-                'label' => 'Country',
+                'label' => 'Country/Region',
                 'type' => 'text',
                 'use4sort' => false,
                 'use4filter' => false

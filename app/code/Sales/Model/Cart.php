@@ -13,28 +13,28 @@ use Redseanet\Lib\Stdlib\Singleton;
 use Redseanet\Sales\Model\Cart\Item;
 use Redseanet\Sales\Model\Collection\Cart as Collection;
 use Redseanet\Sales\Model\Collection\Cart\Item as ItemCollection;
+use Redseanet\Catalog\Model\Warehouse;
+use Redseanet\Catalog\Exception\OutOfStock;
 
-final class Cart extends AbstractModel implements Singleton
-{
+final class Cart extends AbstractModel implements Singleton {
+
     use \Redseanet\Log\Traits\Ip;
 
     protected static $instance = null;
     protected $items = null;
     protected $additional = null;
 
-    protected function construct()
-    {
+    protected function construct() {
         $this->init('sales_cart', 'id', [
             'id', 'customer_id', 'status', 'additional', 'customer_note', 'discount_detail',
             'billing_address_id', 'shipping_address_id', 'billing_address', 'shipping_address',
             'is_virtual', 'free_shipping', 'base_currency', 'currency', 'base_subtotal',
             'shipping_method', 'payment_method', 'base_shipping', 'shipping', 'subtotal',
-            'base_discount', 'discount', 'base_tax', 'tax', 'base_total', 'total', 'coupon', 'ip'
+            'base_discount', 'discount', 'base_tax', 'tax', 'base_total', 'total', 'coupon', 'use_reward_point', 'use_balance', 'ip'
         ]);
     }
 
-    public function initInstance()
-    {
+    public function initInstance() {
         $baseCurrency = $this->getContainer()->get('config')['i18n/currency/base'];
         $currency = $this->getContainer()->get('request')->getCookie('currency', $baseCurrency);
         $segment = new Segment('customer');
@@ -67,8 +67,7 @@ final class Cart extends AbstractModel implements Singleton
     /**
      * @return Cart
      */
-    public static function instance()
-    {
+    public static function instance() {
         if (is_null(static::$instance) || !static::$instance['status']) {
             static::$instance = new static();
             static::$instance->initInstance();
@@ -76,8 +75,7 @@ final class Cart extends AbstractModel implements Singleton
         return static::$instance;
     }
 
-    public function abandon()
-    {
+    public function abandon() {
         $items = $this->getItems(true);
         $result = [];
         foreach ($items as $item) {
@@ -88,6 +86,7 @@ final class Cart extends AbstractModel implements Singleton
         }
         if (count($items)) {
             $this->storage['additional'] = '';
+            $this->storage['discount_detail'] = '';
             $this->collateTotals();
         } else {
             if (!empty($this->storage['status'])) {
@@ -100,8 +99,7 @@ final class Cart extends AbstractModel implements Singleton
         return $result;
     }
 
-    public function combine($cart)
-    {
+    public function combine($cart) {
         $id = $this->getId();
         try {
             $this->beginTransaction();
@@ -122,8 +120,7 @@ final class Cart extends AbstractModel implements Singleton
         static::$instance = $this;
     }
 
-    public function regenerate($cart = null, $currency = null, $baseCurrency = null)
-    {
+    public function regenerate($cart = null, $currency = null, $baseCurrency = null) {
         $segment = new Segment('customer');
         if (is_null($baseCurrency)) {
             $baseCurrency = $this->getContainer()->get('config')['i18n/currency/base'];
@@ -152,8 +149,7 @@ final class Cart extends AbstractModel implements Singleton
         return $cart;
     }
 
-    public function getItem($id)
-    {
+    public function getItem($id) {
         if (!$this->getId()) {
             return null;
         }
@@ -172,8 +168,7 @@ final class Cart extends AbstractModel implements Singleton
         return null;
     }
 
-    public function getItems($force = false)
-    {
+    public function getItems($force = false) {
         if (!$this->getId()) {
             return [];
         }
@@ -192,16 +187,14 @@ final class Cart extends AbstractModel implements Singleton
         return $this->items;
     }
 
-    public function getAdditional($key = null)
-    {
+    public function getAdditional($key = null) {
         if (is_null($this->additional)) {
             $this->additional = empty($this->storage['additional']) ? [] : json_decode($this->storage['additional'], true);
         }
         return $key ? ($this->additional[$key] ?? '') : $this->additional;
     }
 
-    public function isVirtual($storeId = null)
-    {
+    public function isVirtual($storeId = null) {
         foreach ($this->getItems() as $item) {
             if ($item['status'] && (is_null($storeId) || $item['store_id'] == $storeId) && !$item['is_virtual']) {
                 return false;
@@ -210,8 +203,7 @@ final class Cart extends AbstractModel implements Singleton
         return true;
     }
 
-    public function addItem($productId, $qty, $warehouseId, array $options = [], $sku = '', $collate = true, $languageId = '', $optionName = '', $image = '')
-    {
+    public function addItem($productId, $qty, $warehouseId, array $options = [], $option_value_id_string = '', $collate = true, $languageId = '', $optionName = '', $image = '') {
         if (!$this->getId()) {
             $this->regenerate();
         }
@@ -221,22 +213,15 @@ final class Cart extends AbstractModel implements Singleton
             $product = new Product();
         }
         $product->load($productId);
-        ksort($options);
-        if (!$sku) {
-            $sku = $product['sku'];
-            foreach ($options as $key => $value) {
-                $option = new Option();
-                $option->load($key);
-                if (in_array($option->offsetGet('input'), ['select', 'radio', 'checkbox', 'multiselect'])) {
-                    $value = $option->getValue($value, false);
-                    if (isset($value['sku']) && $value['sku'] !== '') {
-                        $sku .= '-' . $option->getValue($value, false)['sku'];
-                    }
-                } elseif ($value !== '' && $option['sku'] !== '') {
-                    $sku .= '-' . $option['sku'];
-                }
-            }
+        $warehouse = new Warehouse();
+        $warehouse->load($warehouseId);
+        $inventory = $warehouse->getInventory($productId, $option_value_id_string);
+        $left = empty($inventory) ? 0 : $inventory['qty'] - $inventory['reserve_qty'];
+        if (empty($inventory['status']) || $qty > $left) {
+            throw new OutOfStock('There are only ' . $left .
+                            ' left in stock. (Product: ' . $optionName . ')');
         }
+        $sku = $inventory["sku"];
         $this->getEventDispatcher()->trigger('cart.add.before', [
             'product_id' => $productId,
             'product' => $product,
@@ -244,17 +229,17 @@ final class Cart extends AbstractModel implements Singleton
             'warehouse_id' => $warehouseId,
             'sku' => $sku,
             'options' => $options,
-            'image' => $image
+            'image' => $image,
+            'option_value_id_string' => $option_value_id_string
         ]);
-
+        //echo $option_value_id_string;exit;
         $items = new ItemCollection();
         $items->where([
             'cart_id' => $this->getId(),
             'product_id' => $productId,
             'warehouse_id' => $warehouseId,
             'store_id' => $product['store_id'],
-            'sku' => $sku,
-            'options' => json_encode($options)
+            'option_value_id_string' => $option_value_id_string
         ]);
         $item = new Item();
         if ($items->count()) {
@@ -275,6 +260,7 @@ final class Cart extends AbstractModel implements Singleton
                 'is_virtual' => $product->isVirtual() ? 1 : 0,
                 'options' => json_encode($options),
                 'options_name' => $optionName,
+                'option_value_id_string' => $option_value_id_string,
                 'sku' => $sku,
                 'warehouse_id' => $warehouseId,
                 'weight' => $product['weight'] * $qty,
@@ -293,20 +279,19 @@ final class Cart extends AbstractModel implements Singleton
             'item' => $item
         ]);
         if ($collate) {
+            $this->clearDiscunt();
             $this->collateTotals();
         }
         $this->flushList('sales_cart');
         $this->flushList('sales_cart_item');
-
         return $this;
     }
 
-    public function changeQty($item, $qty, $collate = true)
-    {
+    public function changeQty($item, $qty, $collate = true) {
         if (is_numeric($item)) {
             $item = (new Item())->load($item);
         }
-        $inventory = $item['product']->getInventory($item['warehouse_id'], $item['sku']);
+        $inventory = $item['product']->getInventory($item['warehouse_id'], $item['option_value_id_string']);
         if ($item['qty'] > $qty && $inventory['min_qty'] <= $qty || $item['qty'] < $qty && $inventory['max_qty'] >= $qty) {
             $this->getEventDispatcher()->trigger('cart.add.before', [
                 'product_id' => $item['product_id'],
@@ -321,26 +306,26 @@ final class Cart extends AbstractModel implements Singleton
             return $this->changeItemStatus($item, true, $collate);
         }
         if ($collate) {
+            $this->clearDiscunt();
             $this->collateTotals();
         }
         return $this;
     }
 
-    public function changeItemStatus($item, $status, $collate = true)
-    {
+    public function changeItemStatus($item, $status, $collate = true) {
         if (is_numeric($item)) {
             $item = (new Item())->load($item);
         }
         $item->setData(['status' => $status])->collateTotals()->save();
         $this->items[$item->getId()]['status'] = $status;
         if ($collate) {
+            $this->clearDiscunt();
             $this->collateTotals();
         }
         return $this;
     }
 
-    public function removeItem($item)
-    {
+    public function removeItem($item) {
         if (is_numeric($item)) {
             unset($this->items[$item]);
             $item = (new Item())->setData('id', $item);
@@ -349,12 +334,12 @@ final class Cart extends AbstractModel implements Singleton
         }
         $item->remove();
         $this->getContainer()->get('eventDispatcher')->trigger('cart.item.remove.after', ['model' => $this]);
+        $this->clearDiscunt();
         $this->collateTotals();
         return $this;
     }
 
-    public function removeItems($items)
-    {
+    public function removeItems($items) {
         if (is_array($items) || $items instanceof \Traversable) {
             foreach ($items as $item) {
                 if (is_numeric($item)) {
@@ -366,13 +351,13 @@ final class Cart extends AbstractModel implements Singleton
                 $item->remove();
             }
             $this->getContainer()->get('eventDispatcher')->trigger('cart.item.remove.after', ['model' => $this]);
+            $this->clearDiscunt();
             $this->collateTotals();
         }
         return $this;
     }
 
-    public function removeAllItems()
-    {
+    public function removeAllItems() {
         foreach ($this->getItems() as $item) {
             $item = new Item();
             $item->setId($item['id'])->remove();
@@ -383,8 +368,7 @@ final class Cart extends AbstractModel implements Singleton
         return $this;
     }
 
-    public function convertPrice($to, $from = null)
-    {
+    public function convertPrice($to, $from = null) {
         try {
             $this->beginTransaction();
             if (is_null($from)) {
@@ -413,8 +397,7 @@ final class Cart extends AbstractModel implements Singleton
         }
     }
 
-    public function convertBasePrice($to, $from = null)
-    {
+    public function convertBasePrice($to, $from = null) {
         try {
             $this->beginTransaction();
             if (is_null($from)) {
@@ -443,8 +426,7 @@ final class Cart extends AbstractModel implements Singleton
         }
     }
 
-    public function collateTotals()
-    {
+    public function collateTotals() {
         if (!$this->getId()) {
             $this->regenerate();
         }
@@ -476,7 +458,6 @@ final class Cart extends AbstractModel implements Singleton
             'base_shipping' => $shipping,
             'base_discount' => 0,
             'discount' => 0,
-            'discount_detail' => '',
             'base_tax' => 0,
             'tax' => 0
         ])->setData([
@@ -493,14 +474,13 @@ final class Cart extends AbstractModel implements Singleton
             'total' => $this->storage['subtotal'] +
             $this->storage['shipping'] +
             ($this->storage['tax'] ?? 0) +
-            ($this->storage['discount'] ?? 0)
+            ($this->storage['discount'] ?? 0),
         ]);
         $this->save();
         return $this;
     }
 
-    public function getShippingAddress()
-    {
+    public function getShippingAddress() {
         if (isset($this->storage['shipping_address_id'])) {
             $address = (new Address())->load($this->storage['shipping_address_id']);
             return $address->getId() ? $address : null;
@@ -508,8 +488,7 @@ final class Cart extends AbstractModel implements Singleton
         return null;
     }
 
-    public function getBillingAddress()
-    {
+    public function getBillingAddress() {
         if (isset($this->storage['billing_address_id'])) {
             $address = (new Address())->load($this->storage['billing_address_id']);
             return $address->getId() ? $address : null;
@@ -517,8 +496,7 @@ final class Cart extends AbstractModel implements Singleton
         return null;
     }
 
-    public function getQty($storeId = null, $withDisabled = false)
-    {
+    public function getQty($storeId = null, $withDisabled = false) {
         $qty = 0;
         foreach ($this->getItems() as $item) {
             if ((is_null($storeId) || $item->offsetGet('store_id') == $storeId) && ($withDisabled || $item['status'])) {
@@ -528,8 +506,7 @@ final class Cart extends AbstractModel implements Singleton
         return $qty;
     }
 
-    public function getWeight($storeId = null)
-    {
+    public function getWeight($storeId = null) {
         $weight = 0;
         foreach ($this->getItems() as $item) {
             if (is_null($storeId) || $item->offsetGet('store_id') == $storeId) {
@@ -539,8 +516,7 @@ final class Cart extends AbstractModel implements Singleton
         return $weight;
     }
 
-    public function getCoupon($storeId = null)
-    {
+    public function getCoupon($storeId = null) {
         if (!empty($this->storage['coupon'])) {
             $coupons = json_decode($this->storage['coupon'], true);
             return !is_null($storeId) && isset($coupons[$storeId]) ? $coupons[$storeId] : $coupons;
@@ -548,8 +524,7 @@ final class Cart extends AbstractModel implements Singleton
         return '';
     }
 
-    public function getShippingMethod($storeId, $nameOnly = false)
-    {
+    public function getShippingMethod($storeId, $nameOnly = false) {
         if (isset($this->storage['shipping_method'])) {
             $methods = json_decode($this->storage['shipping_method'], true);
             if (isset($methods[$storeId])) {
@@ -560,8 +535,7 @@ final class Cart extends AbstractModel implements Singleton
         return null;
     }
 
-    public function getPaymentMethod()
-    {
+    public function getPaymentMethod() {
         if (isset($this->storage['payment_method'])) {
             $className = $this->getContainer()->get('config')['payment/' . $this->storage['payment_method'] . '/model'];
             return new $className();
@@ -569,16 +543,14 @@ final class Cart extends AbstractModel implements Singleton
         return null;
     }
 
-    public function getCurrency()
-    {
+    public function getCurrency() {
         if (isset($this->storage['currency'])) {
             return (new Currency())->load($this->storage['currency'], 'code');
         }
         return $this->getContainer()->get('currency');
     }
 
-    public function getStoreTotal($storeId)
-    {
+    public function getStoreTotal($storeId) {
         $items = $this->getItems(true);
         $items->load(false);
         $total = 0;
@@ -592,9 +564,16 @@ final class Cart extends AbstractModel implements Singleton
         return $total;
     }
 
-    protected function beforeSave()
-    {
+    public function clearDiscunt() {
+        $this->storage['additional'] = '';
+        $this->storage['discount_detail'] = '';
+        $this->storage['discount'] = 0;
+        $this->storage['base_discount'] = 0;
+    }
+
+    protected function beforeSave() {
         parent::beforeSave();
         $this->storage['ip'] = $this->getRealIp();
     }
+
 }

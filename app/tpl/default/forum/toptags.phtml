@@ -1,0 +1,21 @@
+<?php
+$tags = $this->getSysTags();
+$keyword = $this->getQuery('q');
+?>
+<div class="tagsarea">
+    <?php
+    if (count($tags) > 0):
+        foreach ($tags as $item):
+            if ($keyword == $item['name']) {
+                ?>
+                <a href="<?php echo $this->getBaseUrl("forum/post/search?q=" . $item['name'] . "&search_type=2"); ?>" style="white-space: nowrap; display: inline-block;padding:0.2rem 0.8rem;background:#000;color: #fff;border-radius: 0.2rem;border-radius:0.2rem;margin: 0.2rem;"><?php echo $item['name']; ?></a>
+                <?php
+            } else {
+                ?>
+                <a href="<?php echo $this->getBaseUrl("forum/post/search?q=" . $item['name'] . "&search_type=2"); ?>" style="white-space: nowrap; display: inline-block;padding:0.2rem 0.8rem;background:rgba(0,0,0,0.05);border-radius: 0.2rem;border-radius:0.2rem;margin: 0.2rem;"><?php echo $item['name']; ?></a>
+                <?php
+            }
+        endforeach;
+    endif;
+    ?>
+</div>

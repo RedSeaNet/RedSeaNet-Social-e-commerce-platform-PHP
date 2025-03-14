@@ -7,10 +7,9 @@ use Redseanet\Customer\Model\Collection\Balance as Collection;
 use Redseanet\Lib\Model\Collection\Language;
 use Laminas\Db\Sql\Expression;
 
-trait Recalc
-{
-    public function recalc($customerId)
-    {
+trait Recalc {
+
+    public function recalc($customerId) {
         $collection = new Collection();
         $collection->columns(['customer_id', 'amount' => new Expression('sum(amount)')])
                 ->where([
@@ -25,7 +24,9 @@ trait Recalc
         foreach ($languages as $language) {
             $customer = new Customer($language['id']);
             $customer->load($customerId);
-            $customer->setData('balance', $balances)->save();
+            $customer->setData('balance', $balances);
+            $customer->save();
         }
     }
+
 }

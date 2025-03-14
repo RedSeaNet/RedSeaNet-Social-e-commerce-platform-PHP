@@ -1,4 +1,4 @@
-<div class="message-box<?php if (!$this->getVariable('inline')): ?> container<?php endif ?>"><?php foreach ($this->getMessages() as $message): ?>
+<div class="message-box"><?php foreach ($this->getMessages() as $message): ?>
         <div class="alert alert-<?php echo $message['level'] ?? 'info' ?>">
             <?php echo is_scalar($message) ? $message : $message['message'] ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>

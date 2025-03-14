@@ -45,7 +45,7 @@ class Cart extends Template
             $this->warehouses[$item['warehouse_id']]->load($item['warehouse_id']);
         }
         $product = $item['product'];
-        $inventory = $this->warehouses[$item['warehouse_id']]->getInventory($product->getId(), $item['sku']);
+        $inventory = $this->warehouses[$item['warehouse_id']]->getInventory($product->getId(), $item['option_value_id_string']);
         if ($product->canSold() && isset($inventory['status']) && $inventory['status'] &&
                 $inventory['qty'] > $inventory['reserve_qty'] &&
                 min((float) $inventory['max_qty'], (float) $inventory['qty']) > (float) $inventory['min_qty']) {

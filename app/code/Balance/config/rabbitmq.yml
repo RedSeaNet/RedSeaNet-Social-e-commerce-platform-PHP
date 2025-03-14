@@ -9,4 +9,4 @@ order.place.after.mq:
         priority: 30
     -
         listener: [\Redseanet\Balance\Mq\Using, afterOrderPlace]
-        priority: 30
+        priority: 40

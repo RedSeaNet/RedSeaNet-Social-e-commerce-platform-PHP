@@ -18,7 +18,7 @@ class Item extends AbstractModel
     protected function construct()
     {
         $this->init('sales_cart_item', 'id', [
-            'id', 'cart_id', 'product_id', 'product_name', 'options', 'options_name', 'qty',
+            'id', 'cart_id', 'product_id', 'product_name', 'options', 'options_name','option_value_id_string', 'qty',
             'sku', 'is_virtual', 'free_shipping', 'base_price', 'price',
             'base_discount', 'discount', 'base_tax', 'tax', 'base_total',
             'total', 'weight', 'status', 'warehouse_id', 'store_id', 'image', 'ip'
@@ -73,7 +73,7 @@ class Item extends AbstractModel
     public function getInventory()
     {
         $warehouse = new Warehouse();
-        return $warehouse->setId($this->storage['warehouse_id'])->getInventory($this->storage['product_id'], $this->storage['sku']);
+        return $warehouse->setId($this->storage['warehouse_id'])->getInventory($this->storage['product_id'], $this->storage['option_value_id_string']);
     }
 
     public function collateTotals()

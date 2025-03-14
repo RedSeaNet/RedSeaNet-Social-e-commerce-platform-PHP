@@ -6,81 +6,93 @@ use Redseanet\Lib\Listeners\ListenerInterface;
 use Redseanet\Customer\Model\Balance;
 use Redseanet\Customer\Model\Collection\Balance as Collection;
 
-class Using implements ListenerInterface
-{
+class Using implements ListenerInterface {
+
     use \Redseanet\Lib\Traits\Container;
-
     use \Redseanet\Lib\Traits\DB;
-
     use \Redseanet\Lib\Traits\DataCache;
-
     use \Redseanet\Balance\Traits\Calc;
+    use \Redseanet\Balance\Traits\Recalc;
 
-    public function apply($event)
-    {
+    public function apply($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
         if ($config['balance/general/enable'] && $config['balance/general/product_for_recharge'] && $model->offsetGet('customer_id')) {
-            $additional = $model['additional'] ? json_decode($model['additional'], true) : [];
-            $points = $this->getBalances($model);
-            $additional['balance'] = $points ? 1 : 0;
-            $model->setData(['additional' => json_encode($additional)]);
+            $discountDetail = $model->offsetGet('discount_detail') ? json_decode($model->offsetGet('discount_detail'), true) : [];
+            $discountDetail["balance"] = ["total" => 0, "detail" => []];
+            $model->setData([
+                'discount_detail' => json_encode($discountDetail), "use_balance" => 1
+            ]);
         }
     }
 
-    public function cleanBalance($event)
-    {
+    public function cleanBalance($event) {
         $model = $event['model'];
-        $detail = $model->offsetGet('discount_detail') ? json_decode($model->offsetGet('discount_detail'), true) : [];
-        if ($detail && !empty($detail['Balance'])) {
-            $balance = $detail['Balance'];
-            unset($detail['Balance']);
+        $discountDetail = $model->offsetGet('discount_detail') ? json_decode($model->offsetGet('discount_detail'), true) : [];
+        if ($model["use_balance"] == 1) {
+            unset($discountDetail['balance']);
             $model->setData([
-                'base_discount' => (float) $model->offsetGet('base_discount') - $balance,
-                'discount_detail' => json_encode($detail)
+                'discount_detail' => json_encode($discountDetail),
+                "use_balance" => 0
+            ]);
+        }
+    }
+
+    public function calc($event) {
+        $config = $this->getContainer()->get('config');
+        $model = $event['model'];
+        if ($config['balance/general/enable'] && $config['balance/general/product_for_recharge'] && $model->offsetGet('customer_id') && $model["use_balance"] == 1) {
+            $discountDetail = $model['discount_detail'] ? json_decode($model['discount_detail'], true) : [];
+            $evaluableBalance = $this->getBalances($model, true);
+            $balances = min(($model["base_subtotal"] - (!empty($discountDetail["promotion"]["total"]) ? (float) $discountDetail["promotion"]["total"] : 0) - (!empty($discountDetail["rewardpoints"]["total"]) ? (float) $discountDetail["rewardpoints"]["total"] : 0)), $evaluableBalance);
+            $items = $model->getItems();
+            $totals = [];
+            $total = 0;
+            foreach ($items as $item) {
+                if (empty($totals[$item['store_id']])) {
+                    $totals[$item['store_id']] = 0;
+                }
+                $totals[$item['store_id']] += $item['base_total'] * $item['qty'];
+                $total += $item['base_total'] * $item['qty'];
+            }
+            $discountDetail["balance"] = [];
+            $discountDetail["balance"]["detail"] = [];
+            $discountDetail["balance"]["store_total"] = [];
+            foreach ($totals as $store => $tore_total) {
+                $discountDetail["balance"]["detail"][$store] = $balances * ($tore_total / $total);
+                $discountDetail["balance"]["store_total"][$store] = $balances * ($tore_total / $total);
+            }
+            $discountDetail["balance"]["total"] = $balances;
+            $model->setData([
+                'base_discount' => (float) $model->offsetGet('base_discount') - $balances,
+                'discount_detail' => json_encode($discountDetail),
             ])->setData('discount', $model->getCurrency()->convert($model->offsetGet('base_discount')));
         }
     }
 
-    public function calc($event)
-    {
-        $config = $this->getContainer()->get('config');
+    public function cancel($event) {
         $model = $event['model'];
-        if ($config['balance/general/enable'] && $config['balance/general/product_for_recharge'] && $model->offsetGet('customer_id')) {
-            $additional = $model['additional'] ? json_decode($model['additional'], true) : [];
-            if (!empty($additional['balance'])) {
-                $additional['balance'] = $model->offsetGet('base_subtotal') + (float) $model->offsetGet('base_discount') + $model->offsetGet('base_shipping') + $model->offsetGet('base_tax');
-                $discount = min($additional['balance'], $this->getBalances($model, true));
-                $model->setData([
-                    'base_discount' => (float) $model->offsetGet('base_discount') - $discount,
-                    'discount_detail' => json_encode(['Balance' => -$discount] + (json_decode($model['discount_detail'], true) ?: []))
-                ])->setData('discount', $model->getCurrency()->convert($model->offsetGet('base_discount')));
-            }
+        $discountDetail = $model->offsetGet('discount_detail') ? json_decode($model->offsetGet('discount_detail'), true) : [];
+        if ($model["use_balance"] == 1) {
+            unset($discountDetail['balance']);
+            $model->setData([
+                'discount_detail' => json_encode($discountDetail),
+                "use_balance" => 0
+            ]);
         }
     }
 
-    public function cancel($event)
-    {
+    public function afterOrderPlace($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
+        $discountDetail = json_decode($model['discount_detail'], true);
         if ($config['balance/general/enable'] && $config['balance/general/product_for_recharge'] && $model->offsetGet('customer_id')) {
-            $additional = $model['additional'] ? json_decode($model['additional'], true) : [];
-            unset($additional['balance']);
-            $model->setData(['additional' => json_encode($additional)]);
-        }
-    }
-
-    public function afterOrderPlace($event)
-    {
-        $config = $this->getContainer()->get('config');
-        $model = $event['model'];
-        if ($config['balance/general/enable'] && $config['balance/general/product_for_recharge'] && $model->offsetGet('customer_id')) {
-            $points = (float) $model->getDiscount('Balance');
-            if ($points && $model['base_discount'] < (json_decode($model['discount_detail'], true)['Promotion'] ?? 0)) {
+            $balances = (float) (!empty($discountDetail["balance"]["total"]) ? $discountDetail["balance"]["total"] : 0);
+            if ($balances && $balances > 0) {
                 $record = new Balance([
                     'customer_id' => $model->offsetGet('customer_id'),
                     'order_id' => $model->getId(),
-                    'amount' => $points,
+                    'amount' => -$balances,
                     'status' => 1,
                     'comment' => 'Consumption'
                 ]);
@@ -89,23 +101,19 @@ class Using implements ListenerInterface
         }
     }
 
-    public function afterRefund($event)
-    {
+    public function afterRefund($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
         $order = $model->getOrder();
-        if ($event['isNew'] && $config['balance/general/enable'] && $order && $order['additional']) {
-            $additional = json_decode($order['additional'], true);
-            if (!empty($additional['balance'])) {
+        if ($event['isNew'] && $config['balance/general/enable'] && $order && $order['discount_detail']) {
+            $discountDetail = json_decode($order['discount_detail'], true);
+            if (!empty($discountDetail['balance'])) {
                 $collection = new Collection();
                 $collection->columns(['customer_id', 'order_id', 'amount'])
                         ->where(['order_id' => $order->getId()])
                 ->where->notEqualTo('comment', 'Order Refund');
-                $rate = min(($model['base_total'] - max($model['base_discount'], $order->getDiscount($config['rewardpoints/general/title']))) / ($order['base_total'] - $order->getDiscount($config['rewardpoints/general/title'])), 1);
                 foreach ($collection as $record) {
-                    $amount = 0 - $record['amount'] * $rate;
                     $record->setData([
-                        'amount' => $amount,
                         'comment' => 'Order Refund',
                         'status' => 1
                     ])->save();
@@ -114,8 +122,7 @@ class Using implements ListenerInterface
         }
     }
 
-    public function afterOrderCancel($event)
-    {
+    public function afterOrderCancel($event) {
         $model = $event['model'];
         if ($model->getPhase()['code'] === 'canceled') {
             $collection = new Collection();
@@ -129,4 +136,5 @@ class Using implements ListenerInterface
             }
         }
     }
+
 }

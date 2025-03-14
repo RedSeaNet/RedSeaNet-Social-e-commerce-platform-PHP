@@ -12,13 +12,13 @@ use Redseanet\Lib\Model\Eav\Type;
 use Redseanet\Lib\Bootstrap;
 use Laminas\Math\Rand;
 use Redseanet\Resource\Model\Resource;
+use Redseanet\Lib\Tool\PHPTree;
 
-class Category extends AbstractHandler
-{
+class Category extends AbstractHandler {
+
     use \Redseanet\Lib\Traits\Url;
 
-    public function getCategory($id, $token, $languageId = 0, $conditionData = [])
-    {
+    public function getCategory($id, $token, $languageId = 0, $conditionData = []) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -30,8 +30,8 @@ class Category extends AbstractHandler
         //$categories->columns(["id","store_id","attribute_set_id","status","parent_id","sort_order","block","description","display_mode","image","include_in_menu","meta_description","meta_keywords","meta_title","name","thumbnail","uri_key","sortable",(new Laminas_Db_Expr($resourceCollection->where(["id"=>"image"]))) => "imageName"]);
         $attributes = new Attribute();
         $attributes->withSet()->where([
-            'searchable' => 1
-        ])->columns(['code'])
+                    'searchable' => 1
+                ])->columns(['code'])
                 ->join('eav_entity_type', 'eav_attribute.type_id=eav_entity_type.id AND eav_entity_type.id=eav_attribute_set.type_id', [], 'right')
                 ->where(['eav_entity_type.code' => Model::ENTITY_TYPE]);
         $searchable = [];
@@ -87,8 +87,7 @@ class Category extends AbstractHandler
         return $this->responseData;
     }
 
-    public function deleteCategory($id, $token, $cid)
-    {
+    public function deleteCategory($id, $token, $cid) {
         $this->validateToken($id, $token, __FUNCTION__, true);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -103,16 +102,15 @@ class Category extends AbstractHandler
         return $this->responseData;
     }
 
-    public function putCategory($id, $token, $data)
-    {
+    public function putCategory($id, $token, $data) {
         $this->validateToken($id, $token, __FUNCTION__, true);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
         }
         $attributes = new Attribute();
         $attributes->withSet()->where([
-            'is_required' => 1
-        ])->columns(['code'])
+                    'is_required' => 1
+                ])->columns(['code'])
                 ->join('eav_entity_type', 'eav_attribute.type_id=eav_entity_type.id AND eav_entity_type.id=eav_attribute_set.type_id', [], 'right')
                 ->where(['eav_entity_type.code' => Model::ENTITY_TYPE]);
         $required = ['store_id'];
@@ -176,8 +174,7 @@ class Category extends AbstractHandler
         }
     }
 
-    private function reindex($id, $languageId)
-    {
+    private function reindex($id, $languageId) {
         $model = new Model($languageId);
         $model->load($id);
         $tmp = $model;
@@ -195,4 +192,110 @@ class Category extends AbstractHandler
             $this->reindex($child['id'], $languageId);
         }
     }
+
+    public function getCategoryTreeByParentId($id, $token, $parentId, $languageId = 0, $conditionData = []) {
+        $this->validateToken($id, $token, __FUNCTION__, false);
+        if ($this->responseData['statusCode'] != '200') {
+            return $this->responseData;
+        }
+        if ($languageId == 0) {
+            $languageId = Bootstrap::getLanguage()->getId();
+        }
+        $categories = new Collection($languageId);
+        $categories->where(["parent_id", $parentId]);
+        //$categories->columns(["id","store_id","attribute_set_id","status","parent_id","sort_order","block","description","display_mode","image","include_in_menu","meta_description","meta_keywords","meta_title","name","thumbnail","uri_key","sortable",(new Laminas_Db_Expr($resourceCollection->where(["id"=>"image"]))) => "imageName"]);
+        $attributes = new Attribute();
+        $attributes->withSet()->where([
+                    'searchable' => 1
+                ])->columns(['code'])
+                ->join('eav_entity_type', 'eav_attribute.type_id=eav_entity_type.id AND eav_entity_type.id=eav_attribute_set.type_id', [], 'right')
+                ->where(['eav_entity_type.code' => Model::ENTITY_TYPE]);
+        $searchable = [];
+        $attributes->walk(function ($attribute) use (&$searchable) {
+            $searchable[] = $attribute['code'];
+        });
+        if (count($conditionData) > 0) {
+            foreach ($conditionData as $conditionDataK => $conditionDataV) {
+                if (in_array($conditionDataK, $searchable)) {
+                    $categories->where([$conditionDataK => $conditionDataV]);
+                }
+            }
+        }
+        //echo $categories->getSqlString(Bootstrap::getContainer()->get("dbAdapter")->getPlatform());
+        $categories->load(true, true);
+        $tmpCategotyData = [];
+        $model = new Model($languageId);
+        $model->load($parentId);
+        $modealArray = $model->toArray();
+        if (!empty($modealArray['image'])) {
+            $resourceImage = new Resource();
+            $resourceImage->load($modealArray['image']);
+            if (!empty($resourceImage->offsetGet('real_name'))) {
+                $modealArray['imagename'] = $resourceImage->offsetGet('real_name');
+                $modealArray['imageuri'] = $this->getResourceUrl('image/' . $resourceImage->offsetGet('real_name'));
+            } else {
+                $modealArray['imagename'] = '';
+                $modealArray['imageuri'] = '';
+            }
+        } else {
+            $modealArray['imagename'] = '';
+            $modealArray['imageuri'] = '';
+        }
+
+        if ($modealArray['thumbnail'] != '') {
+            $resourceThumbnail = new Resource();
+            $resourceThumbnail->load($modealArray['thumbnail']);
+            if ($resourceThumbnail->offsetGet('real_name') != '') {
+                $modealArray['thumbnailname'] = $resourceThumbnail->offsetGet('real_name');
+                $modealArray['thumbnailuri'] = $this->getResourceUrl('image/' . $resourceThumbnail->offsetGet('real_name'));
+            } else {
+                $modealArray['thumbnailname'] = '';
+                $modealArray['thumbnailuri'] = '';
+            }
+        } else {
+            $modealArray['thumbnailname'] = '';
+            $modealArray['thumbnailuri'] = '';
+        }
+        $modealArray["parent_id"]=0;
+        $tmpCategotyData[] = $modealArray;
+        $categories->toArray();
+        if (count($categories) > 0) {
+            foreach ($categories as $key => $value) {
+                if (!empty($value['image'])) {
+                    $resourceImage = new Resource();
+                    $resourceImage->load($value['image']);
+                    if (!empty($resourceImage->offsetGet('real_name'))) {
+                        $value['imagename'] = $resourceImage->offsetGet('real_name');
+                        $value['imageuri'] = $this->getResourceUrl('image/' . $resourceImage->offsetGet('real_name'));
+                    } else {
+                        $value['imagename'] = '';
+                        $value['imageuri'] = '';
+                    }
+                } else {
+                    $value['imagename'] = '';
+                    $value['imageuri'] = '';
+                }
+
+                if ($value['thumbnail'] != '') {
+                    $resourceThumbnail = new Resource();
+                    $resourceThumbnail->load($value['thumbnail']);
+                    if ($resourceThumbnail->offsetGet('real_name') != '') {
+                        $value['thumbnailname'] = $resourceThumbnail->offsetGet('real_name');
+                        $value['thumbnailuri'] = $this->getResourceUrl('image/' . $resourceThumbnail->offsetGet('real_name'));
+                    } else {
+                        $value['thumbnailname'] = '';
+                        $value['thumbnailuri'] = $this->getPubUrl('frontend/images/placeholder.png');
+                    }
+                } else {
+                    $value['thumbnailname'] = '';
+                    $value['thumbnailuri'] = $this->getPubUrl('frontend/images/placeholder.png');
+                }
+                $tmpCategotyData[] = $value;
+            }
+        }
+        $treeData=PHPTree::makeTree($tmpCategotyData);
+        $this->responseData = ['statusCode' => '200', 'data' => $treeData[0], 'message' => 'get category data successfully'];
+        return $this->responseData;
+    }
+
 }

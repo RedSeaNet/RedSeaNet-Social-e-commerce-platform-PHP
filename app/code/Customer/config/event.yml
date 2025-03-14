@@ -14,35 +14,47 @@ cart.add.after:
     -
         listener: [\Redseanet\Customer\Listeners\Wishlist, afterAddToCart]
         priority: 10
-#customer.level.calc:
-#    -
-#        listener: [\Redseanet\Customer\Listeners\Level, calc]
-#        priority: 10
-#Redseanet\Customer\Model\Level.model.save.after:
-#    -
-#        listener: [\Redseanet\Customer\Listeners\Level, collate]
-#        priority: 10
-#customer.balance.calc:
-#    -
-#        listener: [\Redseanet\Customer\Listeners\Balance, calc]
-#        priority: 10
-#customer.balance.save: 
-#    -
-#        listener: [\Redseanet\Customer\Listeners\Balance, save]
-#        priority: 10
-#customer.balance.save.after:
-#    -
-#        listener: [\Redseanet\Customer\Listeners\Balance, afterSaveRecharge]
-#        priority: 10
-#frontend.customer.balance.save.before:
-#    -
-#        listener: [\Redseanet\Customer\Listeners\Balance,beforeSaveRecharge]
-#        priority: 10
-#frontend.customer.balance.save.after:
-#    -
-#        listener: [\Redseanet\Customer\Listeners\Balance,afterSaveRecharge]
-#        priority: 10
+customer.level.calc:
+    -
+        listener: [\Redseanet\Customer\Listeners\Level, calc]
+        priority: 10
+Redseanet\Customer\Model\Level.model.save.after:
+    -
+        listener: [\Redseanet\Customer\Listeners\Level, collate]
+        priority: 10
+customer.balance.calc:
+    -
+        listener: [\Redseanet\Customer\Listeners\Balance, calc]
+        priority: 10
+customer.balance.save: 
+    -
+        listener: [\Redseanet\Customer\Listeners\Balance, save]
+        priority: 10
+customer.balance.save.after:
+    -
+        listener: [\Redseanet\Customer\Listeners\Balance, afterSaveRecharge]
+        priority: 10
+frontend.customer.balance.save.before:
+    -
+        listener: [\Redseanet\Customer\Listeners\Balance,beforeSaveRecharge]
+        priority: 10
+frontend.customer.balance.save.after:
+    -
+        listener: [\Redseanet\Customer\Listeners\Balance,afterSaveRecharge]
+        priority: 10
 backend.customer.save.after:
     -
         listener: [\Redseanet\Customer\Listeners\Balance, afterSaveBackendCustomer]
+        priority: 10
+customer.login.after:
+    -
+        listener: [\Redseanet\Email\Listeners\Login, welcome]
+        priority: 20
+customer.register.after:
+    -
+        listener: [\Redseanet\Email\Listeners\Register, welcome]
+        priority: 10
+subscribe:
+    -
+        listener: [\Redseanet\Email\Listeners\Subscribe, subscribe]
         priority: 10

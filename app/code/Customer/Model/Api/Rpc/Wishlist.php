@@ -11,8 +11,8 @@ use Redseanet\Customer\Model\Collection\Wishlist as CollectionWishlist;
 use Redseanet\Customer\Model\Collection\Wishlist\Item as CollectionWishlistItem;
 use Redseanet\Lib\Bootstrap;
 
-class Wishlist extends AbstractHandler
-{
+class Wishlist extends AbstractHandler {
+
     use \Redseanet\Lib\Traits\Url;
 
     /**
@@ -23,8 +23,7 @@ class Wishlist extends AbstractHandler
      * @param int $languageId
      * @return array
      */
-    public function addWishlistItem($id, $token, $customerId, $data = [], $languageId = 0)
-    {
+    public function addWishlistItem($id, $token, $customerId, $data = [], $languageId = 0) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -68,8 +67,7 @@ class Wishlist extends AbstractHandler
      * @param int $languageId
      * @return array
      */
-    public function getWishlist($id, $token, $customerId, $page = 1, $limit = 20, $languageId = 0)
-    {
+    public function getWishlist($id, $token, $customerId, $page = 1, $limit = 20, $languageId = 0) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -85,6 +83,8 @@ class Wishlist extends AbstractHandler
             $image = '';
             if ($wishlist[$i]['image'] != '') {
                 $image = $this->getResourceUrl('image/' . $wishlist[$i]['image']);
+            } else {
+                $image = $this->getPubUrl('frontend/images/placeholder.png');
             }
             unset($wishlist[$i]['image']);
             $resultData[] = $wishlist[$i] + ['image' => $image];
@@ -103,8 +103,7 @@ class Wishlist extends AbstractHandler
      * @param int $languageId
      * @return array
      */
-    public function deleteWishlistItem($id, $token, $customerId, $itemId, $page = 1, $limit = 20, $languageId = 0)
-    {
+    public function deleteWishlistItem($id, $token, $customerId, $itemId, $page = 1, $limit = 20, $languageId = 0) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -131,4 +130,5 @@ class Wishlist extends AbstractHandler
         $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => 'delete wish list item successfully'];
         return $this->responseData;
     }
+
 }

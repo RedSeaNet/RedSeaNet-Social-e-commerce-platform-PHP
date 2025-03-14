@@ -7,7 +7,8 @@ use Redseanet\Customer\Exception\InvalidSmsCodeException;
 use Redseanet\Customer\Model\Collection\Customer as Collection;
 use Redseanet\Customer\Model\Customer as Model;
 use Redseanet\Lib\Model\Collection\Eav\Attribute;
-use Redseanet\Lib\Model\Collection\Language;
+use Redseanet\Lib\Model\Collection\Language as languageCollection;
+use Redseanet\Lib\Model\Language;
 use Redseanet\Oauth\Model\Api\Soap\Oauth;
 use Laminas\Db\Sql\Where;
 use Redseanet\Lib\Bootstrap;
@@ -20,12 +21,13 @@ use Redseanet\Api\Model\Rpc\{
 };
 use Redseanet\Lib\Session\Segment;
 
-class Customer extends AbstractHandler
-{
+class Customer extends AbstractHandler {
+
     use \Redseanet\Lib\Traits\Container;
     use \Redseanet\Lib\Traits\DB;
     use \Redseanet\Lib\Traits\DataCache;
     use \Redseanet\Lib\Traits\Url;
+    use \Redseanet\Lib\Traits\Translate;
 
     /**
      * @param int $id
@@ -35,8 +37,7 @@ class Customer extends AbstractHandler
      * @param string $uuid
      * @return array
      */
-    public function customerValid($id, $token, $username, $password, $uuid = null)
-    {
+    public function customerValid($id, $token, $username, $password, $uuid = null, $languageId = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -44,6 +45,8 @@ class Customer extends AbstractHandler
         $customer = new Model();
         $user = new User();
         $user->load(intval($id));
+        $language = new Language();
+        $language->load($languageId);
         //Bootstrap::getContainer()->get("log")->logException(new \Exception(json_encode($user)));
         //Bootstrap::getContainer()->get("log")->logException(new \Exception($this->decryptData($password,$user)));
         $customerId = $customer->valid($username, $this->decryptData($password, $user)) ? $customer->getId() : 0;
@@ -70,10 +73,10 @@ class Customer extends AbstractHandler
             }
             $this->getContainer()->get('eventDispatcher')->trigger('customer.login.after', ['model' => $customer]);
             $resultData['avatar'] = $avatar;
-            $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => 'login successfully'];
+            $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => $this->translate('login successfully', [], null, $language['code'])];
             return $this->responseData;
         } else {
-            $this->responseData = ['statusCode' => '403', 'data' => [], 'message' => 'login failure, useranme and password invaid'];
+            $this->responseData = ['statusCode' => '403', 'data' => [], 'message' => $this->translate('login failure, useranme and password invaid', [], null, $language['code'])];
             return $this->responseData;
         }
     }
@@ -84,12 +87,13 @@ class Customer extends AbstractHandler
      * @param int $customerId
      * @return array
      */
-    public function getcustomerInfo($id, $token, $customerId)
-    {
+    public function getcustomerInfo($id, $token, $customerId, $languageId = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
         }
+        $language = new Language();
+        $language->load($languageId);
         if ($customerId == '') {
             $this->responseData = ['statusCode' => '403', 'data' => [], 'message' => 'customer id can not be null'];
             return $this->responseData;
@@ -125,8 +129,7 @@ class Customer extends AbstractHandler
      * @return array
      * @throws SoapFault
      */
-    public function customerCreate($id, $token, $data)
-    {
+    public function customerCreate($id, $token, $data, $languageId = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -190,7 +193,7 @@ class Customer extends AbstractHandler
             'store_id' => 1,
             'language_id' => 1,
             'status' => 1
-        ] + $data);
+                ] + $data);
         $customer->save();
         if (!empty($avatar) && !empty($name)) {
             if (!is_dir(BP . 'pub/upload/customer/')) {
@@ -232,8 +235,7 @@ class Customer extends AbstractHandler
      * @param araray $data
      * @return araray
      */
-    public function customerUpdate($id, $token, $customerId, $data)
-    {
+    public function customerUpdate($id, $token, $customerId, $data, $languageId = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -296,7 +298,7 @@ class Customer extends AbstractHandler
                 fclose($fp);
                 $data['avatar'] = $name;
             }
-            foreach (new Language() as $language) {
+            foreach (new languageCollection () as $language) {
                 $customer = new Model($language['id']);
                 $customer->load($customerId);
                 $customer->setData($data);
@@ -328,8 +330,7 @@ class Customer extends AbstractHandler
      * @param string $zone
      * @return int
      */
-    public function customerSaveCel($id, $token, $customerId, $oldCel, $oldZone, $cel, $zone)
-    {
+    public function customerSaveCel($id, $token, $customerId, $oldCel, $oldZone, $cel, $zone, $languageId = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -347,7 +348,7 @@ class Customer extends AbstractHandler
                 'cel' => $cel,
                 'zone' => $zone
             ];
-            foreach (new Language() as $language) {
+            foreach (new languageCollection () as $language) {
                 $customer = new Model($language['id']);
                 $customer->load($customerId);
                 $this->getContainer()->get('log')->logException(new \Exception(json_encode($data)));
@@ -370,8 +371,7 @@ class Customer extends AbstractHandler
      * @param $data array
      * @return array
      */
-    public function customerUpdatePassword($id, $token, $cutomerId, $data)
-    {
+    public function customerUpdatePassword($id, $token, $cutomerId, $data, $languageId = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -398,7 +398,7 @@ class Customer extends AbstractHandler
             $this->responseData = ['statusCode' => '403', 'data' => [], 'message' => 'do not find the customer'];
             return $this->responseData;
         }
-        foreach (new Language() as $language) {
+        foreach (new languageCollection () as $language) {
             $customer = new Model($language['id']);
             $customer->load($cutomerId);
             //unset($data['id']);
@@ -410,4 +410,5 @@ class Customer extends AbstractHandler
         $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => 'update password successfully'];
         return $this->responseData;
     }
+
 }

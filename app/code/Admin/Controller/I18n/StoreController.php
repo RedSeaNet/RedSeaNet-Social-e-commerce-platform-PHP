@@ -12,7 +12,6 @@ class StoreController extends AuthActionController
         $root = $this->getLayout('admin_i18n_store_list');
         return $root;
     }
-
     public function editAction()
     {
         $root = $this->getLayout('admin_i18n_store_edit');

@@ -9,39 +9,46 @@ use Redseanet\RewardPoints\Model\Collection\Record as Collection;
 use Redseanet\RewardPoints\Model\Record;
 use Redseanet\Sales\Model\Collection\Order;
 use Laminas\Db\Sql\Expression;
+use Redseanet\Email\Model\Template as TemplateModel;
+use PHPMailer\PHPMailer\Exception as EmailException;
 
-class Cron
-{
+class Cron {
+
     use \Redseanet\Lib\Traits\Container;
 
-    private function sendMail($template, $to, $params = [])
-    {
+    private function sendMail($template, $to, $params = []) {
         try {
             $config = $this->getContainer()->get('config');
-            if ($from = $config['email/customer/sender_email'] ?: $config['email/default/sender_email']) {
+            $fromEmail = $config['email/customer/sender_email'] ?: $config['email/default/sender_email'];
+            $from = [$fromEmail, $config['email/customer/sender_name'] ?: ($config['email/default/sender_name'] ?: null)];
+            if (empty($from)) {
                 $collection = new TemplateCollection();
                 $collection->join('email_template_language', 'email_template_language.template_id=email_template.id', [], 'left')
                         ->where([
                             'code' => $config[$template],
                             'language_id' => Bootstrap::getLanguage()->getId()
-                        ]);
+                ]);
                 if (!is_array($to)) {
                     $to = [$to, null];
                 }
                 if (count($collection)) {
                     $mailer = $this->getContainer()->get('mailer');
-                    $mailer->send((new TemplateModel($collection[0]))
-                                    ->getMessage($params)
-                                    ->addFrom($from, $config['email/customer/sender_name'] ?: ($config['email/default/sender_name'] ?: null))
-                                    ->addTo($to[0], $to[1]));
+                    $mailTemplate = new TemplateModel($collection[0]);
+                    $recipients = [];
+                    $recipients[] = [$to[0], $to[1]];
+                    $subject = $mailTemplate['subject'];
+                    $content = $mailTemplate->getContent($params);
+                    $mailer->send($recipients, $subject, $content, [], '', '', [], true, '', $from);
                 }
             }
+        } catch (EmailException $e) {
+            $this->getContainer()->get('log')->logException($e);
         } catch (Exception $e) {
+            $this->getContainer()->get('log')->logException($e);
         }
     }
 
-    public function schedule()
-    {
+    public function schedule() {
         $config = $this->getContainer()->get('config');
         if ($config['rewardpoints/general/enable'] && ($points = $config['rewardpoints/gathering/birthday'])) {
             try {
@@ -64,12 +71,12 @@ class Cron
                     $model->save();
                 }
             } catch (Exception $e) {
+                
             }
         }
     }
 
-    public function activation()
-    {
+    public function activation() {
         if ($days = $this->getContainer()->get('config')['rewardpoints/general/activating']) {
             $orders = new Order();
             $orders->columns(['id'])
@@ -88,8 +95,7 @@ class Cron
         }
     }
 
-    private function getExpiredCount($record)
-    {
+    private function getExpiredCount($record) {
         $collection = new Collection();
         $collection->columns(['customer_id', 'amount' => new Expression('sum(count)')])
                 ->where([
@@ -103,8 +109,7 @@ class Cron
         return $record['count'] + $amount;
     }
 
-    public function expiration()
-    {
+    public function expiration() {
         $config = $this->getContainer()->get('config');
         if ($config['rewardpoints/general/enable'] && ($days = (int) $config['rewardpoints/general/expiration'])) {
             $date = date('Y-m-d H:i:s', strtotime('-' . $days . 'days'));
@@ -133,4 +138,5 @@ class Cron
             }
         }
     }
+
 }

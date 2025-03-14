@@ -88,10 +88,10 @@ $cart = $this->getCart();
                                         $text = $this->translate('Discount(' . ucwords($type) . ')', [], 'sales');
                                         echo $text[0] === 'D' ? $this->translate('Discount(%s)', [$type], 'sales') : $text
                                         ?>  
-                                        <?php echo $this->getCurrency()->convert($discount["total"], true) ?>
+                                        <?php echo (!empty($discount["total"])?$this->getCurrency()->convert($discount["total"], true):0) ?>
                                     </p>
                                     <?php
-                                    if ($discount["detail"] && is_array($discount["detail"]) && count($discount["detail"]) > 0) {
+                                    if (!empty($discount["detail"]) && is_array($discount["detail"]) && count($discount["detail"]) > 0) {
                                         foreach ($discount["detail"] as $storeId => $promotionStoreData) {
                                             if ($promotionStoreData && is_array($promotionStoreData) && count($promotionStoreData) > 0) {
                                                 foreach ($promotionStoreData as $promationKey => $promotionData) {

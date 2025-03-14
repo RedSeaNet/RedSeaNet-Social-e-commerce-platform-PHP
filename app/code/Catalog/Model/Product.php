@@ -18,32 +18,28 @@ use Laminas\Db\Sql\Predicate\In;
 use Redseanet\Lib\Bootstrap;
 use Redseanet\Lib\Model\Collection\Language;
 
-class Product extends Entity
-{
+class Product extends Entity {
+
     use \Redseanet\Lib\Traits\Url;
 
     public const ENTITY_TYPE = 'product';
 
-    protected function construct()
-    {
+    protected function construct() {
         $this->init('id', ['id', 'type_id', 'attribute_set_id', 'store_id', 'product_type_id', 'status']);
     }
 
-    public function isVirtual()
-    {
+    public function isVirtual() {
         return isset($this->storage['product_type_id']) && $this->storage['product_type_id'] == 2;
     }
 
-    public function isNew()
-    {
+    public function isNew() {
         $time = time();
         return !empty($this->storage['new_start']) &&
                 strtotime($this->storage['new_start']) <= $time &&
                 (empty($this->storage['new_end']) || strtotime($this->storage['new_end']) >= $time);
     }
 
-    public function getOptions($constraint = [], $language = null)
-    {
+    public function getOptions($constraint = [], $language = null) {
         if ($this->getId()) {
             $options = new OptionCollection();
             $options->withLabel($language)
@@ -55,8 +51,7 @@ class Product extends Entity
         return [];
     }
 
-    public function getOption($id, $value = null, $language = null)
-    {
+    public function getOption($id, $value = null, $language = null) {
         if ($this->getId()) {
             $options = $this->getOptions(['id' => $id], $language);
             if ($options->count()) {
@@ -70,8 +65,7 @@ class Product extends Entity
         return null;
     }
 
-    public function getStore()
-    {
+    public function getStore() {
         if ($this->getId()) {
             $store = new Store();
             $store->load($this->storage['store_id']);
@@ -80,8 +74,7 @@ class Product extends Entity
         return null;
     }
 
-    public function getCategories()
-    {
+    public function getCategories() {
         if ($this->getId()) {
             $category = new Categories($this->languageId);
             $tableGateway = $this->getTableGateway('product_in_category');
@@ -100,8 +93,7 @@ class Product extends Entity
         return [];
     }
 
-    public function getAttributes()
-    {
+    public function getAttributes() {
         $result = [];
         if ($this->getId()) {
             $attributes = new AttributeCollection();
@@ -129,8 +121,7 @@ class Product extends Entity
         return $result;
     }
 
-    public function getAttribute($idOrCode, $option = null)
-    {
+    public function getAttribute($idOrCode, $option = null) {
         if ($this->getId()) {
             $attribute = new Attribute();
             $attribute->load($idOrCode, is_numeric($idOrCode) ? 'id' : 'code');
@@ -144,17 +135,13 @@ class Product extends Entity
         return null;
     }
 
-    public function getInventory($warehouse = null, $sku = null)
-    {
-        if (is_null($sku)) {
-            $sku = $this->storage['sku'];
-        }
+    public function getInventory($warehouse = null, $option_value_id_string = null) {
         if (is_null($warehouse)) {
             $warehouses = new WarehouseCollection();
             $warehouses->where(['status' => 1]);
             $result = 0;
             foreach ($warehouses as $warehouse) {
-                $inventory = $warehouse->getInventory($this->getId(), $sku);
+                $inventory = $warehouse->getInventory($this->getId(), $option_value_id_string);
                 if ($inventory) {
                     $result += $inventory['qty'];
                 }
@@ -163,11 +150,10 @@ class Product extends Entity
         } elseif (is_numeric($warehouse)) {
             $warehouse = (new Warehouse())->setId($warehouse);
         }
-        return $warehouse->getInventory($this->getId(), $sku);
+        return $warehouse->getInventory($this->getId(), $option_value_id_string);
     }
 
-    public function getLinkedProducts($type)
-    {
+    public function getLinkedProducts($type) {
         if ($this->getId()) {
             $products = new Collection($this->languageId);
             $products->join('product_link', 'product_link.linked_product_id=id', [], 'right')
@@ -180,23 +166,19 @@ class Product extends Entity
         return [];
     }
 
-    public function getRelatedProducts()
-    {
+    public function getRelatedProducts() {
         return $this->getLinkedProducts('r');
     }
 
-    public function getUpSells()
-    {
+    public function getUpSells() {
         return $this->getLinkedProducts('u');
     }
 
-    public function getCrossSells()
-    {
+    public function getCrossSells() {
         return $this->getLinkedProducts('c');
     }
 
-    public function getUrl($category = null)
-    {
+    public function getUrl($category = null) {
         $constraint = ['product_id' => $this->getId()];
         if (is_object($category) || is_array($category)) {
             $constraint['category_id'] = $category['id'];
@@ -220,8 +202,7 @@ class Product extends Entity
         return $this->getBaseUrl($result[0]['path'] . '.html');
     }
 
-    public function getImages()
-    {
+    public function getImages() {
         $images = json_decode($this->storage['images'] ?? '[]', true);
         $result = [];
         foreach ($images as $image) {
@@ -232,8 +213,7 @@ class Product extends Entity
         return $result;
     }
 
-    public function getThumbnail($options = null, $resized = '')
-    {
+    public function getThumbnail($options = null, $resized = '') {
         if (!is_null($options)) {
             $images = $this->storage['images'] ?? [];
             if ($images) {
@@ -261,8 +241,7 @@ class Product extends Entity
         return $this->getPubUrl('frontend/images/placeholder.png');
     }
 
-    public function getVideo()
-    {
+    public function getVideo() {
         $result = [];
         if (!empty($this->storage['video'])) {
             $resource = new Resource();
@@ -272,8 +251,7 @@ class Product extends Entity
         return $result;
     }
 
-    public function getDefaultImage()
-    {
+    public function getDefaultImage() {
         if (!empty($this->storage['default_image'])) {
             $resource = new Resource();
             $resource->load($this->storage['default_image']);
@@ -282,8 +260,7 @@ class Product extends Entity
         return $this->getPubUrl('frontend/images/placeholder.png');
     }
 
-    public function getFinalPrice($qty = 1, $convert = true)
-    {
+    public function getFinalPrice($qty = 1, $convert = true) {
         if (empty($this->storage['prices'])) {
             $this->storage['prices'] = [];
             $this->storage['base_prices'] = [];
@@ -294,8 +271,7 @@ class Product extends Entity
         return $convert ? min($this->storage['prices']) : min($this->storage['base_prices']);
     }
 
-    protected function afterLoad(&$result)
-    {
+    protected function afterLoad(&$result) {
         if (isset($result[0]) && !empty($result[0]['images'])) {
             if (!is_array($result[0]['images'])) {
                 $result[0]['images'] = json_decode($result[0]['images'], true);
@@ -320,8 +296,7 @@ class Product extends Entity
         parent::afterLoad($result);
     }
 
-    protected function beforeSave()
-    {
+    protected function beforeSave() {
         if (isset($this->storage['images']) && is_array($this->storage['images']) && count($this->storage['images']) > 0) {
             $images = [];
             foreach ($this->storage['images'] as $order => $id) {
@@ -352,8 +327,7 @@ class Product extends Entity
         parent::beforeSave();
     }
 
-    protected function afterSave()
-    {
+    protected function afterSave() {
         $changed = isset($this->storage['_changed_fields']) ? explode(',', $this->storage['_changed_fields']) : [];
         if (!empty($this->storage['category']) || in_array('category', $changed)) {
             $tableGateway = $this->getTableGateway('product_in_category');
@@ -370,35 +344,7 @@ class Product extends Entity
                 }
             }
         }
-        if (!empty($this->storage['inventory'])) {
-            $warehouse = new Warehouse();
-            $tableGateway = $this->getTableGateway('warehouse_inventory');
-            foreach ($this->storage['inventory'] as $warehouseId => $inventory) {
-                $tableGateway->delete([
-                    'warehouse_id' => $warehouseId,
-                    'product_id' => $this->getId()
-                ]);
-                $this->getContainer()->get('log')->logException(new \Exception(json_encode($inventory)));
-                foreach ($inventory['qty'] as $order => $qty) {
-                    if (empty($inventory['sku'][$order]) || $inventory['sku'][$order] !== $this->storage['sku']) {
-                        $warehouse->setInventory([
-                            'warehouse_id' => $warehouseId,
-                            'product_id' => $this->getId(),
-                            'sku' => empty($inventory['sku'][$order]) ? $this->storage['sku'] : $inventory['sku'][$order],
-                            'barcode' => $inventory['barcode'][$order - 1] ?? '',
-                            'qty' => empty($inventory['sku'][$order]) && count($inventory['qty']) > 1 ? array_sum($inventory['qty']) - $qty : $qty,
-                            'reserve_qty' => $inventory['reserve_qty'][$order] ?? ($inventory['reserve_qty'][0] ?? null),
-                            'min_qty' => $inventory['min_qty'][$order] ?? ($inventory['min_qty'][0] ?? null),
-                            'max_qty' => $inventory['max_qty'][$order] ?? ($inventory['max_qty'][0] ?? null),
-                            'is_decimal' => $inventory['is_decimal'][$order] ?? ($inventory['is_decimal'][0] ?? null),
-                            'backorders' => $inventory['backorders'][$order] ?? ($inventory['backorders'][0] ?? null),
-                            'increment' => $inventory['increment'][$order] ?? ($inventory['increment'][0] ?? null),
-                            'status' => $inventory['status'][$order] ?? ($inventory['status'][0] ?? null)
-                        ]);
-                    }
-                }
-            }
-        }
+
         if (isset($this->storage['options'])) {
             //$this->getTableGateway('product_option')->delete(['product_id' => $this->getId()]);
             if (is_array($this->storage['options'])) {
@@ -410,7 +356,6 @@ class Product extends Entity
                         $oldOptionIds[] = $oldOption['id'];
                     }
                 }
-                //var_dump($oldOptionIds);                exit('----');
                 if (count($oldOptionIds) > 0) {
                     $updateOptions = [];
                     foreach ($this->storage['options']['label'] as $id => $label) {
@@ -463,30 +408,84 @@ class Product extends Entity
             }
             $this->flushList('product_option');
         }
+        if (!empty($this->storage['inventory'])) {
+            $warehouse = new Warehouse();
+            $tableGateway = $this->getTableGateway('warehouse_inventory');
+            foreach ($this->storage['inventory'] as $warehouseId => $inventory) {
+                $tableGateway->delete([
+                    'warehouse_id' => $warehouseId,
+                    'product_id' => $this->getId()
+                ]);
+                //$this->getContainer()->get('log')->logException(new \Exception(json_encode($inventory)));
+                $newOptions = $this->getOptions();
+                foreach ($inventory['qty'] as $order => $qty) {
+                    if (empty($inventory['sku'][$order]) || $inventory['sku'][$order] !== $this->storage['sku']) {
+                        $optoin_value_id = [];
+                        $option_value = $inventory['option_value'][$order] ?? ($inventory['option_value'][0] ?? null);
+                        if (!empty($option_value)) {
+                            $option_value_array = explode(",", $option_value);
+                            if (count($option_value_array) > 0) {
+                                for ($ov = 0; $ov < count($option_value_array); $ov++) {
+                                    if (!empty($option_value_array[$ov])) {
+                                        for ($n_ov = 0; $n_ov < count($newOptions); $n_ov++) {
+                                            if (!empty($newOptions[$n_ov]["value"]) && count($newOptions[$n_ov]["value"]) > 0) {
+                                                for ($n_ovv = 0; $n_ovv < count($newOptions[$n_ov]["value"]); $n_ovv++) {
+                                                    if ($option_value_array[$ov] == $newOptions[$n_ov]["value"][$n_ovv]["sku"]) {
+                                                        $optoin_value_id[$newOptions[$n_ov]["id"]][] = $newOptions[$n_ov]["value"][$n_ovv]["id"];
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        ksort($optoin_value_id);
+                        $optoin_value_id_string = null;
+                        if (count($optoin_value_id) > 0) {
+                            $optoin_value_id_string = base64_encode(json_encode($optoin_value_id));
+                        }
+                        $warehouse->setInventory([
+                            'warehouse_id' => $warehouseId,
+                            'product_id' => $this->getId(),
+                            'sku' => empty($inventory['sku'][$order]) ? $this->storage['sku'] : $inventory['sku'][$order],
+                            'barcode' => $inventory['barcode'][$order - 1] ?? '',
+                            'qty' => empty($inventory['sku'][$order]) && count($inventory['qty']) > 1 ? array_sum($inventory['qty']) - $qty : $qty,
+                            'reserve_qty' => $inventory['reserve_qty'][$order] ?? ($inventory['reserve_qty'][0] ?? null),
+                            'min_qty' => $inventory['min_qty'][$order] ?? ($inventory['min_qty'][0] ?? null),
+                            'max_qty' => $inventory['max_qty'][$order] ?? ($inventory['max_qty'][0] ?? null),
+                            'is_decimal' => $inventory['is_decimal'][$order] ?? ($inventory['is_decimal'][0] ?? null),
+                            'backorders' => $inventory['backorders'][$order] ?? ($inventory['backorders'][0] ?? null),
+                            'increment' => $inventory['increment'][$order] ?? ($inventory['increment'][0] ?? null),
+                            'status' => $inventory['status'][$order] ?? ($inventory['status'][0] ?? null),
+                            'option_value' => $option_value,
+                            'option_value_id' => count($optoin_value_id) > 0 ? json_encode($optoin_value_id) : null,
+                            'option_value_id_string' => $optoin_value_id_string
+                        ]);
+                    }
+                }
+            }
+        }
         parent::afterSave();
     }
 
-    public function serialize()
-    {
+    public function serialize() {
         unset($this->storage['prices']);
         return parent::serialize();
     }
 
-    public function getCurrency()
-    {
+    public function getCurrency() {
         if (isset($this->storage['currency'])) {
             return (new Currency())->load($this->storage['currency'], 'code');
         }
         return $this->getContainer()->get('currency');
     }
 
-    public function canSold()
-    {
+    public function canSold() {
         return !empty($this->storage['status']) && $this->getStore()->offsetGet('status');
     }
 
-    public function getOptionsAndValues($constraint = [], $language = null)
-    {
+    public function getOptionsAndValues($constraint = [], $language = null) {
         if ($this->getId()) {
             $optionsVolues = [];
             $options = new OptionCollection();
@@ -534,8 +533,7 @@ class Product extends Entity
         return $optionsVolues;
     }
 
-    public function getOptionsAndValueHtml($constraint = [], $language = null)
-    {
+    public function getOptionsAndValueHtml($constraint = [], $language = null) {
         if ($this->getId()) {
             $optionsVolues = [];
             $options = new OptionCollection();
@@ -655,4 +653,16 @@ class Product extends Entity
             return $optionHtml;
         }
     }
+
+    public function getValueData($option_id, $value_id) {
+        $tableGateway = $this->getTableGateway('product_option_value');
+        $select = $tableGateway->getSql()->select();
+        $select->where(['option_id' => $option_id, 'id' => $value_id]);
+        $result = $tableGateway->selectWith($select)->toArray();
+        if ($result) {
+            return $result[0];
+        }
+        return [];
+    }
+
 }

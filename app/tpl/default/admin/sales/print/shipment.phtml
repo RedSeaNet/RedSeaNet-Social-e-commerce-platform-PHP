@@ -3,7 +3,7 @@ $invoice = $this->getShipment();
 $order = $this->getOrderModel();
 $currency = $order->getCurrency();
 $customer = $this->getCustomer();
-$logo = $this->getVariable('pdf')->Image(BP . 'pub/theme/default/frontend/images/logo.png',15,30,10,10);
+$logo = $this->getVariable('pdf')->Image(BP . 'pub/theme/blue/frontend/images/logo.png',15,30,10,10);
 $barcode = $this->getVariable('pdf')->write1DBarcode($invoice['increment_id'], 'C39', '115', '23', 80, 25, 0.4, array('position' => 'S', 'border' => false, 'padding' => 4, 'fgcolor' => array(0, 0, 0), 'bgcolor' => array(255, 255, 255), 'text' => true, 'font' => 'helvetica', 'fontsize' => 8, 'stretchtext' => 4), 'N');
 ?>
 <style>

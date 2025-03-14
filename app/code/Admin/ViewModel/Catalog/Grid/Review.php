@@ -8,31 +8,28 @@ use Redseanet\Catalog\Model\Product;
 use Redseanet\Customer\Model\Customer;
 use Redseanet\Lib\Source\Language;
 
-class Review extends PGrid
-{
+class Review extends PGrid {
+
     protected $action = [
         'getEditAction' => 'Admin\\Catalog\\Product\\Review::edit',
         'getDeleteAction' => 'Admin\\Catalog\\Product\\Review::delete'
     ];
     protected $translateDomain = 'review';
 
-    public function getEditAction($item)
-    {
+    public function getEditAction($item) {
         return '<a href="' . $this->getAdminUrl(':ADMIN/catalog_product_review/edit/?id=') . $item['id'] . '"title="' . $this->translate('Edit') .
                 '"><span class="fa fa-fw fa-file-text-o" aria-hidden="true"></span><span class="sr-only">'
                 . $this->translate('Edit') . '</span></a>';
     }
 
-    public function getDeleteAction($item)
-    {
+    public function getDeleteAction($item) {
         return '<a href="' . $this->getAdminUrl(':ADMIN/catalog_product_review/delete/') . '" data-method="delete" data-params="id=' . $item['id'] .
                 '&csrf=' . $this->getCsrfKey() . '" title="' . $this->translate('Delete') .
                 '"><span class="fa fa-fw fa-remove" aria-hidden="true"></span><span class="sr-only">' .
                 $this->translate('Delete') . '</span></a>';
     }
 
-    protected function prepareColumns($columns = [])
-    {
+    protected function prepareColumns($columns = []) {
         return [
             'id' => [
                 'type' => 'hidden',
@@ -70,6 +67,18 @@ class Review extends PGrid
                 'type' => 'text',
                 'label' => 'Subject'
             ],
+            'content' => [
+                'type' => 'text',
+                'label' => 'Content',
+                'use4sort' => false,
+                'use4filter' => false
+            ],
+            'reply' => [
+                'type' => 'text',
+                'label' => 'Reply',
+                'use4sort' => false,
+                'use4filter' => false
+            ],
             'status' => [
                 'label' => 'Status',
                 'type' => 'select',
@@ -81,11 +90,11 @@ class Review extends PGrid
         ];
     }
 
-    protected function prepareCollection($collection = null)
-    {
+    protected function prepareCollection($collection = null) {
         if (!$this->getQuery('desc')) {
             $this->query['desc'] = 'created_at';
         }
         return parent::prepareCollection(new Collection());
     }
+
 }

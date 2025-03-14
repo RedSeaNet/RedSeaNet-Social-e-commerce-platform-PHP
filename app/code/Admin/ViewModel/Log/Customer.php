@@ -15,7 +15,7 @@ class Customer extends Grid
             'remote_addr' => [
                 'label' => 'IP',
                 'handler' => function ($value) {
-                    return long2ip($value);
+                    return $value;
                 }
             ],
             'http_user_agent' => [

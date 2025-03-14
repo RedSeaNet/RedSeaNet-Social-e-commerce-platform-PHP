@@ -92,7 +92,7 @@ $product=$this->getProduct();
                             </th>
                             <th><p class="form-inline" style="margin-bottom: 0;display: flex;align-items: center;justify-content: center;"><?php echo $this->translate('Qty') ?>
                                     &nbsp;
-                                    (<input type="number" id="inventoryqty<?php echo $warehouse['id'] ?>" name="inventoryqty[<?php echo $warehouse['id'] ?>]" class="form-control" value="" />&nbsp;
+                                    (<input type="number" id="inventoryqty<?php echo $warehouse['id'] ?>" name="inventoryqty[<?php echo $warehouse['id'] ?>]" class="form-control" value=""  max="9999999999" />&nbsp;
                                     <a class="inventoryqty" data-warehouse="<?php echo $warehouse['id'] ?>"><?php echo $this->translate('Confirm') ?></a>)</p>
                             </th>
                         </tr>
@@ -105,7 +105,7 @@ $product=$this->getProduct();
                         <td>{$title}</td>
                         <td><input type="hidden" name="inventory[<?php echo $warehouse['id'] ?>][sku][]" value="{$sku}" />{$sku}</td>
                         <td><input type="text" name="inventory[<?php echo $warehouse['id'] ?>][barcode][]" class="form-control barcode" value="{$barcode}" data-warehouse="<?php echo $warehouse['id'] ?>" /></td>
-                        <td><input type="number" name="inventory[<?php echo $warehouse['id'] ?>][qty][]" class="form-control required qty" min="0" value="{$qty}" data-warehouse="<?php echo $warehouse['id'] ?>" /></td>
+                        <td><input type="number" name="inventory[<?php echo $warehouse['id'] ?>][qty][]" class="form-control required qty" min="0" value="{$qty}" data-warehouse="<?php echo $warehouse['id'] ?>"  max="9999999999" /></td>
                     </tr>
                 </template>
                 <?php

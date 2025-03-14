@@ -71,8 +71,8 @@ class WeChatPay extends AbstractMethod
         $params['total_fee'] = (int) ($params['total_fee'] * 100);
         $params['product_id'] = md5(implode(',', $ids));
         $params['out_trade_no'] = count($ids) > 1 ?
-                md5(implode('', $ids) . Rand::getString(Rand::getInteger(0, 10), 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')) :
-                $ids[0] . Rand::getString(Rand::getInteger(0, 10), 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+                md5(implode('', $ids) . Rand::getString(Rand::getInteger(1, 10), 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')) :
+                $ids[0] . Rand::getString(Rand::getInteger(1, 10), 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         $params['sign'] = $this->getSign($params);
         $query = http_build_query($params);
         foreach ($logs as $log) {
@@ -89,9 +89,9 @@ class WeChatPay extends AbstractMethod
         $this->getContainer()->get('log')->logException(new \Exception($merchantPrivateKeyFilePath));
         $merchantPrivateKeyInstance = Rsa::from($merchantPrivateKeyFilePath, Rsa::KEY_TYPE_PRIVATE);
         // 「商户API证书」的「证书序列号」
-        $merchantCertificateSerial = '360BE9AF9C05DBBF56BC2F9743EEFD1B23130F94';
+        $merchantCertificateSerial = 'xxxxx';
         // 从本地文件中加载「微信支付平台证书」，用来验证微信支付应答的签名
-        $platformCertificateFilePath = 'file://' . BP . 'var/cert/wechatpay/wechatpay_5E262DC9BBF51F3EDB0BC1566C4B4689C8D018FB.pem';
+        $platformCertificateFilePath = 'file://' . BP . 'var/cert/wechatpay/wechatpay_xxxxxx.pem';
         $this->getContainer()->get('log')->logException(new \Exception($platformCertificateFilePath));
         $platformPublicKeyInstance = Rsa::from($platformCertificateFilePath, Rsa::KEY_TYPE_PUBLIC);
         // 从「微信支付平台证书」中获取「证书序列号」
@@ -111,7 +111,7 @@ class WeChatPay extends AbstractMethod
                     ->post(['json' => [
                         'mchid' => $params['mch_id'],
                         'out_trade_no' => $params['out_trade_no'],
-                        'appid' => 'wxa01b978931bbfbf0',
+                        'appid' => '------',
                         'description' => $params['body'],
                         'notify_url' => $params['notify_url'],
                         'amount' => [

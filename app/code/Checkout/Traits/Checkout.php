@@ -8,10 +8,9 @@ use Redseanet\Lib\Bootstrap;
 use Redseanet\Lib\Session\Segment;
 use Redseanet\Sales\Model\Cart;
 
-trait Checkout
-{
-    protected function validShippingAddress($data)
-    {
+trait Checkout {
+
+    protected function validShippingAddress($data) {
         if (!isset($data['shipping_address_id'])) {
             throw new Exception('Please select shipping address');
         }
@@ -20,8 +19,7 @@ trait Checkout
         return $address;
     }
 
-    protected function validBillingAddress($data)
-    {
+    protected function validBillingAddress($data) {
         if (!isset($data['billing_address_id'])) {
             return null;
         }
@@ -30,8 +28,7 @@ trait Checkout
         return $address;
     }
 
-    public function validPayment($data)
-    {
+    public function validPayment($data) {
         if (!isset($data['payment_method'])) {
             return null;
         }
@@ -44,8 +41,7 @@ trait Checkout
         return $method;
     }
 
-    public function getShippingMethod($shipping_method)
-    {
+    public function getShippingMethod($shipping_method) {
         if (isset($shipping_method)) {
             $className = $this->getContainer()->get('config')['shipping/' . $shipping_method . '/model'];
             return new $className();
@@ -53,9 +49,10 @@ trait Checkout
         return null;
     }
 
-    public function validShipping($data)
-    {
-        $cart = Cart::instance();
+    public function validShipping($data, $cart = null) {
+        if (!$cart) {
+            $cart = Cart::instance();
+        }
         $result = [];
         foreach ($cart->getItems() as $item) {
             if (!$item['is_virtual'] && $item['status'] && !isset($result[$item['store_id']])) {
@@ -71,4 +68,5 @@ trait Checkout
         }
         return $result;
     }
+
 }

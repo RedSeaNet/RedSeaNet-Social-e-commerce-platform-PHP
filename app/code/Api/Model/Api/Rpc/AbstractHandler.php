@@ -160,7 +160,7 @@ class AbstractHandler implements HandlerInterface
                 $this->responseData = ['statusCode' => '401', 'data' => [], 'message' => 'token is invaild 4'];
                 return $this->responseData;
             }
-            if (time() > ($tokenData['loginTime'] + 86400)) {
+            if (time() > ($tokenData['loginTime'] + 129600)) {
                 $this->responseData = ['statusCode' => '401', 'data' => [], 'message' => 'token is expired 5'];
                 return $this->responseData;
             }

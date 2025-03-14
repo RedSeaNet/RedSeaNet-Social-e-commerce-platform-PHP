@@ -4,7 +4,7 @@ $product = $this->getProduct();
 $images = $product->offsetGet('images');
 $warehouse = new Redseanet\Catalog\Model\Warehouse;
 $warehouse->load(1);
-$inventory = $warehouse->getInventory($product->getId(), $product['sku']);
+$inventory = $warehouse->getInventory($product->getId(), '');
 $canSold = $product->canSold() && isset($inventory['status']) && $inventory['status'] && $inventory['qty'] > $inventory['reserve_qty'] && min((float) $inventory['max_qty'], (float) $inventory['qty']) > (float) $inventory['min_qty'];
 $store = $product->getStore();
 $retailer = new Redseanet\Retailer\Model\Retailer;

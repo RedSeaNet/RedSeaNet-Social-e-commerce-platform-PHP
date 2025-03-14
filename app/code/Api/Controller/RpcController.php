@@ -45,6 +45,7 @@ class RpcController extends AbstractController
     protected function prepareRequest()
     {
         $data = $this->getRawPost();
+        
         if (!isset($data['method']) || empty($data['method']) || !is_string($data['method'])) {
             $this->responseData = ['statusCode' => '401', 'data' => [], 'message' => 'Invalid Request'];
         }
@@ -74,7 +75,7 @@ class RpcController extends AbstractController
                         . '</' . $type . '></value></param></params></methodResponse>';
             }
         } elseif ($this->type === 'json') {
-            return json_encode($result);
+            return json_encode($result, JSON_UNESCAPED_UNICODE);
         }
         return $result;
     }
@@ -82,12 +83,16 @@ class RpcController extends AbstractController
     public function indexAction()
     {
         $data = $this->prepareRequest();
+        //$data = $this->getRequest()->getPost();
+        //return $this->response($data);
+        
         if ($this->responseData['statusCode'] != '200') {
             return $this->response($this->responseData);
         }
-        // Bootstrap::getContainer()->get("log")->logException(new \Exception(json_encode($data)));
+        //Bootstrap::getContainer()->get("log")->logException(new \Exception(json_encode($data)));
         $classMap = new ClassMap();
         $result = call_user_func_array([$classMap, $data['method']], $data['params']);
+        //Bootstrap::getContainer()->get("log")->logException(new \Exception('$result: '.json_encode($result)));
         return $this->response($result);
     }
 }

@@ -421,7 +421,7 @@ rpcport:
             currencyCode: string
         respone: json array string 
         documentation: select shipping method
-    selectShippingOrder:
+    selectAddress:
         params: 
             id: string
             token: string
@@ -430,7 +430,71 @@ rpcport:
             languageId: int
             currencyCode: string
         respone: json array string 
-        documentation: select shipping method
+        documentation: select shipping address
+    getAvailablePoints:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: get available
+    selectCoupon:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            data: array
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: select coupon
+    getAvailableBalances:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: get available balance
+    applyRewardPoints:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: apply reward points
+    cancelRewardPoints:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: apply cancel reward points
+    applyBalances:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: apply balance
+    cancelBalances:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            languageId: int
+            currencyCode: string
+        respone: json array string 
+        documentation: apply cancel balance
 soap:
     cartInfo: \Redseanet\Sales\Model\Api\Soap\Cart
     cartAddItem: \Redseanet\Sales\Model\Api\Soap\Cart
@@ -453,6 +517,14 @@ rpc:
     cartChangeItemStatus: \Redseanet\Sales\Model\Api\Rpc\Cart
     selectPayment: \Redseanet\Sales\Model\Api\Rpc\Cart
     selectShipping: \Redseanet\Sales\Model\Api\Rpc\Cart
+    selectAddress: \Redseanet\Sales\Model\Api\Rpc\Cart
+    selectCoupon: \Redseanet\Sales\Model\Api\Rpc\Cart
+    getAvailablePoints: \Redseanet\Sales\Model\Api\Rpc\Cart
+    getAvailableBalances: \Redseanet\Sales\Model\Api\Rpc\Cart
+    applyRewardPoints: \Redseanet\Sales\Model\Api\Rpc\Cart
+    cancelRewardPoints: \Redseanet\Sales\Model\Api\Rpc\Cart
+    applyBalances: \Redseanet\Sales\Model\Api\Rpc\Cart
+    cancelBalances: \Redseanet\Sales\Model\Api\Rpc\Cart
     getMerchant: \Redseanet\Sales\Model\Api\Rpc\Order
     getStore: \Redseanet\Sales\Model\Api\Rpc\Order
     getShippingMethod: \Redseanet\Sales\Model\Api\Rpc\Order
@@ -465,4 +537,3 @@ rpc:
     getShippingMethodByItems: \Redseanet\Sales\Model\Api\Rpc\Order
     getPaymentMethodByCondition: \Redseanet\Sales\Model\Api\Rpc\Order
     chargeBalanceOrder: \Redseanet\Sales\Model\Api\Rpc\Order
-    selectShippingOrder: \Redseanet\Sales\Model\Api\Rpc\Order

@@ -34,6 +34,7 @@
                 <td>
                     <?php echo $warehouse['name'] ?>
                     <input type="hidden" name="inventory[<?php echo $warehouse['id'] ?>][sku][]" value="" />
+                    <input type="hidden" name="inventory[<?php echo $warehouse['id'] ?>][option_value][]" value="<?php echo isset($warehouse['option_value']) ? $warehouse['option_value'] : '' ?>" />
                 </td>
                 <td><input type="number" name="inventory[<?php echo $warehouse['id'] ?>][qty][]" class="form-control required" min="0" value="<?php echo isset($warehouse['qty']) ? (float) $warehouse['qty'] : '0' ?>" /></td>
                 <td><input type="number" name="inventory[<?php echo $warehouse['id'] ?>][reserve_qty][]" class="form-control" value="<?php echo isset($warehouse['reserve_qty']) ? (float) $warehouse['reserve_qty'] : 0 ?>" /></td>
@@ -83,7 +84,7 @@ foreach ($this->getWarehouses() as $warehouse):
                 </th>
                 <th><p class="form-inline" style="margin-bottom: 0;display: flex;align-items: center;justify-content: center;"><?php echo $this->translate('Qty') ?>
                         &nbsp;
-                        (<input type="number" id="inventoryqty<?php echo $warehouse['id'] ?>" name="inventoryqty[<?php echo $warehouse['id'] ?>]" class="form-control" value="" />&nbsp;
+                        (<input type="number" id="inventoryqty<?php echo $warehouse['id'] ?>" name="inventoryqty[<?php echo $warehouse['id'] ?>]" class="form-control" value="" max="9999999999" />&nbsp;
                         <a class="inventoryqty" data-warehouse="<?php echo $warehouse['id'] ?>"><?php echo $this->translate('Confirm') ?></a>)</p>
                 </th>
             </tr>
@@ -94,9 +95,13 @@ foreach ($this->getWarehouses() as $warehouse):
     <template class="tmpl-inventory-branch" data-inventory='<?php echo json_encode($json) ?>'>
         <tr>
             <td>{$title}</td>
-            <td><input type="hidden" name="inventory[<?php echo $warehouse['id'] ?>][sku][]" value="{$sku}" />{$sku}</td>
+            <td>
+                <input type="hidden" name="inventory[<?php echo $warehouse['id'] ?>][sku][]" value="{$sku}" />
+                <input type="hidden" name="inventory[<?php echo $warehouse['id'] ?>][option_value][]" value="{$option_value}" />
+                {$sku}
+            </td>
             <td><input type="text" name="inventory[<?php echo $warehouse['id'] ?>][barcode][]" class="form-control barcode" value="{$barcode}" data-warehouse="<?php echo $warehouse['id'] ?>" /></td>
-            <td><input type="number" name="inventory[<?php echo $warehouse['id'] ?>][qty][]" class="form-control required qty" min="0" value="{$qty}" data-warehouse="<?php echo $warehouse['id'] ?>" /></td>
+            <td><input type="number" name="inventory[<?php echo $warehouse['id'] ?>][qty][]" class="form-control required qty" min="0" value="{$qty}" data-warehouse="<?php echo $warehouse['id'] ?>" max="9999999999" /></td>
         </tr>
     </template>
     <?php

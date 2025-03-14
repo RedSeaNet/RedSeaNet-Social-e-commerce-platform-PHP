@@ -7,7 +7,6 @@ use Redseanet\Lib\Model\Collection\Language as Collection;
 use Redseanet\Lib\Session\Segment;
 use Redseanet\Admin\Model\User;
 use Redseanet\Lib\Source\Merchant;
-
 class Language extends PGrid
 {
     protected $action = [
@@ -15,23 +14,19 @@ class Language extends PGrid
         'getDeleteAction' => 'Admin\\I18n\\Language::delete'
     ];
 
-    public function getEditAction($item)
-    {
+    public function getEditAction($item) {
         return '<a href="' . $this->getAdminUrl(':ADMIN/i18n_language/edit/?id=') . $item['id'] . '" title="' . $this->translate('Edit') .
                 '"><span class="fa fa-fw fa-file-text-o" aria-hidden="true"></span><span class="sr-only">' .
                 $this->translate('Edit') . '</span></a>';
     }
 
-    public function getDeleteAction($item)
-    {
+    public function getDeleteAction($item) {
         return '<a href="' . $this->getAdminUrl(':ADMIN/i18n_language/delete/') . '" data-method="delete" data-params="id=' . $item['id'] .
                 '&csrf=' . $this->getCsrfKey() . '" title="' . $this->translate('Delete') .
                 '"><span class="fa fa-fw fa-remove" aria-hidden="true"></span><span class="sr-only">' .
                 $this->translate('Delete') . '</span></a>';
     }
-
-    protected function prepareColumns()
-    {
+    protected function prepareColumns() {
         return [
             'id' => [
                 'label' => 'ID',
@@ -66,7 +61,6 @@ class Language extends PGrid
             ]
         ];
     }
-
     protected function prepareCollection($collection = null)
     {
         $collection = new Collection();

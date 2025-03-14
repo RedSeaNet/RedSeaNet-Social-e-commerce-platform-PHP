@@ -4,32 +4,41 @@ namespace Redseanet\Email\Mq;
 
 use Redseanet\Email\Model\Collection\Template as TemplateCollection;
 use Redseanet\Email\Model\Template as TemplateModel;
-use Redseanet\Lib\Model\Language;
 use Redseanet\Lib\Mq\MqInterface;
+use PHPMailer\PHPMailer\Exception as EmailException;
 
-class Login implements MqInterface
-{
+class Login implements MqInterface {
+
     use \Redseanet\Lib\Traits\Container;
 
-    public function welcome($data)
-    {
+    public function welcome($data) {
         $config = $this->getContainer()->get('config');
-        $from = $config['email/customer/sender_email'] ?: $config['email/default/sender_email'];
-        $collection = new TemplateCollection();
-        $collection->join('email_template_language', 'email_template_language.template_id=email_template.id', [], 'left')
-                ->where([
-                    'code' => $config['email/customer/welcome_template'],
-                    'language_id' => $data['language_id']
+        $fromEmail = $config['email/customer/sender_email'] ?: $config['email/default/sender_email'];
+        $from = [$fromEmail, $config['email/customer/sender_name'] ?: ($config['email/default/sender_name'] ?: null)];
+        try {
+            if (!empty($from)) {
+                $collection = new TemplateCollection();
+                $collection->join('email_template_language', 'email_template_language.template_id=email_template.id', [], 'left')
+                        ->where([
+                            'code' => $config['email/customer/confirm_template'],
+                            'language_id' => $data['language_id']
                 ]);
-        $language = new Language();
-        $language->load($data['language_id']);
-        $mailer = $this->getContainer()->get('mailer');
-        $mailer->send((new TemplateModel($collection[0]))
-                        ->getMessage([
-                            'password' => $data['password'],
-                            'username' => $data['username']
-                        ])
-                        ->addFrom($from, $config['email/customer/sender_name'] ?: ($config['email/default/sender_name'] ?: null))
-                        ->addTo($data['email'], $data['username']));
+                if (count($collection) > 0) {
+                    $mailer = $this->getContainer()->get('mailer');
+                    $params = ['username' => $data['username']];
+                    $mailTemplate = new TemplateModel($collection[0]);
+                    $recipients = [];
+                    $recipients[] = [$data['email'], $data['username']];
+                    $subject = $mailTemplate['subject'];
+                    $content = $mailTemplate->getContent($params);
+                    $mailer->send($recipients, $subject, $content, [], '', '', [], true, '', $from);
+                }
+            }
+        } catch (EmailException $e) {
+            $this->getContainer()->get('log')->logException($e);
+        } catch (Exception $e) {
+            $this->getContainer()->get('log')->logException($e);
+        }
     }
+
 }

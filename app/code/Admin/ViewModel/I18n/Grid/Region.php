@@ -34,9 +34,9 @@ class Region extends PGrid
             'id' => [
                 'label' => 'ID',
             ],
-            'country' => [
+            'parent_id' => [
                 'type' => 'select',
-                'label' => 'Country',
+                'label' => 'Country/Region',
                 'options' => (new Country())->getSourceArrayId()
             ],
             'code' => [
@@ -52,6 +52,9 @@ class Region extends PGrid
     {
         $collection = new Collection();
         $collection->join('i18n_country', 'i18n_region.parent_id=i18n_country.id', ['country' => 'id', 'country_default_name' => 'default_name'], 'left');
+        if (!$this->getQuery('desc')) {
+            $this->query['desc'] = 'i18n_region.id';
+        }
         return parent::prepareCollection($collection);
     }
 }

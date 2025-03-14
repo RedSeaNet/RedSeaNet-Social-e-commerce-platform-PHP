@@ -224,3 +224,5 @@
 "Secrecy","保密"
 "Please enter ","请输入 "
 "Please choose ","请选择 "
+"login successfully","登陆成功"
+"login failure, useranme and password invaid","登陆失败，用户名和密码不对"

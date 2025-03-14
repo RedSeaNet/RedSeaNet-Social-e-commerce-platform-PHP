@@ -11,8 +11,8 @@ use Laminas\Db\Sql\Expression;
 use Redseanet\Sales\Model\Order;
 use Redseanet\Lib\Bootstrap;
 
-class Gather implements MqInterface
-{
+class Gather implements MqInterface {
+
     use \Redseanet\Lib\Traits\Container;
 
     use \Redseanet\Lib\Traits\DB;
@@ -21,8 +21,7 @@ class Gather implements MqInterface
 
     use \Redseanet\Lib\Traits\DataCache;
 
-    public function afterReview($event)
-    {
+    public function afterReview($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
         if ($config['rewardpoints/general/enable'] &&
@@ -42,8 +41,7 @@ class Gather implements MqInterface
         }
     }
 
-    public function afterRegister($event)
-    {
+    public function afterRegister($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
         if ($config['rewardpoints/general/enable'] && ($points = $config['rewardpoints/gathering/registration']) && $event['isNew']) {
@@ -57,8 +55,7 @@ class Gather implements MqInterface
         }
     }
 
-    private function getPoints($order)
-    {
+    private function getPoints($order) {
         $config = $this->getContainer()->get('config');
         $total = 0;
         $unavailable = 0;
@@ -89,29 +86,23 @@ class Gather implements MqInterface
         return $total >= $config['rewardpoints/gathering/min_amount'] ? ($max ? min($max, $calc) : $calc) : 0;
     }
 
-    public function afterOrderPlace($data)
-    {
+    public function afterOrderPlace($data) {
         $config = $this->getContainer()->get('config');
-        for ($i = 0; $i < count($data['ids']); $i++) {
-            $model = new Order();
-            $model->load($data['ids'][$i]);
-            $points = $this->getPoints($model);
-            //Bootstrap::getContainer()->get('log')->logException(new \Exception('point:'.$points));
-            if ($config['rewardpoints/general/enable'] && $config['rewardpoints/gathering/rate'] && $model->offsetGet('customer_id') && $points > 0) {
-                $record = new Record([
-                    'customer_id' => $model->offsetGet('customer_id'),
-                    'order_id' => $model->getId(),
-                    'count' => $points,
-                    'comment' => 'Consumption',
-                    'status' => 0
-                ]);
-                $record->save();
-            }
+        $points = (!empty($data["rewardpoint"]["total"]) ? (float) $data["rewardpoint"]["total"] : 0);
+        //Bootstrap::getContainer()->get('log')->logException(new \Exception('point:'.$points));
+        if ($config['rewardpoints/general/enable'] && $config['rewardpoints/gathering/rate'] && $data['customer_id'] && $points > 0) {
+            $record = new Record([
+                'customer_id' => $data['customer_id'],
+                'order_id' => $data["id"],
+                'count' => $points,
+                'comment' => 'Consumption',
+                'status' => 0
+            ]);
+            $record->save();
         }
     }
 
-    public function afterOrderComplete($event)
-    {
+    public function afterOrderComplete($event) {
         if ($this->getContainer()->get('config')['rewardpoints/general/activating'] == 0) {
             $model = $event['model'];
             if ($model->getPhase()['code'] === 'complete') {
@@ -121,7 +112,7 @@ class Gather implements MqInterface
                         ->where([
                             'order_id' => $model->getId(),
                             'sales_order_phase.code' => 'complete'
-                        ]);
+                ]);
                 if (count($history->load(false, true)) === 0) {
                     $collection = new Collection();
                     $collection->columns(['id'])
@@ -137,8 +128,7 @@ class Gather implements MqInterface
         }
     }
 
-    public function afterSubscribe($event)
-    {
+    public function afterSubscribe($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
         if ($event['isNew'] && $config['rewardpoints/general/enable'] && ($points = $config['rewardpoints/gathering/newsletter']) && $model['status'] === 1) {
@@ -156,8 +146,7 @@ class Gather implements MqInterface
         }
     }
 
-    public function afterShare($event)
-    {
+    public function afterShare($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
         if ($event['isNew'] && $config['rewardpoints/general/enable'] && ($points = $config['rewardpoints/gathering/share'])) {
@@ -182,8 +171,7 @@ class Gather implements MqInterface
         }
     }
 
-    public function afterRefund($event)
-    {
+    public function afterRefund($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
         $order = $model->getOrder();
@@ -208,13 +196,11 @@ class Gather implements MqInterface
         }
     }
 
-    public function beforeSaveCustomer($event)
-    {
+    public function beforeSaveCustomer($event) {
         unset($event['model']['rewardpoints']);
     }
 
-    public function afterSaveBackendCustomer($event)
-    {
+    public function afterSaveBackendCustomer($event) {
         $customer = $event['model'];
         if ($count = (int) $customer->offsetGet('adjust_rewardpoints')) {
             $record = new Record();
@@ -227,4 +213,5 @@ class Gather implements MqInterface
             $record->save();
         }
     }
+
 }

@@ -12,10 +12,10 @@ product.price.calc:
     -
         listener: [\Redseanet\Catalog\Listeners\Price\Group, calc]
         priority: 30
-cart.add.before:
-    -
-        listener: [\Redseanet\Catalog\Listeners\Inventory, check]
-        priority: 10
+#cart.add.before:
+#    -
+#        listener: [\Redseanet\Catalog\Listeners\Inventory, check]
+#        priority: 10
 order.place.after:
     -
         listener: [\Redseanet\Catalog\Listeners\Inventory, decrease]

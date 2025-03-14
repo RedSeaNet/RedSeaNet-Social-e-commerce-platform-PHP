@@ -8,14 +8,13 @@ use Redseanet\RewardPoints\Model\Record;
 use Redseanet\Sales\Model\Order;
 use Redseanet\Lib\Bootstrap;
 
-class Using implements MqInterface
-{
+class Using implements MqInterface {
+
     use \Redseanet\Lib\Traits\Container;
 
     use \Redseanet\RewardPoints\Traits\Calc;
 
-    public function apply($event)
-    {
+    public function apply($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
         $count = $event['count'] ?: false;
@@ -27,8 +26,7 @@ class Using implements MqInterface
         }
     }
 
-    public function cancel($event)
-    {
+    public function cancel($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
         if ($config['rewardpoints/general/enable'] && $config['rewardpoints/using/rate'] && $model->offsetGet('customer_id')) {
@@ -38,8 +36,7 @@ class Using implements MqInterface
         }
     }
 
-    public function calc($event)
-    {
+    public function calc($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
         if ($config['rewardpoints/general/enable'] && $config['rewardpoints/using/rate'] && $model->offsetGet('customer_id')) {
@@ -57,32 +54,25 @@ class Using implements MqInterface
         }
     }
 
-    public function afterOrderPlace($data)
-    {
+    public function afterOrderPlace($data) {
         $config = $this->getContainer()->get('config');
-        for ($i = 0; $i < count($data['ids']); $i++) {
-            $model = new Order();
-            $model->load($data['ids'][$i]);
-
-            if ($config['rewardpoints/general/enable'] && $config['rewardpoints/using/rate'] && $model->offsetGet('customer_id')) {
-                $points = $model->getAdditional('rewardpoints');
-                //Bootstrap::getContainer()->get('log')->logException(new \Exception('using points:'.$points));
-                if ($points && $model['base_discount'] < (json_decode($model['discount_detail'], true)['Promotion'] ?? 0)) {
-                    $record = new Record([
-                        'customer_id' => $model->offsetGet('customer_id'),
-                        'order_id' => $model->getId(),
-                        'count' => -$points,
-                        'status' => 1,
-                        'comment' => 'Consumption'
-                    ]);
-                    $record->save();
-                }
+        if ($config['rewardpoints/general/enable'] && $config['rewardpoints/using/rate'] && $data['customer_id']) {
+            $points = !empty($data["discount_detail"]["rewardpoints"]["total"]) ? (float) $data["discount_detail"]["rewardpoints"]["total"] : 0;
+            //Bootstrap::getContainer()->get('log')->logException(new \Exception('using points:'.$points));
+            if ($points && $points > 0) {
+                $record = new Record([
+                    'customer_id' => $data['customer_id'],
+                    'order_id' => $data["id"],
+                    'count' => -$points,
+                    'status' => 1,
+                    'comment' => 'Consumption'
+                ]);
+                $record->save();
             }
         }
     }
 
-    public function afterRefund($event)
-    {
+    public function afterRefund($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
         $order = $model->getOrder();
@@ -107,8 +97,7 @@ class Using implements MqInterface
         }
     }
 
-    public function afterOrderCancel($event)
-    {
+    public function afterOrderCancel($event) {
         $model = $event['model'];
         if ($model->getPhase()['code'] === 'canceled') {
             $collection = new Collection();
@@ -122,4 +111,5 @@ class Using implements MqInterface
             }
         }
     }
+
 }

@@ -5,7 +5,6 @@ namespace Redseanet\Admin\Controller\Api\Soap;
 use Redseanet\Lib\Controller\AuthActionController;
 use Redseanet\Lib\Session\Segment;
 use Redseanet\Api\Model\Soap\User as Model;
-use Redseanet\Admin\Model\User;
 
 class UserController extends AuthActionController
 {

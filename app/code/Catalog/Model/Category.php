@@ -68,7 +68,7 @@ class Category extends Entity
         if (!empty($this->storage['thumbnail'])) {
             $resource = new Resource();
             $resource->load($this->storage['thumbnail']);
-            return $resource['real_name'];
+            return $this->getResourceUrl('image/' . $resource['real_name']);
         }
         return $this->getPubUrl('frontend/images/placeholder.png');
     }

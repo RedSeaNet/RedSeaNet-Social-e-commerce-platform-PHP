@@ -44,7 +44,7 @@ class Warehouse extends PEdit
                 'required' => 'required'
             ],
             'country' => [
-                'label' => 'Country',
+                'label' => 'Country/Region',
                 'type' => 'text',
                 'required' => 'required',
                 'attrs' => ['maxlength' => 2]

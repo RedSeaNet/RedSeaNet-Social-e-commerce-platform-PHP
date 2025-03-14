@@ -1,0 +1,12 @@
+---
+rpcport:
+    getStoreList: 
+        params: 
+            id: string
+            token: string
+            coditionData: array
+            languageId: int
+        respone: json array string
+        documentation: get store list by codition 
+rpc:
+    getStoreList: \Redseanet\Retailer\Model\Api\Rpc\Store

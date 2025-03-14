@@ -170,3 +170,6 @@
 "Please select a video","請選擇一個視頻"
 "Please select an image","請選擇一張圖片"
 "Images/Video","圖像/視頻"
+"The SKU can not be null","SKU不能是空的"
+"The sku has to be unique","SKU不能有重復的"
+"The option value label can not be null":"選擇值的標簽不能是空的"

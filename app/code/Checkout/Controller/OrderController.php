@@ -12,14 +12,13 @@ use Redseanet\Lib\Session\Segment;
 use Redseanet\Sales\Model\Cart;
 use Redseanet\Sales\Model\Order;
 
-class OrderController extends ActionController
-{
+class OrderController extends ActionController {
+
     use \Redseanet\Lib\Traits\DB;
     use \Redseanet\Lib\Traits\DataCache;
     use \Redseanet\Lib\Traits\Rabbitmq;
 
-    public function dispatch($request = null, $routeMatch = null)
-    {
+    public function dispatch($request = null, $routeMatch = null) {
         $session = new Segment('customer');
         $config = $this->getContainer()->get('config');
         if (!$session->get('hasLoggedIn') && !$config['checkout/general/allow_guest']) {
@@ -32,8 +31,7 @@ class OrderController extends ActionController
         return parent::dispatch($request, $routeMatch);
     }
 
-    public function indexAction()
-    {
+    public function indexAction() {
         $cart = Cart::instance();
         $items = $cart->getItems(true);
         $items->where(['status' => 1]);
@@ -55,8 +53,7 @@ class OrderController extends ActionController
         return $this->redirectReferer('checkout/cart/');
     }
 
-    public function shippingAction()
-    {
+    public function shippingAction() {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $store = $this->getRequest()->getQuery('store');
             $root = $this->getLayout('checkout_order_shipping');
@@ -72,8 +69,7 @@ class OrderController extends ActionController
         return $this->notFoundAction();
     }
 
-    public function paymentAction()
-    {
+    public function paymentAction() {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $root = $this->getLayout('checkout_order_payment');
             $store = $this->getRequest()->getQuery('store');
@@ -99,16 +95,14 @@ class OrderController extends ActionController
         return $this->notFoundAction();
     }
 
-    public function reviewAction()
-    {
+    public function reviewAction() {
         if ($this->getRequest()->isXmlHttpRequest()) {
             return $this->getLayout('checkout_order_review');
         }
         return $this->notFoundAction();
     }
 
-    public function couponAction()
-    {
+    public function couponAction() {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $store = $this->getRequest()->getQuery('store');
             $root = $this->getLayout('checkout_order_coupon');
@@ -118,8 +112,7 @@ class OrderController extends ActionController
         return $this->notFoundAction();
     }
 
-    public function placeAction()
-    {
+    public function placeAction() {
         $result = ['error' => 0, 'message' => []];
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
@@ -161,12 +154,12 @@ class OrderController extends ActionController
                         $cartInfo = [
                             'payment_method' => $data['payment_method'],
                             'customer_note' => isset($data['comment']) ? json_encode($data['comment']) : '{}'
-                        ] + $cartInfo;
+                                ] + $cartInfo;
                         if ($billingAddress) {
                             $cartInfo = [
                                 'billing_address_id' => $data['billing_address_id'],
                                 'billing_address' => $billingAddress->display(false)
-                            ] + $cartInfo;
+                                    ] + $cartInfo;
                         }
                     } else {
                         $shippingAddress = $this->validShippingAddress($data);
@@ -177,14 +170,14 @@ class OrderController extends ActionController
                             'payment_method' => $data['payment_method'],
                             'shipping_method' => json_encode($data['shipping_method']),
                             'customer_note' => isset($data['comment']) ? json_encode($data['comment']) : '{}'
-                        ] + $cartInfo;
+                                ] + $cartInfo;
                         $cartInfo = ($billingAddress ? [
                             'billing_address_id' => $data['billing_address_id'],
                             'billing_address' => $billingAddress->display(false)
-                        ] : [
+                                ] : [
                             'billing_address_id' => $data['shipping_address_id'],
                             'billing_address' => $shippingAddress->display(false)
-                        ]) + $cartInfo;
+                                ]) + $cartInfo;
                     }
                     $orders = [];
                     if (isset($data['payment_data'])) {
@@ -209,24 +202,13 @@ class OrderController extends ActionController
                     if (isset($orders['openid'])) {
                         $result['prepay'] = (new Segment('payment'))->get('wechatpay');
                     }
+                    $cart->setData(["use_balance" => 0, "use_reward_point" => 0]);
+                    $cart->collateTotals();
                     $this->commit();
-
-                    if (!empty($config['adapter']['mq'])) {
-                        //mp
-                        $this->getRabbitmqConnection();
-                        $this->createRabbitmqChannel();
-                        $this->declareRabbitmqQueue('customerlogin');
-                        $this->declareRabbitmqExchange('customerlogin');
-                        $data['language_id'] = $language_id;
-                        $data['ids'] = [];
-                        foreach ($orders as $order) {
-                            $data['ids'][] = $order->getId();
-                        }
-                        $msgBody = ['eventName' => 'order.place.after.mq', 'data' => $data];
-                        $this->sendPublishMqMessage(json_encode($msgBody));
-                    }
                     $segment = new Segment('checkout');
                     $segment->set('hasNewOrder', 1);
+                    $this->flushList("customer_balance");
+                    $this->flushList("reward_points");
                 } catch (Error $e) {
                     $this->getContainer()->get('log')->logError($e);
                     $result['error'] = 1;
@@ -247,8 +229,7 @@ class OrderController extends ActionController
         return $this->response($result, 'checkout/order/', 'checkout');
     }
 
-    protected function validShippingAddress($data)
-    {
+    protected function validShippingAddress($data) {
         if (!isset($data['shipping_address_id'])) {
             throw new Exception('Please select shipping address');
         }
@@ -263,8 +244,7 @@ class OrderController extends ActionController
         return $address;
     }
 
-    protected function validBillingAddress($data)
-    {
+    protected function validBillingAddress($data) {
         if (!isset($data['billing_address_id'])) {
             return null;
         }
@@ -279,8 +259,7 @@ class OrderController extends ActionController
         return $address;
     }
 
-    public function saveAddressAction()
-    {
+    public function saveAddressAction() {
         $result = ['error' => 0, 'message' => []];
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
@@ -313,15 +292,15 @@ class OrderController extends ActionController
                     }
                     $result['data'] = ['id' => $address->getId(), 'content' => $address->display(), 'json' => json_encode($address->toArray())];
                     Cart::instance()->setData(
-                        (isset($data['is_billing']) && $data['is_billing']) ? [
-                            'billing_address_id' => $result['data']['id'],
-                            'billing_address' => $result['data']['content']
-                        ] : [
-                            'shipping_address_id' => $result['data']['id'],
-                            'shipping_address' => $result['data']['content'],
-                            'billing_address_id' => $result['data']['id'],
-                            'billing_address' => $result['data']['content']
-                        ]
+                            (isset($data['is_billing']) && $data['is_billing']) ? [
+                                'billing_address_id' => $result['data']['id'],
+                                'billing_address' => $result['data']['content']
+                                    ] : [
+                                'shipping_address_id' => $result['data']['id'],
+                                'shipping_address' => $result['data']['content'],
+                                'billing_address_id' => $result['data']['id'],
+                                'billing_address' => $result['data']['content']
+                                    ]
                     )->save();
                 } catch (Exception $e) {
                     $result['error'] = 1;
@@ -333,8 +312,7 @@ class OrderController extends ActionController
         return $this->response($result, 'checkout/order/', 'checkout');
     }
 
-    public function defaultAddressAction()
-    {
+    public function defaultAddressAction() {
         $id = $this->getRequest()->getQuery('id');
         if ($id) {
             $address = new Address();
@@ -344,8 +322,7 @@ class OrderController extends ActionController
         return $this->redirectReferer();
     }
 
-    public function deleteAddressAction()
-    {
+    public function deleteAddressAction() {
         $result = ['error' => 0, 'message' => []];
         if ($this->getRequest()->isDelete()) {
             $data = $this->getRequest()->getPost();
@@ -373,8 +350,7 @@ class OrderController extends ActionController
         return $this->response($result, 'checkout/order/', 'checkout');
     }
 
-    public function selectAddressAction()
-    {
+    public function selectAddressAction() {
         $result = ['error' => 0, 'message' => []];
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
@@ -398,12 +374,12 @@ class OrderController extends ActionController
                             'shipping_address_id' => $data['shipping_address_id'],
                             'shipping_address' => $shippingAddress->display(false)
                         ])->setData($billingAddress ? [
-                            'billing_address_id' => $data['billing_address_id'],
-                            'billing_address' => $billingAddress->display(false)
-                        ] : [
-                            'billing_address_id' => $data['shipping_address_id'],
-                            'billing_address' => $shippingAddress->display(false)
-                        ])->collateTotals();
+                                    'billing_address_id' => $data['billing_address_id'],
+                                    'billing_address' => $billingAddress->display(false)
+                                        ] : [
+                                    'billing_address_id' => $data['shipping_address_id'],
+                                    'billing_address' => $shippingAddress->display(false)
+                                ])->collateTotals();
                     }
                 } catch (Exception $e) {
                     $result['error'] = 1;
@@ -414,8 +390,7 @@ class OrderController extends ActionController
         return $this->response($result, 'checkout/order/', 'checkout');
     }
 
-    public function validPayment($data)
-    {
+    public function validPayment($data) {
         if (!isset($data['payment_method'])) {
             throw new Exception('Please select payment method');
         }
@@ -428,8 +403,7 @@ class OrderController extends ActionController
         return $method;
     }
 
-    public function selectPaymentAction()
-    {
+    public function selectPaymentAction() {
         $result = ['error' => 0, 'message' => []];
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
@@ -452,8 +426,7 @@ class OrderController extends ActionController
         return $this->response($result, 'checkout/order/', 'checkout');
     }
 
-    public function validShipping($data)
-    {
+    public function validShipping($data) {
         $cart = Cart::instance();
         $result = [];
         foreach ($cart->getItems() as $item) {
@@ -471,8 +444,7 @@ class OrderController extends ActionController
         return $result;
     }
 
-    public function selectShippingAction()
-    {
+    public function selectShippingAction() {
         $result = ['error' => 0, 'message' => []];
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
@@ -506,8 +478,7 @@ class OrderController extends ActionController
         return $this->response($result, 'checkout/order/', 'checkout');
     }
 
-    public function selectCouponAction()
-    {
+    public function selectCouponAction() {
         $result = ['error' => 0, 'message' => []];
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
@@ -529,4 +500,5 @@ class OrderController extends ActionController
         }
         return $this->response($result, 'checkout/order/', 'checkout');
     }
+
 }

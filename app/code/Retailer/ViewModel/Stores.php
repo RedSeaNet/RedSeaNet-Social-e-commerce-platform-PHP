@@ -15,7 +15,7 @@ class Stores extends Template
         $query = $this->getQuery();
         $collection = new Collection();
         $collection->join('core_store', 'retailer.store_id=core_store.id', ['code', 'name'], 'left');
-        $collection->where(['status' => 1]);
+        $collection->where(["status"=>1]);
         if (!isset($query['asc']) && !isset($query['desc'])) {
             $collection->order('created_at DESC');
         }

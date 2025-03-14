@@ -20,8 +20,8 @@ use Laminas\Db\Sql\Select;
 use Redseanet\Forum\Model\Poll as PollModel;
 use Redseanet\Resource\Lib\Factory as resourceFactory;
 
-class Post extends Template
-{
+class Post extends Template {
+
     use \Redseanet\Lib\Traits\Filter;
 
     protected $posts = null;
@@ -35,16 +35,14 @@ class Post extends Template
     protected $customer_id = null;
     protected $action = [];
 
-    protected function getCurrent()
-    {
+    protected function getCurrent() {
         if (is_null($this->current)) {
             $this->current = new DateTime();
         }
         return $this->current;
     }
 
-    public function getTime($time)
-    {
+    public function getTime($time) {
         $dt = new DateTime($time);
         $days = $dt->diff($this->getCurrent())->format('%a');
         if ($days && $days > 1) {
@@ -56,8 +54,7 @@ class Post extends Template
         }
     }
 
-    public function getReviews()
-    {
+    public function getReviews() {
         $post = $this->getVariable('post');
         $reviews = $post->getReviews();
         $reviews->order('created_at DESC')->where->greaterThan('status', 0);
@@ -69,8 +66,7 @@ class Post extends Template
         return $reviews;
     }
 
-    public function getReferences()
-    {
+    public function getReferences() {
         $post = $this->getVariable('post');
         $reviews = $post->getReviews();
         $reviews->order('created_at ASC')->where->greaterThan('reference', 0);
@@ -82,8 +78,7 @@ class Post extends Template
         return $reviews;
     }
 
-    public function getPosts()
-    {
+    public function getPosts() {
         $segment = new Segment('customer');
         $customerId = $segment->get('hasLoggedIn') ? $segment->get('customer')['id'] : null;
         if (is_null($this->posts)) {
@@ -115,6 +110,7 @@ class Post extends Template
             //echo $this->posts->getSqlString(Bootstrap::getContainer()->get("dbAdapter")->getPlatform());exit;
             $searchQuery = [];
             $query = $this->getQuery();
+            $search_type = (isset($query['search_type']) && '' != $query['search_type'] ? intval($query['search_type']) : 1);
             $allowSearchColumn = ['id', 'customer_id', 'category_id',
                 'language_id', 'status', 'anonymous', 'uri_key', 'poll_id', 'product_id',
                 'images', 'videos', 'title', 'description', 'content', 'like', 'dislike',
@@ -124,10 +120,20 @@ class Post extends Template
                     $searchQuery[$key] = $value;
                 }
             }
-            if (isset($query['q']) && $query['q'] != '') {
-                $this->posts->where('title like "%' . $query['q'] . '%" and tags like "%' . $query['q'] . '%"');
+            if (2 == $search_type) {
+                if (isset($query['q']) && '' != $query['q']) {
+                    $this->posts->where('title like "%' . $query['q'] . '%" and tags like "%' . $query['q'] . '%"');
+                }
+            } else if (!empty($customerId) && 3 == $search_type) {
+                if (isset($query['q']) && '' != $query['q']) {
+                    $this->posts->join('customer_1_index', 'customer_1_index.id=customer_id', [], 'left');
+                    $this->posts->where(["customer_1_index.country" => intval($query['q'])]);
+                }
+            } else {
+                if (isset($query['q']) && '' != $query['q']) {
+                    $this->posts->where('title like "%' . $query['q'] . '%" and tags like "%' . $query['q'] . '%"');
+                }
             }
-
             if ($this->getVariable('category', false)) {
                 $this->posts->where(['category_id' => $this->getVariable('category')->getId()]);
             } elseif ($this->getVariable('category_id', false)) {
@@ -150,8 +156,7 @@ class Post extends Template
         return $this->posts;
     }
 
-    public function getDrafts()
-    {
+    public function getDrafts() {
         if (is_null($this->posts)) {
             $views = new Select('log_visitor');
             $views->columns(['count' => new Expression('count(1)')])
@@ -171,8 +176,7 @@ class Post extends Template
         return $this->posts;
     }
 
-    public function getUsers()
-    {
+    public function getUsers() {
         if (is_null($this->posts)) {
             $views = new Select('customer_1_index');
             $views->columns(['count' => new Expression('count(1)')])
@@ -180,15 +184,14 @@ class Post extends Template
             ->where->equalTo('id', 'forum_post.customer_id', 'identifier', 'identifier');
             $this->posts = new PostCollection();
             $this->posts->columns(['*', 'views' => $views])
-                    ->where(['language_id' => Bootstrap::getLanguage()->getId(), ])
+                    ->where(['language_id' => Bootstrap::getLanguage()->getId(),])
                     ->order('id DESC')
             ->where->greaterThan('status', 0);
         }
         return $this->posts;
     }
 
-    public function getLikeCount()
-    {
+    public function getLikeCount() {
         $likes = new Select('forum_post');
         $likes->columns(['count' => new Expression('count(1)')])
                 ->group('id')
@@ -200,8 +203,7 @@ class Post extends Template
         return $count;
     }
 
-    public function getCollected($customer_id = null)
-    {
+    public function getCollected($customer_id = null) {
         if (empty($customer_id)) {
             $customer = (new Segment('customer'))->get('customer');
             $customer_id = $customer['id'];
@@ -216,15 +218,13 @@ class Post extends Template
         return $my_likes;
     }
 
-    public function getCategories()
-    {
+    public function getCategories() {
         $categories = new CategoryCollection();
         $categories->withName();
         return $categories;
     }
 
-    public function getRootCategory()
-    {
+    public function getRootCategory() {
         $categories = new ProductCategory();
         $categories->where(['parent_id' => null]);
         if (count($categories)) {
@@ -233,8 +233,7 @@ class Post extends Template
         return [];
     }
 
-    public function getLinkedProducts()
-    {
+    public function getLinkedProducts() {
         $post = new PModel();
         $post->load($this->getQuery('id'));
         $products = $post->getLinkedProducts();
@@ -244,8 +243,7 @@ class Post extends Template
         return [];
     }
 
-    public function getActiveIds()
-    {
+    public function getActiveIds() {
         $collection = (new PModel())->setId($this->getRequest()->getQuery('id'))
                 ->getLinkedProducts();
         $old = $this->getSegment('forum')->get('forum_product_relation', false);
@@ -264,8 +262,7 @@ class Post extends Template
         return $activeIds;
     }
 
-    public function getSelfPosts()
-    {
+    public function getSelfPosts() {
         $post = new PModel();
         $post->load($this->getQuery('id'));
         $posts = $post->getSelfPosts();
@@ -275,8 +272,7 @@ class Post extends Template
         return [];
     }
 
-    public function getCategoryRelatePosts($category_id)
-    {
+    public function getCategoryRelatePosts($category_id) {
         $post = new PModel();
         $post->load($this->getQuery('id'));
         $posts = $post->getCategoryRelatePosts($category_id);
@@ -286,8 +282,7 @@ class Post extends Template
         return [];
     }
 
-    public function getCategoryUnLikeCustomer($category_id, $exclude = [], $random = 3)
-    {
+    public function getCategoryUnLikeCustomer($category_id, $exclude = [], $random = 3) {
         if (empty($category_id)) {
             return [];
         }
@@ -317,8 +312,7 @@ class Post extends Template
         return $customers;
     }
 
-    public function getFollowCount($id = null)
-    {
+    public function getFollowCount($id = null) {
         $id = $this->getQuery();
         $customer_id = $id['customer_id'] ?? (new Segment('customer'))->get('customer')['id'];
         $like_customer = new customerLikeCollection();
@@ -327,8 +321,7 @@ class Post extends Template
         return $like_customer->toArray()[0]['count'];
     }
 
-    public function getNewFollowCount($id = null)
-    {
+    public function getNewFollowCount($id = null) {
         $id = $this->getQuery();
         $customer_id = $id['customer_id'] ?? (new Segment('customer'))->get('customer')['id'];
         $fans = new customerLikeCollection();
@@ -337,8 +330,7 @@ class Post extends Template
         return $fans->toArray()[0]['count'];
     }
 
-    public function getFansCount($id = null)
-    {
+    public function getFansCount($id = null) {
         $id = $this->getQuery();
         $customer_id = $id['customer_id'] ?? (new Segment('customer'))->get('customer')['id'];
         $fans = new customerLikeCollection();
@@ -347,8 +339,7 @@ class Post extends Template
         return $fans->toArray()[0]['count'];
     }
 
-    public function getNewFansCount($id = null)
-    {
+    public function getNewFansCount($id = null) {
         $id = $this->getQuery();
         $customer_id = $id['customer_id'] ?? (new Segment('customer'))->get('customer')['id'];
         $fans = new customerLikeCollection();
@@ -357,8 +348,7 @@ class Post extends Template
         return $fans->toArray()[0]['count'];
     }
 
-    public function getBeLikeCount($id = null)
-    {
+    public function getBeLikeCount($id = null) {
         $id = $this->getQuery();
         $customer_id = $id['customer_id'] ?? (new Segment('customer'))->get('customer')['id'];
         $beLikes = new Like();
@@ -367,8 +357,7 @@ class Post extends Template
         return $beLikes->toArray()[0]['count'];
     }
 
-    public function getNewBeLikeCount($id = null)
-    {
+    public function getNewBeLikeCount($id = null) {
         $id = $this->getQuery();
         $customer_id = $id['customer_id'] ?? (new Segment('customer'))->get('customer')['id'];
         $like = new Like();
@@ -377,8 +366,7 @@ class Post extends Template
         return $like->toArray()[0]['count'];
     }
 
-    public function getBefollowCount($id = null)
-    {
+    public function getBefollowCount($id = null) {
         $id = $this->getQuery();
         $customer_id = $id['customer_id'] ?? (new Segment('customer'))->get('customer')['id'];
         $beFollows = new Favorite();
@@ -386,8 +374,7 @@ class Post extends Template
         return $beFollows->toArray()[0]['count'];
     }
 
-    public function getNewBefollwCount($customer_id = null)
-    {
+    public function getNewBefollwCount($customer_id = null) {
         $id = $this->getQuery();
         $customer_id = $id['customer_id'] ?? (new Segment('customer'))->get('customer')['id'];
         $favorite = new Favorite();
@@ -395,8 +382,7 @@ class Post extends Template
         return $favorite->toArray()[0]['count'];
     }
 
-    public function getDynamic($customer_id = null)
-    {
+    public function getDynamic($customer_id = null) {
         if (empty($customer_id)) {
             $customer = (new Segment('customer'))->get('customer');
             $customer_id = $customer['id'];
@@ -410,24 +396,21 @@ class Post extends Template
         return $posts;
     }
 
-    public function getSystemRecommendedTags()
-    {
+    public function getSystemRecommendedTags() {
         $tags = new TagsCollection();
         $tags->withName();
         $tags->where(['sys_recommended' => 1]);
         return $tags;
     }
 
-    public function getLinks()
-    {
+    public function getLinks() {
         $post = $this->getVariable('post');
         $links = $post->getLinks();
         $links->order('created_at ASC');
         return $links;
     }
 
-    public function checkLink($url)
-    {
+    public function checkLink($url) {
         $preg = "/http[s]?:\/\/[\w.]+[\w\/]*[\w.]*\??[\w=&\+\%]*/is";
         $lowerUrl = strtolower($url);
         $returnUrl = '';
@@ -439,18 +422,17 @@ class Post extends Template
         return $returnUrl;
     }
 
-    public function getPoll($poll_id)
-    {
+    public function getPoll($poll_id) {
         $poll = new PollModel();
         $poll->load(intval($poll_id));
         return $poll;
     }
 
-    public function customerFollowed($customer_id, $like_customer_id)
-    {
+    public function customerFollowed($customer_id, $like_customer_id) {
         $customerLike = new customerLikeCollection();
         $customerLike->where(['customer_id' => $customer_id, 'like_customer_id' => $like_customer_id]);
         $customerLike->load(true, true);
         return count($customerLike) ? true : false;
     }
+
 }

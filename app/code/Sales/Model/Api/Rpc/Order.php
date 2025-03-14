@@ -31,8 +31,8 @@ use Redseanet\Promotion\Model\Collection\Rule;
 use Redseanet\Lib\Model\Language;
 use Redseanet\I18n\Model\Currency;
 
-class Order extends AbstractHandler
-{
+class Order extends AbstractHandler {
+
     use \Redseanet\Lib\Traits\Url;
     use \Redseanet\Lib\Traits\Translate;
     use \Redseanet\Checkout\Traits\Checkout;
@@ -41,8 +41,7 @@ class Order extends AbstractHandler
      * @param int $customerId
      * @return Model
      */
-    protected function getCart($customerId)
-    {
+    protected function getCart($customerId) {
         $segment = new Segment('customer');
         $segment->set('hasLoggedIn', true)
                 ->set('customer', (new Customer())->setId($customerId));
@@ -56,8 +55,7 @@ class Order extends AbstractHandler
      * @param array $chosenItems
      * @return array
      */
-    public function cartInfoToConfirmOrder($id, $token, $customerId, $chosenItems = [], $language = 0)
-    {
+    public function cartInfoToConfirmOrder($id, $token, $customerId, $chosenItems = [], $language = 0) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -175,8 +173,7 @@ class Order extends AbstractHandler
      * @param string $merchantId
      * @return array
      */
-    public function getMerchant($id, $token, $merchantId = '')
-    {
+    public function getMerchant($id, $token, $merchantId = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -200,8 +197,7 @@ class Order extends AbstractHandler
      * @param string $storeIds
      * @return array
      */
-    public function getStore($id, $token, $storeIds = [])
-    {
+    public function getStore($id, $token, $storeIds = []) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -228,8 +224,7 @@ class Order extends AbstractHandler
      * @param array $storeIds
      * @return array
      */
-    public function getShippingMethod($id, $token, $customerId, $storeIds = [], $shipping_address_id = 0, $languageId = 0, $currencyCode = '')
-    {
+    public function getShippingMethod($id, $token, $customerId, $storeIds = [], $shipping_address_id = 0, $languageId = 0, $currencyCode = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -296,8 +291,7 @@ class Order extends AbstractHandler
      * @param int $customerId
      * @return array
      */
-    public function getPaymentMethod($id, $token, $customerId, $languageId = 0, $currencyCode = '')
-    {
+    public function getPaymentMethod($id, $token, $customerId, $languageId = 0, $currencyCode = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -336,8 +330,7 @@ class Order extends AbstractHandler
      * @param array $data
      * @return array
      */
-    public function placeOrder($id, $token, $customerId, $data, $languageId = 0, $currencyCode = '')
-    {
+    public function placeOrder($id, $token, $customerId, $data, $languageId = 0, $currencyCode = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -374,12 +367,12 @@ class Order extends AbstractHandler
             $cartInfo = [
                 'payment_method' => $data['payment_method'],
                 'customer_note' => isset($data['comment']) ? json_encode($data['comment']) : '{}'
-            ] + $cartInfo;
+                    ] + $cartInfo;
             if ($billingAddress) {
                 $cartInfo = [
                     'billing_address_id' => $data['billing_address_id'],
                     'billing_address' => $billingAddress->display(false)
-                ] + $cartInfo;
+                        ] + $cartInfo;
             }
         } else {
             $shippingAddress = $this->validShippingAddress($data);
@@ -397,14 +390,14 @@ class Order extends AbstractHandler
                 'payment_method' => $data['payment_method'],
                 'shipping_method' => json_encode($data['shipping_method']),
                 'customer_note' => isset($data['comment']) ? json_encode($data['comment']) : '{}'
-            ] + $cartInfo;
+                    ] + $cartInfo;
             $cartInfo = ($billingAddress ? [
                 'billing_address_id' => $data['billing_address_id'],
                 'billing_address' => $billingAddress->display(false)
-            ] : [
+                    ] : [
                 'billing_address_id' => $data['shipping_address_id'],
                 'billing_address' => $shippingAddress->display(false)
-            ]) + $cartInfo;
+                    ]) + $cartInfo;
         }
         $orders = [];
         if (isset($data['payment_data'])) {
@@ -431,12 +424,14 @@ class Order extends AbstractHandler
         }
         $this->flushList('sales_cart');
         $this->flushList('sales_cart_item');
+        foreach ($orders as $key => $order) {
+            $orders[$key] = $order->toArray();
+        }
         $this->responseData = ['statusCode' => '200', 'data' => $orders, 'message' => 'place orders successfully'];
         return $this->responseData;
     }
 
-    protected function validBillingAddress($data)
-    {
+    protected function validBillingAddress($data) {
         if (!isset($data['billing_address_id'])) {
             $this->responseData = ['statusCode' => '403', 'data' => [], 'message' => 'billing_address_id can not bet null'];
             return $this->responseData;
@@ -453,8 +448,7 @@ class Order extends AbstractHandler
         return $address;
     }
 
-    protected function validShippingAddress($data)
-    {
+    protected function validShippingAddress($data) {
         if (!isset($data['shipping_address_id'])) {
             $this->responseData = ['statusCode' => '403', 'data' => [], 'message' => 'Please select shipping address'];
             return $this->responseData;
@@ -471,8 +465,7 @@ class Order extends AbstractHandler
         return $address;
     }
 
-    public function validShipping($data, $customerId)
-    {
+    public function validShipping($data, $customerId) {
         $cart = $this->getCart($customerId);
         $result = [];
         foreach ($cart->getItems() as $item) {
@@ -495,8 +488,7 @@ class Order extends AbstractHandler
         return $result;
     }
 
-    public function validPayment($data)
-    {
+    public function validPayment($data) {
         if (!isset($data['payment_method'])) {
             $this->responseData = ['statusCode' => '403', 'data' => [], 'message' => 'Please select payment method'];
             return $this->responseData;
@@ -517,14 +509,16 @@ class Order extends AbstractHandler
      * @param array $conditions
      * @return array
      */
-    public function getOrder($id, $token, $conditions, $languageId = 0, $currencyCode = '')
-    {
+    public function getOrder($id, $token, $conditions, $languageId = 0, $currencyCode = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
         }
         //Bootstrap::getContainer()->get("log")->logException(new \Exception(json_encode($conditions)));
         $collection = new Collection();
+        if (empty($conditions["asc"]) && empty($conditions["desc"])) {
+            $conditions["desc"] = "created_at";
+        }
         $this->filter($collection, $conditions);
         $resultData = [];
         $itemColumns = [];
@@ -537,9 +531,15 @@ class Order extends AbstractHandler
                 $product = new Product();
                 $product->load($items[$i]['product_id']);
                 $options = json_decode($items[$i]['options'], true);
-                $image = $product->getThumbnail($options);
+                $image = $this->getPubUrl('frontend/images/placeholder.png');
+                //$product->getThumbnail($options);
+                if (!empty($items["image"])) {
+                    $image = $this->getResourceUrl("image/" . $items["image"]);
+                }
                 unset($items[$i]['options']);
-                $tmpItems[] = $items[$i] + ['image' => $image, 'options' => $options];
+                $items[$i]["image"] = $image;
+                $items[$i]["options"] = $options;
+                $tmpItems[] = $items[$i];
             }
             $item['status'] = ($item->getStatus())->toArray();
             $item['store'] = ($item->getStore())->toArray();
@@ -557,8 +557,7 @@ class Order extends AbstractHandler
      * @param int $orderId
      * @return array
      */
-    public function getOrderById($id, $token, $orderId, $languageId = 0, $currencyCode = '')
-    {
+    public function getOrderById($id, $token, $orderId, $languageId = 0, $currencyCode = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -591,49 +590,94 @@ class Order extends AbstractHandler
         return $this->responseData;
     }
 
-    public function getCoupons($id, $token)
-    {
+    public function getCoupons($id, $token, $customerId, $conditionData = [], $languageId = 0, $currencyCode = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
         }
+        $resultData = [];
         $collection = new Rule();
         $collection->withStore(true)
                 ->where(['promotion.use_coupon' => 1]);
         //echo $collection->getSqlString(Bootstrap::getContainer()->get("dbAdapter")->getPlatform());
-        $resultData = [];
+
+        if (!isset($conditionData['limit']) || $conditionData['limit'] == '') {
+            $conditionData['limit'] = 20;
+        } else {
+            $conditionData['limit'] = intval($conditionData['limit']);
+        }
+        if (!isset($conditionData['page']) || $conditionData['page'] == '') {
+            $conditionData['page'] = 1;
+        } else {
+            $conditionData['page'] = intval($conditionData['page']);
+        }
+        $total = $collection->count();
+        $last_page = ceil($total / $conditionData['limit']);
+        $resultData['pagination'] = [
+            "total" => $total,
+            "per_page" => $conditionData['limit'],
+            "current_page" => $conditionData['page'],
+            "last_page" => $last_page,
+            "next_page" => ($last_page > $conditionData['page'] ? $conditionData['page'] + 1 : $last_page),
+            "previous_page" => ($conditionData['page'] > 1 ? $conditionData['page'] - 1 : 1),
+            "has_next_page" => ($last_page > $conditionData['page'] ? true : false),
+            "has_previous_page" => ($conditionData['page'] > 1 && $last_page > 1 ? true : false)
+        ];
+        if ($conditionData['page'] > 1) {
+            $collection->order('id DESC')->limit($conditionData['limit'])->offset((int) ($conditionData['page'] - 1) * $conditionData['limit']);
+        } else {
+            $collection->order('id DESC')->limit($conditionData['limit'])->offset(0);
+        }
+        $resultData["coupons"] = [];
         foreach ($collection as $rule) {
-            if ($this->matchCoupons($rule->getCondition())) {
-                $resultData[] = $rule->toArray();
+            if ($this->matchCoupons($rule->getCondition(), true, $customerId)) {
+                $_coupon = $rule->toArray();
+                if (!empty($_coupon["store_id"])) {
+                    $stores = new storeCollection;
+                    $stores->columns(["id", "code", "name"]);
+                    $stores->where("id in (" . implode(",", $_coupon["store_id"]) . ") and status=1");
+                    $_coupon["stores"] = [];
+                    if (count($stores) > 0) {
+                        foreach ($stores as $store) {
+                            $_coupon["stores"][] = $store->toArray();
+                        }
+                    }
+                } else {
+                    $_coupon["stores"] = [];
+                }
+                $resultData["coupons"][] = $_coupon;
             }
         }
         $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => 'get coupon list successfully'];
         return $this->responseData;
     }
 
-    public function matchCoupons($condition, $default = true)
-    {
+    public function matchCoupons($condition, $default, $customerId) {
         if ($condition['identifier'] === 'customer_id') {
-            return $condition['operator'] === '=' ? $this->getCustomer()->getId() == $condition['value'] : $this->getCustomer()->getId() != $condition['value'];
+            return $condition['operator'] === '=' ? $customerId == $condition['value'] : $customerId != $condition['value'];
         } elseif ($condition['identifier'] === 'customer_group') {
-            foreach ($this->getCustomer()->getGroup() as $group) {
+            $customer = new Customer();
+            $customer->load($customerId);
+            foreach ($customer->getGroup() as $group) {
                 if ($condition['operator'] === '=' && $group['id'] == $condition['value'] || $condition['operator'] !== '=' && $group['id'] != $condition['value']) {
                     return true;
                 }
             }
             return false;
         } elseif ($condition['identifier'] === 'customer_level') {
-            return $condition['operator'] === '=' ? $this->getCustomer()->getLevel() == $condition['value'] : $this->getCustomer()->getLevel() != $condition['value'];
+            $customer = new Customer();
+            $customer->load($customerId);
+            return $condition['operator'] === '=' ? $customer->getLevel() == $condition['value'] : $customer->getLevel() != $condition['value'];
         } elseif ($condition['identifier'] === 'combination') {
             $result = $condition['operator'] === 'and' ? 1 : 0;
             foreach ($condition->getChildren() as $child) {
                 if ($condition['operator'] === 'and') {
-                    $result &= (int) $this->matchCoupons($child, $condition['value']);
+                    $result &= (int) $this->matchCoupons($child, $condition['value'], $customerId);
                     if (!$result) {
                         break;
                     }
                 } else {
-                    $result |= (int) $this->matchCoupons($child, $condition['value']);
+                    $result |= (int) $this->matchCoupons($child, $condition['value'], $customerId);
                     if ($result) {
                         break;
                     }
@@ -654,8 +698,7 @@ class Order extends AbstractHandler
      * @param string $currencyCode
      * @return array
      */
-    public function getShippingMethodByItems($id, $token, $items = [], $shipping_address_id = 0, $languageId = 0, $currencyCode = '')
-    {
+    public function getShippingMethodByItems($id, $token, $items = [], $shipping_address_id = 0, $languageId = 0, $currencyCode = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -679,8 +722,7 @@ class Order extends AbstractHandler
      * @param array $codition
      * @return array
      */
-    public function getPaymentMethodByCondition($id, $token, $codition = [], $languageId = 0, $currencyCode = '')
-    {
+    public function getPaymentMethodByCondition($id, $token, $codition = [], $languageId = 0, $currencyCode = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -714,8 +756,7 @@ class Order extends AbstractHandler
      * @param array $data
      * @return array
      */
-    public function chargeBalanceOrder($id, $token, $data = [], $languageId = 0, $currencyCode = '')
-    {
+    public function chargeBalanceOrder($id, $token, $data = [], $languageId = 0, $currencyCode = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -818,34 +859,4 @@ class Order extends AbstractHandler
         }
     }
 
-    public function selectShippingOrder($id, $token, $customerId, $data = [], $languageId = 0, $currencyCode = '')
-    {
-        $this->validateToken($id, $token, __FUNCTION__, false);
-        if ($this->responseData['statusCode'] != '200') {
-            return $this->responseData;
-        }
-        if (!empty($customerId)) {
-            $config = $this->getContainer()->get('config');
-            $cart = $this->getCart($customerId);
-            if (!$cart->isVirtual()) {
-                $totals = [];
-                foreach ($cart->getItems() as $item) {
-                    if (!$item['is_virtual']) {
-                        if (!isset($totals[$item['store_id']])) {
-                            $totals[$item['store_id']] = 0;
-                        }
-                        $totals[$item['store_id']] += $item['base_total'] * $item['qty'];
-                    }
-                }
-                $this->validShipping(['totals' => $totals] + $data, $customerId);
-                $cart->setData([
-                    'shipping_method' => json_encode($data['shipping_method'])
-                ])->collateTotals();
-            }
-            return $this->cartInfoToConfirmOrder($id, $token, $customerId, [], $languageId);
-        } else {
-            $this->responseData = ['statusCode' => '403', 'data' => $resultData, 'message' => 'customer id can not be null'];
-            return $this->responseData;
-        }
-    }
 }

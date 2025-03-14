@@ -20,22 +20,20 @@ use Laminas\Math\Rand;
 use Redseanet\Resource\Lib\Factory as resourceFactory;
 use PHPMailer\PHPMailer\Exception as EmailException;
 
-class AccountController extends AuthActionController
-{
+class AccountController extends AuthActionController {
+
     use \Redseanet\Lib\Traits\DB;
     use \Redseanet\Lib\Traits\Rabbitmq;
 
     protected $allowedAction = ['login', 'loginpost', 'forgotpwd', 'forgotpwdpost', 'captcha', 'confirm', 'resendconfirmemail'];
 
-    public function __construct()
-    {
+    public function __construct() {
         if ($this->getContainer()->get('config')['customer/registion/enabled']) {
             $this->allowedAction = array_merge($this->allowedAction, ['create', 'createpost']);
         }
     }
 
-    public function doDispatch($method = 'notFoundAction')
-    {
+    public function doDispatch($method = 'notFoundAction') {
         $action = strtolower(substr($method, 0, -6));
         $session = new Segment('customer');
         if (!in_array($action, $this->allowedAction) && !$session->get('hasLoggedIn', false)) {
@@ -54,23 +52,19 @@ class AccountController extends AuthActionController
         return ActionController::doDispatch($method);
     }
 
-    public function createAction()
-    {
+    public function createAction() {
         return $this->getLayout('customer_account_create');
     }
 
-    public function loginAction()
-    {
+    public function loginAction() {
         return $this->getLayout('customer_account_login');
     }
 
-    public function forgotPwdAction()
-    {
+    public function forgotPwdAction() {
         return $this->getLayout('customer_account_forgotpwd');
     }
 
-    private function sendMail($template, $to, $params = [])
-    {
+    private function sendMail($template, $to, $params = []) {
         $config = $this->getContainer()->get('config');
         $fromEmail = $config['email/customer/sender_email'] ?: $config['email/default/sender_email'];
         if (!empty($fromEmail)) {
@@ -79,7 +73,7 @@ class AccountController extends AuthActionController
                     ->where([
                         'code' => $config[$template],
                         'language_id' => Bootstrap::getLanguage()->getId()
-                    ]);
+            ]);
             if (!is_array($to)) {
                 $to = [$to, null];
             }
@@ -100,8 +94,7 @@ class AccountController extends AuthActionController
         }
     }
 
-    public function captchaAction()
-    {
+    public function captchaAction() {
         $config = $this->getContainer()->get('config');
         $builder = new CaptchaBuilder(null, new PhraseBuilder($config['customer/captcha/number'], $config['customer/captcha/symbol']));
         $builder->setBackgroundColor(0xff, 0xff, 0xff);
@@ -114,8 +107,7 @@ class AccountController extends AuthActionController
         return $builder->get();
     }
 
-    public function createPostAction()
-    {
+    public function createPostAction() {
         $config = $this->getContainer()->get('config');
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
@@ -182,7 +174,7 @@ class AccountController extends AuthActionController
                     'store_id' => Bootstrap::getStore()->getId(),
                     'language_id' => $languageId,
                     'status' => 1
-                ] + $data);
+                        ] + $data);
                 $data['status'] = 1;
                 $token = Rand::getString(32, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789');
                 $data['token'] = $token;
@@ -218,13 +210,13 @@ class AccountController extends AuthActionController
                 }
 
                 if (!empty($data['subscribe'])) {
-                    //$this->getContainer()->get('eventDispatcher')->trigger('subscribe', ['data' => $data]);
                     if (!empty($config['adapter']['mq'])) {
                         //mp
                         $msgBody = ['eventName' => 'subscribe.mp', 'data' => $data];
                         $this->sendPublishMqMessage(json_encode($msgBody));
+                    } else {
+                        $this->getContainer()->get('eventDispatcher')->trigger('subscribe', ['data' => $data]);
                     }
-                    //$this->getContainer()->get('eventDispatcher')->trigger('subscribe', ['data' => $data]);
                 }
                 $this->sendMail($status ? 'email/customer/confirm_template' : 'email/customer/welcome_template', [$data['email'], $data['username']], ['username' => $data['username'], 'confirm' => $this->getBaseUrl('customer/account/confirm/?token=' . $token)]);
             }
@@ -232,15 +224,15 @@ class AccountController extends AuthActionController
         return $this->response($result ?? ['error' => 0, 'message' => []], $url ?? '/customer/account/create/', 'customer');
     }
 
-    public function loginPostAction()
-    {
+    public function loginPostAction() {
         $url = 'customer/account/';
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
             $config = $this->getContainer()->get('config');
             $segment = new Segment('customer');
-            $result = $this->validateForm($data, ['username', 'password'], (in_array('login', $config['customer/captcha/form']) && ($config['customer/captcha/mode'] == 0 || $config['customer/captcha/attempt'] <= $segment->get('fail2login'))) ? 'customer' : false);
+            $result = $this->validateForm($data, ['username', 'password'], (is_array($config['customer/captcha/form']) && in_array('login', $config['customer/captcha/form']) && ($config['customer/captcha/mode'] == 0 || $config['customer/captcha/attempt'] <= $segment->get('fail2login'))) ? 'customer' : false);
             $key = $segment->get('reset_password_' . base64_encode($data['username']), ['key' => false, 'time' => 0]);
+            $language_id = Bootstrap::getLanguage()->getId();
             if ($result['error'] == 0) {
                 $customer = new Model();
                 if ($customer->login($data['username'], $data['password'])) {
@@ -256,9 +248,8 @@ class AccountController extends AuthActionController
                     }
                     $result['data'] = ['id' => $customer['id'], 'username' => $data['username'], 'email' => $customer['email']];
                     $result['message'][] = ['message' => $this->translate('Welcome %s.', [$customer['username']], 'customer'), 'level' => 'success'];
-
                     $this->getContainer()->get('eventDispatcher')->trigger('customer.login.after', ['model' => $customer]);
-                    $language_id = Bootstrap::getLanguage()->getId();
+
                     $customer->setData('language_id', $language_id);
                     if (!empty($config['adapter']['mq'])) {
                         //mp
@@ -268,12 +259,13 @@ class AccountController extends AuthActionController
                         $this->declareRabbitmqExchange('customerlogin');
                         $msgBody = ['eventName' => 'customer.login.after.mq', 'data' => $customer->toArray()];
                         $this->sendPublishMqMessage(json_encode($msgBody));
+                    }else{
+                        $this->getContainer()->get('eventDispatcher')->trigger('customer.login.after', ['model' => $customer]);
                     }
                 } elseif ($data['password'] === $key['key'] && $key['time'] >= strtotime('-1hour')) {
                     $segment->set('hasLoggedIn', true)
                             ->set('customer', (clone $customer)->toArray());
-                    $this->getContainer()->get('eventDispatcher')->trigger('customer.login.after', ['model' => $customer]);
-                    $language_id = Bootstrap::getLanguage()->getId();
+                    //$this->getContainer()->get('eventDispatcher')->trigger('customer.login.after', ['model' => $customer]);
                     $customer->setData('language_id', $language_id);
                     if (!empty($config['adapter']['mq'])) {
                         //mp
@@ -283,6 +275,8 @@ class AccountController extends AuthActionController
                         $this->declareRabbitmqExchange('customerlogin');
                         $msgBody = ['eventName' => 'customer.login.after.mq', 'data' => $customer->toArray()];
                         $this->sendPublishMqMessage(json_encode($msgBody));
+                    }else{
+                        $this->getContainer()->get('eventDispatcher')->trigger('customer.login.after', ['model' => $customer]);
                     }
                     $result['success_url'] = $this->getBaseUrl('customer/account/edit/');
                     $result['message'][] = ['message' => $this->translate('You are logged in with a temporary password. Please reset your password immdiately.'), 'level' => 'warning'];
@@ -304,8 +298,7 @@ class AccountController extends AuthActionController
         return $this->response($result ?? ['error' => 0, 'message' => []], $url ?? 'customer/account/login/', 'customer');
     }
 
-    public function forgotPwdPostAction()
-    {
+    public function forgotPwdPostAction() {
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
             $result = $this->validateForm($data, ['username'], in_array('forgotpwd', $this->getContainer()->get('config')['customer/captcha/form']) ? 'customer' : false);
@@ -352,8 +345,7 @@ class AccountController extends AuthActionController
         return $this->response($result ?? ['error' => 0, 'message' => []], 'customer/account/login/', 'customer');
     }
 
-    public function logoutAction()
-    {
+    public function logoutAction() {
         $segment = new Segment('customer');
         $customerId = $segment->get('customer')['id'];
         $segment->offsetUnset('customer');
@@ -370,8 +362,7 @@ class AccountController extends AuthActionController
         return $this->response($result, 'customer/account/login/', 'customer', $customerId);
     }
 
-    public function confirmAction()
-    {
+    public function confirmAction() {
         if ($token = $this->getRequest()->getQuery('token')) {
             try {
                 $customer = new Model();
@@ -411,18 +402,15 @@ class AccountController extends AuthActionController
         return $this->response($result ?? ['error' => 0, 'message' => []], 'customer/account/login/', 'customer');
     }
 
-    public function indexAction()
-    {
+    public function indexAction() {
         return $this->getLayout('customer_account_dashboard');
     }
 
-    public function editAction()
-    {
+    public function editAction() {
         return $this->getLayout('customer_account_edit');
     }
 
-    public function saveAction()
-    {
+    public function saveAction() {
         $result = ['error' => 0, 'message' => []];
         $config = $this->getContainer()->get('config');
         if ($this->getRequest()->isPost()) {
@@ -434,9 +422,9 @@ class AccountController extends AuthActionController
             $customer->load($customerArray['id']);
             $attributes = new Attribute();
             $attributes->withSet()->where([
-                'is_unique' => 1,
-                'attribute_set_id' => $data['attribute_set_id'] ?? $customer['attribute_set_id']
-            ])->columns(['code'])
+                        'is_unique' => 1,
+                        'attribute_set_id' => $data['attribute_set_id'] ?? $customer['attribute_set_id']
+                    ])->columns(['code'])
                     ->join('eav_entity_type', 'eav_attribute.type_id=eav_entity_type.id', [], 'right')
                     ->where(['eav_entity_type.code' => Model::ENTITY_TYPE])
             ->where->notEqualTo('input', 'password');
@@ -532,13 +520,11 @@ class AccountController extends AuthActionController
         return $this->response($result ?? ['error' => 0, 'message' => []], 'customer/account/edit/', 'customer');
     }
 
-    public function addressAction()
-    {
+    public function addressAction() {
         return $this->getLayout('customer_account_address');
     }
 
-    public function deleteAddressAction()
-    {
+    public function deleteAddressAction() {
         if ($this->getRequest()->isDelete()) {
             $address = new Address();
             $data = $this->getRequest()->getPost();
@@ -557,8 +543,7 @@ class AccountController extends AuthActionController
         return $this->response($result ?? ['error' => 0, 'message' => []], 'customer/account/address/', 'customer');
     }
 
-    public function saveAddressAction()
-    {
+    public function saveAddressAction() {
         $result = ['error' => 0, 'message' => []];
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
@@ -602,8 +587,7 @@ class AccountController extends AuthActionController
         return $this->response($result, 'customer/account/address', 'customer');
     }
 
-    public function defaultAddressAction()
-    {
+    public function defaultAddressAction() {
         $id = $this->getRequest()->getQuery('id');
         if ($id) {
             $address = new Address();
@@ -612,14 +596,12 @@ class AccountController extends AuthActionController
         return $this->response(['error' => 0, 'message' => []], 'customer/account/address/');
     }
 
-    public function logviewAction()
-    {
+    public function logviewAction() {
         $root = $this->getLayout('customer_account_logview');
         return $root;
     }
 
-    public function updateAvatarAction()
-    {
+    public function updateAvatarAction() {
         $result = ['error' => 0, 'message' => []];
         $config = $this->getContainer()->get('config');
         if ($this->getRequest()->isPost()) {
@@ -666,20 +648,17 @@ class AccountController extends AuthActionController
         return $this->response($result ?? ['error' => 0, 'message' => []], 'customer/account/edit/', 'customer');
     }
 
-    public function refereesAction()
-    {
+    public function refereesAction() {
         $root = $this->getLayout('customer_account_referees');
         return $root;
     }
 
-    public function referrerAction()
-    {
+    public function referrerAction() {
         $root = $this->getLayout('customer_account_referrer');
         return $root;
     }
 
-    public function resendconfirmemailAction()
-    {
+    public function resendconfirmemailAction() {
         $result = ['error' => 0, 'message' => []];
         $id = $this->getRequest()->getQuery('id');
         if (!empty($id)) {
@@ -697,4 +676,5 @@ class AccountController extends AuthActionController
         }
         return $this->response($result, 'customer/account/login/', 'customer');
     }
+
 }

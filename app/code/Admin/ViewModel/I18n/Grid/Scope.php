@@ -6,7 +6,6 @@ use Redseanet\Admin\ViewModel\Grid as PGrid;
 use Redseanet\Lib\Model\Collection\Merchant;
 use Redseanet\Lib\Session\Segment;
 use Redseanet\Admin\Model\User;
-
 class Scope extends PGrid
 {
     protected function prepareCollection($collection = null)
@@ -22,8 +21,8 @@ class Scope extends PGrid
     public function getUser()
     {
         $segment = new Segment('admin');
-        $userArray = $segment->get('user');
-        $user = new User();
+        $userArray=$segment->get('user');
+        $user=new User();
         $user->load($userArray['id']);
         return $user;
     }

@@ -6,7 +6,6 @@ use Redseanet\Admin\ViewModel\Grid as PGrid;
 use Redseanet\Admin\Model\Collection\User as Collection;
 use Redseanet\Lib\Session\Segment;
 use Redseanet\Admin\Source\Role;
-
 class Grid extends PGrid
 {
     protected $action = [

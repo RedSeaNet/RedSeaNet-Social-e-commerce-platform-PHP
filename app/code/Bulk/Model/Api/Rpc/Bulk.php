@@ -19,8 +19,8 @@ use Redseanet\Sales\Model\Order;
 use Redseanet\Sales\Model\Order\Item as orderItem;
 use Redseanet\Bulk\Model\Collection\Bulk\Item as itemCollection;
 
-class Bulk extends AbstractHandler
-{
+class Bulk extends AbstractHandler {
+
     use \Redseanet\Lib\Traits\Filter;
 
     use \Redseanet\Lib\Traits\Url;
@@ -31,8 +31,7 @@ class Bulk extends AbstractHandler
 
     use \Redseanet\Checkout\Traits\Checkout;
 
-    public function bulkList($id, $token, $conditionData = [], $customerId = '', $languageId = 0, $currencyCode = '')
-    {
+    public function bulkList($id, $token, $conditionData = [], $customerId = '', $languageId = 0, $currencyCode = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -51,7 +50,36 @@ class Bulk extends AbstractHandler
         $products = new productCollection($languageId);
         $products->where("bulk_price!='' and status=1");
         ///echo $products->getSqlString(Bootstrap::getContainer()->get("dbAdapter")->getPlatform());exit;
+
+        if (!isset($conditionData['limit']) || $conditionData['limit'] == '') {
+            $conditionData['limit'] = 20;
+        } else {
+            $conditionData['limit'] = intval($conditionData['limit']);
+        }
+        if (!isset($conditionData['page']) || $conditionData['page'] == '') {
+            $conditionData['page'] = 1;
+        } else {
+            $conditionData['page'] = intval($conditionData['page']);
+        }
+        $total = $products->count();
+        $last_page = ceil($total / $conditionData['limit']);
+        $resultData['pagination'] = [
+            "total" => $total,
+            "per_page" => $conditionData['limit'],
+            "current_page" => $conditionData['page'],
+            "last_page" => $last_page,
+            "next_page" => ($last_page > $conditionData['page'] ? $conditionData['page'] + 1 : $last_page),
+            "previous_page" => ($conditionData['page'] > 1 ? $conditionData['page'] - 1 : 1),
+            "has_next_page" => ($last_page > $conditionData['page'] ? true : false),
+            "has_previous_page" => ($conditionData['page'] > 1 && $last_page > 1 ? true : false)
+        ];
+        if ($conditionData['page'] > 1) {
+            $products->order('id DESC')->limit($conditionData['limit'])->offset((int) ($conditionData['page'] - 1) * $conditionData['limit']);
+        } else {
+            $products->order('id DESC')->limit($conditionData['limit'])->offset(0);
+        }
         $prductsArray = $products->load(true, true);
+
         $tmpResultData = [];
         if (count($prductsArray) > 0) {
             for ($i = 0; count($prductsArray) > $i; $i++) {
@@ -87,8 +115,7 @@ class Bulk extends AbstractHandler
         return $this->responseData;
     }
 
-    public function bulkSalesList($id, $token, $productId, $customerId = '', $activeOnly = 0, $languageId = 0, $currencyCode = '')
-    {
+    public function bulkSalesList($id, $token, $productId, $customerId = '', $activeOnly = 0, $languageId = 0, $currencyCode = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -107,9 +134,9 @@ class Bulk extends AbstractHandler
 
         $collection = new Collection();
         $collection->join('bulk_sale_item', 'bulk_sale_item.bulk_id=bulk_sale.id', ['options', 'options_name', 'options_image', 'qty',
-            'sku', 'is_virtual', 'free_shipping', 'base_price', 'price',
-            'base_discount', 'discount', 'base_tax', 'tax', 'base_total',
-            'total', 'weight', 'store_id', 'warehouse_id'], 'left')
+                    'sku', 'is_virtual', 'free_shipping', 'base_price', 'price',
+                    'base_discount', 'discount', 'base_tax', 'tax', 'base_total',
+                    'total', 'weight', 'store_id', 'warehouse_id'], 'left')
                 ->where(['bulk_sale_item.product_id' => $productId])
                 ->order('created_at DESC');
         if ($activeOnly) {
@@ -136,8 +163,7 @@ class Bulk extends AbstractHandler
         return $this->responseData;
     }
 
-    public function bulkApply($id, $token, $productId, $customerId, $bulkId = '', $data = [], $languageId = 0, $currencyCode = '')
-    {
+    public function bulkApply($id, $token, $productId, $customerId, $bulkId = '', $data = [], $languageId = 0, $currencyCode = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -532,4 +558,5 @@ class Bulk extends AbstractHandler
         $this->responseData = ['statusCode' => '400', 'data' => [], 'message' => $this->translate('An error detected. Please contact us or try again later.')];
         return $this->responseData;
     }
+
 }

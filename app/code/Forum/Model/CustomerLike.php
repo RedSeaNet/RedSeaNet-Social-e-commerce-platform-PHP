@@ -26,6 +26,7 @@ class CustomerLike extends AbstractModel
             return $this;
         } else {
             $this->insert(['customer_id' => $this->getId(), 'like_customer_id' => $id]);
+            $this->setData("like_customer_id",$id);
             $this->flushList($this->getCacheKey());
             return $this;
         }

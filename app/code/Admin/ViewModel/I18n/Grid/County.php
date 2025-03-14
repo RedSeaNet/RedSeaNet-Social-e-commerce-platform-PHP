@@ -35,7 +35,7 @@ class County extends PGrid
                 'label' => 'ID',
             ],
             'country' => [
-                'label' => 'Country',
+                'label' => 'Country/Region',
                 'type' => 'select',
                 'options' => (new Country())->getSourceArrayId()
             ],

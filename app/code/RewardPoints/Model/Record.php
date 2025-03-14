@@ -10,19 +10,17 @@ use Redseanet\Lib\Model\Language;
 use Redseanet\Sales\Model\Order;
 use PHPMailer\PHPMailer\Exception as EmailException;
 
-class Record extends AbstractModel
-{
+class Record extends AbstractModel {
+
     use \Redseanet\RewardPoints\Traits\Recalc;
 
     use \Redseanet\Lib\Traits\Translate;
 
-    protected function construct()
-    {
+    protected function construct() {
         $this->init('reward_points', 'id', ['id', 'customer_id', 'order_id', 'count', 'comment', 'status']);
     }
 
-    public function getCustomer()
-    {
+    public function getCustomer() {
         if (!empty($this->storage['customer_id'])) {
             $customer = new Customer();
             $customer->load($this->storage['customer_id']);
@@ -33,8 +31,7 @@ class Record extends AbstractModel
         return [];
     }
 
-    public function getOrder()
-    {
+    public function getOrder() {
         if (!empty($this->storage['order_id'])) {
             $order = new Order();
             $order->load($this->storage['order_id']);
@@ -45,14 +42,15 @@ class Record extends AbstractModel
         return null;
     }
 
-    protected function afterSave()
-    {
+    protected function afterSave() {
         if (!empty($this->storage['status'])) {
             $this->recalc($this->storage['customer_id']);
             $config = $this->getContainer()->get('config');
             try {
                 $customer = $this->getCustomer();
-                if ($customer && $from = $config['email/customer/sender_email'] ?: $config['email/default/sender_email']) {
+                $fromEmail = $config['email/customer/sender_email'] ?: $config['email/default/sender_email'];
+                $from = [$fromEmail, $config['email/customer/sender_name'] ?: ($config['email/default/sender_name'] ?: null)];
+                if ($customer) {
                     $collection = new TemplateCollection();
                     $collection->join('email_template_language', 'email_template_language.template_id=email_template.id', [], 'left')
                             ->where([
@@ -62,21 +60,22 @@ class Record extends AbstractModel
                                                 $config['rewardpoints/notifications/expiring'] :
                                                 $config['rewardpoints/notifications/updated']),
                                 'language_id' => $customer['language_id']
-                            ]);
-                    $language = new Language();
-                    $language->load($customer['language_id']);
+                    ]);
                     $days = strtotime('+' . $config['rewardpoints/general/expiration'] . ' days');
-                    //                    $mailer = $this->getContainer()->get('mailer');
-                    //                    $mailer->send((new TemplateModel($collection[0]))
-                    //                                    ->getMessage([
-                    //                                        'type' => $this->translate($this->storage['count'] > 0 ? 'gathered' : 'used', [], 'rewardpoints', $language['code']),
-                    //                                        'points' => abs($this->storage['count']),
-                    //                                        'balance' => $customer['rewardpoints'],
-                    //                                        'username' => $customer['username'],
-                    //                                        'expiration' => date('Y-m-d', $days)
-                    //                                    ])
-                    //                                    ->addFrom($from, $config['email/customer/sender_name'] ?: ($config['email/default/sender_name'] ?: null))
-                    //                                    ->addTo($customer['email'], $customer['username']));
+                    $mailer = $this->getContainer()->get('mailer');
+                    $params = [
+                        'type' => $this->translate($this->storage['count'] > 0 ? 'gathered' : 'used', [], 'rewardpoints', $language['code']),
+                        'points' => abs($this->storage['count']),
+                        'balance' => $customer['rewardpoints'],
+                        'username' => $customer['username'],
+                        'expiration' => date('Y-m-d', $days)
+                    ];
+                    $mailTemplate = new TemplateModel($collection[0]);
+                    $recipients = [];
+                    $recipients[] = [$customer['email'], $customer['username']];
+                    $subject = $mailTemplate['subject'];
+                    $content = $mailTemplate->getContent($params);
+                    $mailer->send($recipients, $subject, $content, [], '', '', [], true, '', $from);
                 }
             } catch (EmailException $e) {
                 $this->getContainer()->get('log')->logException($e);
@@ -84,4 +83,5 @@ class Record extends AbstractModel
         }
         parent::afterSave();
     }
+
 }

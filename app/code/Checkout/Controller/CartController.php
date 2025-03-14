@@ -14,13 +14,12 @@ use Redseanet\Sales\Model\Cart;
 use Redseanet\Lib\Bootstrap;
 use Redseanet\Resource\Model\Resource;
 
-class CartController extends ActionController
-{
+class CartController extends ActionController {
+
     use \Redseanet\Lib\Traits\DB;
     use \Redseanet\Lib\Traits\DataCache;
 
-    public function addAction()
-    {
+    public function addAction() {
         $languageId = Bootstrap::getLanguage()->getId();
         $data = $this->getRequest()->isGet() ? $this->getRequest()->getQuery() : $this->getRequest()->getPost();
         $result = $this->validateForm($data, ['product_id', 'qty', 'warehouse_id']);
@@ -31,6 +30,25 @@ class CartController extends ActionController
                     if (!empty($options)) {
                         $data['options'] = $options;
                     }
+                }
+                if (!empty($data['options']) && is_array($data['options']) && count($data['options']) > 0) {
+                    $_tmpOptions = [];
+                    foreach ($data['options'] as $key => $value) {
+                        if (is_array($value)) {
+                            sort($value);
+                            $_value = [];
+                            if (count($value) > 0) {
+                                foreach ($value as $v_value) {
+                                    $_value[] = intval($v_value);
+                                }
+                            }
+                            $_tmpOptions[$key] = $_value;
+                        } else {
+                            $_tmpOptions[$key] = [intval($value)];
+                        }
+                    }
+                    ksort($_tmpOptions);
+                    $data['options'] = $_tmpOptions;
                 }
                 $product = new Product($languageId);
                 $product->load($data['product_id']);
@@ -50,16 +68,32 @@ class CartController extends ActionController
                         $images = $product['images'];
                         if ($images) {
                             foreach ($data['options'] as $id => $value) {
-                                $value = $product->getOption($id, $value, $languageId);
-                                foreach ($images as $image) {
-                                    if ($image['group'] == $value) {
-                                        $data['image'] = $image['name'];
+                                if (is_array($value)) {
+                                    foreach ($value as $value_i) {
+                                        $_value = $product->getValueData($id, $value_i);
+                                        if (!empty($_value["sku"])) {
+                                            foreach ($images as $image) {
+                                                if ($image['group'] == $_value["sku"]) {
+                                                    $data['image'] = $image['name'];
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    $_value = $product->getValueData($id, $value_i);
+                                    if (!empty($_value["sku"])) {
+                                        foreach ($images as $image) {
+                                            if ($image['group'] == $_value["sku"]) {
+                                                $data['image'] = $image['name'];
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                    if ($data['image'] == '' && $product['thumbnail'] != '') {
+                    if (empty($data['image']) && $product['thumbnail'] != '') {
                         $resource = new Resource();
                         $resource->load($product['thumbnail']);
                         $data['image'] = $resource['real_name'];
@@ -71,7 +105,6 @@ class CartController extends ActionController
                     if (!isset($data['options'][$option->getId()])) {
                         if (!isset($data['warehouse_id']) || $data['warehouse_id'] == '') {
                             $this->responseData = ['statusCode' => '403', 'data' => [], 'message' => ['title' => 'The ' . $option->offsetGet('title') . ' field is required and cannot be empty.', 'content' => 'The ' . $option->offsetGet('title') . ' field is required and cannot be empty.', 'level' => 'danger']];
-
                             return $this->responseData;
                         }
                     } else {
@@ -80,7 +113,7 @@ class CartController extends ActionController
                             $value = $option->offsetGet('value');
                             if (count($value) > 0) {
                                 for ($i = 0; $i < count($value); $i++) {
-                                    if ($value[$i]['id'] == $data['options'][$option->getId()]) {
+                                    if (in_array($value[$i]['id'], $data['options'][$option->getId()])) {
                                         if ($option->offsetGet('title')) {
                                             $productOptionsNames[] = $option->offsetGet('title') . ':' . ($value[$i]['title'] != '' ? $value[$i]['title'] : $value[$i]['default_title']);
                                         } else {
@@ -92,8 +125,12 @@ class CartController extends ActionController
                         }
                     }
                 }
+                $option_value_id_string = '';
+                if (!empty($data["options"]) && is_array($data["options"]) && count($data["options"]) > 0) {
+                    $option_value_id_string = base64_encode(json_encode($data["options"]));
+                }
                 Cart::instance()->addItem($data['product_id'], $data['qty'], $data['warehouse_id'], isset($data['options']) ?
-                                (is_string($data['options']) ? json_decode($data['options'], true) : (array) $data['options']) : [], $data['sku'] ?? '', true, $languageId, implode(',', $productOptionsNames), $data['image']);
+                                (is_string($data['options']) ? json_decode($data['options'], true) : (array) $data['options']) : [], $option_value_id_string, true, $languageId, implode(',', $productOptionsNames), $data['image']);
 
                 if ($this->getRequest()->isXmlHttpRequest()) {
                     $result['html'] = (new Item())->setTemplate('checkout/minicart/item')->setVariable('item', new Cart\Item($data))->__toString();
@@ -117,8 +154,7 @@ class CartController extends ActionController
         return $this->response($result, 'checkout/cart/', 'checkout');
     }
 
-    public function removeAction()
-    {
+    public function removeAction() {
         $data = $this->getRequest()->isGet() ? $this->getRequest()->getQuery() : $this->getRequest()->getPost();
         $result = $this->validateForm($data);
         if ($result['error'] === 0) {
@@ -151,8 +187,7 @@ class CartController extends ActionController
         return $this->response($result, 'checkout/cart/', 'checkout');
     }
 
-    public function updateAction()
-    {
+    public function updateAction() {
         $data = $this->getRequest()->isGet() ? $this->getRequest()->getQuery() : $this->getRequest()->getPost();
         $result = $this->validateForm($data, ['qty', 'item']);
         if ($result['error'] === 0) {
@@ -177,6 +212,7 @@ class CartController extends ActionController
                 $cart->collateTotals();
                 $this->flushList('sales_cart_item');
                 $this->flushList('sales_cart');
+                $this->flushList('customer');
             } catch (Exception $e) {
                 $result['error'] = 1;
                 $result['message'][] = ['message' => $this->translate('An error detected. Please contact us or try again later.'), 'level' => 'danger'];
@@ -188,8 +224,7 @@ class CartController extends ActionController
         return $this->response($result, 'checkout/cart/', 'checkout');
     }
 
-    public function indexAction()
-    {
+    public function indexAction() {
         $root = $this->getLayout('checkout_cart');
         if (!count(Cart::instance()->getItems())) {
             $root->addBodyClass('empty-cart');
@@ -197,8 +232,7 @@ class CartController extends ActionController
         return $root;
     }
 
-    public function jsonAction()
-    {
+    public function jsonAction() {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $cart = Cart::instance();
             $result = $cart->collateTotals()->toArray();
@@ -209,7 +243,7 @@ class CartController extends ActionController
                 $result['items'][] = $item->toArray() + [
                     '_options' => $options ? $item->getOptions() : [],
                     '_product' => $product->toArray() + [
-                        'thumbnail_url' => $product->getThumbnail($options ? json_decode($options, true) : null)
+                'thumbnail_url' => $product->getThumbnail($options ? json_decode($options, true) : null)
                     ]
                 ];
             }
@@ -218,16 +252,14 @@ class CartController extends ActionController
         return $this->notFoundAction();
     }
 
-    public function miniAction()
-    {
+    public function miniAction() {
         if ($this->getRequest()->isXmlHttpRequest()) {
             return $this->getLayout('checkout_cart_mini');
         }
         return $this->notFoundAction();
     }
 
-    public function moveToWishlistAction()
-    {
+    public function moveToWishlistAction() {
         $segment = new Segment('customer');
         if (!$segment->get('hasLoggedIn')) {
             $segment->set('afterLogin', 'checkout/cart/');
@@ -263,4 +295,5 @@ class CartController extends ActionController
         }
         return $this->response($result, 'checkout/cart/', 'checkout');
     }
+
 }

@@ -24,13 +24,14 @@ use Redseanet\Forum\Model\Poll;
 use Redseanet\Forum\Model\Poll\Option;
 use Redseanet\Forum\Model\Post\Link;
 
-class Post extends AbstractHandler
-{
+class Post extends AbstractHandler {
+
     use \Redseanet\Lib\Traits\Url;
     use \Redseanet\Lib\Traits\Translate;
     use \Redseanet\Forum\Traits\Wechat;
 
     protected $current = null;
+    protected $conditionKey = ['id', 'customer_id', 'category_id', 'language_id', 'product_id', 'poll_id', 'anonymous', 'status', 'uri_key', 'title', 'description', 'content', 'temp_content', 'images', 'like', 'dislike', 'reviews', 'collections', 'can_review', 'is_top', 'is_hot', 'is_draft', 'is_relate', 'created_at', 'updated_at'];
 
     /**
      * @param string $id
@@ -39,36 +40,24 @@ class Post extends AbstractHandler
      * @param int $languageId
      * @return array
      */
-    public function getForumPostList($id, $token, $condition = [], $languageId = 0, $page = 1, $limit = 20, $customerId = '')
-    {
+    public function getForumPostList($id, $token, $condition = [], $languageId = 0, $customerId = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
         }
-        $conditionKey = ['id', 'customer_id', 'category_id', 'language_id', 'product_id', 'poll_id', 'anonymous', 'status', 'uri_key', 'title', 'description', 'content', 'temp_content', 'images', 'like', 'dislike', 'reviews', 'collections', 'can_review', 'is_top', 'is_hot', 'is_draft', 'is_relate', 'created_at', 'updated_at'];
         $postCollection = new PostCollection();
-        $postCollection->join('forum_category', 'forum_post.category_id=forum_category.id', ['category_id' => 'id', 'parent_id'], 'left')
-                ->join('forum_category_language', 'forum_category.id=forum_category_language.category_id', ['category_name' => 'name'], 'left');
+        $postCollection->columns(["id"]);
+        $postCollection->join('forum_category', 'forum_post.category_id=forum_category.id', [], 'left');
 
-        if ($customerId != '') {
-            $likedSelect = new Select();
-            $likedSelect->from('forum_like');
-            $likedSelect->columns(['liked' => new Expression('count(forum_like.post_id)')]);
-            $likedSelect->where('`forum_like`.`customer_id`=' . $customerId . ' and `forum_like`.`post_id`=`forum_post`.`id`');
-            $favoritedSelect = new Select();
-            $favoritedSelect->from('forum_post_favorite');
-            $favoritedSelect->columns(['favorited' => new Expression('count(forum_post_favorite.post_id)')]);
-            $favoritedSelect->where('`forum_post_favorite`.`customer_id`=' . $customerId . ' and `forum_post_favorite`.`post_id`=`forum_post`.`id`');
-            $postCollection->columns(['*', 'liked' => $likedSelect, 'favorited' => $favoritedSelect]);
-        } else {
-            $postCollection->columns(['*']);
-        }
         if (count($condition) > 0) {
             foreach ($condition as $conditionDataK => $conditionDataV) {
-                if (in_array($conditionDataK, $conditionKey)) {
+                if (in_array($conditionDataK, $this->conditionKey)) {
                     $postCollection->where(['forum_post.' . $conditionDataK => $conditionDataV]);
                 }
             }
+        }
+        if (count($condition) > 0 && !empty($condition["categories"]) && is_array($condition["categories"]) && count($condition["categories"]) > 0) {
+            $postCollection->where("forum_post.category_id in (" . implode(',', $condition["categories"]) . ")");
         }
         if (isset($condition['inFavorited']) && $condition['inFavorited'] != '') {
             $postCollection->join('forum_post_favorite', 'forum_post.id=forum_post_favorite.post_id', [], 'left');
@@ -78,38 +67,49 @@ class Post extends AbstractHandler
             $postCollection->join('forum_like', 'forum_post.id=forum_like.post_id', [], 'left');
             $postCollection->where(['forum_like.customer_id' => intval($condition['inLiked'])]);
         }
-        if ($languageId != 0) {
-            $postCollection->where(['forum_category_language.language_id' => $languageId]);
+        if (!isset($condition['limit']) || $condition['limit'] == '') {
+            $condition['limit'] = 20;
         } else {
-            $postCollection->where(['forum_category_language.language_id' => Bootstrap::getLanguage()->getId()]);
+            $condition['limit'] = intval($condition['limit']);
+        }
+        if (!isset($condition['page']) || $condition['page'] == '') {
+            $condition['page'] = 1;
+        } else {
+            $condition['page'] = intval($condition['page']);
         }
         if ($languageId == 0) {
             $languageId = Bootstrap::getLanguage()->getId();
         }
         $language = new Language();
         $language->load($languageId);
-        $postCollection->offset(($page > 0 ? ($page - 1) : 0) * $limit)->limit((int) $limit);
-        $postCollection->order('forum_post.created_at DESC');
         $resultData = [];
-        $postList = $postCollection->load(true, true);
 
-        for ($p = 0; $p < count($postList); $p++) {
-            $customer = new Customer();
-            $customer->load($postList[$p]['customer_id']);
-            $images = [];
-            $tmpImages = json_decode($postList[$p]['images'], true);
-            if ($tmpImages != '' && count($tmpImages) > 0) {
-                for ($i = 0; $i < count($tmpImages); $i++) {
-                    $images[] = $this->getBaseUrl('pub/upload/forum/' . $tmpImages[$i]);
-                }
+        $total = $postCollection->count();
+        $postCollection->offset(($condition['page'] - 1) * $condition['limit'])->limit((int) $condition['limit']);
+        $postCollection->order('forum_post.created_at DESC');
+        $last_page = ceil($total / $condition['limit']);
+        //echo $postCollection->getSqlString(Bootstrap::getContainer()->get("dbAdapter")->getPlatform());exit;
+        $resultData['pagination'] = [
+            "total" => $total,
+            "per_page" => $condition['limit'],
+            "current_page" => $condition['page'],
+            "last_page" => $last_page,
+            "next_page" => ($last_page > $condition['page'] ? $condition['page'] + 1 : $last_page),
+            "previous_page" => ($condition['page'] > 1 ? $condition['page'] - 1 : 1),
+            "has_next_page" => ($last_page > $condition['page'] ? true : false),
+            "has_previous_page" => ($condition['page'] > 1 && $last_page > 1 ? true : false)
+        ];
+
+        $postList = $postCollection->load(true, true);
+        $ids = [];
+        if (count($postList) > 0) {
+            foreach ($postList as $post) {
+                $ids[] = $post["id"];
             }
-            unset($postList[$p]['images']);
-            //$postList[$p]["images"] = $images;
-            $avatar = $this->getPubUrl('frontend/images/avatar-holderplace.jpg');
-            if ($customer->offsetGet('avatar')) {
-                $avatar = $this->getBaseUrl('pub/upload/customer/avatar/' . $customer->offsetGet('avatar'));
-            }
-            $resultData[] = $postList[$p] + ['customer_name' => $customer->offsetGet('username'), 'customer_avatar' => $avatar, 'images' => $images, 'created_at_string' => $this->getTime($postList[$p]['created_at'], $language['code'])];
+        }
+        $resultData["posts"] = [];
+        if (count($ids) > 0) {
+            $resultData["posts"] = $this->getPostData($ids, $customerId, $languageId, $language["code"]);
         }
         $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => 'get post list successfully'];
         return $this->responseData;
@@ -123,8 +123,7 @@ class Post extends AbstractHandler
      * @param int $languageId
      * @return array
      */
-    public function addForumPost($id, $token, $cutomerId, $data = [], $languageId = 0)
-    {
+    public function addForumPost($id, $token, $cutomerId, $data = [], $languageId = 0) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -135,7 +134,7 @@ class Post extends AbstractHandler
             $accesstoken = $this->getAccessToken();
             Bootstrap::getContainer()->get('log')->logException(new \Exception(json_encode($accesstoken)));
             if (!empty($accesstoken)) {
-                $msgMsgCheckParams = ['openid' => $data['openid'], 'token' => $accesstoken, 'scene' => 2, 'content' => $data['content'], 'title' => $data['title'], ];
+                $msgMsgCheckParams = ['openid' => $data['openid'], 'token' => $accesstoken, 'scene' => 2, 'content' => $data['content'], 'title' => $data['title'],];
                 $msgCheck = $this->msgSecCheck($msgMsgCheckParams);
                 Bootstrap::getContainer()->get('log')->logException(new \Exception(json_encode($msgCheck)));
                 if ($msgCheck['code'] != 200) {
@@ -255,14 +254,12 @@ class Post extends AbstractHandler
      * @param int $languageId
      * @return array
      */
-    public function getForumPostById($id, $token, $postId, $languageId = 0, $customerId = '')
-    {
+    public function getForumPostById($id, $token, $postId, $languageId = 0, $customerId = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
         }
         $config = $this->getContainer()->get('config');
-        $collect = new PostCollection();
         $postCollection = new PostCollection();
         $views = new Select('log_visitor');
         $views->columns(['count' => new Expression('count(1)')])
@@ -329,13 +326,26 @@ class Post extends AbstractHandler
             if ($postList[0]['videos'] != '') {
                 $postList[0]['videos'] = $this->getBaseUrl('pub/upload/forum/videos/' . $postList[0]['videos']);
             }
+            $postList[0]['created_at_string'] = $this->getTime($postList[0]["created_at"], $language['code']);
+            $likeList = [];
             $postlikeList = new likeCollecttion();
             $postlikeList->columns(['customer_id']);
-            $postlikeList->where(['post_id' => $postList[0]['id']]);
-
-            $postlikeList->load(true, true);
-            //echo $postlikeList->getSqlString(Bootstrap::getContainer()->get("dbAdapter")->getPlatform());
-            $resultData = $postList[0]->toArray() + ['customer_name' => $customer->offsetGet('username'), 'customer_avatar' => $this->getBaseUrl('pub/upload/customer/avatar/' . $customer->offsetGet('avatar')), 'reviewlist' => $reviewList, 'likelist' => $postlikeList];
+            $postlikeList->join('customer_1_index', 'forum_like.customer_id=customer_1_index.id', ['avatar', 'username', 'created_at'], 'left');
+            $postlikeList->where(['forum_like.post_id' => $postList[0]['id']]);
+            $postlikeList->order('forum_like.created_at DESC')->offset(0)->limit(20);
+            if (count($postlikeList) > 0) {
+                for ($l = 0; $l < count($postlikeList); $l++) {
+                    $tmpLike = $postlikeList[$l]->toArray();
+                    $avatar = $this->getPubUrl('frontend/images/avatar-holderplace.jpg');
+                    if ($tmpLike['avatar']) {
+                        $avatar = $this->getBaseUrl('pub/upload/customer/avatar/' . $tmpLike['avatar']);
+                    }
+                    $tmpLike['avatar'] = $avatar;
+                    $tmpLike['created_at_string'] = $this->getTime($tmpLike['created_at'], $language['code']);
+                    $likeList[] = $tmpLike;
+                }
+            }
+            $resultData = $postList[0]->toArray() + ['customer_name' => $customer->offsetGet('username'), 'customer_avatar' => ($customer->offsetGet('avatar')?$this->getBaseUrl('pub/upload/customer/avatar/' . $customer->offsetGet('avatar')):$this->getPubUrl('frontend/images/avatar-holderplace.jpg')), 'reviewlist' => $reviewList, 'likelist' => $likeList];
             $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => 'get post information successfully'];
             return $this->responseData;
         } else {
@@ -353,8 +363,7 @@ class Post extends AbstractHandler
      * @param int $languageId
      * @return array
      */
-    public function forumPostReviewSave($id, $token, $customerId, $postId, $data, $languageId = 0)
-    {
+    public function forumPostReviewSave($id, $token, $customerId, $postId, $data, $languageId = 0) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -368,22 +377,6 @@ class Post extends AbstractHandler
         }
         if ($config['forum/review/anonymous'] == 0) {
             unset($data['anonymous']);
-        }
-        if (!empty($data['openid'])) {
-            $accesstoken = $this->getAccessToken();
-            Bootstrap::getContainer()->get('log')->logException(new \Exception(json_encode($accesstoken)));
-            if (!empty($accesstoken)) {
-                $msgMsgCheckParams = ['openid' => $data['openid'], 'token' => $accesstoken, 'scene' => 2, 'content' => $data['content'], 'title' => (!empty($data['subject']) ? $data['subject'] : '')];
-                $msgCheck = $this->msgSecCheck($msgMsgCheckParams);
-                Bootstrap::getContainer()->get('log')->logException(new \Exception(json_encode($msgCheck)));
-                if ($msgCheck['code'] != 200) {
-                    $this->responseData = ['statusCode' => $msgCheck['code'], 'data' => json_encode($msgCheck), 'message' => $this->translate('The title or content contains pornographic or political words', [], null, $language['code'])];
-                    return $this->responseData;
-                }
-            } else {
-                $this->responseData = ['statusCode' => 400, 'data' => [], 'message' => $this->translate('get wechat accesstoken fail', [], null, $language['code'])];
-                return $this->responseData;
-            }
         }
         $customer = new Customer();
         $customer->load($customerId);
@@ -402,6 +395,12 @@ class Post extends AbstractHandler
                     $model = new Review($data);
                     $model->save();
                     $resultData = $model->load($model->getId())->toArray();
+                    $avatar = $this->getPubUrl('frontend/images/avatar-holderplace.jpg');
+                    if (!empty($customer['avatar'])) {
+                        $avatar = $this->getBaseUrl('pub/upload/customer/avatar/' . $customer['avatar']);
+                    }
+                    $resultData["avatar"] = $avatar;
+                    $resultData["username"] = $customer['username'];
                     $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => $data['status'] ? $this->translate('The review has been posted successfully', [], null, $language['code']) : $this->translate('The review has been posted successfully. It would been viewed after approval', [], null, $language['code'])];
                     return $this->responseData;
                 } catch (Exception $e) {
@@ -425,8 +424,7 @@ class Post extends AbstractHandler
      * @param int $postId
      * @return array
      */
-    public function forumLikePost($id, $token, $customerId, $postId)
-    {
+    public function forumLikePost($id, $token, $customerId, $postId) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -457,8 +455,7 @@ class Post extends AbstractHandler
      * @param int $postId
      * @return array
      */
-    public function forumDeletePost($id, $token, $customerId, $postId)
-    {
+    public function forumDeletePost($id, $token, $customerId, $postId) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -483,8 +480,7 @@ class Post extends AbstractHandler
      * @param int $limit
      * @return array
      */
-    public function forumPostReviewList($id, $token, $condition, $page = 1, $limit = 20)
-    {
+    public function forumPostReviewList($id, $token, $condition, $page = 1, $limit = 20) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -528,8 +524,7 @@ class Post extends AbstractHandler
      * @param int $limit
      * @return array
      */
-    public function forumPostReplyList($id, $token, $customerId, $page = 1, $limit = 20)
-    {
+    public function forumPostReplyList($id, $token, $customerId, $page = 1, $limit = 20) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -562,8 +557,7 @@ class Post extends AbstractHandler
         return $this->responseData;
     }
 
-    public function getMyLiked($id, $token, $customerId, $page = 1, $limit = 20)
-    {
+    public function getMyLiked($id, $token, $customerId, $page = 1, $limit = 20) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -596,8 +590,7 @@ class Post extends AbstractHandler
         return $this->responseData;
     }
 
-    public function getBeLikes($id, $token, $customerId, $page = 1, $limit = 20)
-    {
+    public function getBeLikes($id, $token, $customerId, $page = 1, $limit = 20) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -631,16 +624,35 @@ class Post extends AbstractHandler
         return $this->responseData;
     }
 
-    public function getFollow($id, $token, $customerId, $page = 1, $limit = 20)
-    {
+    public function getFollow($id, $token, $customerId, $conditionData = [], $languageId = 0) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
         }
-        $query = ['page' => $page, 'limit' => $limit];
         $liked = new followingCollection();
         $my_likes = $liked->getFollow($customerId);
-        $this->filter($my_likes, $query);
+        if (!isset($conditionData['limit']) || $conditionData['limit'] == '') {
+            $conditionData['limit'] = 20;
+        } else {
+            $conditionData['limit'] = intval($conditionData['limit']);
+        }
+        if (!isset($condition['page']) || $conditionData['page'] == '') {
+            $conditionData['page'] = 1;
+        } else {
+            $conditionData['page'] = intval($conditionData['page']);
+        }
+        $total = 0;
+        $last_page = ceil($total / $conditionData['limit']);
+        $resultData['pagination'] = [
+            "total" => $total,
+            "per_page" => $conditionData['limit'],
+            "current_page" => $conditionData['page'],
+            "last_page" => $last_page,
+            "next_page" => ($last_page > $conditionData['page'] ? $conditionData['page'] + 1 : $last_page),
+            "previous_page" => ($conditionData['page'] > 1 ? $conditionData['page'] - 1 : 1),
+            "has_next_page" => ($last_page > $conditionData['page'] ? true : false),
+            "has_previous_page" => ($conditionData['page'] > 1 && $last_page > 1 ? true : false)
+        ];
         $likes = [];
         if (count($my_likes) > 0) {
             for ($l = 0; $l < count($my_likes); $l++) {
@@ -653,12 +665,12 @@ class Post extends AbstractHandler
                 $likes[] = $like;
             }
         }
-        $this->responseData = ['statusCode' => '200', 'data' => $likes, 'message' => 'get forum my follow list successfully'];
+        $resultData["followed"] = $likes;
+        $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => 'get forum my follow list successfully'];
         return $this->responseData;
     }
 
-    public function getFans($id, $token, $customerId, $page = 1, $limit = 20)
-    {
+    public function getFans($id, $token, $customerId, $page = 1, $limit = 20) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -683,8 +695,7 @@ class Post extends AbstractHandler
         return $this->responseData;
     }
 
-    public function getBeCollected($id, $token, $customerId, $page = 1, $limit = 20)
-    {
+    public function getBeCollected($id, $token, $customerId, $page = 1, $limit = 20) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -718,8 +729,7 @@ class Post extends AbstractHandler
         return $this->responseData;
     }
 
-    public function getFavoritedWithPosts($id, $token, $customerId, $page = 1, $limit = 20)
-    {
+    public function getFavoritedWithPosts($id, $token, $customerId, $page = 1, $limit = 20) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -775,8 +785,7 @@ class Post extends AbstractHandler
      * @param int $toLikeCustomerId
      * @return array
      */
-    public function forumToLikeCustomer($id, $token, $customerId, $toLikeCustomerId)
-    {
+    public function forumToLikeCustomer($id, $token, $customerId, $toLikeCustomerId) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -800,8 +809,7 @@ class Post extends AbstractHandler
      * @param int $postId
      * @return array
      */
-    public function forumFavoritePost($id, $token, $customerId, $postId)
-    {
+    public function forumFavoritePost($id, $token, $customerId, $postId) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -826,8 +834,7 @@ class Post extends AbstractHandler
      * @param int $currentCustomerId
      * @return array
      */
-    public function forumSpaceData($id, $token, $customerId, $currentCustomerId = '')
-    {
+    public function forumSpaceData($id, $token, $customerId, $currentCustomerId = '') {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -869,7 +876,7 @@ class Post extends AbstractHandler
             if ($currentCustomerId != '') {
                 $customer->columns(['*', 'following' => $followingSelect, 'fans' => $fansSelect, 'liked' => $likedSelect, 'beliked' => $belikedSelect, 'befavorited' => $befavoritedSelect, 'customerliked' => $customerLikedSelect]);
             } else {
-                $customer->columns(['*', 'following' => $followingSelect, 'fans' => $fansSelect, 'liked' => $likedSelect, 'beliked' => $belikedSelect, 'befavorited' => $befavoritedSelect, ]);
+                $customer->columns(['*', 'following' => $followingSelect, 'fans' => $fansSelect, 'liked' => $likedSelect, 'beliked' => $belikedSelect, 'befavorited' => $befavoritedSelect,]);
             }
 
             $customer->where(['main_table.id' => $customerId, 'main_table.status' => 1]);
@@ -895,8 +902,7 @@ class Post extends AbstractHandler
         }
     }
 
-    public function getTime($time, $languageCode)
-    {
+    public function getTime($time, $languageCode) {
         $dt = new DateTime($time);
         $days = $dt->diff($this->getCurrent())->format('%a');
         if ($days && $days > 1) {
@@ -908,11 +914,359 @@ class Post extends AbstractHandler
         }
     }
 
-    protected function getCurrent()
-    {
+    protected function getCurrent() {
         if (is_null($this->current)) {
             $this->current = new DateTime();
         }
         return $this->current;
     }
+
+    public function getPostData($ids, $customerId, $languageId, $languageCode) {
+        $postCollection = new PostCollection();
+        $postCollection->join('forum_category', 'forum_post.category_id=forum_category.id', ['category_id' => 'id', 'parent_id'], 'left')
+                ->join('forum_category_language', 'forum_category.id=forum_category_language.category_id', ['category_name' => 'name'], 'left');
+        if ($customerId != '') {
+            $likedSelect = new Select();
+            $likedSelect->from('forum_like');
+            $likedSelect->columns(['liked' => new Expression('count(forum_like.post_id)')]);
+            $likedSelect->where('`forum_like`.`customer_id`=' . $customerId . ' and `forum_like`.`post_id`=`forum_post`.`id`');
+            $favoritedSelect = new Select();
+            $favoritedSelect->from('forum_post_favorite');
+            $favoritedSelect->columns(['favorited' => new Expression('count(forum_post_favorite.post_id)')]);
+            $favoritedSelect->where('`forum_post_favorite`.`customer_id`=' . $customerId . ' and `forum_post_favorite`.`post_id`=`forum_post`.`id`');
+            $postCollection->columns(['*', 'liked' => $likedSelect, 'favorited' => $favoritedSelect]);
+        } else {
+            $postCollection->columns(['*']);
+        }
+        $postCollection->where("forum_post.id in (" . implode(',', $ids) . ")");
+        $postCollection->where(['forum_category_language.language_id' => $languageId]);
+        $posts = [];
+        $postList = $postCollection->load(true, true);
+        for ($p = 0; $p < count($postList); $p++) {
+            $customer = new Customer();
+            $customer->load($postList[$p]['customer_id']);
+            $images = [];
+            $tmpImages = json_decode($postList[$p]['images'], true);
+            if ($tmpImages != '' && count($tmpImages) > 0) {
+                for ($i = 0; $i < count($tmpImages); $i++) {
+                    $images[] = $this->getBaseUrl('pub/upload/forum/' . $tmpImages[$i]);
+                }
+            }
+            unset($postList[$p]['images']);
+            $avatar = $this->getPubUrl('frontend/images/avatar-holderplace.jpg');
+            if ($customer->offsetGet('avatar')) {
+                $avatar = $this->getBaseUrl('pub/upload/customer/avatar/' . $customer->offsetGet('avatar'));
+            }
+            $postList[$p]['customer_name'] = $customer->offsetGet('username');
+            $postList[$p]['customer_avatar'] = $avatar;
+            $postList[$p]['images'] = $images;
+            $postList[$p]['created_at_string'] = $this->getTime($postList[$p]['created_at'], $languageCode);
+
+            $reviews = new ReviewCollection();
+            $reviews->join('customer_1_index', 'forum_post_review.customer_id=customer_1_index.id', ['avatar', 'username'], 'left');
+            $reviews->where(['forum_post_review.post_id' => $postList[$p]['id']]);
+            $reviews->order('forum_post_review.created_at DESC')->where->greaterThan('forum_post_review.status', 0);
+            $reviews->offset(0)->limit(20);
+            $reviewList = [];
+            if (count($reviews) > 0) {
+                for ($r = 0; $r < count($reviews); $r++) {
+                    $tmpReview = $reviews[$r]->toArray();
+                    $avatar = $this->getPubUrl('frontend/images/avatar-holderplace.jpg');
+                    if ($tmpReview['avatar']) {
+                        $avatar = $this->getBaseUrl('pub/upload/customer/avatar/' . $tmpReview['avatar']);
+                    }
+                    $tmpReview['avatar'] = $avatar;
+                    $tmpReview['created_at_string'] = $this->getTime($tmpReview['created_at'], $languageCode);
+                    $reviewList[] = $tmpReview;
+                }
+            }
+            $postList[$p]["reviewlist"] = $reviewList;
+            $likeList = [];
+            $postlikeList = new likeCollecttion();
+            $postlikeList->columns(['customer_id']);
+            $postlikeList->join('customer_1_index', 'forum_like.customer_id=customer_1_index.id', ['avatar', 'username', 'created_at'], 'left');
+            $postlikeList->where(['forum_like.post_id' => $postList[$p]['id']]);
+            $postlikeList->order('forum_like.created_at DESC')->offset(0)->limit(10);
+            if (count($postlikeList) > 0) {
+                for ($l = 0; $l < count($postlikeList); $l++) {
+                    $tmpLike = $postlikeList[$l]->toArray();
+                    $avatar = $this->getPubUrl('frontend/images/avatar-holderplace.jpg');
+                    if ($tmpLike['avatar']) {
+                        $avatar = $this->getBaseUrl('pub/upload/customer/avatar/' . $tmpLike['avatar']);
+                    }
+                    $tmpLike['avatar'] = $avatar;
+                    $tmpLike['created_at_string'] = $this->getTime($tmpLike['created_at'], $languageCode);
+                    $likeList[] = $tmpLike;
+                }
+            }
+            $postList[$p]["likelist"] = $likeList;
+            $posts[] = $postList[$p];
+        }
+        return $posts;
+    }
+
+    public function getRandCustomer($id, $token, $customerId = '', $exclude = [], $random = 5, $languageId = 0) {
+        $this->validateToken($id, $token, __FUNCTION__, false);
+        if ($this->responseData['statusCode'] != '200') {
+            return $this->responseData;
+        }
+        $customers = new customerCollection();
+        $customersSelect = $customers->getSelect();
+        if (!empty($customerId)) {
+            $sub1 = new Select('forum_customer_like');
+            $sub1->columns(['customer_id'])->where(['customer_id' => $customerId]);
+            $customersSelect->where->notIn('id', $sub1);
+        }
+        $exclude[] = $customerId;
+        $customersSelect->where->notIn('id', $exclude);
+        $customers->where(['status' => 1]);
+        $customers->order(new Expression('Rand()'))->limit($random);
+        $customerList = [];
+        if (count($customers) > 0) {
+            for ($l = 0; $l < count($customers); $l++) {
+                $customer = $customers[$l]->toArray();
+                $avatar = $this->getPubUrl('frontend/images/avatar-holderplace.jpg');
+                if ($customer['avatar']) {
+                    $avatar = $this->getBaseUrl('pub/upload/customer/avatar/' . $customer['avatar']);
+                }
+                $customer['avatar'] = $avatar;
+                unset($customer["password"]);
+                $customerList[] = $customer;
+            }
+        }
+        $this->responseData = ['statusCode' => '200', 'data' => $customerList, 'message' => 'get forum rand customer list successfully'];
+        return $this->responseData;
+    }
+
+    public function getForumPostRandList($id, $token, $customerId = '', $conditionData = [], $random = 5, $languageId = 0) {
+        $this->validateToken($id, $token, __FUNCTION__, false);
+        if ($this->responseData['statusCode'] != '200') {
+            return $this->responseData;
+        }
+        $conditionKey = ['id', 'customer_id', 'category_id', 'language_id', 'product_id', 'poll_id', 'anonymous', 'status', 'uri_key', 'title', 'description', 'content', 'temp_content', 'images', 'like', 'dislike', 'reviews', 'collections', 'can_review', 'is_top', 'is_hot', 'is_draft', 'is_relate', 'created_at', 'updated_at'];
+        $postCollection = new PostCollection();
+        $postCollection->columns(["id"]);
+
+        if (count($conditionData) > 0) {
+            foreach ($conditionData as $conditionDataK => $conditionDataV) {
+                if (in_array($conditionDataK, $conditionKey)) {
+                    $postCollection->where(['forum_post.' . $conditionDataK => $conditionDataV]);
+                }
+            }
+        }
+        if ($languageId == 0) {
+            $languageId = Bootstrap::getLanguage()->getId();
+        }
+        $language = new Language();
+        $language->load($languageId);
+        $postCollection->order(new Expression('Rand()'))->limit($random);
+
+        $postList = $postCollection->load(true, true);
+        $ids = [];
+        if (count($postList) > 0) {
+            foreach ($postList as $post) {
+                $ids[] = $post["id"];
+            }
+        }
+        $posts = $this->getPostData($ids, $customerId, $languageId, $language["code"]);
+        $this->responseData = ['statusCode' => '200', 'data' => $posts, 'message' => 'get random post list successfully'];
+        return $this->responseData;
+    }
+
+    public function toDoLikeCustomerAction($id, $token, $customerId, $likeId, $languageId = 0) {
+        $this->validateToken($id, $token, __FUNCTION__, false);
+        if ($this->responseData['statusCode'] != '200') {
+            return $this->responseData;
+        }
+        try {
+            $model = new CustomerLike();
+            $data = ['data' => $model->setId($customerId)->like($likeId)];
+            if (!empty($data["like_customer_id"])) {
+                $this->responseData = ['statusCode' => '200', 'data' => [], 'message' => 'You subscribe the customer successfully'];
+            } else {
+                $this->responseData = ['statusCode' => '200', 'data' => [], 'message' => 'You unsubscribe the customer successfully'];
+            }
+        } catch (Exception $e) {
+            $this->responseData = ['statusCode' => '400', 'data' => [], 'message' => 'You subscribe the customer failure' . $e->getMessage()];
+        }
+
+        return $this->responseData;
+    }
+
+    public function toDoLikePostAction($id, $token, $customerId, $postId, $type = 1, $languageId = 0) {
+        $this->validateToken($id, $token, __FUNCTION__, false);
+        if ($this->responseData['statusCode'] != '200') {
+            return $this->responseData;
+        }
+        if ($type == 1) {
+            try {
+                $model = new Model();
+                $model->load($postId);
+                $model->like($customerId);
+                $this->responseData = ['statusCode' => '200', 'data' => [], 'message' => 'You like the post successfully'];
+            } catch (Exception $e) {
+                $this->responseData = ['statusCode' => '400', 'data' => [], 'message' => 'You like the post failure'];
+            }
+        } else {
+            try {
+                $model = new Post();
+                $model->load($postId);
+                $model->dislike($customerId);
+                $this->responseData = ['statusCode' => '200', 'data' => [], 'message' => 'You unlike the post successfully'];
+            } catch (Exception $e) {
+                $this->responseData = ['statusCode' => '400', 'data' => [], 'message' => 'You unlike the post failure'];
+            }
+        }
+        return $this->responseData;
+    }
+
+    public function toDoFavoritePostAction($id, $token, $customerId, $postId, $languageId = 0) {
+        $this->validateToken($id, $token, __FUNCTION__, false);
+        if ($this->responseData['statusCode'] != '200') {
+            return $this->responseData;
+        }
+        try {
+            $model = new Model();
+            $model->load($postId);
+            $favoriteBool = $model->favorite($customerId);
+            if ($favoriteBool) {
+                $this->responseData = ['statusCode' => '200', 'data' => [], 'message' => 'You favorite the post successfully'];
+            } else {
+                $this->responseData = ['statusCode' => '200', 'data' => [], 'message' => 'You cancel favorite the post successfully'];
+            }
+            $this->flushList('forum_post');
+        } catch (Exception $e) {
+            $this->responseData = ['statusCode' => '400', 'data' => [], 'message' => 'You favorite the post failure'];
+        }
+        return $this->responseData;
+    }
+
+    public function toDoLikePostReviewAction($id, $token, $customerId, $reviewId, $type = 1, $languageId = 0) {
+        $this->validateToken($id, $token, __FUNCTION__, false);
+        if ($this->responseData['statusCode'] != '200') {
+            return $this->responseData;
+        }
+        if ($type == 1) {
+            try {
+                $model = new Review();
+                $model->Review($reviewId);
+                $model->like($customerId);
+                $this->responseData = ['statusCode' => '200', 'data' => [], 'message' => 'You like the review successfully'];
+            } catch (Exception $e) {
+                $this->responseData = ['statusCode' => '400', 'data' => [], 'message' => 'You like the review failure'];
+            }
+        } else {
+            try {
+                $model = new Post();
+                $model->load($reviewId);
+                $model->dislike($customerId);
+                $this->responseData = ['statusCode' => '200', 'data' => [], 'message' => 'You unlike the review successfully'];
+            } catch (Exception $e) {
+                $this->responseData = ['statusCode' => '400', 'data' => [], 'message' => 'You unlike the review failure'];
+            }
+        }
+        return $this->responseData;
+    }
+
+    public function getRecommentPostByPostId($id, $token, $postId, $condition = [], $languageId = 0, $customerId = '') {
+        $this->validateToken($id, $token, __FUNCTION__, false);
+        if ($this->responseData['statusCode'] != '200') {
+            return $this->responseData;
+        }
+        if (!isset($condition['page']) || $condition['page'] == '') {
+            $condition['page'] = 1;
+        } else {
+            $condition['page'] = intval($condition['page']);
+        }
+        if (!isset($condition['taglimit']) || $condition['taglimit'] == '') {
+            $condition['taglimit'] = 5;
+        } else {
+            $condition['taglimit'] = intval($condition['taglimit']);
+        }
+        if (!isset($condition['authorlimit']) || $condition['authorlimit'] == '') {
+            $condition['authorlimit'] = 5;
+        } else {
+            $condition['authorlimit'] = intval($condition['authorlimit']);
+        }
+        if (!isset($condition['limit']) || $condition['limit'] == '') {
+            $condition['limit'] = 20;
+        } else {
+            $condition['limit'] = intval($condition['limit']);
+        }
+        $model = new Model();
+        $model->load($postId);
+        $ids = [];
+        if ($condition['page'] == 1) {
+            $theSameAuthorCollection = new PostCollection();
+            $theSameAuthorCollection->columns(["id"]);
+            $theSameAuthorCollection->where(['customer_id' => $model["customer_id"]])->where->notEqualTo('id', $postId);
+            $theSameAuthorCollection->order(new Expression('Rand()'))->limit($condition['taglimit']);
+            if (count($theSameAuthorCollection) > 0) {
+                foreach ($theSameAuthorCollection as $post) {
+                    $ids[] = $post["id"];
+                }
+            }
+            if (!empty($model["tags"])) {
+                $tags = explode(",", $model["tags"]);
+                $theSameTagCollection = new PostCollection();
+                $likeArray = [];
+                foreach ($tags as $tag) {
+                    if (!empty($tag)) {
+                        $likeArray[] = "tags like '%" . $tag . "%'";
+                    }
+                }
+                if (count($likeArray) > 0) {
+                    $theSameTagCollection->where("customer_id!=" . $model["customer_id"] . " and (" . implode(' or ', $likeArray) . ")")->where->notEqualTo('id', $postId);
+                } else {
+                    $theSameTagCollection->where("customer_id!=" . $model["customer_id"])->where->notEqualTo('id', $postId);
+                }
+                $theSameTagCollection->order('created_at')->limit($condition['authorlimit']);
+                if (count($theSameTagCollection) > 0) {
+                    foreach ($theSameTagCollection as $post) {
+                        $ids[] = $post["id"];
+                    }
+                }
+            }
+        }
+        $postCollection = new PostCollection();
+        $postCollection->columns(["id"]);
+        $postCollection->join('forum_category', 'forum_post.category_id=forum_category.id', [], 'left');
+        if (!empty($model["category_id"])) {
+            $postCollection->where("forum_post.category_id='" . $model["category_id"] . "'");
+        }
+        if ($languageId == 0) {
+            $languageId = Bootstrap::getLanguage()->getId();
+        }
+        $language = new Language();
+        $language->load($languageId);
+        $resultData = [];
+        $total = $postCollection->count();
+        $postCollection->offset(($condition['page'] - 1) * $condition['limit'])->limit((int) $condition['limit']);
+        $postCollection->order('forum_post.created_at DESC');
+        $last_page = ceil($total / $condition['limit']);
+        $resultData['pagination'] = [
+            "total" => $total,
+            "per_page" => $condition['limit'],
+            "current_page" => $condition['page'],
+            "last_page" => $last_page,
+            "next_page" => ($last_page > $condition['page'] ? $condition['page'] + 1 : $last_page),
+            "previous_page" => ($condition['page'] > 1 ? $condition['page'] - 1 : 1),
+            "has_next_page" => ($last_page > $condition['page'] ? true : false),
+            "has_previous_page" => ($condition['page'] > 1 && $last_page > 1 ? true : false)
+        ];
+
+        $postList = $postCollection->load(true, true);
+        if (count($postList) > 0) {
+            foreach ($postList as $post) {
+                $ids[] = $post["id"];
+            }
+        }
+        $resultData["posts"] = [];
+        if (count($ids) > 0) {
+            $resultData["posts"] = $this->getPostData($ids, $customerId, $languageId, $language["code"]);
+        }
+        $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => 'get post list successfully'];
+        return $this->responseData;
+    }
+
 }

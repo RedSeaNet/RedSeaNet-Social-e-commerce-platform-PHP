@@ -8,8 +8,8 @@ use Redseanet\Lib\Bootstrap;
 use Redseanet\Lib\Model\Collection\Store;
 use Laminas\Db\Sql\Predicate\In;
 
-class Regular implements ListenerInterface
-{
+class Regular implements ListenerInterface {
+
     use \Redseanet\Lib\Traits\Container;
 
     protected $model;
@@ -17,8 +17,7 @@ class Regular implements ListenerInterface
     protected $items = [];
     protected $stores = [];
 
-    public function calc($event)
-    {
+    public function calc($event) {
         $this->items = [];
         $this->discount = 0;
         $this->model = $event['model'];
@@ -55,7 +54,7 @@ class Regular implements ListenerInterface
             foreach ($storeCollection as $store) {
                 $this->store[$store['id']] = $store;
             }
-            Bootstrap::getContainer()->get('log')->logException(new \Exception(json_encode($this->store)));
+            //Bootstrap::getContainer()->get('log')->logException(new \Exception(json_encode($this->store)));
             $result = 0;
             $result_store = [];
             $time = time();
@@ -92,30 +91,27 @@ class Regular implements ListenerInterface
                 }
             }
             if ($result) {
-                $additional = json_encode(['promotion' => $promotionDetail] + (!empty($this->model['additional']) ? json_decode($this->model['additional'], true) : []));
                 $base_discount = (float) $this->model->offsetGet('base_discount') - $result;
-                $discount_detail = json_encode(['promotion' => ['total' => -$result, 'store_total' => $result_store, 'detail' => $promotionDetail]] + (!empty($this->model['discount_detail']) ? json_decode($this->model['discount_detail'], true) : []));
+                $discount_detail = (!empty($this->model['discount_detail']) ? json_decode($this->model['discount_detail'], true) : []);
+                $discount_detail["promotion"] = ['total' => -$result, 'store_total' => $result_store, 'detail' => $promotionDetail];
                 $discount = $this->model->getCurrency()->convert($base_discount);
                 $this->model->setData([
-                    'additional' => $additional,
                     'base_discount' => $base_discount,
-                    'discount_detail' => $discount_detail,
+                    'discount_detail' => json_encode($discount_detail),
                     'discount' => $discount
                 ]);
             }
         }
     }
 
-    protected function matchRule($rule, $storeId)
-    {
+    protected function matchRule($rule, $storeId) {
         if (!$rule['use_coupon'] || $rule->matchCoupon($this->model->getCoupon($storeId), $this->model)) {
             return $rule->getCondition() ? $rule->getCondition()->match($this->model, $storeId) : true;
         }
         return false;
     }
 
-    protected function handleRule($rule, $storeId, &$block)
-    {
+    protected function handleRule($rule, $storeId, &$block) {
         if ($rule['stop_processing']) {
             $block = true;
         }
@@ -150,4 +146,5 @@ class Regular implements ListenerInterface
         }
         return min($total - $this->discount, $result);
     }
+
 }

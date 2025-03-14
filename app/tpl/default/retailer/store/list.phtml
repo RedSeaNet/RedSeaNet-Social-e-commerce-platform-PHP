@@ -7,7 +7,7 @@ $retailers = $this->getRetailers();
         if (count($retailers) > 0) {
             for ($r = 0; $r < count($retailers); $r++) {
                 ?>
-                <div class="col-6 col-md-3 p-5 ms-md-5 me-md-5 ms-3 me-3 text-center align-items-center">
+                <div class="col-6 col-md-3 p-5 text-center align-items-center shadow-lg">
                     <p>
                         <a href="<?php echo $this->getBaseUrl('store/' . $retailers[$r]['uri_key'] . '.html') ?>">
                             <img src="<?php if (!empty($retailers[$r]["profile"])): 

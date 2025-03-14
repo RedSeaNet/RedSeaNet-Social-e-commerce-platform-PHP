@@ -32,7 +32,7 @@ class County extends PEdit
                 'type' => 'csrf',
             ],
             'country' => [
-                'label' => 'Country',
+                'label' => 'Country/Region',
                 'type' => 'locate',
                 'required' => 'required',
             ],

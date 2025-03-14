@@ -9,7 +9,7 @@ use Redseanet\Lib\Session\Segment;
 use Redseanet\Lib\Source\Store;
 use Redseanet\Admin\Model\User;
 use Redseanet\Lib\Model\Store as storeModel;
-
+use Redseanet\Retailer\Source\Retailer;
 class Manager extends PGrid
 {
     protected $translateDomain = 'retailer';
@@ -85,11 +85,13 @@ class Manager extends PGrid
                 }
             ],
             'retailer_id' => [
-                'label' => 'Retailer',
+                'label' => 'Retailer ID',
                 'type' => 'text',
+                'use4sort' => false,
+                'use4filter' => false,
                 'handler' => function ($id, &$item) {
                     return '<a href="' . $this->getAdminUrl('retailer_index/edit/?id=' . $id) . '">' . $id . '</a>';
-                }
+                },
             ],
             'uri_key' => [
                 'label' => 'Uri Key',

@@ -19,17 +19,17 @@ $inputCustomOptions = $this->getCustomAttributes($attributeSet);
             </caption>
             <tr class="optiontr">
                 <th>
-                    <label class="control-label"><?php echo $this->translate('Label') ?></label>
+                    <label class="control-label required"><?php echo $this->translate('Label') ?></label>
                 </th>
                 <td>
-                    <input type="text" class="form-control optionslabel" name="options[label][<?php echo $option['id'] ?>]" value="<?php echo $option['default_title'] ?>" />
+                    <input type="text" class="form-control optionslabel required" name="options[label][<?php echo $option['id'] ?>]" value="<?php echo $option['default_title'] ?>" />
                     <input type="hidden" class="form-control eavattributeid" name="options[eavattributeid][<?php echo $option['id'] ?>]" value="<?php echo $option['eav_attribute_id'] ?>" />
                 </td>
                 <th>
                     <label class="control-label"><?php echo $this->translate('Input Widget') ?></label>
                 </th>
                 <td>
-                    <select class="form-control" name="options[input][<?php echo $option['id'] ?>]">
+                    <select class="form-control option_widget" name="options[input][<?php echo $option['id'] ?>]">
                         <?php
                         $selected = false;
                         $selectedCustomOptionValueList = [];
@@ -64,7 +64,7 @@ $inputCustomOptions = $this->getCustomAttributes($attributeSet);
                     <label class="control-label"><?php echo $this->translate('Sort Order') ?></label>
                 </th>
                 <td>
-                    <input type="tel" class="form-control digits" name="options[sort_order][<?php echo $option['id'] ?>]" value="<?php echo $option['sort_order'] ?>" />
+                    <input type="tel" class="form-control digits" name="options[sort_order][<?php echo $option['id'] ?>]" value="<?php echo $option['sort_order']??0 ?>" min="0" />
                 </td>
             </tr>
             <tr class="optionvaluelist"<?php if (!in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect'])): ?> style="display:none"<?php endif ?>>
@@ -88,8 +88,8 @@ $inputCustomOptions = $this->getCustomAttributes($attributeSet);
                 </td>
             </tr>
             <tr class="non-value"<?php if (in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect'])): ?> style="display:none"<?php endif ?>>
-                <th><label class="control-label"><?php echo $this->translate('SKU') ?></label></th>
-                <td><input data-type="sku" type="text" class="form-control optionssku<?php if ((!isset($option['is_required']) || $option['is_required']) && !in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect'])): ?> required<?php endif ?>" name="options[sku][<?php echo $option['id'] ?>]" value="<?php echo $option['sku'] ?>" /></td>
+                <th><label class="control-label required"><?php echo $this->translate('SKU') ?></label></th>
+                <td><input data-type="sku" data-msg-required="<?php echo $this->translate('The SKU can not be null') ?>" data-msg-optionsvaluesku="<?php echo $this->translate('The sku has to be unique') ?>" type="text" class="form-control optionssku <?php if ((!isset($option['is_required']) || $option['is_required']) && !in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect'])): ?> required<?php endif ?>" name="options[sku][<?php echo $option['id'] ?>]" value="<?php echo $option['sku'] ?>" /></td>
                 <th><label class="control-label"><?php echo $this->translate('Price') ?></label></th>
                 <td>
                     <div class="input-group">
@@ -114,10 +114,10 @@ $inputCustomOptions = $this->getCustomAttributes($attributeSet);
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th><?php echo $this->translate('Label') ?></th>
+                                <th><label class="control-label required"><?php echo $this->translate('Label') ?></label></th>
                                 <th><?php echo $this->translate('Price') ?></th>
                                 <th><?php echo $this->translate('Price Type') ?></th>
-                                <th><?php echo $this->translate('SKU') ?></th>
+                                <th><label class="control-label required"><?php echo $this->translate('SKU') ?></label></th>
                                 <th><?php echo $this->translate('Delete') ?></th>
                             </tr>
                         </thead>
@@ -127,7 +127,7 @@ $inputCustomOptions = $this->getCustomAttributes($attributeSet);
                                     <td>
                                         <input type="hidden" name="options[value][<?php echo $option['id'] ?>][id][]" value="<?php echo $value['id'] ?>" />
                                         <input type="hidden" class="form-control eavattributeoptionid" name="options[value][<?php echo $option['id'] ?>][eav_attribute_option_id][]" value="<?php echo $value['eav_attribute_option_id'] ?>" />
-                                        <input type="text" class="form-control optionsvaluelabel" name="options[value][<?php echo $option['id'] ?>][label][]" value="<?php echo $value['title'] != '' ? $value['title'] : $value['default_title'] ?>" />
+                                        <input type="text" data-msg-required="<?php echo $this->translate('The option value label can not be null') ?>" class="form-control optionsvaluelabel required" name="options[value][<?php echo $option['id'] ?>][label][]" value="<?php echo $value['title'] != '' ? $value['title'] : $value['default_title'] ?>" />
                                     </td>
                                     <td>
                                         <div class="input-group">
@@ -143,7 +143,9 @@ $inputCustomOptions = $this->getCustomAttributes($attributeSet);
                                             <option value="0"<?php if ($option['is_fixed'] === '0'): ?> selected="selected"<?php endif ?>><?php echo $this->translate('Percent') ?></option>
                                         </select>
                                     </td>
-                                    <td><input type="text" id="option-sku-value-<?php echo $option['id'] ?>-<?php echo $value['id'] ?>" data-type="sku" class="form-control optionsvaluesku <?php if ((!isset($option['is_required']) || $option['is_required']) && in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect'])): ?> required<?php endif ?>" name="options[value][<?php echo $option['id'] ?>][sku][]" value="<?php echo $value['sku'] ?>" oninput="value=value.replace(/[^\w_]/g,'');" /></td>
+                                    <td>
+                                        <input type="text" data-msg-required="<?php echo $this->translate('The SKU can not be null') ?>" data-msg-optionsvaluesku="<?php echo $this->translate('The sku has to be unique') ?>" id="option-sku-value-<?php echo $option['id'] ?>-<?php echo $value['id'] ?>" data-type="sku" class="form-control optionsvaluesku <?php if ((!isset($option['is_required']) || $option['is_required']) && in_array($option['input'], ['select', 'radio', 'checkbox', 'multiselect'])): ?> required<?php endif ?>" name="options[value][<?php echo $option['id'] ?>][sku][]" value="<?php echo $value['sku'] ?>" oninput="value=value.replace(/[^\w_]/g,'');" />
+                                    </td>
                                     <td>
                                         <button type="button" class="btn btn-delete delete-row" title="<?php echo $this->translate('Delete') ?>">
                                             <span class="fa fa-remove" aria-hidden="true"></span>
@@ -173,17 +175,17 @@ $inputCustomOptions = $this->getCustomAttributes($attributeSet);
             </caption>
             <tr class="optionstr">
                 <th>
-                    <label class="control-label"><?php echo $this->translate('Label') ?></label>
+                    <label class="control-label required"><?php echo $this->translate('Label') ?></label>
                 </th>
                 <td>
-                    <input type="text" class="form-control optionslabel" name="options[label][{$id}]" />
+                    <input type="text" class="form-control optionslabel required" name="options[label][{$id}]" />
                     <input type="hidden" class="form-control eavattributeid" name="options[eavattributeid][{$id}]" value="" />
                 </td>
                 <th>
                     <label class="control-label"><?php echo $this->translate('Input Widget') ?></label>
                 </th>
                 <td>
-                    <select class="form-control" name="options[input][{$id}]">
+                    <select class="form-control option_widget" name="options[input][{$id}]">
                         <?php
                         $selectedCustomOptionValueList = [];
                         $o = 0;
@@ -218,7 +220,7 @@ $inputCustomOptions = $this->getCustomAttributes($attributeSet);
                     <label class="control-label"><?php echo $this->translate('Sort Order') ?></label>
                 </th>
                 <td>
-                    <input type="tel" class="form-control digits" name="options[sort_order][{$id}]" />
+                    <input type="tel" class="form-control digits" name="options[sort_order][{$id}]" value="0" min="0" />
                 </td>
             </tr>
             <tr class="optionvaluelist" style="<?php count($selectedCustomOptionValueList) > 0?'':'display:none' ?>">
@@ -236,8 +238,8 @@ $inputCustomOptions = $this->getCustomAttributes($attributeSet);
                 </td>
             </tr>
             <tr class="non-value" style="<?php count($selectedCustomOptionValueList) > 0?'display:none':'' ?>">
-                <th><label class="control-label"><?php echo $this->translate('SKU') ?></label></th>
-                <td><input type="text" class="form-control optionssku" name="options[sku][{$id}]" /></td>
+                <th><label class="control-label required"><?php echo $this->translate('SKU') ?></label></th>
+                <td><input type="text" data-msg-required="<?php echo $this->translate('The SKU can not be null') ?>" data-msg-optionsvaluesku="<?php echo $this->translate('The sku has to be unique') ?>" data-type="sku" class="form-control optionssku" name="options[sku][{$id}]" /></td>
                 <th><label class="control-label"><?php echo $this->translate('Price') ?></label></th>
                 <td>
                     <div class="input-group">
@@ -265,7 +267,7 @@ $inputCustomOptions = $this->getCustomAttributes($attributeSet);
                                 <th><?php echo $this->translate('Label') ?></th>
                                 <th><?php echo $this->translate('Price') ?></th>
                                 <th><?php echo $this->translate('Price Type') ?></th>
-                                <th><?php echo $this->translate('SKU') ?></th>
+                                <th><label class="control-label required"><?php echo $this->translate('SKU') ?></label></th>
                                 <th><?php echo $this->translate('Delete') ?></th>
                             </tr>
                         </thead>
@@ -286,7 +288,7 @@ $inputCustomOptions = $this->getCustomAttributes($attributeSet);
         <tr>
             <td>
                 <input type="hidden" name="options[value][{$id}][id][]" />
-                <input type="text" class="form-control optionsvaluelabel" name="options[value][{$id}][label][]" value="{$label}"  />
+                <input type="text" class="form-control optionsvaluelabel required" name="options[value][{$id}][label][]" value="{$label}" data-msg-required="<?php echo $this->translate('The option value label can not be null') ?>" />
                 <input type="hidden" class="form-control eavattributeoptionid" name="options[value][{$id}][eav_attribute_option_id][]" value="{$eavattributeoptionid}" />                        
             </td>
             <td>
@@ -303,7 +305,7 @@ $inputCustomOptions = $this->getCustomAttributes($attributeSet);
                     <option value="0"><?php echo $this->translate('Percent') ?></option>
                 </select>
             </td>
-            <td><input type="text" class="form-control optionsvaluesku" name="options[value][{$id}][sku][]" value="{$sku}" oninput="value=value.replace(/[^\w_]/g,'');" /></td>
+            <td><input type="text" data-type="sku" class="form-control optionsvaluesku required" data-msg-required="<?php echo $this->translate('The SKU can not be null') ?>" data-msg-optionsvaluesku="<?php echo $this->translate('The sku has to be unique') ?>" name="options[value][{$id}][sku][]" value="{$sku}" oninput="value=value.replace(/[^\w_]/g,'');" /></td>
             <td>
                 <button type="button" class="btn btn-delete delete-row" title="<?php echo $this->translate('Delete') ?>">
                     <span class="fa fa-remove" aria-hidden="true"></span>

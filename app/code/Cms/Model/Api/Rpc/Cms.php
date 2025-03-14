@@ -34,7 +34,8 @@ class Cms extends AbstractHandler
         }
         $collection->load(true, true);
         if (count($collection) > 0) {
-            $this->responseData = ['statusCode' => '200', 'data' => $collection->toArray(), 'message' => 'get page successfully'];
+             $pageData=$collection[0];
+            $this->responseData = ['statusCode' => '200', 'data' => $pageData, 'message' => 'get page successfully'];
             //Bootstrap::getContainer()->get("log")->logException(new \Exception(json_encode($collection->toArray())));
             return $this->responseData;
         } else {
@@ -66,7 +67,8 @@ class Cms extends AbstractHandler
         }
         $collection->load(true, true);
         if (count($collection) > 0) {
-            $this->responseData = ['statusCode' => '200', 'data' => $collection->toArray(), 'message' => 'get cart page successfully'];
+            $pageData=$collection[0];
+            $this->responseData = ['statusCode' => '200', 'data' => $pageData, 'message' => 'get page successfully'];
             return $this->responseData;
         } else {
             $this->responseData = ['statusCode' => '404', 'data' => [], 'message' => 'not fount the page with page id:' . $pid];

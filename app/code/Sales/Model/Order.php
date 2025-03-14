@@ -21,16 +21,16 @@ use Redseanet\Sales\Model\Order\Item;
 use Redseanet\Sales\Model\Order\Status;
 use Redseanet\Sales\Model\Order\Status\History;
 
-class Order extends AbstractModel
-{
+class Order extends AbstractModel {
+
     use \Redseanet\Log\Traits\Ip;
+    use \Redseanet\Lib\Traits\Rabbitmq;
 
     protected $items = null;
     protected $additional = null;
     protected $discount_detail = null;
 
-    protected function construct()
-    {
+    protected function construct() {
         $this->init('sales_order', 'id', [
             'id', 'status_id', 'increment_id', 'customer_id', 'language_id',
             'billing_address_id', 'shipping_address_id', 'warehouse_id', 'base_total_refunded',
@@ -42,10 +42,10 @@ class Order extends AbstractModel
         ]);
     }
 
-    public function place($ids, $items, $cart, $statusId)
-    {
-        Bootstrap::getContainer()->get('log')->logException(new \Exception('place order ------'));
-        Bootstrap::getContainer()->get('log')->logException(new \Exception(json_encode($cart)));
+    public function place($ids, $items, $cart, $statusId) {
+        //Bootstrap::getContainer()->get('log')->logException(new \Exception('place order ------'));
+        //Bootstrap::getContainer()->get('log')->logException(new \Exception(json_encode($cart)));
+        $config = $this->getContainer()->get('config');
         list($warehouseId, $storeId, $isVirtual) = explode('-', $ids);
         $note = json_decode($cart['customer_note'], true);
         $coupon = (isset($cart['coupon']) && $cart['coupon'] != '' ? json_decode($cart['coupon'], true) : []);
@@ -59,24 +59,36 @@ class Order extends AbstractModel
         $cartData['is_virtual'] = $isVirtual;
         $cartData['language_id'] = Bootstrap::getLanguage()->getId();
         $cartData['status_id'] = $statusId;
-        Bootstrap::getContainer()->get('log')->logException(new \Exception(json_encode($cartData)));
+        //Bootstrap::getContainer()->get('log')->logException(new \Exception(json_encode($cartData)));
         $this->setData($cartData)->setId(null)->save();
         $orderId = $this->getId();
         foreach ($items as $item) {
             if (is_array($item)) {
+                $item["option_value_id"] = $item["options"];
                 $item = new Item($item);
             } else {
+                $item["option_value_id"] = $item["options"];
                 $item = new Item($item->toArray());
             }
             $item->setData('order_id', $orderId)->setId(null)->save();
         }
         $this->collateTotals();
-        //$this->getEventDispatcher()->trigger('order.place.after', ['model' => $this]);
+        if (!empty($config['adapter']['mq'])) {
+            //mp
+            $this->getRabbitmqConnection();
+            $this->createRabbitmqChannel();
+            $this->declareRabbitmqQueue('customerlogin');
+            $this->declareRabbitmqExchange('customerlogin');
+            $this->setData("items", $items);
+            $msgBody = ['eventName' => 'order.place.after.mq', 'data' => $this->toArray()];
+            $this->sendPublishMqMessage(json_encode($msgBody));
+        } else {
+            $this->getEventDispatcher()->trigger('order.place.after', ['model' => $this]);
+        }
         return $this;
     }
 
-    public function getCustomer()
-    {
+    public function getCustomer() {
         if (!empty($this->storage['customer_id'])) {
             $customer = new Customer($this->storage['language_id']);
             $customer->load($this->storage['customer_id']);
@@ -87,8 +99,7 @@ class Order extends AbstractModel
         return null;
     }
 
-    public function getItems($force = false)
-    {
+    public function getItems($force = false) {
         if ($force || is_null($this->items)) {
             $items = new ItemCollection();
             $items->where(['order_id' => $this->getId()]);
@@ -104,8 +115,7 @@ class Order extends AbstractModel
         return $this->items;
     }
 
-    public function collateTotals()
-    {
+    public function collateTotals() {
         $baseCurrency = $this->getContainer()->get('config')['i18n/currency/base'];
         $currency = (new Currency())->load($this->getContainer()->get('request')->getCookie('currency', $baseCurrency));
         $items = $this->getItems(true);
@@ -117,11 +127,18 @@ class Order extends AbstractModel
         $discount_detail = [];
         $discount_detail['promotion']['total'] = isset($detail['promotion']['store_total'][$this->storage['store_id']]) ? $detail['promotion']['store_total'][$this->storage['store_id']] : 0;
         $discount_detail['promotion']['detail'] = isset($detail['promotion']['detail'][$this->storage['store_id']]) ? $detail['promotion']['detail'][$this->storage['store_id']] : [];
+        $discount_detail['balance']['total'] = isset($detail['balance']['store_total'][$this->storage['store_id']]) ? $detail['balance']['store_total'][$this->storage['store_id']] : 0;
+        $discount_detail['balance']['detail'] = isset($detail['balance']['detail'][$this->storage['store_id']]) ? $detail['balance']['detail'][$this->storage['store_id']] : [];
+        $discount_detail['rewardpoints']['total'] = isset($detail['rewardpoints']['store_total'][$this->storage['store_id']]) ? $detail['rewardpoints']['store_total'][$this->storage['store_id']] : 0;
+        $discount_detail['rewardpoints']['detail'] = isset($detail['rewardpoints']['detail'][$this->storage['store_id']]) ? $detail['rewardpoints']['detail'][$this->storage['store_id']] : [];
+        $base_discount = (!empty($discount_detail['promotion']['total'] ? (float) $discount_detail['promotion']['total'] : 0.000)) + (!empty($discount_detail['promotion']['retailer']) ? (float) $discount_detail['promotion']['retailer'] : 0.000);
+        $base_discount += (!empty($discount_detail['balance']['total']) ? (float) $discount_detail['balance']['total'] : 0.000);
+        $base_discount += (!empty($discount_detail['rewardpoints']['total']) ? (float) $discount_detail['rewardpoints']['total'] : 0.000);
         $this->setData([
             'base_subtotal' => $baseSubtotal,
             'base_shipping' => $this->offsetGet('free_shipping') || $this->offsetGet('is_virtual') ? 0 : $this->getShippingMethod()->getShippingRate($items),
-            'base_discount' => -(!empty($discount_detail['promotion']['total'] ? $discount_detail['promotion']['total'] : 0)) - (!empty($discount_detail['promotion']['retailer']) ? $discount_detail['promotion']['retailer'] : 0),
-            'discount' => empty($discount_detail['promotion']['total']) ? 0 : -$currency->convert($discount_detail['promotion']['total']),
+            'base_discount' => -$base_discount,
+            'discount' => $base_discount > 0 ? -$currency->convert($base_discount) : 0,
             'discount_detail' => json_encode($discount_detail),
             'base_tax' => 0,
             'tax' => 0
@@ -129,8 +146,7 @@ class Order extends AbstractModel
             'subtotal' => $currency->convert($this->storage['base_subtotal']),
             'shipping' => $currency->convert($this->storage['base_shipping'])
         ]);
-        $this->getEventDispatcher()->trigger('tax.calc', ['model' => $this]);
-        $this->getEventDispatcher()->trigger('promotion.calc', ['model' => $this]);
+        //$this->getEventDispatcher()->trigger('tax.calc', ['model' => $this]);
         $this->setData([
             'base_total' => $this->storage['base_subtotal'] +
             $this->storage['base_shipping'] +
@@ -148,8 +164,7 @@ class Order extends AbstractModel
         return $this;
     }
 
-    public function getShippingAddress()
-    {
+    public function getShippingAddress() {
         if (isset($this->storage['shipping_address_id'])) {
             $address = (new Address())->load($this->storage['shipping_address_id']);
             return $address->getId() ? $address : null;
@@ -157,8 +172,7 @@ class Order extends AbstractModel
         return null;
     }
 
-    public function getBillingAddress()
-    {
+    public function getBillingAddress() {
         if (isset($this->storage['billing_address_id'])) {
             $address = (new Address())->load($this->storage['billing_address_id']);
             return $address->getId() ? $address : null;
@@ -166,32 +180,28 @@ class Order extends AbstractModel
         return null;
     }
 
-    public function getAdditional($key = null)
-    {
+    public function getAdditional($key = null) {
         if (is_null($this->additional)) {
             $this->additional = empty($this->storage['additional']) ? [] : json_decode($this->storage['additional'], true);
         }
         return $key ? ($this->additional[$key] ?? '') : $this->additional;
     }
 
-    public function getDiscount($key = null)
-    {
+    public function getDiscount($key = null) {
         if (is_null($this->discount_detail)) {
             $this->discount_detail = empty($this->storage['discount_detail']) ? [] : json_decode($this->storage['discount_detail'], true);
         }
-        return $key ? ($this->discount_detail[$key] ?? '') : $this->discount_detail;
+        return $key ? ($this->discount_detail[$key]["total"] ?? '') : $this->discount_detail;
     }
 
-    public function getCoupon()
-    {
+    public function getCoupon() {
         if (!empty($this->storage['coupon'])) {
             return $this->storage['coupon'];
         }
         return '';
     }
 
-    public function getShippingMethod()
-    {
+    public function getShippingMethod() {
         if (isset($this->storage['shipping_method'])) {
             $className = $this->getContainer()->get('config')['shipping/' . $this->storage['shipping_method'] . '/model'];
             return new $className();
@@ -199,8 +209,7 @@ class Order extends AbstractModel
         return null;
     }
 
-    public function getPaymentMethod()
-    {
+    public function getPaymentMethod() {
         if (isset($this->storage['payment_method'])) {
             $className = $this->getContainer()->get('config')['payment/' . $this->storage['payment_method'] . '/model'];
             return new $className();
@@ -208,40 +217,35 @@ class Order extends AbstractModel
         return null;
     }
 
-    public function getBaseCurrency()
-    {
+    public function getBaseCurrency() {
         if (isset($this->storage['base_currency'])) {
             return (new Currency())->load($this->storage['base_currency'], 'code');
         }
         return $this->getContainer()->get('currency');
     }
 
-    public function getCurrency()
-    {
+    public function getCurrency() {
         if (isset($this->storage['currency'])) {
             return (new Currency())->load($this->storage['currency'], 'code');
         }
         return $this->getContainer()->get('currency');
     }
 
-    public function getStatus()
-    {
+    public function getStatus() {
         if (isset($this->storage['status_id'])) {
             return (new Status())->load($this->storage['status_id']);
         }
         return null;
     }
 
-    public function getPhase()
-    {
+    public function getPhase() {
         if ($status = $this->getStatus()) {
             return $status->getPhase();
         }
         return null;
     }
 
-    public function getStatusHistory()
-    {
+    public function getStatusHistory() {
         if ($this->getId()) {
             $history = new HistoryCollection();
             $history->where(['order_id' => $this->getId()])
@@ -251,8 +255,7 @@ class Order extends AbstractModel
         return [];
     }
 
-    public function getInvoice()
-    {
+    public function getInvoice() {
         if ($this->getId()) {
             $collection = new InvoiceCollection();
             $collection->where(['order_id' => $this->getId()]);
@@ -261,8 +264,7 @@ class Order extends AbstractModel
         return [];
     }
 
-    public function getShipment()
-    {
+    public function getShipment() {
         if ($this->getId()) {
             $collection = new ShipmentCollection();
             $collection->where(['order_id' => $this->getId()]);
@@ -271,8 +273,7 @@ class Order extends AbstractModel
         return [];
     }
 
-    public function getCreditMemo()
-    {
+    public function getCreditMemo() {
         if ($this->getId()) {
             $collection = new CreditMemoCollection();
             $collection->where(['order_id' => $this->getId()]);
@@ -281,8 +282,7 @@ class Order extends AbstractModel
         return [];
     }
 
-    public function getQty()
-    {
+    public function getQty() {
         $qty = 0;
         foreach ($this->getItems() as $item) {
             $qty += $item['qty'];
@@ -290,8 +290,7 @@ class Order extends AbstractModel
         return $qty;
     }
 
-    public function getWeight()
-    {
+    public function getWeight() {
         $qty = 0;
         foreach ($this->getItems() as $item) {
             $qty += $item['weight'];
@@ -299,39 +298,33 @@ class Order extends AbstractModel
         return $qty;
     }
 
-    public function getLanguage()
-    {
+    public function getLanguage() {
         if (isset($this->storage['language_id'])) {
             return (new Language())->load($this->storage['language_id']);
         }
         return [];
     }
 
-    public function getStore()
-    {
+    public function getStore() {
         if (isset($this->storage['store_id'])) {
             return (new Store())->load($this->storage['store_id']);
         }
         return null;
     }
 
-    public function canCancel()
-    {
+    public function canCancel() {
         return in_array($this->getPhase()->offsetGet('code'), ['pending', 'pending_payment']);
     }
 
-    public function canHold()
-    {
+    public function canHold() {
         return $this->getPhase()->offsetGet('code') === 'processing';
     }
 
-    public function canUnhold()
-    {
+    public function canUnhold() {
         return $this->getPhase()->offsetGet('code') === 'holded';
     }
 
-    public function canInvoice()
-    {
+    public function canInvoice() {
         if (in_array($this->getPhase()->offsetGet('code'), ['complete', 'canceled', 'closed', 'holded'])) {
             return false;
         }
@@ -345,20 +338,17 @@ class Order extends AbstractModel
         return $qty > 0;
     }
 
-    public function canRepay()
-    {
+    public function canRepay() {
         return $this->getPhase()->offsetGet('code') === 'pending_payment' &&
                 strtotime($this->offsetGet('created_at')) < strtotime('-5 minutes') &&
                 $this->getContainer()->get('config')['payment/' . $this->offsetGet('payment_method') . '/gateway'];
     }
 
-    public function canConfirm()
-    {
+    public function canConfirm() {
         return $this->getPhase()->offsetGet('code') === 'complete' && !empty($this->getStatus()['is_default']);
     }
 
-    public function canReview()
-    {
+    public function canReview() {
         if ($this->getPhase()->offsetGet('code') !== 'complete' || !empty($this->getStatus()['is_default'])) {
             return false;
         }
@@ -367,8 +357,7 @@ class Order extends AbstractModel
         return $collection->count() === 0;
     }
 
-    public function canShip()
-    {
+    public function canShip() {
         if ($this->storage['is_virtual'] || in_array($this->getPhase()->offsetGet('code'), ['complete', 'canceled', 'closed', 'holded'])) {
             return false;
         }
@@ -382,8 +371,7 @@ class Order extends AbstractModel
         return $qty > 0;
     }
 
-    public function canRefund($flag = true)
-    {
+    public function canRefund($flag = true) {
         if ($flag && !in_array($this->getPhase()->offsetGet('code'), ['holded', 'complete'])) {
             return false;
         } elseif (!$flag) {
@@ -408,8 +396,7 @@ class Order extends AbstractModel
         return $qty > 0;
     }
 
-    public function rollbackStatus()
-    {
+    public function rollbackStatus() {
         if ($this->getId()) {
             $history = new HistoryCollection();
             $history->join('sales_order_status', 'sales_order_status.id=sales_order_status_history.status_id', ['name'])
@@ -439,8 +426,7 @@ class Order extends AbstractModel
         return $this;
     }
 
-    public function getRefundApplication()
-    {
+    public function getRefundApplication() {
         $application = new RmaCollection();
         $application->where(['order_id' => $this->getId()])
                 ->order('id DESC')
@@ -448,14 +434,12 @@ class Order extends AbstractModel
         return count($application) ? $application[0] : null;
     }
 
-    protected function beforeSave()
-    {
+    protected function beforeSave() {
         parent::beforeSave();
         $this->storage['ip'] = $this->getRealIp();
     }
 
-    protected function afterSave()
-    {
+    protected function afterSave() {
         if ($this->isNew) {
             $history = new Order\Status\History();
             $history->setData([
@@ -466,4 +450,5 @@ class Order extends AbstractModel
         }
         parent::afterSave();
     }
+
 }

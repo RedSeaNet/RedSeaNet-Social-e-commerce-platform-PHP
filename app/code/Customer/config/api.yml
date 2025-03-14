@@ -108,7 +108,7 @@ rpcport:
             username: string
             password: sring
             uuid: string
-            checkPermission: Boolean
+            languageId: string
         respone: json array 
         documentation: customer login
     customerCreate: 
@@ -219,6 +219,15 @@ rpcport:
             languageId: int
         respone: json array 
         documentation: get balance list
+    getCouponList: 
+        params: 
+            id: string
+            token: string
+            cutomerId: int
+            conditionData: array
+            languageId: int
+        respone: json array 
+        documentation: get coupon list
 soap:
     customerValid: \Redseanet\Customer\Model\Api\Soap\Customer
     customerInfo: \Redseanet\Customer\Model\Api\Soap\Customer
@@ -246,3 +255,4 @@ rpc:
     getWishlist: \Redseanet\Customer\Model\Api\Rpc\Wishlist
     deleteWishlistItem: \Redseanet\Customer\Model\Api\Rpc\Wishlist
     balanceList: \Redseanet\Customer\Model\Api\Rpc\Balance
+    getCouponList: \Redseanet\Customer\Model\Api\Rpc\Coupon

@@ -6,19 +6,18 @@ use Redseanet\Lib\Controller\ActionController;
 use Redseanet\Lib\Session\Segment;
 use Redseanet\Forum\Model\CustomerLike;
 
-class AccountController extends \Redseanet\Customer\Controller\AuthActionController
-{
+class AccountController extends \Redseanet\Customer\Controller\AuthActionController {
+
     use \Redseanet\Lib\Traits\DB;
     use \Redseanet\Notifications\Traits\NotificationsMethod;
 
     protected $allowedAction = ['like'];
 
-    public function __construct()
-    {
+    public function __construct() {
+        
     }
 
-    public function doDispatch($method = 'notFoundAction')
-    {
+    public function doDispatch($method = 'notFoundAction') {
         $action = strtolower(substr($method, 0, -6));
         $session = new Segment('customer');
         if (!in_array($action, $this->allowedAction) && !$session->get('hasLoggedIn', false)) {
@@ -36,8 +35,7 @@ class AccountController extends \Redseanet\Customer\Controller\AuthActionControl
         return ActionController::doDispatch($method);
     }
 
-    public function indexAction()
-    {
+    public function indexAction() {
         if ($this->getRequest()->isXmlHttpRequest() || $this->getRequest()->getQuery('is_json')) {
             $root = $this->getLayout('forum_account_dashboard_ajax');
             //$root->getChild('main', true)->setVariable('category', $this->getOption('category'));
@@ -51,8 +49,7 @@ class AccountController extends \Redseanet\Customer\Controller\AuthActionControl
         return $root;
     }
 
-    public function likeAction()
-    {
+    public function likeAction() {
         $segment = new Segment('customer');
         if ($this->getRequest()->isXmlHttpRequest() && $this->getRequest()->isPost()) {
             $customer = $segment->get('customer');
@@ -90,4 +87,14 @@ class AccountController extends \Redseanet\Customer\Controller\AuthActionControl
         }
         return $this->notFoundAction();
     }
+
+    public function searchCustomerAction() {
+        if ($this->getRequest()->isXmlHttpRequest() || $this->getRequest()->getQuery('is_json')) {
+            $root = $this->getLayout('forum_search_customer_ajax');
+        } else {
+            $root = $this->getLayout('forum_search_customer');
+        }
+        return $root;
+    }
+
 }

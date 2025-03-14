@@ -1,0 +1,24 @@
+<?php
+
+?>
+<div class="container index-main">
+        <div class="">
+            <?php
+            echo '<dt class="clearfix background-white">';
+            echo $this->getChild('list');
+            echo '</dt>';
+            ?>
+           
+            <input type="hidden" name="forum_article_pager" id="forum_article_pager" value="1" />
+            <input type="hidden" name="forum_customer_id" id="forum_customer_id" value="" />
+            <div class="page-load-status">
+                <div class="loader-ellips infinite-scroll-request">
+                    <span class="loader-ellips__dot"></span>
+                    <span class="loader-ellips__dot"></span>
+                    <span class="loader-ellips__dot"></span>
+                    <span class="loader-ellips__dot"></span>
+                </div>
+            </div>
+        </div>
+    
+</div>

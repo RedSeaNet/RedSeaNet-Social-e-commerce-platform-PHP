@@ -2,7 +2,7 @@
 $item = $this->getVariable('item');
 $product = $item['product'];
 $options = json_decode($item['options'], true);
-$thumbnail = $product->getThumbnail($options);
+$thumbnail = (!empty($item['image'])?$this->getResourceUrl('image/' . $item['image']):$product->getThumbnail($options));
 $inventory = $item->getInventory();
 $tier = $product['tier_price'] ? json_decode($product['tier_price'], true) : [];
 $tiers = $tier[-1] ?? [];

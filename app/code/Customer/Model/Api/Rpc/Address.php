@@ -13,15 +13,14 @@ use Redseanet\I18n\Model\Locate;
 use Redseanet\Lib\Bootstrap;
 use Redseanet\Lib\Model\Language;
 
-class Address extends AbstractHandler
-{
+class Address extends AbstractHandler {
+
     /**
      * @param string $sessionId
      * @param int $customerId
      * @return array
      */
-    public function addressList($id, $token, $customerId, $languageId = 0)
-    {
+    public function addressList($id, $token, $customerId, $languageId = 0) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -35,6 +34,7 @@ class Address extends AbstractHandler
         }
         $collection = new Collection();
         $collection->where(['customer_id' => $customerId]);
+        $collection->order("created_at desc");
         $collection->load(true, true);
         $resultData = [];
         $locate = new Locate();
@@ -73,7 +73,7 @@ class Address extends AbstractHandler
             }
             $resultData[] = $item;
         }
-        $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => 'get cart information successfully'];
+        $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => 'get address list successfully'];
         return $this->responseData;
     }
 
@@ -83,8 +83,7 @@ class Address extends AbstractHandler
      * @param int $addressId
      * @return object
      */
-    public function addressInfo($id, $token, $customerId, $addressId)
-    {
+    public function addressInfo($id, $token, $customerId, $addressId) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -106,8 +105,7 @@ class Address extends AbstractHandler
      * @param object $data
      * @return bool
      */
-    public function addressSave($id, $token, $customerId, $data)
-    {
+    public function addressSave($id, $token, $customerId, $data) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -149,8 +147,7 @@ class Address extends AbstractHandler
      * @param int $addressId
      * @return bool
      */
-    public function addressDelete($id, $token, $customerId, $addressId)
-    {
+    public function addressDelete($id, $token, $customerId, $addressId) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -177,8 +174,7 @@ class Address extends AbstractHandler
      * @param int $customerId
      * @return array
      */
-    public function getDefaultAddress($id, $token, $customerId)
-    {
+    public function getDefaultAddress($id, $token, $customerId) {
         $this->validateToken($id, $token, __FUNCTION__, false);
         if ($this->responseData['statusCode'] != '200') {
             return $this->responseData;
@@ -194,4 +190,5 @@ class Address extends AbstractHandler
         $this->responseData = ['statusCode' => '200', 'data' => $resultData, 'message' => 'get cart information successfully'];
         return $this->responseData;
     }
+
 }

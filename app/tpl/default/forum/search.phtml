@@ -1,8 +1,14 @@
-<form action="<?php echo $this->getBaseUrl('forum/post/search'); ?>" method="get">
+<form action="<?php echo ($this->getQuery('search_type')==3?$this->getBaseUrl('forum/account/searchCustomer'):$this->getBaseUrl('forum/post/search')); ?>" method="get" id="forum-global-search">
     <div class="input-group search-box">
         <div class="input-group-addon"><span class="fa fa-search"></span></div>
         <input class="form-control required" id="search-query" name="q" placeholder="<?php echo $this->translate('Enter the keywords for searching'); ?>" type="search" value="<?php echo $this->getQuery('q') ?>" />
+        <div style="background-color: #0099CC;padding-left: 2px;">
+            <select name="search_type" id="search_type" required="" class="form-control rounded-0" data-post-url="<?php echo $this->getBaseUrl('forum/post/search'); ?>" data-customer-url="<?php echo $this->getBaseUrl('forum/account/searchCustomer'); ?>">
+                <option value="1" <?php echo ($this->getQuery('search_type')==1?' selected="selected"':''); ?>><?php echo $this->translate('Posts'); ?></option>
+                <option value="2" <?php echo ($this->getQuery('search_type')==2?' selected="selected"':''); ?>><?php echo $this->translate('Hashtags'); ?></option>
+                <option value="3" <?php echo ($this->getQuery('search_type')==3?' selected="selected"':''); ?>><?php echo $this->translate('Blogger'); ?></option>
+            </select>
+        </div>
         <div class="input-group-addon input-addon-style "><button class="btn btn-submit" type="submit"><?php echo $this->translate('Search') ?></button></div>
-    
     </div>
 </form>

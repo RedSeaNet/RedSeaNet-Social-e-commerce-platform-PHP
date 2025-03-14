@@ -64,14 +64,7 @@ if ($is_json) {
     endif;
 } else {
     ?>
-    <div class="mobile-post-top d-block d-sm-none pt-2 pb-2">
-        <div class="row">
-            <div class="col-2"><a href="javascript:void(0)" onclick="javascript:history.back(-1);"><span class="fa fa-arrow-left"></span></a></div>
-            <div class="col-8 text-center"><?php echo $username['username'] ?></div>
-            <div class="col-2 text-end"></div>
-        </div>
-    </div>
-    <div class="main-container userSpace-main">
+    <div class="container userSpace-main">
         <div class="container">
             <div class="background-white col-12">
                 <div class="userSpace-head">
@@ -83,16 +76,16 @@ if ($is_json) {
                                     <?php
                                     if ($current == 0) {
                                         ?>
-                                        <a href="<?php echo $this->getBaseUrl('customer/account/logion/') ?>" class="attention-btn"><?php echo $this->translate('Add Following'); ?></a>
+                                        <a href="<?php echo $this->getBaseUrl('customer/account/logion/') ?>" class="attention-btn"><?php echo $this->translate('To subscribe'); ?></a>
                                         <?php
                                     } else {
                                         if (!$followed) {
                                             ?>
-                                            <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/account/like/') ?>" class="attention-btn" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $username['id']; ?>"><?php echo $this->translate('Add Following'); ?></a>
+                                            <a href="<?php echo $this->getBaseUrl($config['forum/general/uri_key'] . '/account/like/') ?>" class="attention-btn" data-method="post" data-params="csrf=<?php echo $this->getCsrfKey() ?>&id=<?php echo $username['id']; ?>"><?php echo $this->translate('To subscribe'); ?></a>
                                             <?php
                                         } else {
                                             ?>
-                                            <a class="attention-btn"><?php echo $this->translate('Followed'); ?></a>
+                                            <a class="attention-btn"><?php echo $this->translate('Subscribed'); ?></a>
                                             <?php
                                         }
                                     }
@@ -110,7 +103,7 @@ if ($is_json) {
                                             <?php echo $follows; ?>
                                         </p>
                                         <p class="h5">
-                                            <?php echo $this->translate('Following'); ?>
+                                            <?php echo $this->translate('Subscribed'); ?>
                                         </p>
                                     </a>
                                 </li>

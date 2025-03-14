@@ -102,7 +102,7 @@ final class Cache implements ArrayAccess, Singleton
                 return serialize($data);
             };
             $this->decoder = function ($data) {
-                return unserialize($data);
+                return @unserialize($data);
             };
         }
     }

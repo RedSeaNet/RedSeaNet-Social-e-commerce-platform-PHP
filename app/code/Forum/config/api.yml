@@ -100,8 +100,7 @@ rpcport:
             id: string
             token: string
             customerId: int
-            page: int
-            limit: int
+            conditionData: array
         respone: json array 
         documentation: get forum follow list
     getFans: 
@@ -155,6 +154,83 @@ rpcport:
             currentCustomerId: int
         respone: json array 
         documentation: customer space data
+    getRandCustomer: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            exclude: array
+            random: Int
+            languageId: Int
+        respone: json array 
+        documentation: get forum rand customer list
+    getForumPostRandList: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            conditionData: array
+            random: Int
+            languageId: Int
+        respone: json array 
+        documentation: get forum rand customer list
+    toDoLikeCustomerAction: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            likeID: int
+            languageId: Int
+        respone: json array 
+        documentation: subcribe a customer
+    toDoLikePostAction: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            postId: int
+            type: int
+            languageId: Int
+        respone: json array 
+        documentation: subcribe a customer
+    toDoFavoritePostAction: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            postId: int
+            languageId: Int
+        respone: json array 
+        documentation: favorite a customer
+    toDoLikePostReviewAction: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            reviewId: int
+            type: int
+            languageId: Int
+        respone: json array 
+        documentation: like a review
+    getRecommentPostByPostId: 
+        params: 
+            id: string
+            token: string
+            postId: int
+            condition: array
+            languageId: int
+            customerId: int
+        respone: json array 
+        documentation: like a review
+    getBloggerInfo: 
+        params: 
+            id: string
+            token: string
+            customerId: int
+            conditionData: array
+            languageId: int
+        respone: json array 
+        documentation: get blogger information 
 rpc:
     getForumCategory: \Redseanet\Forum\Model\Api\Rpc\Category
     getForumPostList: \Redseanet\Forum\Model\Api\Rpc\Post
@@ -174,3 +250,11 @@ rpc:
     forumToLikeCustomer: \Redseanet\Forum\Model\Api\Rpc\Post
     forumFavoritePost: \Redseanet\Forum\Model\Api\Rpc\Post
     forumSpaceData: \Redseanet\Forum\Model\Api\Rpc\Post
+    getRandCustomer: \Redseanet\Forum\Model\Api\Rpc\Post
+    getForumPostRandList: \Redseanet\Forum\Model\Api\Rpc\Post
+    toDoLikeCustomerAction: \Redseanet\Forum\Model\Api\Rpc\Post
+    toDoLikePostAction: \Redseanet\Forum\Model\Api\Rpc\Post
+    toDoFavoritePostAction: \Redseanet\Forum\Model\Api\Rpc\Post
+    toDoLikePostReviewAction: \Redseanet\Forum\Model\Api\Rpc\Post
+    getRecommentPostByPostId: \Redseanet\Forum\Model\Api\Rpc\Post
+    getBloggerInfo: \Redseanet\Forum\Model\Api\Rpc\Blogger

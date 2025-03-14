@@ -108,9 +108,9 @@ $currency = $order->getCurrency();
                                     ?>
                                 </dl>
                             <?php endif ?>
-                            <p class="mb-0 pb-0 d-block d-md-none sys-gray font-12"><?php echo $this->translate('SKU', [], 'sales').': '.$item['sku'] ?></p>
+                            <p class="mb-0 pb-0 d-block d-md-none sys-gray font-12"><?php echo $this->translate('SKU', [], 'sales') . ': ' . $item['sku'] ?></p>
                             <p class="mb-0 pb-0 d-block d-md-none sys-gray font-12"><?php echo $currency->format($item['price']) ?></p>
-                            <p class="mb-0 pb-0 d-block d-md-none sys-gray font-12"><?php echo 'X '.$item['qty'] ?></p>
+                            <p class="mb-0 pb-0 d-block d-md-none sys-gray font-12"><?php echo 'X ' . $item['qty'] ?></p>
                         </div>
                     </div>
                     <div class="col-2 d-none d-md-block"> 
@@ -139,12 +139,16 @@ $currency = $order->getCurrency();
                     if ((float) $order->offsetGet('discount')):
                         $discount = json_decode($order->offsetGet('discount_detail'), true);
                         foreach ($discount as $type => $price):
-                            ?>
-                            <dt><?php
-                                $text = $this->translate('Discount(' . $type . ')', [], 'sales');
-                                echo $text[0] === 'D' ? $this->translate('Discount(%s)', [$type], 'sales') : $text
-                                ?>: <?php echo (is_array($price) ? $currency->convert($price["total"], true) : $currency->convert($price, true)) ?></dt>
-                            <?php
+                            if ((is_array($price) ? $price["total"] : $price) > 0) {
+                                ?>
+                                <dt>
+                                    <?php
+                                    $text = $this->translate('Discount(' . ucwords($type) . ')', [], 'sales');
+                                    echo $text[0] === 'D' ? $this->translate('Discount(%s)', [ucwords($type)], 'sales') : $text
+                                    ?>: <?php echo (is_array($price) ? $currency->convert($price["total"], true) : $currency->convert($price, true)) ?>
+                                </dt>
+                                <?php
+                            }
                         endforeach;
                     endif;
                     ?>

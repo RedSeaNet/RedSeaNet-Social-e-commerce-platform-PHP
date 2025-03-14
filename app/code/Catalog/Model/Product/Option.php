@@ -7,37 +7,33 @@ use Redseanet\Lib\Model\AbstractModel;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Predicate\In;
 
-class Option extends AbstractModel
-{
+class Option extends AbstractModel {
+
     protected $languageId;
 
-    protected function construct()
-    {
+    protected function construct() {
         $this->init('product_option', 'id', ['id', 'product_id', 'input', 'is_required', 'sku', 'price', 'is_fixed', 'sort_order', 'eav_attribute_id']);
     }
 
-    protected function getLanguageId()
-    {
+    protected function getLanguageId() {
         if (!$this->languageId) {
             $this->languageId = Bootstrap::getLanguage()->getId();
         }
         return $this->languageId;
     }
 
-    public function getLabel($languageId = null)
-    {
+    public function getLabel($languageId = null) {
         if ($this->getId()) {
             $tableGateway = $this->getTableGateway('product_option_title');
             $result = $tableGateway->select([
-                'option_id' => $this->getId(),
-                'language_id' => is_null($languageId) ? $languageId : $this->getLanguageId()
-            ])->toArray();
+                        'option_id' => $this->getId(),
+                        'language_id' => is_null($languageId) ? $languageId : $this->getLanguageId()
+                    ])->toArray();
         }
         return empty($result) ? '' : $result[0]['title'];
     }
 
-    public function getValues()
-    {
+    public function getValues() {
         if (!empty($this->storage['id'])) {
             if (!isset($this->storage['value'])) {
                 if (in_array($this->storage['input'], ['select', 'radio', 'checkbox', 'multiselect'])) {
@@ -76,8 +72,7 @@ class Option extends AbstractModel
         return [];
     }
 
-    public function getValue($value, $titleOnly = true, $languageId = null)
-    {
+    public function getValue($value, $titleOnly = true, $languageId = null) {
         if (!empty($this->storage['id'])) {
             if (in_array($this->storage['input'], ['select', 'radio', 'checkbox', 'multiselect'])) {
                 $tableGateway = $this->getTableGateway('product_option_value');
@@ -115,9 +110,7 @@ class Option extends AbstractModel
         }
         return '';
     }
-
-    protected function isUpdate($constraint = [], $insertForce = false)
-    {
+    protected function isUpdate($constraint = [], $insertForce = false) {
         if (!$this->getId()) {
             return false;
         } elseif (!$this->isLoaded) {
@@ -133,8 +126,7 @@ class Option extends AbstractModel
         }
     }
 
-    protected function afterSave()
-    {
+    protected function afterSave() {
         $languageId = Bootstrap::getLanguage()->getId();
         if ($this->storage['label']) {
             $tableGateway = $this->getTableGateway('product_option_title');
@@ -166,7 +158,7 @@ class Option extends AbstractModel
                                 'sort_order' => (int) $order,
                                 'option_id' => $this->getId(),
                                 'eav_attribute_option_id' => !empty($this->storage['value']['eav_attribute_option_id'][$order]) ? (int) $this->storage['value']['eav_attribute_option_id'][$order] : null
-                            ], ['id' => $this->storage['value']['id'][$order]]);
+                                    ], ['id' => $this->storage['value']['id'][$order]]);
                             $valueId = $this->storage['value']['id'][$order];
                         } else {
                             $tableGateway->insert([
@@ -202,4 +194,5 @@ class Option extends AbstractModel
         }
         parent::afterSave();
     }
+
 }

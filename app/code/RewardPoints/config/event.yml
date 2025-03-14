@@ -45,10 +45,10 @@ Redseanet\Sales\Model\CreditMemo.model.save.after:
     -
         listener: [\Redseanet\RewardPoints\Listeners\Using, afterRefund]
         priority: 20
-#frontend.customer.save.before:
-#    -
-#        listener: [\Redseanet\RewardPoints\Listeners\Gather, beforeSaveCustomer]
-#        priority: 10
+frontend.customer.save.before:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Gather, beforeSaveCustomer]
+        priority: 10
 backend.customer.save.before:
     -
         listener: [\Redseanet\RewardPoints\Listeners\Gather, beforeSaveCustomer]
@@ -57,10 +57,10 @@ backend.customer.save.after:
     -
         listener: [\Redseanet\RewardPoints\Listeners\Gather, afterSaveBackendCustomer]
         priority: 10
-#customer.login.after:
-#    -
-#        listener: [\Redseanet\RewardPoints\Listeners\Recalc, afterCustomerLogin]
-#        priority: 10
+customer.login.after:
+    -
+        listener: [\Redseanet\RewardPoints\Listeners\Recalc, afterCustomerLogin]
+        priority: 10
 cart.item.remove.after:
     -
         listener: [\Redseanet\RewardPoints\Listeners\Using, cancel]

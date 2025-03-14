@@ -8,25 +8,24 @@ use Redseanet\Lib\ViewModel\Template;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
 use Redseanet\Lib\Session\Segment;
+use Redseanet\Customer\Model\Collection\Customer as CustomerCollection;
+use Redseanet\Forum\Model\Collection\Category as CategoryCollection;
+class Category extends Template {
 
-class Category extends Template
-{
     use \Redseanet\Lib\Traits\Filter;
 
     protected $posts = null;
     protected $bannedMember = ['query', 'posts'];
     protected $current = null;
 
-    protected function getCurrent()
-    {
+    protected function getCurrent() {
         if (is_null($this->current)) {
             $this->current = new DateTime();
         }
         return $this->current;
     }
 
-    public function getTime($time)
-    {
+    public function getTime($time) {
         $dt = new DateTime($time);
         $days = $dt->diff($this->getCurrent())->format('%a');
         if ($days && $days > 1) {
@@ -38,8 +37,7 @@ class Category extends Template
         }
     }
 
-    public function getPosts()
-    {
+    public function getPosts() {
         $segment = new Segment('customer');
         $customerId = $segment->get('hasLoggedIn') ? $segment->get('customer')['id'] : null;
         if (is_null($this->posts)) {
@@ -60,12 +58,12 @@ class Category extends Template
                 $favoritedSelect->where('`forum_post_favorite`.`customer_id`=' . $customerId . ' and `forum_post_favorite`.`post_id`=`forum_post`.`id`');
 
                 $this->posts->columns(['*', 'views' => $views, 'liked' => $likedSelect, 'favorited' => $favoritedSelect])
-                    ->order('is_top DESC')
-            ->where->greaterThan('status', 0);
+                        ->order('is_top DESC')
+                ->where->greaterThan('status', 0);
             } else {
                 $this->posts->columns(['*', 'views' => $views])
-                    ->order('is_top DESC')
-            ->where->greaterThan('status', 0);
+                        ->order('is_top DESC')
+                ->where->greaterThan('status', 0);
             }
             $query = $this->getQuery();
             if ($this->getVariable('category', false)) {
@@ -78,12 +76,39 @@ class Category extends Template
             if (!empty($query['product_id'])) {
                 $this->posts->where(['product_id' => $query['product_id']]);
             }
-            unset($query['category_id'], $query['product_id'], $query['status'],$query['is_json']);
+            unset($query['category_id'], $query['product_id'], $query['status'], $query['is_json']);
             if (!isset($query['asc']) && !isset($query['desc'])) {
                 $this->posts->order('created_at DESC');
             }
             $this->filter($this->posts, $query);
         }
         return $this->posts;
+    }
+
+    public function getRandCustomer($exclude = [], $random = 5) {
+        $customers = new CustomerCollection();
+        $segment = new Segment('customer');
+        $customer_id = $segment->get('customer')->getId();
+        if (!in_array($customer_id, $exclude)) {
+            $exclude[] = $customer_id;
+        }
+        $sub1 = new Select('forum_customer_like');
+        $sub1->columns(['customer_id'])->where(['customer_id' => $customer_id]);
+        $customersSelect = $customers->getSelect();
+        $customersSelect->where->notIn('id', $sub1)->notIn('id', $exclude);
+        $customers->where(['status' => 1]);
+        $customers->order(new Expression('Rand()'))->limit($random);
+
+        return $customers;
+    }
+
+    public function getCategories($systemRecomment=false) {
+        $categories = new CategoryCollection();
+        //$categories->where(['status' => 1]);
+        $categories->where(['parent_id' => 1]);
+        $categories->order('sort_order desc');
+        $categories->withName();
+
+        return $categories;
     }
 }

@@ -6,30 +6,27 @@ use Redseanet\Admin\ViewModel\Grid as PGrid;
 use Redseanet\Lib\Model\Collection\Store as Collection;
 use Redseanet\Lib\Source\Merchant;
 
-class Store extends PGrid
-{
+class Store extends PGrid {
+
     protected $action = [
         'getEditAction' => 'Admin\\I18n\\Store::edit',
         'getDeleteAction' => 'Admin\\I18n\\Store::delete'
     ];
 
-    public function getEditAction($item)
-    {
+    public function getEditAction($item) {
         return '<a href="' . $this->getAdminUrl(':ADMIN/i18n_store/edit/?id=') . $item['id'] . '" title="' . $this->translate('Edit') .
                 '"><span class="fa fa-fw fa-file-text-o" aria-hidden="true"></span><span class="sr-only">' .
                 $this->translate('Edit') . '</span></a>';
     }
 
-    public function getDeleteAction($item)
-    {
+    public function getDeleteAction($item) {
         return '<a href="' . $this->getAdminUrl(':ADMIN/i18n_store/delete/') . '" data-method="delete" data-params="id=' . $item['id'] .
                 '&csrf=' . $this->getCsrfKey() . '" title="' . $this->translate('Delete') .
                 '"><span class="fa fa-fw fa-remove" aria-hidden="true"></span><span class="sr-only">' .
                 $this->translate('Delete') . '</span></a>';
     }
 
-    protected function prepareColumns()
-    {
+    protected function prepareColumns() {
         return [
             'id' => [
                 'label' => 'ID',
@@ -64,9 +61,9 @@ class Store extends PGrid
         ];
     }
 
-    protected function prepareCollection($collection = null)
-    {
+    protected function prepareCollection($collection = null) {
         $collection = new Collection();
         return parent::prepareCollection($collection);
     }
+
 }

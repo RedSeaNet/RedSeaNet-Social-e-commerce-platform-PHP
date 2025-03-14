@@ -7,7 +7,16 @@ rpcport:
             languageId: int
             data: array
         respone: json array 
-        documentation: get product category message
+        documentation: get product category list
+    getCategoryTreeByParentId:
+        params: 
+            id: string
+            token: string
+            parentId: int
+            languageId: int
+            data: array
+        respone: json array 
+        documentation: get product category tree list
     deleteCategory: 
         params: 
             id: string
@@ -46,13 +55,60 @@ rpcport:
             languageId: int, allow null 
         respone: json array 
         documentation: get product by Keyword is message
+    getProductByCategoryId:
+        params: 
+            id: string
+            token: string
+            categoryId: int
+            conditionData: array,[limit,page]
+            withCategoryInfo: bool
+            languageId: int, allow null 
+        respone: json array 
+        documentation: get product by Keyword is message
+    getProductLink:
+        params: 
+            id: string
+            token: string
+            productId: int
+            linkType: string
+            conditionData: array,[limit,page]
+            languageId: int, allow null 
+        respone: json array 
+        documentation: get product link
+    getReviews:
+        params: 
+            id: string
+            token: string
+            productId: int
+            whetherInquiries: false
+            conditionData: array,[limit,page]
+            languageId: int, allow null 
+            currencyCode: string
+        respone: json array 
+        documentation: get product reviews
+    createReview:
+        params: 
+            id: string
+            token: string
+            customerId: int
+            productId: int
+            data: array,[subject,content]
+            languageId: int, allow null 
+            currencyCode: string
+        respone: json array 
+        documentation: get product reviews
 rest:
     product: Redseanet\Catalog\Model\Api\Rest\Product
     category: Redseanet\Catalog\Model\Api\Rest\Category
 rpc:
     getCategory: \Redseanet\Catalog\Model\Api\Rpc\Category
+    getCategoryTreeByParentId: \Redseanet\Catalog\Model\Api\Rpc\Category
     deleteCategory: \Redseanet\Catalog\Model\Api\Rpc\Category
     putCategory: \Redseanet\Catalog\Model\Api\Rpc\Category
     getProductById: \Redseanet\Catalog\Model\Api\Rpc\Product
     getProductByKeyword: \Redseanet\Catalog\Model\Api\Rpc\Product
     getProductByCategoryIds: \Redseanet\Catalog\Model\Api\Rpc\Product
+    getProductByCategoryId: \Redseanet\Catalog\Model\Api\Rpc\Product
+    getProductLink: \Redseanet\Catalog\Model\Api\Rpc\Product
+    getReviews: \Redseanet\Catalog\Model\Api\Rpc\Review
+    createReview: \Redseanet\Catalog\Model\Api\Rpc\Review

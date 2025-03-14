@@ -28,7 +28,7 @@ $customer = $this->getCustomer();
         </div>
         <?php
         foreach ($this->getAttribute() as $attr) {
-            if (!in_array($attr['code'], ['referer'])) {
+            if (!in_array($attr['code'], ['referer','balance'])) {
                 echo $this->getInputBox($attr);
             }
         }

@@ -6,66 +6,84 @@ use Redseanet\Lib\Listeners\ListenerInterface;
 use Redseanet\RewardPoints\Model\Collection\Record as Collection;
 use Redseanet\RewardPoints\Model\Record;
 
-class Using implements ListenerInterface
-{
-    use \Redseanet\Lib\Traits\Container;
+class Using implements ListenerInterface {
 
+    use \Redseanet\Lib\Traits\Container;
     use \Redseanet\RewardPoints\Traits\Calc;
 
-    public function apply($event)
-    {
+    public function apply($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
-        $count = $event['count'] ?: false;
+        $count = $event['count'] ?: '';
         if ($config['rewardpoints/general/enable'] && $config['rewardpoints/using/rate'] && $model->offsetGet('customer_id')) {
-            $additional = $model['additional'] ? json_decode($model['additional'], true) : [];
-            $points = $this->getPoints($model);
-            $additional['rewardpoints'] = $count === false ? $points : min($count, $points);
-            $model->setData(['additional' => json_encode($additional)]);
+            $discountDetail = $model->offsetGet('discount_detail') ? json_decode($model->offsetGet('discount_detail'), true) : [];
+            $evaluablePoints = $this->getPoints($model);
+            $maxPoint = ($model["base_subtotal"] - (!empty($discountDetail["promotion"]["total"]) ? (float) $discountDetail["promotion"]["total"] : 0)) / $config['rewardpoints/using/rate'];
+            $discountDetail["rewardpoints"] = ["total" => (min($maxPoint, (empty($count) ? $evaluablePoints : min($count, $evaluablePoints)))) * $config['rewardpoints/using/rate']];
+            $model->setData(['discount_detail' => json_encode($discountDetail), "use_reward_point" => 1]);
         }
     }
 
-    public function cancel($event)
-    {
+    public function cancel($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
-        if ($config['rewardpoints/general/enable'] && $config['rewardpoints/using/rate'] && $model->offsetGet('customer_id')) {
-            $additional = $model['additional'] ? json_decode($model['additional'], true) : [];
-            unset($additional['rewardpoints']);
-            $model->setData(['additional' => json_encode($additional)]);
+        if ($config['rewardpoints/general/enable'] && $config['rewardpoints/using/rate'] && $model->offsetGet('customer_id') && $model["use_reward_point"] == 1) {
+            $discountDetail = $model->offsetGet('discount_detail') ? json_decode($model->offsetGet('discount_detail'), true) : [];
+            unset($discountDetail['rewardpoints']);
+            $model->setData(['discount_detail' => json_encode($discountDetail), "use_reward_point" => 0]);
         }
     }
 
-    public function calc($event)
-    {
+    public function calc($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
-        if ($config['rewardpoints/general/enable'] && $config['rewardpoints/using/rate'] && $model->offsetGet('customer_id')) {
-            $additional = $model['additional'] ? json_decode($model['additional'], true) : [];
-            if (!empty($additional['rewardpoints'])) {
-                $points = $this->getPoints($model, true);
-                $additional['rewardpoints'] = min($additional['rewardpoints'], $points);
-                $discount = function_exists('bcmul') ? bcmul($additional['rewardpoints'], $config['rewardpoints/using/rate'], 4) : $additional['rewardpoints'] * $config['rewardpoints/using/rate'];
-                $model->setData([
-                    'additional' => json_encode($additional),
-                    'base_discount' => (float) $model->offsetGet('base_discount') - $discount,
-                    'discount_detail' => json_encode([$config['rewardpoints/general/title'] => -$discount] + (json_decode($model['discount_detail'], true) ?: []))
-                ])->setData('discount', $model->getCurrency()->convert($model->offsetGet('base_discount')));
+        if ($config['rewardpoints/general/enable'] && $config['rewardpoints/using/rate'] && $model->offsetGet('customer_id') && $model["use_reward_point"] == 1) {
+            $discountDetail = !empty($model['discount_detail']) ? json_decode($model['discount_detail'], true) : [];
+            $discountDetail['rewardpoints']["total"] = ($discountDetail['rewardpoints']["total"] ?? 0);
+            $evaluablePoints = $this->getPoints($model, true);
+            $maxPoint = ($model["base_subtotal"] - (!empty($discountDetail["promotion"]["total"]) ? (float) $discountDetail["promotion"]["total"] : 0)) / $config['rewardpoints/using/rate'];
+            $points = 0;
+            if (!empty($discountDetail["rewardpoints"]["total"]) && $discountDetail["rewardpoints"]["total"] > 0) {
+                $points = min($maxPoint, min($discountDetail["rewardpoints"]["total"] / $config['rewardpoints/using/rate'], $evaluablePoints));
+            } else {
+                $points = min($evaluablePoints, $points);
             }
+            $discountDetail['rewardpoints']["total"] = $points * $config['rewardpoints/using/rate'];
+            $items = $model->getItems();
+            $totals = [];
+            $total = 0;
+            foreach ($items as $item) {
+                if (empty($totals[$item['store_id']])) {
+                    $totals[$item['store_id']] = 0;
+                }
+                $totals[$item['store_id']] += $item['base_total'] * $item['qty'];
+                $total += $item['base_total'] * $item['qty'];
+            }
+            $discountDetail["rewardpoints"]["detail"] = [];
+            $discountDetail["rewardpoints"]["store_total"] = [];
+
+            foreach ($totals as $store => $tore_total) {
+                $discountDetail["rewardpoints"]["detail"][$store] = $discountDetail['rewardpoints']["total"] * ($tore_total / $total);
+                $discountDetail["rewardpoints"]["store_total"][$store] = $discountDetail['rewardpoints']["total"] * ($tore_total / $total);
+            }
+            $model->setData([
+                'base_discount' => (float) $model->offsetGet('base_discount') - $discountDetail['rewardpoints']["total"],
+                'discount_detail' => json_encode($discountDetail)
+            ])->setData('discount', $model->getCurrency()->convert($model->offsetGet('base_discount')));
         }
     }
 
-    public function afterOrderPlace($event)
-    {
+    public function afterOrderPlace($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
+        $discountDetail = (!empty($model["discount_detail"]) ? json_decode($model["discount_detail"], true) : []);
         if ($config['rewardpoints/general/enable'] && $config['rewardpoints/using/rate'] && $model->offsetGet('customer_id')) {
-            $points = $model->getAdditional('rewardpoints');
-            if ($points && $model['base_discount'] < (json_decode($model['discount_detail'], true)['Promotion'] ?? 0)) {
+            $points = (!empty($discountDetail["rewardpoints"]["total"]) ? $discountDetail["rewardpoints"]["total"] : 0);
+            if ($points > 0) {
                 $record = new Record([
                     'customer_id' => $model->offsetGet('customer_id'),
                     'order_id' => $model->getId(),
-                    'count' => -$points,
+                    'count' => -($points / $config['rewardpoints/using/rate']),
                     'status' => 1,
                     'comment' => 'Consumption'
                 ]);
@@ -74,14 +92,13 @@ class Using implements ListenerInterface
         }
     }
 
-    public function afterRefund($event)
-    {
+    public function afterRefund($event) {
         $config = $this->getContainer()->get('config');
         $model = $event['model'];
         $order = $model->getOrder();
-        if ($event['isNew'] && $config['rewardpoints/general/enable'] && $config['rewardpoints/using/refund'] && $order && $order['additional']) {
-            $additional = json_decode($order['additional'], true);
-            if (!empty($additional['rewardpoints'])) {
+        if ($event['isNew'] && $config['rewardpoints/general/enable'] && $config['rewardpoints/using/refund'] && $order && $order['discount_detail']) {
+            $discountDetail = json_decode($order['discount_detail'], true);
+            if (!empty($discountDetail['rewardpoints'])) {
                 $collection = new Collection();
                 $collection->columns(['customer_id', 'order_id', 'amount'])
                         ->where(['order_id' => $order->getId()])
@@ -100,8 +117,7 @@ class Using implements ListenerInterface
         }
     }
 
-    public function afterOrderCancel($event)
-    {
+    public function afterOrderCancel($event) {
         $model = $event['model'];
         if ($model->getPhase()['code'] === 'canceled') {
             $collection = new Collection();
@@ -115,4 +131,5 @@ class Using implements ListenerInterface
             }
         }
     }
+
 }

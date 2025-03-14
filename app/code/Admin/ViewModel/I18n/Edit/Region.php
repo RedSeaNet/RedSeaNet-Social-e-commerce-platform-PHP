@@ -31,7 +31,7 @@ class Region extends PEdit
             ],
             'parent_id' => [
                 'type' => 'jquerynoajaxselect2',
-                'label' => 'Country',
+                'label' => 'Country/Region',
                 'options' => (new Country())->getSourceArrayId()
             ],
             'code' => [

@@ -62,6 +62,34 @@ class Bargain extends AbstractHandler
         $bargains->columns(['*', 'bargains_user_help_total' => $bargains_user_help_total]);
         $bargains->where('status=1');
         ///echo $bargains->getSqlString(Bootstrap::getContainer()->get("dbAdapter")->getPlatform());exit;
+        if (!isset($conditionData['limit']) || $conditionData['limit'] == '') {
+            $conditionData['limit'] = 20;
+        } else {
+            $conditionData['limit'] = intval($conditionData['limit']);
+        }
+        if (!isset($conditionData['page']) || $conditionData['page'] == '') {
+            $conditionData['page'] = 1;
+        } else {
+            $conditionData['page'] = intval($conditionData['page']);
+        }
+        $total = $bargains->count();
+        $last_page = ceil($total / $conditionData['limit']);
+        $resultData['pagination'] = [
+            "total" => $total,
+            "per_page" => $conditionData['limit'],
+            "current_page" => $conditionData['page'],
+            "last_page" => $last_page,
+            "next_page" => ($last_page > $conditionData['page'] ? $conditionData['page'] + 1 : $last_page),
+            "previous_page" => ($conditionData['page'] > 1 ? $conditionData['page'] - 1 : 1),
+            "has_next_page" => ($last_page > $conditionData['page'] ? true : false),
+            "has_previous_page" => ($conditionData['page'] > 1 && $last_page > 1 ? true : false)
+        ];
+        if ($conditionData['page'] > 1) {
+            $bargains->order('id DESC')->limit($conditionData['limit'])->offset((int) ($conditionData['page'] - 1) * $conditionData['limit']);
+        } else {
+            $bargains->order('id DESC')->limit($conditionData['limit'])->offset(0);
+        }
+        
         $tmpResultData = [];
         $i = 0;
         foreach ($bargains as $bargain) {

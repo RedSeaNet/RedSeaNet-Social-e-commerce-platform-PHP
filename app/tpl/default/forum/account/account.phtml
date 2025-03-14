@@ -35,7 +35,7 @@ $count = $this->getCount();
                                     <?php echo $like_user_count; ?>
                                 </p>
                                 <p class="h6">
-                                    <?php echo $this->translate('Following'); ?>
+                                    <?php echo $this->translate('Subscribed'); ?>
                                 </p>
                                 <?php
                                 if (!empty($new_like_user_count)) {
@@ -140,7 +140,7 @@ $count = $this->getCount();
                 <!--                <div class="settings col-12 d-block d-sm-none padding-10">
                                     
                                     <a href="javascript:void(0)" class="float-end">
-                                        <span class="fa fa-commenting-o fa-2x"></span>
+                                        <span class="fa fa-commenting-o"></span>
                 <?php
                 if ($count):
                     ?>
@@ -162,18 +162,8 @@ $count = $this->getCount();
                     <h6 class="page-title">
                         <span><?php echo $this->translate($title) ?></span>
                     </h6>
-                    <h2 class="page-title d-block d-sm-none">
-                        <div class="d-flex justify-content-between">
-                            <a href="javascript:void(0)" onclick="javascript:history.back(-1)" class="d-block d-sm-none"><span class="fa fa-arrow-left"></span></a>
-                            <span><?php echo $this->translate($title) ?></span>
-                            <a type="button" class="navbar-toggler navbar-toggle collapsed" data-bs-toggle="collapse" data-target="#navbar-customer-account">
-                                <span class="fa fa-cog fa-2x"></span>
-                            </a>   
-                        </div>
-                    </h2>
                 <?php endif ?>
-                <?php echo $this->getChild('messages') ?>
-                <div class="main-container">
+                <div class="container">
                     <?php echo $this->getChild('main') ?>
                 </div>
             </main>

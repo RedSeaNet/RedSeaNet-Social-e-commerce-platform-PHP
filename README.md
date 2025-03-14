@@ -6,7 +6,7 @@
 <div align="center">
 
 [Official Website](https://redseanet.com/) |
-[Demo](http://store.redseanet/) |
+[Demo](http://store.redseanet.com/) |
 [Help Document](https://redseanet.com/technology-sharing/ecomphp.html)
 
 </div>
@@ -55,7 +55,7 @@ Account
 Username： demo
 Password: redseanet.com
 
-PC/WAP：http://store.redseanet/ （PC/WAP）
+PC/WAP：http://store.redseanet.com/ （PC/WAP）
 
 ---
 

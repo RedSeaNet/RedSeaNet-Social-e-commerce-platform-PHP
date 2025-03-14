@@ -6,7 +6,7 @@
 <div align="center">
 
 [官网](https://redseanet.com/) |
-[在线体验](http://store.redseanet/) |
+[在线体验](http://store.redseanet.com/) |
 [帮助文档](https://redseanet.com/technology-sharing/ecomphp.html)
 
 </div>
@@ -55,7 +55,7 @@
 用户名： demo
 密码： redseanet.com
 
-PC/WAP 端：http://store.redseanet/ （电脑/手机打开）
+PC/WAP 端：http://store.redseanet.com/ （电脑/手机打开）
 
 ---
 
